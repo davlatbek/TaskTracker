@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.projectse.aads.task_tracker.PlanActivity">
+    tools:context="com.projectse.aads.task_tracker.PlanActivity"
+    tools:showIn="@layout/content_plan">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

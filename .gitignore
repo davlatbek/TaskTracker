@@ -1,0 +1,11 @@
+.gradle
+/.idea
+/build
+.DS_Store
+/gradle.properties
+/gradlew
+/gradlew.bat
+/build.gradle
+/local.properties
+/settings.gradle
+/task-tracker.iml

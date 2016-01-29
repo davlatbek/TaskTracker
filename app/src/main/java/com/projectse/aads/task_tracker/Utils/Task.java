@@ -1,5 +1,9 @@
 package com.projectse.aads.task_tracker.Utils;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,7 +13,7 @@ import java.util.List;
  *
  * Contain data of task entity.
  */
-public class Task {
+public class Task implements Parcelable {
 
     private String name;
     private Long id;
@@ -31,6 +35,40 @@ public class Task {
         this.id = id;
         this.name = name;
     }
+
+    /**
+     * Helps in intent creation.
+     * @param in - Parcel object, that contain's data for transmition
+     */
+    protected Task(Parcel in) {
+        id = in.readLong();
+        name = in.readString();
+        description = in.readString();
+        deadline = (Date) in.readSerializable();
+        startTime = (Date) in.readSerializable();
+
+        boolean [] b_arr = new boolean[3];
+        in.readBooleanArray(b_arr);
+        isNotifyDeadline = b_arr[0];
+        isNotifyStartTime = b_arr[1];
+        isDone = b_arr[2];
+
+        subtasks = in.createTypedArrayList(Task.CREATOR);
+        parentTaskId = in.readLong();
+        priority = in.readInt();
+    }
+
+    public static final Creator<Task> CREATOR = new Creator<Task>() {
+        @Override
+        public Task createFromParcel(Parcel in) {
+            return new Task(in);
+        }
+
+        @Override
+        public Task[] newArray(int size) {
+            return new Task[size];
+        }
+    };
 
     public String getName() {
         return name;
@@ -108,5 +146,21 @@ public class Task {
         this.isDone = isDone;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(name);
+        dest.writeString(description);
+        dest.writeSerializable(deadline);
+        dest.writeSerializable(startTime);
+        dest.writeBooleanArray(new boolean[]{isNotifyDeadline,isNotifyStartTime,isDone});
+        dest.writeTypedList(subtasks);
+        dest.writeLong(parentTaskId);
+        dest.writeInt(priority);
+    }
 }

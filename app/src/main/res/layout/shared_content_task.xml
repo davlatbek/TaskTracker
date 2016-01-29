@@ -62,7 +62,8 @@
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/btnDateStartTime" />
+                android:id="@+id/btnDateStartTime"
+                android:onClick="showDatePickerDialog" />
 
             <EditText
                 android:layout_width="111dp"
@@ -76,7 +77,8 @@
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/btnTimeStartTime" />
+                android:id="@+id/btnTimeStartTime"
+                android:onClick="showTimePickerDialog" />
         </LinearLayout>
 
         <Switch
@@ -121,7 +123,8 @@
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/btnDateDeadline" />
+                android:id="@+id/btnDateDeadline"
+                android:onClick="showDatePickerDialog" />
 
             <EditText
                 android:layout_width="111dp"
@@ -135,7 +138,8 @@
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/btnTimeDeadline" />
+                android:id="@+id/btnTimeDeadline"
+                android:onClick="showTimePickerDialog" />
         </LinearLayout>
 
         <TextView

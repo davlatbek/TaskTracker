@@ -3,7 +3,8 @@ package com.projectse.aads.task_tracker.Utils;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
+import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,9 +19,9 @@ public class Task implements Parcelable {
     private String name;
     private Long id;
     private String description;
-    private Date deadline;
-    private Date startTime;
-    private Long duration;
+    private Time startTime = new Time(System.currentTimeMillis());
+    private Time deadline = new Time( startTime.getTime() + 7*24*60*60*1000 );
+    private Long duration = new Long( 8*7*24 );
     private Boolean isNotifyDeadline = Boolean.FALSE;
     private Boolean isNotifyStartTime = Boolean.FALSE;
     private Boolean isDone = Boolean.FALSE;
@@ -44,8 +45,8 @@ public class Task implements Parcelable {
         id = in.readLong();
         name = in.readString();
         description = in.readString();
-        deadline = (Date) in.readSerializable();
-        startTime = (Date) in.readSerializable();
+        deadline = (Time) in.readSerializable();
+        startTime = (Time) in.readSerializable();
 
         boolean [] b_arr = new boolean[3];
         in.readBooleanArray(b_arr);
@@ -54,8 +55,8 @@ public class Task implements Parcelable {
         isDone = b_arr[2];
 
         subtasks = in.createTypedArrayList(Task.CREATOR);
-        parentTaskId = in.readLong();
-        priority = in.readInt();
+//        parentTaskId = in.readLong();
+//        priority = in.readInt();
     }
 
     public static final Creator<Task> CREATOR = new Creator<Task>() {
@@ -98,19 +99,19 @@ public class Task implements Parcelable {
         this.description = description;
     }
 
-    public Date getDeadline() {
+    public Time getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(Date deadline) {
+    public void setDeadline(Time deadline) {
         this.deadline = deadline;
     }
 
-    public Date getStartTime() {
+    public Time getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
+    public void setStartTime(Time startTime) {
         this.startTime = startTime;
     }
 
@@ -158,9 +159,9 @@ public class Task implements Parcelable {
         dest.writeString(description);
         dest.writeSerializable(deadline);
         dest.writeSerializable(startTime);
-        dest.writeBooleanArray(new boolean[]{isNotifyDeadline,isNotifyStartTime,isDone});
+        dest.writeBooleanArray(new boolean[]{isNotifyDeadline, isNotifyStartTime, isDone});
         dest.writeTypedList(subtasks);
-        dest.writeLong(parentTaskId);
-        dest.writeInt(priority);
+//        dest.writeLong(parentTaskId==null?parentTaskId:0);
+//        dest.writeInt(priority);
     }
 }

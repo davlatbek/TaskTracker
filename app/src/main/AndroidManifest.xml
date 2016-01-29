@@ -18,6 +18,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".TaskEditActivity"
+            android:label="@string/task_edit_title"
+            android:parentActivityName=".PlanActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".PlanActivity" />
+        </activity>
     </application>
 
 </manifest>

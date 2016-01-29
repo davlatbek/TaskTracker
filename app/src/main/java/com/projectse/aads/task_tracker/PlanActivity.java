@@ -1,8 +1,9 @@
 package com.projectse.aads.task_tracker;
 
 import android.content.Context;
-import android.os.Build;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Shows list of tasks
+ */
 public class PlanActivity extends AppCompatActivity {
 
     @Override
@@ -38,6 +42,7 @@ public class PlanActivity extends AppCompatActivity {
             }
         });
 
+        // debug data
         final ListView listview = (ListView) findViewById(R.id.listview);
         String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
                 "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
@@ -61,22 +66,15 @@ public class PlanActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
                 final Task item = (Task) parent.getItemAtPosition(position);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    view.animate().setDuration(2000).alpha(0)
-                            .withEndAction(new Runnable() {
-                                @Override
-                                public void run() {
-                                    list.remove(item);
-                                    adapter.notifyDataSetChanged();
-                                    view.setAlpha(1);
-                                }
-                            });
-                }
+                callEditTaskActivity(item);
             }
 
         });
     }
 
+    /**
+     * sub class for taking list item
+     */
     private class StableArrayAdapter extends ArrayAdapter<Task> {
 
         HashMap<Task, Integer> mIdMap = new HashMap<Task, Integer>();
@@ -122,5 +120,15 @@ public class PlanActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * sending task object and starting Edit Task activity
+     * @param task
+     */
+    public void callEditTaskActivity(Task task){
+        Intent intent = new Intent (this, TaskEditActivity.class);
+        intent.putExtra("task_object", new Parcelable[] {task});
+        startActivity(intent);
     }
 }

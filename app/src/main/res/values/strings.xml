@@ -3,6 +3,8 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
 
+    <string name="task_edit_title">Task Settings</string>
+
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->

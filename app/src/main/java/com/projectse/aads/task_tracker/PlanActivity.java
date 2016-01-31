@@ -37,8 +37,9 @@ public class PlanActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
+                addTask(view);
             }
         });
 
@@ -129,6 +130,15 @@ public class PlanActivity extends AppCompatActivity {
     public void callEditTaskActivity(Task task){
         Intent intent = new Intent (this, TaskEditActivity.class);
         intent.putExtra("task_object", new Parcelable[] {task});
+        startActivity(intent);
+    }
+
+    /**
+     * Starting AddTask activity
+     * @param view
+     */
+    public void addTask(View view){
+        Intent intent = new Intent(this, AddTaskActivity.class);
         startActivity(intent);
     }
 }

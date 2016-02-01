@@ -174,17 +174,16 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         } finally {
             db.endTransaction();
         }
-//
-//        // insert row in task table
-//
-//        long insert = db.insert(TABLE_TASKS, null, values);
-//        return insert;
 
     }
 
     // Add UpDateEntry
 
+
+
+
     public int updateTask(TaskModel task) {
+        SQLiteDatabase db = this.getWritableDatabase();
         // update row in task table base on task.is value
         return 0;
     }
@@ -210,20 +209,20 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         if (c != null)
             c.moveToFirst();
         TaskModel tasks = new TaskModel();
-        tasks.id = c.getInt(c.getColumnIndex(TASKS_KEY_ID));
+        tasks.id = c.getLong(c.getColumnIndex(TASKS_KEY_ID));
         tasks.name = c.getString(c.getColumnIndex(TASKS_NAME));
         tasks.description = c.getString(c.getColumnIndex(TASKS_DESCRIPTION));
 
         return tasks;
     }
 
-    public void beginTransaction() {
-
-    }
-
-    public void inTransaction() {
-
-    }
+//    public void beginTransaction() {
+//
+//    }
+//
+//    public void inTransaction() {
+//
+//    }
 
     public List<TaskModel> geTaskModelList() {
         List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
@@ -238,7 +237,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         if (c.moveToFirst()) {
             do {
                 TaskModel tasks = new TaskModel();
-                tasks.id = c.getInt(c.getColumnIndex(TASKS_KEY_ID));
+                tasks.id = c.getLong(c.getColumnIndex(TASKS_KEY_ID));
                 tasks.name = c.getString(c.getColumnIndex(TASKS_NAME));
                 tasks.description = c.getString(c.getColumnIndex(TASKS_DESCRIPTION));
 

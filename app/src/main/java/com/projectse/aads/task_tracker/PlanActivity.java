@@ -16,8 +16,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.projectse.aads.task_tracker.Utils.Task;
+import com.projectse.aads.task_tracker.Utils.TaskModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -25,6 +27,11 @@ import java.util.List;
  * Shows list of tasks
  */
 public class PlanActivity extends AppCompatActivity {
+
+    ArrayList<Task> taskList = new ArrayList<>();
+
+    StableArrayAdapter adapter = null;
+    ListView listview = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,22 +49,10 @@ public class PlanActivity extends AppCompatActivity {
             }
         });
 
-        // debug data
-        final ListView listview = (ListView) findViewById(R.id.listview);
-        String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
-                "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
-                "Linux", "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux",
-                "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux", "OS/2",
-                "Android", "iPhone", "WindowsMobile" };
+        listview = (ListView) findViewById(R.id.listview);
 
-
-        final ArrayList<Task> list = new ArrayList<>();
-        for (int i = 0; i < values.length; ++i) {
-            list.add(new Task((long) i,values[i]));
-        }
-
-        final StableArrayAdapter adapter = new StableArrayAdapter(this,
-                android.R.layout.simple_list_item_1, list);
+        taskList = (ArrayList<Task>) TaskModel.toList();
+        adapter = new StableArrayAdapter(getBaseContext(),android.R.layout.simple_list_item_1, taskList);
         listview.setAdapter(adapter);
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -127,8 +122,11 @@ public class PlanActivity extends AppCompatActivity {
      * @param task
      */
     public void callEditTaskActivity(Task task){
-        Intent intent = new Intent (this, TaskEditActivity.class);
-        intent.putExtra("task_object", new Parcelable[] {task});
-        startActivity(intent);
+        Intent intent = new Intent (getApplicationContext(), TaskEditActivity.class);
+        intent.putExtra("task_id", task.getId());
+//        onPause();
+        startActivityForResult(intent,0);
+        adapter.notifyDataSetChanged();
+//        onResume();
     }
 }

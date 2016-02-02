@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:weightSum="1"
     tools:context="company.tasktracker.AddTaskActivity"
-    android:onClick="AddAndSave"
     android:paddingTop="5dp"
     android:paddingBottom="5dp"
     android:textAlignment="inherit">
@@ -56,7 +55,9 @@
                 android:ems="10"
                 android:id="@+id/txtDateStartTime"
                 android:text="Date"
-                android:layout_weight="0.82" />
+                android:layout_weight="0.82"
+                android:enabled="true"
+                android:editable="true" />
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -71,7 +72,9 @@
                 android:inputType="date"
                 android:ems="10"
                 android:id="@+id/txtTimeStartTime"
-                android:text="Time" />
+                android:text="Time"
+                android:editable="true"
+                android:enabled="true" />
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -91,7 +94,8 @@
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:layout_alignBottom="@+id/textView"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            android:enabled="true" />
 
     </RelativeLayout>
 
@@ -117,7 +121,9 @@
                 android:ems="10"
                 android:id="@+id/txtDateDeadline"
                 android:text="Date"
-                android:layout_weight="0.82" />
+                android:layout_weight="0.82"
+                android:editable="true"
+                android:enabled="true" />
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -132,7 +138,9 @@
                 android:inputType="date"
                 android:ems="10"
                 android:id="@+id/txtTimeDeadline"
-                android:text="Time" />
+                android:text="Time"
+                android:editable="true"
+                android:enabled="true" />
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -159,7 +167,8 @@
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:layout_alignBottom="@+id/textView2"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            android:enabled="true" />
     </RelativeLayout>
 
     <LinearLayout
@@ -175,7 +184,8 @@
             android:ems="10"
             android:id="@+id/txtDuration"
             android:text="Duration"
-            android:layout_weight="0.94" />
+            android:layout_weight="0.94"
+            android:enabled="true" />
 
         <TextView
             android:layout_width="56dp"

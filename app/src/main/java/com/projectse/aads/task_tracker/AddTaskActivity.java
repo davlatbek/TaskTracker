@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +17,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 
-import com.projectse.aads.task_tracker.Utils.Task;
+import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -33,17 +35,22 @@ public class AddTaskActivity extends AppCompatActivity {
     //Text views
     private EditText startTimeTimeView, deadlineTimeView,
             startTimeDateView, deadlineDateView;
+    public DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addtask);
 
+        databaseHelper = DatabaseHelper.getsInstance(this);
+
         Spinner dropdown = (Spinner) findViewById(R.id.spinner);
         String[] items = new String[]{"Medium", "High", "Low"};
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, items);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_dropdown_item, items);
         dropdown.setAdapter(adapter);
 
+        //Validation of fields
         /*final EditText nameEditText = (EditText) findViewById(R.id.txtName);
         findViewById(R.id.addTaskButton).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,13 +136,14 @@ public class AddTaskActivity extends AppCompatActivity {
      */
     public boolean AddTaskToDb(){
         //creating new task and reading to it from fields
-        Task task;
+        TaskModel task = new TaskModel();
         EditText name = (EditText) findViewById(R.id.txtName);
         EditText deadLineDate = (EditText) findViewById(R.id.txtDateDeadline);
-        task = new Task(0123456L, name.getText().toString());
-        /*if (taskController.addTask(task))
-            return true;
-        else return false;*/
+        task.setName(name.toString());
+
+        Date date = new Date(1994, 12, 1);
+        task.setDeadline(date);
+        databaseHelper.addTask(task);
         return true;
     }
 

@@ -1,13 +1,18 @@
-package com.projectse.aads.task_tracker.Utils;
+package com.projectse.aads.task_tracker.DBService;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.ContactsContract;
 import android.util.Log;
 
+import com.projectse.aads.task_tracker.Models.TaskModel;
+
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -109,7 +114,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     private static final String CREATE_TABLE_TASKS = "CREATE TABLE "
             + TABLE_TASKS + "(" + TASKS_KEY_ID
             + " INTEGER PRIMARY KEY AUTOINCREMENT," + TASKS_NAME + " TEXT,"
-            + TASKS_DESCRIPTION + " TEXT);";
+            + TASKS_DESCRIPTION + " TEXT," + TASKS_DEADLINE + " TEXT);";
 
 //    public DatabaseHelper(Context context) {
 //        super(context,DATABASE_NAME,null,DATABASE_VERSION);
@@ -165,7 +170,8 @@ public class DatabaseHelper extends SQLiteOpenHelper{
             // Creating content values
             ContentValues values = new ContentValues();
             values.put(TASKS_NAME, task.name);
-            values.put(TASKS_DESCRIPTION, task.description);
+            values.put(TASKS_DEADLINE, task.getDeadline().toString());
+            //values.put(TASKS_DESCRIPTION, task.description);
 
             db.insertOrThrow(TABLE_TASKS,null,values);
             db.setTransactionSuccessful();
@@ -205,13 +211,24 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         Log.d(TAG, selectQuery);
 
         Cursor c = db.rawQuery(selectQuery, null);
+        //String dateString = c.getString(c.getColumnIndex(TASKS_DEADLINE));
 
+
+        // Get deadline date from table
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(1991, 12, 23);
+
+        //calendar.set(Calendar.YEAR, Integer.parseInt(dateString.substring(0, 3)));
+        //calendar.set(Calendar.MONTH, Integer.parseInt(dateString.substring(5, 6)));
+        //calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateString.substring(8, 9)));
+        Date taskDealine = calendar.getTime();
         if (c != null)
             c.moveToFirst();
         TaskModel tasks = new TaskModel();
         tasks.id = c.getLong(c.getColumnIndex(TASKS_KEY_ID));
         tasks.name = c.getString(c.getColumnIndex(TASKS_NAME));
-        tasks.description = c.getString(c.getColumnIndex(TASKS_DESCRIPTION));
+        //tasks.description = c.getString(c.getColumnIndex(TASKS_DESCRIPTION));
+        tasks.setDeadline(taskDealine);
 
         return tasks;
     }
@@ -239,7 +256,20 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 TaskModel tasks = new TaskModel();
                 tasks.id = c.getLong(c.getColumnIndex(TASKS_KEY_ID));
                 tasks.name = c.getString(c.getColumnIndex(TASKS_NAME));
-                tasks.description = c.getString(c.getColumnIndex(TASKS_DESCRIPTION));
+
+
+                // Adjust date format
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(1991, 12, 23);
+
+                //calendar.set(Calendar.YEAR, Integer.parseInt(dateString.substring(0, 3)));
+                //calendar.set(Calendar.MONTH, Integer.parseInt(dateString.substring(5, 6)));
+                //calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateString.substring(8, 9)));
+                Date taskDealine = calendar.getTime();
+
+
+                //tasks.description = c.getString(c.getColumnIndex(TASKS_DESCRIPTION));
+                tasks.setDeadline(taskDealine);
 
                 // adding to Task list
                 tasksArrayList.add(tasks);

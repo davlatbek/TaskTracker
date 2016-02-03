@@ -1,6 +1,4 @@
-package com.projectse.aads.task_tracker.Utils;
-
-import android.util.Log;
+package com.projectse.aads.task_tracker.Models;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,7 +20,7 @@ public class TaskModel {
 
     // not supported yet
     private Long parentTaskId;
-    private List<Task> subtasks = new ArrayList<>();
+    private List<TaskModel> subtasks = new ArrayList<>();
     private Integer priority = 0;
 
 

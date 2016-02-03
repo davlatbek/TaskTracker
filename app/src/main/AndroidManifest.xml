@@ -29,13 +29,22 @@
         </activity>
 
         <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".AddTaskActivity"
             android:label="Adding new task"
             android:parentActivityName=".PlanActivity" >
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".PlanActivity" />
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".PlanActivity" />
         </activity>
 
     </application>

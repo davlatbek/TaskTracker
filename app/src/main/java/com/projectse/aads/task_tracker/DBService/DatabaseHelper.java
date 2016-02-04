@@ -241,18 +241,9 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         return tasks;
     }
 
-<<<<<<< HEAD
-    // RECEIVE LIST OF TASKS
-=======
-//    public void beginTransaction() {
-//
-//    }
-//
-//    public void inTransaction() {
-//
-//    }
 
->>>>>>> deleteTask
+    // RECEIVE LIST OF TASKS
+
     public List<TaskModel> getTaskModelList() {
         List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
 

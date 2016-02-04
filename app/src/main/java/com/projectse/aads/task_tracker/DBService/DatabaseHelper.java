@@ -10,10 +10,12 @@ import android.util.Log;
 
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Andrey Zolin on 28.01.2016.
@@ -114,7 +116,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     private static final String CREATE_TABLE_TASKS = "CREATE TABLE "
             + TABLE_TASKS + "(" + TASKS_KEY_ID
             + " INTEGER PRIMARY KEY AUTOINCREMENT," + TASKS_NAME + " TEXT,"
-            + TASKS_DESCRIPTION + " TEXT," + TASKS_DEADLINE + " TEXT);";
+            + TASKS_DESCRIPTION + " TEXT," + TASKS_DEADLINE + " INTEGER);";
 
 //    public DatabaseHelper(Context context) {
 //        super(context,DATABASE_NAME,null,DATABASE_VERSION);
@@ -169,10 +171,9 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         try {
             // Creating content values
             ContentValues values = new ContentValues();
-            values.put(TASKS_NAME, task.name);
-            values.put(TASKS_DEADLINE, task.getDeadline().toString());
+            values.put(TASKS_NAME, task.getName());
+            values.put(TASKS_DEADLINE, task.getStartTime().getTime().getTime());
             //values.put(TASKS_DESCRIPTION, task.description);
-
             db.insertOrThrow(TABLE_TASKS,null,values);
             db.setTransactionSuccessful();
         } catch (Exception e) {
@@ -185,13 +186,15 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
     // Add UpDateEntry
 
-
-
-
-    public int updateTask(TaskModel task) {
+    public int updateEntry(TaskModel task) {
         SQLiteDatabase db = this.getWritableDatabase();
         // update row in task table base on task.is value
-        return 0;
+        ContentValues values = new ContentValues();
+        values.put(TASKS_NAME, task.getName());
+        values.put(TASKS_DEADLINE,task.getDeadline().getTime().getTime());
+
+        return db.update(TABLE_TASKS,values, TASKS_KEY_ID + " = ?",
+                new String[] { String.valueOf(task.getId())});
     }
 
     // Add Delete method
@@ -199,9 +202,11 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     public void deleteEntry(long id) {
         // delete row in task table based on id
         SQLiteDatabase db = this.getWritableDatabase();
-        //db.delete();
+        db.delete(TABLE_TASKS,TASKS_KEY_ID + " = ?", new String[]{String.valueOf(id)});
+
     }
 
+    // Get task object by id
     public TaskModel getTask(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -211,37 +216,21 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         Log.d(TAG, selectQuery);
 
         Cursor c = db.rawQuery(selectQuery, null);
-        //String dateString = c.getString(c.getColumnIndex(TASKS_DEADLINE));
 
-
-        // Get deadline date from table
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(1991, 12, 23);
-
-        //calendar.set(Calendar.YEAR, Integer.parseInt(dateString.substring(0, 3)));
-        //calendar.set(Calendar.MONTH, Integer.parseInt(dateString.substring(5, 6)));
-        //calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateString.substring(8, 9)));
-        Date taskDealine = calendar.getTime();
         if (c != null)
             c.moveToFirst();
         TaskModel tasks = new TaskModel();
-        tasks.id = c.getLong(c.getColumnIndex(TASKS_KEY_ID));
-        tasks.name = c.getString(c.getColumnIndex(TASKS_NAME));
-        //tasks.description = c.getString(c.getColumnIndex(TASKS_DESCRIPTION));
-        tasks.setDeadline(taskDealine);
+        tasks.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
+        tasks.setName(c.getString(c.getColumnIndex(TASKS_NAME)));
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
+        tasks.setDeadline(cal);
 
         return tasks;
     }
 
-//    public void beginTransaction() {
-//
-//    }
-//
-//    public void inTransaction() {
-//
-//    }
-
-    public List<TaskModel> geTaskModelList() {
+    // RECEIVE LIST OF TASKS
+    public List<TaskModel> getTaskModelList() {
         List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
 
         String selectQuery = "SELECT * FROM " + TABLE_TASKS;
@@ -254,22 +243,11 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         if (c.moveToFirst()) {
             do {
                 TaskModel tasks = new TaskModel();
-                tasks.id = c.getLong(c.getColumnIndex(TASKS_KEY_ID));
-                tasks.name = c.getString(c.getColumnIndex(TASKS_NAME));
-
-
-                // Adjust date format
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(1991, 12, 23);
-
-                //calendar.set(Calendar.YEAR, Integer.parseInt(dateString.substring(0, 3)));
-                //calendar.set(Calendar.MONTH, Integer.parseInt(dateString.substring(5, 6)));
-                //calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateString.substring(8, 9)));
-                Date taskDealine = calendar.getTime();
-
-
-                //tasks.description = c.getString(c.getColumnIndex(TASKS_DESCRIPTION));
-                tasks.setDeadline(taskDealine);
+                tasks.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
+                tasks.setName(c.getString(c.getColumnIndex(TASKS_NAME)));
+                Calendar cal = Calendar.getInstance();
+                cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
+                tasks.setDeadline(cal);
 
                 // adding to Task list
                 tasksArrayList.add(tasks);

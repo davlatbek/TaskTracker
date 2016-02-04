@@ -186,10 +186,15 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
     // Add UpDateEntry
 
-    public int updateTask(TaskModel task) {
+    public int updateEntry(TaskModel task) {
         SQLiteDatabase db = this.getWritableDatabase();
         // update row in task table base on task.is value
-        return 0;
+        ContentValues values = new ContentValues();
+        values.put(TASKS_NAME, task.getName());
+        values.put(TASKS_DEADLINE,task.getDeadline().getTime().getTime());
+
+        return db.update(TABLE_TASKS,values, TASKS_KEY_ID + " = ?",
+                new String[] { String.valueOf(task.getId())});
     }
 
     // Add Delete method
@@ -197,7 +202,8 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     public void deleteEntry(long id) {
         // delete row in task table based on id
         SQLiteDatabase db = this.getWritableDatabase();
-        //db.delete();
+        db.delete(TABLE_TASKS,TASKS_KEY_ID + " = ?", new String[]{String.valueOf(id)});
+
     }
 
     // Get task object by id

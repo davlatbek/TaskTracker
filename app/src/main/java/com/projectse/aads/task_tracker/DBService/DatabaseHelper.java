@@ -110,7 +110,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     // Tasks Table Create Query
     /**
      * CREATE TABLE tasks (task_id INTEGER PRIMARY KEY AUTOINCREMENT, task_name TEXT,
-     * task_description TEXT)
+     * task_description TEXT, task_deadline INTEGER)
      */
 
     private static final String CREATE_TABLE_TASKS = "CREATE TABLE "
@@ -162,9 +162,9 @@ public class DatabaseHelper extends SQLiteOpenHelper{
      * @param task
      * @return
      */
-    public void addTask(TaskModel task) {
+    public long addTask(TaskModel task) {
         SQLiteDatabase db = this.getWritableDatabase();
-
+        long id = 0;
 
         // Begin Transaction
         db.beginTransaction();
@@ -174,13 +174,17 @@ public class DatabaseHelper extends SQLiteOpenHelper{
             values.put(TASKS_NAME, task.getName());
             values.put(TASKS_DEADLINE, task.getStartTime().getTime().getTime());
             //values.put(TASKS_DESCRIPTION, task.description);
-            db.insertOrThrow(TABLE_TASKS,null,values);
+            //db.insertOrThrow(TABLE_TASKS,null,values);
+
+            // Return id of the added task
+            id = db.insertOrThrow(TABLE_TASKS,null,values);
             db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.d(TAG, "Error while trying to add task to database");
         } finally {
             db.endTransaction();
         }
+        return id;
 
     }
 

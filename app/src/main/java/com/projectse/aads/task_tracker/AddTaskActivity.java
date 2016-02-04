@@ -41,7 +41,6 @@ public class AddTaskActivity extends AppCompatActivity {
     private static java.text.DateFormat dateFormat = new SimpleDateFormat("dd-MM-yy");
     private static java.text.DateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,9 +110,10 @@ public class AddTaskActivity extends AppCompatActivity {
      */
     public void AddAndSaveToDb(View v) {
         if (ValidateTaskData()) {
-            AddTaskToDb();
-            Intent intent = new Intent(this, PlanActivity.class);
-            startActivity(intent);
+            if (AddTaskToDb()) {
+                Intent intent = new Intent(this, PlanActivity.class);
+                startActivity(intent);
+            }
         }
     }
 
@@ -124,11 +124,11 @@ public class AddTaskActivity extends AppCompatActivity {
     public boolean ValidateTaskData() {
         EditText editName = (EditText) findViewById(R.id.txtName);
         if (editName.getText().toString().trim().equals("")) {
-            editName.setError("Name is required!");
+            editName.setError("Enter the task name!");
             return false;
         } else if (deadlineDateView != null) {
             if (deadlineDateView.getText().toString().equals("")) {
-                deadlineDateView.setError("Deadline date is required!");
+                deadlineDateView.setError("Enter the deadline!");
                 return false;
             }
         }

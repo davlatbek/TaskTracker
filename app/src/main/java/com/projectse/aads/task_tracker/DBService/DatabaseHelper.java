@@ -194,12 +194,20 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         return 0;
     }
 
-    // Add Delete method
-
+    // Delete method. Not tested yet!
     public void deleteEntry(long id) {
         // delete row in task table based on id
-        SQLiteDatabase db = this.getWritableDatabase();
-        //db.delete();
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        String where = TASKS_KEY_ID + " = " + id;
+        try {
+            db.delete(TABLE_TASKS, where, null);         // Wrong arguments!
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to delete all posts and users");
+        } finally {
+            db.endTransaction();
+        }
     }
 
     public TaskModel getTask(long id) {
@@ -241,7 +249,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 //
 //    }
 
-    public List<TaskModel> geTaskModelList() {
+    public List<TaskModel> getTaskModelList() {
         List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
 
         String selectQuery = "SELECT * FROM " + TABLE_TASKS;

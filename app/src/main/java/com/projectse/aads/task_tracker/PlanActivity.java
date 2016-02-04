@@ -14,9 +14,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.Utils.Task;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,6 +27,7 @@ public class PlanActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        final DatabaseHelper db = DatabaseHelper.getsInstance(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -39,17 +43,17 @@ public class PlanActivity extends AppCompatActivity {
         });
 
         final ListView listview = (ListView) findViewById(R.id.listview);
-        String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
-                "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
-                "Linux", "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux",
-                "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux", "OS/2",
-                "Android", "iPhone", "WindowsMobile" };
 
+//        Create fake data onCreate
+//        TaskModel task = new TaskModel();
+//        Date date = new Date();
+//        long millis = date.getTime();
+//        task.setName("dfghjk");
+//        date.setTime(234234234234234L);
+//        task.setDeadline(date);
+//        db.addTask(task);
 
-        final ArrayList<Task> list = new ArrayList<>();
-        for (int i = 0; i < values.length; ++i) {
-            list.add(new Task((long) i,values[i]));
-        }
+        List<TaskModel> list = db.getTaskModelList();
 
         final StableArrayAdapter adapter = new StableArrayAdapter(this,
                 android.R.layout.simple_list_item_1, list);
@@ -60,29 +64,20 @@ public class PlanActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
-                final Task item = (Task) parent.getItemAtPosition(position);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    view.animate().setDuration(2000).alpha(0)
-                            .withEndAction(new Runnable() {
-                                @Override
-                                public void run() {
-                                    list.remove(item);
-                                    adapter.notifyDataSetChanged();
-                                    view.setAlpha(1);
-                                }
-                            });
-                }
-            }
 
-        });
+                // delete task by click
+                // db.deleteEntry(id);
+           }
+
+       });
     }
 
-    private class StableArrayAdapter extends ArrayAdapter<Task> {
+    private class StableArrayAdapter extends ArrayAdapter<TaskModel> {
 
-        HashMap<Task, Integer> mIdMap = new HashMap<Task, Integer>();
+        HashMap<TaskModel, Integer> mIdMap = new HashMap<TaskModel, Integer>();
 
         public StableArrayAdapter(Context context, int textViewResourceId,
-                                  List<Task> objects) {
+                                  List<TaskModel> objects) {
             super(context, textViewResourceId, objects);
             for (int i = 0; i < objects.size(); ++i) {
                 mIdMap.put(objects.get(i), i);
@@ -91,7 +86,7 @@ public class PlanActivity extends AppCompatActivity {
 
         @Override
         public long getItemId(int position) {
-            Task item = getItem(position);
+            TaskModel item = getItem(position);
             return mIdMap.get(item);
         }
 

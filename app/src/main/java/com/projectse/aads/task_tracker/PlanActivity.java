@@ -3,7 +3,6 @@ package com.projectse.aads.task_tracker;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -15,20 +14,20 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.projectse.aads.task_tracker.Utils.Task;
-import com.projectse.aads.task_tracker.Utils.TaskModel;
+import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Shows list of tasks
  */
 public class PlanActivity extends AppCompatActivity {
 
-    ArrayList<Task> taskList = new ArrayList<>();
+    ArrayList<TaskModel> taskList = new ArrayList<>();
 
     StableArrayAdapter adapter = null;
     ListView listview = null;
@@ -51,7 +50,14 @@ public class PlanActivity extends AppCompatActivity {
 
         listview = (ListView) findViewById(R.id.listview);
 
-        taskList = (ArrayList<Task>) TaskModel.toList();
+        DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
+        Map<Long,TaskModel> tasks = new HashMap<>();
+        initData(tasks);
+        for(TaskModel t : tasks.values()){
+//            t.setId(db.addTask(t));
+            db.addTask(t);
+        }
+        taskList = (ArrayList<TaskModel>) db.getTaskModelList();
         adapter = new StableArrayAdapter(getBaseContext(),android.R.layout.simple_list_item_1, taskList);
         listview.setAdapter(adapter);
 
@@ -60,7 +66,7 @@ public class PlanActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
-                final Task item = (Task) parent.getItemAtPosition(position);
+                final TaskModel item = (TaskModel) parent.getItemAtPosition(position);
                 callEditTaskActivity(item);
             }
 
@@ -68,14 +74,32 @@ public class PlanActivity extends AppCompatActivity {
     }
 
     /**
+     * Create debug data
+     */
+    /** TODO
+     * avoid this method usage and delete finally.
+     */
+    public static void initData(Map<Long,TaskModel> tasks){
+        String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
+                "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
+                "Linux", "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux",
+                "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux", "OS/2",
+                "Android", "iPhone", "WindowsMobile" };
+
+        for (int i = 0; i < values.length; ++i) {
+            tasks.put( (long)i, new TaskModel((long) i,values[i]));
+        }
+    }
+
+    /**
      * sub class for taking list item
      */
-    private class StableArrayAdapter extends ArrayAdapter<Task> {
+    private class StableArrayAdapter extends ArrayAdapter<TaskModel> {
 
-        HashMap<Task, Integer> mIdMap = new HashMap<Task, Integer>();
+        HashMap<TaskModel, Integer> mIdMap = new HashMap<TaskModel, Integer>();
 
         public StableArrayAdapter(Context context, int textViewResourceId,
-                                  List<Task> objects) {
+                                  List<TaskModel> objects) {
             super(context, textViewResourceId, objects);
             for (int i = 0; i < objects.size(); ++i) {
                 mIdMap.put(objects.get(i), i);
@@ -84,7 +108,7 @@ public class PlanActivity extends AppCompatActivity {
 
         @Override
         public long getItemId(int position) {
-            Task item = getItem(position);
+            TaskModel item = getItem(position);
             return mIdMap.get(item);
         }
 
@@ -121,7 +145,7 @@ public class PlanActivity extends AppCompatActivity {
      * sending task object and starting Edit Task activity
      * @param task
      */
-    public void callEditTaskActivity(Task task){
+    public void callEditTaskActivity(TaskModel task){
         Intent intent = new Intent (getApplicationContext(), TaskEditActivity.class);
         intent.putExtra("task_id", task.getId());
 //        onPause();

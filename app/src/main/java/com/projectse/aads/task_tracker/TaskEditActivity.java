@@ -18,8 +18,8 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.projectse.aads.task_tracker.Utils.Task;
-import com.projectse.aads.task_tracker.Utils.TaskModel;
+import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,7 +44,7 @@ public class TaskEditActivity extends AppCompatActivity {
     private ToggleButton isDoneView;
 
     // Current task
-    private static Task task = null;
+    private static TaskModel task = null;
 
     private static java.text.DateFormat dateFormat = new SimpleDateFormat("dd-MM-yy");
     private static java.text.DateFormat timeFormat = new SimpleDateFormat("HH:mm");
@@ -59,7 +59,8 @@ public class TaskEditActivity extends AppCompatActivity {
 
         Long task_id = getIntent().getLongExtra("task_id",-1);
 
-        task = TaskModel.getTaskById(task_id);
+        DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
+        task = db.getTask(task_id);
 
         if (task != null) fillData();
 

@@ -22,6 +22,8 @@ import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -36,6 +38,9 @@ public class AddTaskActivity extends AppCompatActivity {
     private EditText startTimeTimeView, deadlineTimeView,
             startTimeDateView, deadlineDateView;
     public DatabaseHelper databaseHelper;
+    private static java.text.DateFormat dateFormat = new SimpleDateFormat("dd-MM-yy");
+    private static java.text.DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,16 +140,33 @@ public class AddTaskActivity extends AppCompatActivity {
      * @return True if all data is successfully recorded to database
      */
     public boolean AddTaskToDb(){
+
         //creating new task and reading to it from fields
         TaskModel task = new TaskModel();
         EditText name = (EditText) findViewById(R.id.txtName);
-        EditText deadLineDate = (EditText) findViewById(R.id.txtDateDeadline);
-        task.setName(name.toString());
 
-        Date date = new Date(1994, 12, 1);
-        task.setDeadline(date);
+        EditText deadlineDate = (EditText) findViewById(R.id.txtDateDeadline);
+        EditText startTimeDate = (EditText) findViewById(R.id.txtDateStartTime);
+        Calendar deadLineCal = Calendar.getInstance();
+        deadLineCal = getCalendarFromTxtEditViews(deadlineDate, startTimeDate);
+
+        task.setName(name.toString());
+        task.setDeadline(deadLineCal);
         databaseHelper.addTask(task);
         return true;
+    }
+
+    private static Calendar getCalendarFromTxtEditViews(EditText dateView, EditText timeView){
+        Calendar cal = null;
+        try {
+            java.util.Date date = dateFormat.parse(String.valueOf(dateView.getText()));
+            date.setTime(date.getTime() + timeFormat.parse(String.valueOf(timeView.getText())).getTime());
+            cal = Calendar.getInstance();
+            cal.setTime(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return cal;
     }
 
     @SuppressLint("ValidFragment")

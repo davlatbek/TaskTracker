@@ -201,13 +201,21 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 new String[] { String.valueOf(task.getId())});
     }
 
-    // Add Delete method
-
+    // Delete method. Not tested yet!
     public void deleteEntry(long id) {
         // delete row in task table based on id
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_TASKS,TASKS_KEY_ID + " = ?", new String[]{String.valueOf(id)});
 
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        String where = TASKS_KEY_ID + " = " + id;
+        try {
+            db.delete(TABLE_TASKS, where, null);         // Wrong arguments!
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to delete all posts and users");
+        } finally {
+            db.endTransaction();
+        }
     }
 
     // Get task object by id
@@ -233,7 +241,18 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         return tasks;
     }
 
+<<<<<<< HEAD
     // RECEIVE LIST OF TASKS
+=======
+//    public void beginTransaction() {
+//
+//    }
+//
+//    public void inTransaction() {
+//
+//    }
+
+>>>>>>> deleteTask
     public List<TaskModel> getTaskModelList() {
         List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
 

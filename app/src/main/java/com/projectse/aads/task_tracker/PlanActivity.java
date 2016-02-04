@@ -16,8 +16,11 @@ import android.widget.ListView;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.TaskModel;
+import com.projectse.aads.task_tracker.Utils.Task;
+
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +37,7 @@ public class PlanActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        final DatabaseHelper db = DatabaseHelper.getsInstance(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -48,17 +52,22 @@ public class PlanActivity extends AppCompatActivity {
             }
         });
 
-        listview = (ListView) findViewById(R.id.listview);
+        final ListView listview = (ListView) findViewById(R.id.listview);
 
-        DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
-        Map<Long,TaskModel> tasks = new HashMap<>();
-        initData(tasks);
-        for(TaskModel t : tasks.values()){
-//            t.setId(db.addTask(t));
-            db.addTask(t);
-        }
-        taskList = (ArrayList<TaskModel>) db.getTaskModelList();
-        adapter = new StableArrayAdapter(getBaseContext(),android.R.layout.simple_list_item_1, taskList);
+//        Create fake data onCreate
+//        TaskModel task = new TaskModel();
+//        Date date = new Date();
+//        long millis = date.getTime();
+//        task.setName("dfghjk");
+//        date.setTime(234234234234234L);
+//        task.setDeadline(date);
+//        db.addTask(task);
+
+        List<TaskModel> list = db.getTaskModelList();
+
+        final StableArrayAdapter adapter = new StableArrayAdapter(this,
+                android.R.layout.simple_list_item_1, list);
+				
         listview.setAdapter(adapter);
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -68,10 +77,14 @@ public class PlanActivity extends AppCompatActivity {
                                     int position, long id) {
                 final TaskModel item = (TaskModel) parent.getItemAtPosition(position);
                 callEditTaskActivity(item);
-            }
 
-        });
+                // delete task by click
+                // db.deleteEntry(id);
+           }
+
+       });
     }
+
 
     /**
      * Create debug data

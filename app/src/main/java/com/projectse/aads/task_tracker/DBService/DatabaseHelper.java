@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.ContactsContract;
 import android.util.Log;
 
+import com.projectse.aads.task_tracker.Models.SettingsModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.text.SimpleDateFormat;
@@ -87,7 +88,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     private static final String SETTINGS_ALWAYS_NOTIFY_DEADLINE = "setting_always_notify_deadline";
     private static final String SETTINGS_NOTIFY_START_TIME_BEFORE = "setting_notify_start_time_before";
     private static final String SETTINGS_NOTIFY_DEADLINE_BEFORE = "setting_notify_deadline_before";
-    private static final String SETTINGS_NOTIFY_START_TIME_S_TIMES = "setting_notify_start_time_x_times";
+    private static final String SETTINGS_NOTIFY_START_TIME_X_TIMES = "setting_notify_start_time_x_times";
     private static final String SETTINGS_NOTIFY_DEADLINE_X_TIMES = "setting_notify_deadline_x_times";
 
     // All keys used in table PLANS
@@ -195,7 +196,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         // update row in task table base on task.is value
         ContentValues values = new ContentValues();
         values.put(TASKS_NAME, task.getName());
-        values.put(TASKS_DEADLINE,task.getDeadline().getTime().getTime());
+        values.put(TASKS_DEADLINE, task.getDeadline().getTime().getTime());
 
         return db.update(TABLE_TASKS,values, TASKS_KEY_ID + " = ?",
                 new String[] { String.valueOf(task.getId())});
@@ -268,6 +269,62 @@ public class DatabaseHelper extends SQLiteOpenHelper{
             } while (c.moveToNext());
         }
         return tasksArrayList;
+    }
+
+    // SETTING METHODS
+
+    // return object of class SettingModel with all settings
+    public SettingsModel getAllSettings() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        SettingsModel settings = new SettingsModel();
+
+        String selectQuery = "SELECT * FROM" + TABLE_SETTINGS;
+        Log.d(TAG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+        try {
+            if (c.moveToFirst()) {
+                settings.setAlwaysNotifyDeadLine(Boolean.getBoolean(c.getString(c.getColumnIndex(SETTINGS_ALWAYS_NOTIFY_START_TIME))));
+                settings.setAlwaysNotifyDeadLine(Boolean.getBoolean(c.getString(c.getColumnIndex(SETTINGS_ALWAYS_NOTIFY_DEADLINE))));
+                settings.setNotifyStartTimeXTimes(Integer.getInteger(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_START_TIME_X_TIMES))));
+                settings.setNotifyDeadLineXTimes(Integer.getInteger(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_DEADLINE_X_TIMES))));
+                settings.setNotifyDeadLineBefore(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_DEADLINE_BEFORE)));
+                settings.setNotifyStartTimeBefore(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_START_TIME_BEFORE)));
+
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to get settings from database");
+        } finally {
+            if (c != null && !c.isClosed()) {
+                c.close();
+            }
+        }
+
+        return settings;
+    }
+
+    // return string value of particular setting from DB
+    public String getSetting(String settingName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String result = "";
+
+        String selectQuery = "SELECT " + settingName + "FROM " + TABLE_SETTINGS;
+        Log.d(TAG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+        try {
+            if (c.moveToFirst()) {
+                result = c.getString(c.getColumnIndex(settingName));
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to get settings from database");
+        } finally {
+            if (c != null && !c.isClosed()) {
+                c.close();
+            }
+        }
+
+        return result;
     }
 
 }

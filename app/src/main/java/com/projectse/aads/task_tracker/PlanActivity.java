@@ -16,11 +16,9 @@ import android.widget.ListView;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.TaskModel;
-import com.projectse.aads.task_tracker.Utils.Task;
 
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,18 +52,9 @@ public class PlanActivity extends AppCompatActivity {
 
         final ListView listview = (ListView) findViewById(R.id.listview);
 
-//        Create fake data onCreate
-//        TaskModel task = new TaskModel();
-//        Date date = new Date();
-//        long millis = date.getTime();
-//        task.setName("dfghjk");
-//        date.setTime(234234234234234L);
-//        task.setDeadline(date);
-//        db.addTask(task);
-
         List<TaskModel> list = db.getTaskModelList();
 
-        final StableArrayAdapter adapter = new StableArrayAdapter(this,
+        adapter = new StableArrayAdapter(this,
                 android.R.layout.simple_list_item_1, list);
 				
         listview.setAdapter(adapter);
@@ -83,25 +72,6 @@ public class PlanActivity extends AppCompatActivity {
            }
 
        });
-    }
-
-
-    /**
-     * Create debug data
-     */
-    /** TODO
-     * avoid this method usage and delete finally.
-     */
-    public static void initData(Map<Long,TaskModel> tasks){
-        String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
-                "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
-                "Linux", "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux",
-                "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux", "OS/2",
-                "Android", "iPhone", "WindowsMobile" };
-
-        for (int i = 0; i < values.length; ++i) {
-            tasks.put( (long)i, new TaskModel((long) i,values[i]));
-        }
     }
 
     /**

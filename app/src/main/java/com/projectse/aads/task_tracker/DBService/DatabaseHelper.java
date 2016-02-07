@@ -194,12 +194,19 @@ public class DatabaseHelper extends SQLiteOpenHelper{
      * @return the number of rows affected
      */
 
-    public int updateEntry(TaskModel task) {
+    public int updateTask(TaskModel task) {
         SQLiteDatabase db = this.getWritableDatabase();
         // update row in task table base on task.is value
         ContentValues values = new ContentValues();
         values.put(TASKS_NAME, task.getName());
+        values.put(TASKS_DESCRIPTION, task.getDescription());
         values.put(TASKS_DEADLINE,task.getDeadline().getTime().getTime());
+        values.put(TASKS_START_TIME, task.getStartTime().getTime().getTime());
+        values.put(TASKS_DURATION, task.getDuration());
+        values.put(TASKS_IS_NOTIFY_DEADLINE, task.getIsNotifyDeadline());
+        values.put(TASKS_IS_NOTIFY_START_TIME, task.getIsNotifyStartTime());
+        values.put(TASKS_IS_NOTIFY_DEADLINE, task.getIsNotifyDeadline());
+        values.put(TASKS_IS_DONE, task.getIsDone());
 
         return db.update(TABLE_TASKS,values, TASKS_KEY_ID + " = ?",
                 new String[] { String.valueOf(task.getId())});

@@ -51,8 +51,23 @@ public class DataBaseHelperTest extends AndroidTestCase {
         t.setId(db.addTask(t));
         t.setName("TestTask");
         long t_id = t.getId();
+
         db.deleteTask(t_id);
         assertEquals(null, db.getTask(t_id)); // instance has been deleted and doesn't exist in DB
+    }
+
+    @Test
+    public void updateTask(){
+        DatabaseHelper db = DatabaseHelper.getsInstance(getContext());
+        TaskModel t = new TaskModel();
+        t.setId(db.addTask(t));
+        t.setName("TestTask");
+        long t_id = t.getId();
+
+        db.updateTask(t);
+        TaskModel t1 = db.getTask(t_id);
+        assertEquals(t1.getId(), t.getId());
+        assertEquals(t1.getName(), t.getName());
     }
 
 }

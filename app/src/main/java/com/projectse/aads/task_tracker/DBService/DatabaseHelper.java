@@ -206,7 +206,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     }
 
     // Delete method. Not tested yet!
-    public void deleteEntry(long id) {
+    public void deleteTask(long id) {
         // delete row in task table based on id
 
         SQLiteDatabase db = getWritableDatabase();
@@ -222,27 +222,32 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         }
     }
 
-    // Get task object by id
-    public TaskModel getTask(long id) {
+    /** Get task object by id
+     *
+     * @param task_id
+     * @return new TaskModel object or null, if row with id doesn't exist.
+     */
+    public TaskModel getTask(long task_id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         // SELECT * FROM tasks WHERE id = ?;
         String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE "
-                + TASKS_KEY_ID + " = " + id;
+                + TASKS_KEY_ID + " = " + task_id;
         Log.d(TAG, selectQuery);
 
         Cursor c = db.rawQuery(selectQuery, null);
 
-        if (c != null)
+        if (c != null){
             c.moveToFirst();
-        TaskModel tasks = new TaskModel();
-        tasks.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
-        tasks.setName(c.getString(c.getColumnIndex(TASKS_NAME)));
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
-        tasks.setDeadline(cal);
-
-        return tasks;
+            TaskModel tasks = new TaskModel();
+            tasks.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
+            tasks.setName(c.getString(c.getColumnIndex(TASKS_NAME)));
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
+            tasks.setDeadline(cal);
+            return tasks;
+        }
+        return null;
     }
 
 

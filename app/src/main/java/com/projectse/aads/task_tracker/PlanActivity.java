@@ -66,9 +66,6 @@ public class PlanActivity extends AppCompatActivity {
                                     int position, long id) {
                 final TaskModel item = (TaskModel) parent.getItemAtPosition(position);
                 callEditTaskActivity(item);
-
-                // delete task by click
-                // db.deleteEntry(id);
            }
 
        });

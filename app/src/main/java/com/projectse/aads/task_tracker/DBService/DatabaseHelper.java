@@ -36,7 +36,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     }
 
     // Constructor
-    private DatabaseHelper(Context context) {
+    public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -188,7 +188,11 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
     }
 
-    // Add UpDateEntry
+    /** Add UpDateEntry
+     *
+     * @param task
+     * @return the number of rows affected
+     */
 
     public int updateEntry(TaskModel task) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -268,6 +272,30 @@ public class DatabaseHelper extends SQLiteOpenHelper{
             } while (c.moveToNext());
         }
         return tasksArrayList;
+    }
+
+    /**
+     * TODO impelement this.
+     * @param date
+     * @return
+     */
+    public List<TaskModel> getTasksForDay(Calendar date){
+        ArrayList<TaskModel> tasks = new ArrayList<>();
+        return tasks;
+    }
+
+    /**
+     *
+     */
+    public void markTaskAsDone(long task_id) throws Exception {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // update row in task table base on task.is value
+        ContentValues values = new ContentValues();
+        values.put(TASKS_IS_DONE, true);
+
+        if( db.update(TABLE_TASKS,values, TASKS_KEY_ID + " = ?",
+                new String[] { String.valueOf(task_id)}) > 1 )
+            throw new Exception("More than one row was affected");
     }
 
 }

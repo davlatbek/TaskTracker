@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TimePicker;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
@@ -143,15 +144,31 @@ public class AddTaskActivity extends AppCompatActivity {
 
         //creating new task and reading to it from fields
         TaskModel task = new TaskModel();
-        EditText name = (EditText) findViewById(R.id.txtName);
 
+        EditText name = (EditText) findViewById(R.id.txtName);
+        EditText description = (EditText) findViewById(R.id.txtDescription);
         EditText deadlineDate = (EditText) findViewById(R.id.txtDateDeadline);
-        EditText startTimeDate = (EditText) findViewById(R.id.txtDateStartTime);
-        Calendar deadLineCal = Calendar.getInstance();
-        deadLineCal = getCalendarFromTxtEditViews(deadlineDate, startTimeDate);
+        EditText deadlineTime = (EditText) findViewById(R.id.txtTimeDeadline);
+        EditText startDate = (EditText) findViewById(R.id.txtDateStartTime);
+        EditText startTime = (EditText) findViewById(R.id.txtTimeStartTime);
+        Switch notifyStartTime = (Switch) findViewById(R.id.swtStartTimeNotification);
+        Switch notifyDeadLine = (Switch) findViewById(R.id.swtDeadlineNotification);
+        EditText duration = (EditText) findViewById(R.id.txtDuration);
+        Calendar deadLineCal, startTimeCal;
+        deadLineCal = getCalendarFromTxtEditViews(deadlineDate, deadlineTime);
+        startTimeCal = getCalendarFromTxtEditViews(deadlineDate, deadlineTime);
+
+        //compute duration in hours automatically
+        //long durationInHours = ( deadLineCal.getTimeInMillis() - startTimeCal.getTimeInMillis() ) / (1000*60*60);
 
         task.setName(name.toString());
         task.setDeadline(deadLineCal);
+        task.setDescription(description.toString());
+        task.setStartTime(startTimeCal);
+        task.setIsNotifyStartTime(notifyStartTime.isChecked());
+        task.setIsNotifyDeadline(notifyDeadLine.isChecked());
+        task.setDuration(Long.parseLong(duration.toString()));
+
         databaseHelper.addTask(task);
         return true;
     }

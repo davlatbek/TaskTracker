@@ -306,6 +306,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Returns list of tasks for current week
+     *
      * @return List of current week tasks
      */
     public List<TaskModel> getTasksForACurrentWeek() {
@@ -337,5 +338,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while (c.moveToNext());
         }
         return tasks;
+    }
+
+    /**
+     *
+     * @param parentID The identificator of parent task
+     * @param childID The identificator of child task
+     * @return
+     */
+    public boolean AddSubTask(long parentID, long childID) {
+        return true;
     }
 }

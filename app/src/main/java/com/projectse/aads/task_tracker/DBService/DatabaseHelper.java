@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.ContactsContract;
 import android.util.Log;
 
+import com.projectse.aads.task_tracker.Models.CourseModel;
+import com.projectse.aads.task_tracker.Models.SettingsModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.text.SimpleDateFormat;
@@ -78,16 +80,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TASKS_SUB_TASKS = "task_sub_task";
 
     // All keys used in table COURSES
-    private static final String COURSES_NAME = "course_name";
-    private static final String COURSES_ID = "course_id";
-    private static final String COURSES_PRIORITY = "course_priority";
+    private static final String COURSE_ID = "course_id";
+    private static final String COURSE_NAME = "course_name";
+    private static final String COURSE_PRIORITY = "course_priority";
 
     // All keys used in table SETTINGS
     private static final String SETTINGS_ALWAYS_NOTIFY_START_TIME = "setting_always_notify_start_time";
     private static final String SETTINGS_ALWAYS_NOTIFY_DEADLINE = "setting_always_notify_deadline";
     private static final String SETTINGS_NOTIFY_START_TIME_BEFORE = "setting_notify_start_time_before";
     private static final String SETTINGS_NOTIFY_DEADLINE_BEFORE = "setting_notify_deadline_before";
-    private static final String SETTINGS_NOTIFY_START_TIME_S_TIMES = "setting_notify_start_time_x_times";
+    private static final String SETTINGS_NOTIFY_START_TIME_X_TIMES = "setting_notify_start_time_x_times";
     private static final String SETTINGS_NOTIFY_DEADLINE_X_TIMES = "setting_notify_deadline_x_times";
 
     // All keys used in table PLANS
@@ -110,7 +112,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Tasks Table Create Query
     /**
      * CREATE TABLE tasks (task_id INTEGER PRIMARY KEY AUTOINCREMENT, task_name TEXT,
-     * task_description TEXT)
+     * task_description TEXT, task_deadline INTEGER)
      */
 
     private static final String CREATE_TABLE_TASKS = "CREATE TABLE "
@@ -121,6 +123,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //    public DatabaseHelper(Context context) {
 //        super(context,DATABASE_NAME,null,DATABASE_VERSION);
 //    }
+
+
+    // Course Table Create Query
+    /**
+     * CREATE TABLE courses (course_id INTEGER PRIMARY KEY AUTOINCREMENT, course_name TEXT,
+     * course_priority INTEGER)
+     */
+
+    private static final String CREATE_TABLE_COURSES = "CREATE TABLE "
+            + TABLE_COURSES + "(" + COURSE_ID
+            + " INTEGER PRIMARY KEY AUTOINCREMENT," + COURSE_NAME + " TEXT,"
+            + COURSE_PRIORITY + " INTEGER);";
 
     /**
      * This method is called by system if the database is accessed but not yet
@@ -133,6 +147,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         db.execSQL(CREATE_TABLE_TASKS); // create tasks table
+        db.execSQL(CREATE_TABLE_COURSES); // create course table
 
     }
 
@@ -157,14 +172,84 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * This method is used to add course in to course table
+     *
+     * @param course
+     * @return
+     */
+    public long addCourse(CourseModel course) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long id = 0;
+
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(COURSE_NAME,course.getName());
+            values.put(COURSE_PRIORITY, course.getPriority());
+
+            id = db.insertOrThrow(TABLE_COURSES,null,values);
+            db.setTransactionSuccessful();
+
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to add course to database");
+        } finally {
+            db.endTransaction();
+        }
+
+        return id;
+    }
+
+    /**
+     * This method is used to delete course from course table
+     */
+
+    public void deleteCourse(long id) {
+        // delete row in course table based on id
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        String where = COURSE_ID + " = ?" + id;
+        try {
+            db.delete(TABLE_COURSES, where, null);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to delete course");
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    /**
+     * This method is used to update course by id
+     */
+    public int updateCourse(CourseModel course) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int id=0;
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(COURSE_NAME, course.getName());
+            values.put(COURSE_PRIORITY, course.getPriority());
+            id = db.update(TABLE_COURSES, values, COURSE_ID + " = ?",
+                    new String[]{String.valueOf(course.getId())});
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to update course");
+        } finally {
+            db.endTransaction();
+        }
+        return id;
+    }
+
+
+    /**
      * This method is used to add task in task table
      *
      * @param task
      * @return
      */
-    public void addTask(TaskModel task) {
+    public long addTask(TaskModel task) {
         SQLiteDatabase db = this.getWritableDatabase();
-
+        long id = 0;
 
         // Begin Transaction
         db.beginTransaction();
@@ -175,18 +260,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(TASKS_DEADLINE, task.getStartTime().getTime().getTime());
             //values.put(TASKS_DESCRIPTION, task.description);
             db.insertOrThrow(TABLE_TASKS, null, values);
+            // Return id of the added task
+            id = db.insertOrThrow(TABLE_TASKS,null,values);
             db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.d(TAG, "Error while trying to add task to database");
         } finally {
             db.endTransaction();
         }
+        return id;
 
     }
 
-    // Add UpDateEntry
+    // Add UpDateTask by id
 
-    public int updateEntry(TaskModel task) {
+    public int updateTask(TaskModel task) {
         SQLiteDatabase db = this.getWritableDatabase();
         // update row in task table base on task.is value
         ContentValues values = new ContentValues();
@@ -197,13 +285,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(task.getId())});
     }
 
-    // Add Delete method
-
-    public void deleteEntry(long id) {
+    // Delete method. Not tested yet!
+    public void deleteTask(long id) {
         // delete row in task table based on id
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_TASKS, TASKS_KEY_ID + " = ?", new String[]{String.valueOf(id)});
 
+        db.beginTransaction();
+        String where = TASKS_KEY_ID + " = ?" + id;
+        try {
+            db.delete(TABLE_TASKS, where, null);         // Wrong arguments!
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to delete all posts and users");
+        } finally {
+            db.endTransaction();
+        }
     }
 
     // Get task object by id
@@ -229,7 +326,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return tasks;
     }
 
+
     // RECEIVE LIST OF TASKS
+
     public List<TaskModel> getTaskModelList() {
         List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
 
@@ -255,5 +354,83 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return tasksArrayList;
     }
-    
+
+    // RECEIVE LIST OF COURSES
+
+    public List<CourseModel> getCourseModelList() {
+        List<CourseModel> courseArrayList = new ArrayList<CourseModel>();
+        String selectQuery = "SELECT * FROM " + TABLE_COURSES;
+        Log.d(TAG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery,null);
+
+        if (c.moveToFirst()) {
+            do {
+                CourseModel course = new CourseModel();
+                course.setId(c.getLong(c.getColumnIndex(COURSE_ID)));
+                course.setName(c.getString(c.getColumnIndex(COURSE_NAME)));
+                course.setPriority(c.getInt(c.getColumnIndex(COURSE_PRIORITY)));
+                courseArrayList.add(course);
+            } while (c.moveToNext());
+        }
+        return courseArrayList;
+    }
+
+    // SETTING METHODS
+
+    // return object of class SettingModel with all settings
+    public SettingsModel getAllSettings() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        SettingsModel settings = new SettingsModel();
+
+        String selectQuery = "SELECT * FROM" + TABLE_SETTINGS;
+        Log.d(TAG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+        try {
+            if (c.moveToFirst()) {
+                settings.setAlwaysNotifyDeadLine(Boolean.getBoolean(c.getString(c.getColumnIndex(SETTINGS_ALWAYS_NOTIFY_START_TIME))));
+                settings.setAlwaysNotifyDeadLine(Boolean.getBoolean(c.getString(c.getColumnIndex(SETTINGS_ALWAYS_NOTIFY_DEADLINE))));
+                settings.setNotifyStartTimeXTimes(Integer.getInteger(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_START_TIME_X_TIMES))));
+                settings.setNotifyDeadLineXTimes(Integer.getInteger(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_DEADLINE_X_TIMES))));
+                settings.setNotifyDeadLineBefore(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_DEADLINE_BEFORE)));
+                settings.setNotifyStartTimeBefore(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_START_TIME_BEFORE)));
+
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to get settings from database");
+        } finally {
+            if (c != null && !c.isClosed()) {
+                c.close();
+            }
+        }
+
+        return settings;
+    }
+
+    // return string value of particular setting from DB
+    public String getSetting(String settingName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String result = "";
+
+        String selectQuery = "SELECT " + settingName + "FROM " + TABLE_SETTINGS;
+        Log.d(TAG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+        try {
+            if (c.moveToFirst()) {
+                result = c.getString(c.getColumnIndex(settingName));
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to get settings from database");
+        } finally {
+            if (c != null && !c.isClosed()) {
+                c.close();
+            }
+        }
+
+        return result;
+    }
+
 }

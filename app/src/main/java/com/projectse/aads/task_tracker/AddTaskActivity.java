@@ -163,11 +163,11 @@ public class AddTaskActivity extends AppCompatActivity {
 
         task.setName(name.toString());
         task.setDeadline(deadLineCal);
-        task.setDescription(description.toString());
-        task.setStartTime(startTimeCal);
-        task.setIsNotifyStartTime(notifyStartTime.isChecked());
-        task.setIsNotifyDeadline(notifyDeadLine.isChecked());
-        task.setDuration(Long.parseLong(duration.toString()));
+        //task.setDescription(description.toString());
+        //task.setStartTime(startTimeCal);
+        //task.setIsNotifyStartTime(notifyStartTime.isChecked());
+        //task.setIsNotifyDeadline(notifyDeadLine.isChecked());
+        //task.setDuration(Long.parseLong(duration.toString()));
 
         databaseHelper.addTask(task);
         return true;

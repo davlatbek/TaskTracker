@@ -20,7 +20,7 @@ import java.util.Locale;
 /**
  * Created by Andrey Zolin on 28.01.2016.
  */
-public class DatabaseHelper extends SQLiteOpenHelper{
+public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Create new instance of our database
     // In any activity just pass the context and use the singleton method
@@ -174,7 +174,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
             values.put(TASKS_NAME, task.getName());
             values.put(TASKS_DEADLINE, task.getStartTime().getTime().getTime());
             //values.put(TASKS_DESCRIPTION, task.description);
-            db.insertOrThrow(TABLE_TASKS,null,values);
+            db.insertOrThrow(TABLE_TASKS, null, values);
             db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.d(TAG, "Error while trying to add task to database");
@@ -191,10 +191,10 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         // update row in task table base on task.is value
         ContentValues values = new ContentValues();
         values.put(TASKS_NAME, task.getName());
-        values.put(TASKS_DEADLINE,task.getDeadline().getTime().getTime());
+        values.put(TASKS_DEADLINE, task.getDeadline().getTime().getTime());
 
-        return db.update(TABLE_TASKS,values, TASKS_KEY_ID + " = ?",
-                new String[] { String.valueOf(task.getId())});
+        return db.update(TABLE_TASKS, values, TASKS_KEY_ID + " = ?",
+                new String[]{String.valueOf(task.getId())});
     }
 
     // Add Delete method
@@ -202,7 +202,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     public void deleteEntry(long id) {
         // delete row in task table based on id
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_TASKS,TASKS_KEY_ID + " = ?", new String[]{String.valueOf(id)});
+        db.delete(TABLE_TASKS, TASKS_KEY_ID + " = ?", new String[]{String.valueOf(id)});
 
     }
 
@@ -256,4 +256,86 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         return tasksArrayList;
     }
 
+    /**
+     * Gets a day as an input and returns list of tasks for a randomly chosen week
+     *
+     * @param day Choose day starting from which tasks will be returned for a week
+     * @return List of random week tasks
+     */
+    public List<TaskModel> getTasksForAChosenWeek(Calendar day) {
+        List<TaskModel> tasks = new ArrayList<>();
+
+        //setting starting day time
+        day.set(Calendar.HOUR_OF_DAY, 00);
+        day.set(Calendar.MINUTE, 00);
+        day.set(Calendar.SECOND, 01);
+
+        //setting last day of random week
+        Calendar lastDay = day;
+        lastDay.add(Calendar.DATE, 7);
+        lastDay.set(Calendar.HOUR_OF_DAY, 23);
+        lastDay.set(Calendar.MINUTE, 59);
+        lastDay.set(Calendar.SECOND, 59);
+
+        Calendar cal = Calendar.getInstance();
+
+        /*String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE "
+                + TASKS_START_TIME + " > " + day.getTime().getTime() +
+                " AND " + TASKS_DEADLINE + " < " + lastDay.getTime().getTime();*/
+
+        String selectQuery = "SELECT * FROM " + TABLE_TASKS;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c.moveToFirst()) {
+            do {
+                TaskModel task = new TaskModel();
+                cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
+                if (cal.getTime().getTime() >= day.getTime().getTime() &&
+                        cal.getTime().getTime() <= lastDay.getTime().getTime()) {
+                    task.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
+                    task.setName(c.getString(c.getColumnIndex(TASKS_NAME)));
+                    task.setDeadline(cal);
+                    tasks.add(task);
+                }
+            } while (c.moveToNext());
+        }
+        return tasks;
+    }
+
+    /**
+     * Returns list of tasks for current week
+     * @return List of current week tasks
+     */
+    public List<TaskModel> getTasksForACurrentWeek() {
+        List<TaskModel> tasks = new ArrayList<>();
+
+        //setting last day of current week
+        Calendar lastDayOfCurrentWeek = Calendar.getInstance();
+        lastDayOfCurrentWeek.add(Calendar.DATE, 7);
+        lastDayOfCurrentWeek.set(Calendar.HOUR_OF_DAY, 23);
+        lastDayOfCurrentWeek.set(Calendar.MINUTE, 59);
+        lastDayOfCurrentWeek.set(Calendar.SECOND, 59);
+
+        Calendar cal = Calendar.getInstance();
+        String selectQuery = "SELECT * FROM " + TABLE_TASKS;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c.moveToFirst()) {
+            do {
+                TaskModel task = new TaskModel();
+                cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
+                if (cal.getTime().getTime() <= lastDayOfCurrentWeek.getTime().getTime()) {
+                    task.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
+                    task.setName(c.getString(c.getColumnIndex(TASKS_NAME)));
+                    task.setDeadline(cal);
+                    tasks.add(task);
+                }
+            } while (c.moveToNext());
+        }
+        return tasks;
+    }
 }

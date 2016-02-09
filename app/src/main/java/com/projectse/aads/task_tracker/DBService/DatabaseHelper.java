@@ -176,6 +176,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    public void deleteTaskTable(SQLiteDatabase db){
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TASKS + ";");
+        db.execSQL(CREATE_TABLE_TASKS); // create course table
+    }
+
     /**
      * This method is used to add course in to course table
      *
@@ -245,7 +250,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return id;
     }
 
-
     /**
      * This method is used to add task in task table
      *
@@ -262,44 +266,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             // Creating content values
             ContentValues values = new ContentValues();
             values.put(TASKS_NAME, task.getName());
-            values.put(TASKS_DEADLINE, task.getStartTime().getTime().getTime());
-            //values.put(TASKS_DESCRIPTION, task.description);
-
-            // Return id of the added task
-            id = db.insertOrThrow(TABLE_TASKS, null, values);
-            db.setTransactionSuccessful();
-        } catch (Exception e) {
-            Log.d(TAG, "Error while trying to add task to database");
-        } finally {
-            db.endTransaction();
-        }
-        return id;
-
-    }
-
-    /**
-     * This method is used to add task in task table
-     *
-     * @param task
-     * @return
-     */
-    public long addTaskUpdated(TaskModel task) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        long id = 0;
-
-        // Begin Transaction
-        db.beginTransaction();
-        try {
-            // Creating content values
-            ContentValues values = new ContentValues();
-            values.put(TASKS_NAME, task.getName());
             values.put(TASKS_DESCRIPTION, task.getDescription());
+
+            //writing 1 or 0 to boolean types
+            int bool = task.getIsNotifyDeadline() ? 1 : 0;
+            values.put(TASKS_IS_NOTIFY_DEADLINE, bool);
+            bool = task.getIsNotifyStartTime() ? 1 : 0;
+            values.put(TASKS_IS_NOTIFY_START_TIME, bool);
+            bool = task.getIsDone() ? 1 : 0;
+            values.put(TASKS_IS_DONE, bool);
+
+            values.put(TASKS_DURATION, task.getDuration());
             values.put(TASKS_START_TIME, task.getStartTime().getTimeInMillis());
             values.put(TASKS_DEADLINE, task.getStartTime().getTime().getTime());
-            values.put(TASKS_DURATION, task.getDuration());
-            values.put(TASKS_IS_DONE, task.getIsDone());
-            values.put(TASKS_IS_NOTIFY_DEADLINE, task.getIsNotifyDeadline());
-            values.put(TASKS_IS_NOTIFY_START_TIME, task.getIsNotifyStartTime());
 
             // Return id of the added task
             id = db.insertOrThrow(TABLE_TASKS, null, values);
@@ -333,7 +312,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.beginTransaction();
         String where = TASKS_KEY_ID + " = ?" + id;
         try {
-            db.delete(TABLE_TASKS, where, null);         // Wrong arguments!
+            db.delete(TABLE_TASKS, where, null);
             db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.d(TAG, "Error while trying to delete all posts and users");
@@ -355,9 +334,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (c != null)
             c.moveToFirst();
+
         TaskModel tasks = new TaskModel();
         tasks.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
         tasks.setName(c.getString(c.getColumnIndex(TASKS_NAME)));
+        Calendar calStart = Calendar.getInstance();
+        calStart.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_START_TIME)));
+        tasks.setStartTime(calStart);
+        tasks.setDuration((long) c.getInt(c.getColumnIndex(TASKS_DURATION)));
+
+        int boolInt = c.getInt(c.getColumnIndex(TASKS_IS_DONE));
+        Boolean boolString = boolInt == 1 ? true : false;
+        tasks.setIsDone(boolString);
+
+        boolInt = c.getInt(c.getColumnIndex(TASKS_IS_NOTIFY_DEADLINE));
+        boolString = boolInt == 1;
+        tasks.setIsNotifyDeadline(boolString);
+
+        boolInt = c.getInt(c.getColumnIndex(TASKS_IS_NOTIFY_START_TIME));
+        boolString = boolInt == 1;
+        tasks.setIsNotifyStartTime(boolString);
+        tasks.setDescription(c.getString(c.getColumnIndex(TASKS_DESCRIPTION)));
+
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
         tasks.setDeadline(cal);
@@ -383,6 +381,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 TaskModel tasks = new TaskModel();
                 tasks.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
                 tasks.setName(c.getString(c.getColumnIndex(TASKS_NAME)));
+
+                Calendar calStart = Calendar.getInstance();
+                calStart.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_START_TIME)));
+                tasks.setStartTime(calStart);
+                tasks.setDuration((long) c.getInt(c.getColumnIndex(TASKS_DURATION)));
+
+                int boolInt = c.getInt(c.getColumnIndex(TASKS_IS_DONE));
+                Boolean boolString = boolInt == 1 ? true : false;
+                tasks.setIsDone(boolString);
+
+                boolInt = c.getInt(c.getColumnIndex(TASKS_IS_NOTIFY_DEADLINE));
+                boolString = boolInt == 1;
+                tasks.setIsNotifyDeadline(boolString);
+
+                boolInt = c.getInt(c.getColumnIndex(TASKS_IS_NOTIFY_START_TIME));
+                boolString = boolInt == 1;
+                tasks.setIsNotifyStartTime(boolString);
+
+                tasks.setDescription(c.getString(c.getColumnIndex(TASKS_DESCRIPTION)));
+
                 Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
                 tasks.setDeadline(cal);

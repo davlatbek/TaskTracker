@@ -23,7 +23,7 @@ public class SettingsModel {
     public SettingsModel() {
         AlwaysNotifyStartTime = true;
         AlwaysNotifyDeadLine = true;
-        NotifyStartTimeBefore = "";
+        NotifyStartTimeBefore = "";    // integer - number of minutes
         NotifyDeadLineBefore = "";
         NotifyStartTimeXTimes = 1;
         NotifyDeadLineXTimes = 1;

@@ -278,6 +278,8 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getReadableDatabase();
         SettingsModel settings = new SettingsModel();
 
+
+
         String selectQuery = "SELECT * FROM" + TABLE_SETTINGS;
         Log.d(TAG, selectQuery);
 

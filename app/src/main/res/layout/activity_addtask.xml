@@ -7,24 +7,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Add new task"
+        android:text="New task"
         android:id="@+id/textView2"
         android:layout_marginTop="10dp"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textStyle="bold" />
 
     <include layout="@layout/shared_content_task"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnIsDone"
         android:layout_alignParentStart="true" />
-
-    <Spinner
-        android:layout_width="242dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/spinner"
-        android:spinnerMode="dropdown"
-        android:transitionGroup="false">
-    </Spinner>
 
     <Button
         style="?android:attr/buttonStyleSmall"

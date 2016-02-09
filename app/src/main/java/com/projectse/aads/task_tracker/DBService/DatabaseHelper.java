@@ -5,19 +5,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.ContactsContract;
+import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.util.Log;
 
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.SettingsModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by Andrey Zolin on 28.01.2016.
@@ -114,11 +111,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * CREATE TABLE tasks (task_id INTEGER PRIMARY KEY AUTOINCREMENT, task_name TEXT,
      * task_description TEXT, task_deadline INTEGER)
      */
-
     private static final String CREATE_TABLE_TASKS = "CREATE TABLE "
-            + TABLE_TASKS + "(" + TASKS_KEY_ID
-            + " INTEGER PRIMARY KEY AUTOINCREMENT," + TASKS_NAME + " TEXT,"
-            + TASKS_DESCRIPTION + " TEXT," + TASKS_DEADLINE + " INTEGER);";
+            + TABLE_TASKS + "("
+            + TASKS_KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + TASKS_NAME + " TEXT, "
+            + TASKS_DESCRIPTION + " TEXT, "
+            + TASKS_DEADLINE + " INTEGER, "
+            + TASKS_START_TIME + " INTEGER, "
+            + TASKS_DURATION + " INTEGER, "
+            + TASKS_IS_DONE + " INTEGER, "
+            + TASKS_IS_NOTIFY_START_TIME + " INTEGER, "
+            + TASKS_IS_NOTIFY_DEADLINE + " INTEGER, "
+            + TASKS_PRIORITY + " TEXT "
+            + ");";
 
 //    public DatabaseHelper(Context context) {
 //        super(context,DATABASE_NAME,null,DATABASE_VERSION);
@@ -184,10 +189,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.beginTransaction();
         try {
             ContentValues values = new ContentValues();
-            values.put(COURSE_NAME,course.getName());
+            values.put(COURSE_NAME, course.getName());
             values.put(COURSE_PRIORITY, course.getPriority());
 
-            id = db.insertOrThrow(TABLE_COURSES,null,values);
+            id = db.insertOrThrow(TABLE_COURSES, null, values);
             db.setTransactionSuccessful();
 
         } catch (Exception e) {
@@ -224,7 +229,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public int updateCourse(CourseModel course) {
         SQLiteDatabase db = this.getWritableDatabase();
-        int id=0;
+        int id = 0;
         db.beginTransaction();
         try {
             ContentValues values = new ContentValues();
@@ -259,9 +264,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(TASKS_NAME, task.getName());
             values.put(TASKS_DEADLINE, task.getStartTime().getTime().getTime());
             //values.put(TASKS_DESCRIPTION, task.description);
-            db.insertOrThrow(TABLE_TASKS, null, values);
+
             // Return id of the added task
-            id = db.insertOrThrow(TABLE_TASKS,null,values);
+            id = db.insertOrThrow(TABLE_TASKS, null, values);
             db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.d(TAG, "Error while trying to add task to database");
@@ -270,6 +275,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return id;
 
+    }
+
+    /**
+     * This method is used to add task in task table
+     *
+     * @param task
+     * @return
+     */
+    public long addTaskUpdated(TaskModel task) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long id = 0;
+
+        // Begin Transaction
+        db.beginTransaction();
+        try {
+            // Creating content values
+            ContentValues values = new ContentValues();
+            values.put(TASKS_NAME, task.getName());
+            values.put(TASKS_DESCRIPTION, task.getDescription());
+            values.put(TASKS_START_TIME, task.getStartTime().getTimeInMillis());
+            values.put(TASKS_DEADLINE, task.getStartTime().getTime().getTime());
+            values.put(TASKS_DURATION, task.getDuration());
+            values.put(TASKS_IS_DONE, task.getIsDone());
+            values.put(TASKS_IS_NOTIFY_DEADLINE, task.getIsNotifyDeadline());
+            values.put(TASKS_IS_NOTIFY_START_TIME, task.getIsNotifyStartTime());
+
+            // Return id of the added task
+            id = db.insertOrThrow(TABLE_TASKS, null, values);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to add task to database");
+        } finally {
+            db.endTransaction();
+        }
+        return id;
     }
 
     // Add UpDateTask by id
@@ -288,9 +328,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Delete method. Not tested yet!
     public void deleteTask(long id) {
         // delete row in task table based on id
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_TASKS, TASKS_KEY_ID + " = ?", new String[]{String.valueOf(id)});
 
+        SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
         String where = TASKS_KEY_ID + " = ?" + id;
         try {
@@ -363,7 +402,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d(TAG, selectQuery);
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery(selectQuery,null);
+        Cursor c = db.rawQuery(selectQuery, null);
 
         if (c.moveToFirst()) {
             do {
@@ -434,3 +473,4 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 }
+

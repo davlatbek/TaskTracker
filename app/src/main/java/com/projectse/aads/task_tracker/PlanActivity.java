@@ -1,5 +1,6 @@
 package com.projectse.aads.task_tracker;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,9 +8,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -49,13 +52,13 @@ public class PlanActivity extends AppCompatActivity {
             }
         });
 
-        final ListView listview = (ListView) findViewById(R.id.listview);
+        ListView listview = (ListView) findViewById(R.id.listview);
 
-        List<TaskModel> list = db.getTaskModelList();
+        taskList = (ArrayList<TaskModel>) db.getTaskModelList();
 
         adapter = new StableArrayAdapter(this,
-                android.R.layout.simple_list_item_1, list);
-				
+                android.R.layout.simple_list_item_1, taskList);
+
         listview.setAdapter(adapter);
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -65,9 +68,9 @@ public class PlanActivity extends AppCompatActivity {
                                     int position, long id) {
                 final TaskModel item = (TaskModel) parent.getItemAtPosition(position);
                 callEditTaskActivity(item);
-           }
+            }
 
-       });
+        });
     }
 
     /**
@@ -78,7 +81,7 @@ public class PlanActivity extends AppCompatActivity {
         HashMap<TaskModel, Integer> mIdMap = new HashMap<TaskModel, Integer>();
 
         public StableArrayAdapter(Context context, int textViewResourceId,
-                                  List<TaskModel> objects) {
+                                  ArrayList<TaskModel> objects) {
             super(context, textViewResourceId, objects);
             for (int i = 0; i < objects.size(); ++i) {
                 mIdMap.put(objects.get(i), i);

@@ -7,35 +7,48 @@
     tools:context="company.tasktracker.AddTaskActivity"
     android:paddingTop="5dp"
     android:paddingBottom="5dp"
-    android:textAlignment="inherit">
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Task Name:"
+        android:id="@+id/textViewName" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Name"
         android:ems="10"
         android:id="@+id/txtName" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Description:"
+        android:id="@+id/textViewDesc" />
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Description"
         android:ems="10"
         android:id="@+id/txtDescription" />
 
     <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Start Time:"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Start Datetime"
             android:id="@+id/textView" />
 
         <LinearLayout
@@ -46,7 +59,8 @@
             android:layout_marginLeft="0dp"
             android:layout_below="@+id/textView"
             android:layout_alignParentStart="true"
-            android:id="@+id/linearLayout">
+            android:id="@+id/linearLayout"
+            android:layout_marginTop="5dp">
 
             <EditText
                 android:layout_width="129dp"
@@ -54,7 +68,6 @@
                 android:inputType="date"
                 android:ems="10"
                 android:id="@+id/txtDateStartTime"
-                android:text="Date"
                 android:layout_weight="0.82"
                 android:enabled="true"
                 android:editable="true" />
@@ -72,7 +85,6 @@
                 android:inputType="date"
                 android:ems="10"
                 android:id="@+id/txtTimeStartTime"
-                android:text="Time"
                 android:editable="true"
                 android:enabled="true" />
 
@@ -91,18 +103,21 @@
             android:id="@+id/swtStartTimeNotification"
             android:checked="false"
             android:textSize="18dp"
-            android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:layout_alignBottom="@+id/textView"
             android:layout_alignParentEnd="true"
-            android:enabled="true" />
+            android:enabled="true"
+            android:showText="false"
+            android:singleLine="false"
+            android:splitTrack="false" />
 
     </RelativeLayout>
 
     <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp">
 
         <LinearLayout
             android:orientation="horizontal"
@@ -112,7 +127,8 @@
             android:layout_marginLeft="0dp"
             android:layout_below="@+id/textView2"
             android:layout_alignParentStart="true"
-            android:id="@+id/linearLayout2" >
+            android:id="@+id/linearLayout2"
+            android:layout_marginTop="5dp">
 
             <EditText
                 android:layout_width="129dp"
@@ -120,7 +136,6 @@
                 android:inputType="date"
                 android:ems="10"
                 android:id="@+id/txtDateDeadline"
-                android:text="Date"
                 android:layout_weight="0.82"
                 android:editable="true"
                 android:enabled="true" />
@@ -138,7 +153,6 @@
                 android:inputType="date"
                 android:ems="10"
                 android:id="@+id/txtTimeDeadline"
-                android:text="Time"
                 android:editable="true"
                 android:enabled="true" />
 
@@ -153,9 +167,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Deadline:"
-            android:id="@+id/textView2" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Deadline Datetime"
+            android:id="@+id/textView2"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
 
         <Switch
             android:layout_width="wrap_content"
@@ -164,7 +180,6 @@
             android:id="@+id/swtDeadlineNotification"
             android:checked="false"
             android:textSize="18dp"
-            android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:layout_alignBottom="@+id/textView2"
             android:layout_alignParentEnd="true"
@@ -177,14 +192,19 @@
         android:layout_height="wrap_content"
         android:weightSum="1">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Duration:"
+            android:id="@+id/textViewDuration" />
+
         <EditText
-            android:layout_width="229dp"
+            android:layout_width="95dp"
             android:layout_height="wrap_content"
             android:inputType="number"
             android:ems="10"
             android:id="@+id/txtDuration"
-            android:text="Duration"
-            android:layout_weight="0.94"
             android:enabled="true" />
 
         <TextView

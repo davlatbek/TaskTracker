@@ -1,9 +1,11 @@
 package com.projectse.aads.task_tracker;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -28,6 +30,7 @@ import java.util.Calendar;
 /**
  * Shows fields for editing current Task
  */
+
 public class TaskEditActivity extends AppCompatActivity {
 
     // Views
@@ -458,5 +461,24 @@ public class TaskEditActivity extends AppCompatActivity {
         setResult(0);
         // write changes to base
         finish();
+    }
+
+    protected void onDeleteClick() {
+        createDialog();
+    }
+
+    private void createDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setMessage("Hi");
+
+        alertDialog.setCancelable(false);
+        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+             //   TaskEditActivity.super.onDeleteClick();
+            }
+        }); {
+
+        }
     }
 }

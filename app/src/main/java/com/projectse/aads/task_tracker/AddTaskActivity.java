@@ -40,7 +40,7 @@ public class AddTaskActivity extends AppCompatActivity {
         setContentView(R.layout.activity_addtask);
         getViews();
         databaseHelper = DatabaseHelper.getsInstance(this);
-        fillData();
+        //fillData();
         /*Spinner dropdown = (Spinner) findViewById(R.id.spinner);
         String[] items = new String[]{"Medium", "High", "Low"};
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -156,19 +156,22 @@ public class AddTaskActivity extends AppCompatActivity {
         EditText duration = (EditText) findViewById(R.id.txtDuration);
         Calendar deadLineCal, startTimeCal;
         deadLineCal = getCalendarFromTxtEditViews(deadlineDate, deadlineTime);
-        startTimeCal = getCalendarFromTxtEditViews(deadlineDate, deadlineTime);
+        startTimeCal = getCalendarFromTxtEditViews(startDate, startTime);
 
         //compute duration in hours automatically
         /*long durationInHours = ( deadLineCal.getTimeInMillis() - startTimeCal.getTimeInMillis() ) / (1000*60*60);
         duration.setText((int) durationInHours);*/
 
-        task.setName(name.toString());
+        task.setName(name.getText().toString());
         task.setDeadline(deadLineCal);
-        //task.setDescription(description.toString());
-        //task.setStartTime(startTimeCal);
-        //task.setIsNotifyStartTime(notifyStartTime.isChecked());
-        //task.setIsNotifyDeadline(notifyDeadLine.isChecked());
-        //task.setDuration(Long.parseLong(duration.toString()));
+        task.setDescription(description.getText().toString());
+        task.setStartTime(startTimeCal);
+        task.setIsNotifyStartTime(notifyStartTime.isChecked());
+        task.setIsNotifyDeadline(notifyDeadLine.isChecked());
+        if (duration.getText().toString().equals("")){
+            task.setDuration(0L);
+        } else
+            task.setDuration(Long.parseLong(duration.getText().toString()));
 
         databaseHelper.addTask(task);
         return true;
@@ -248,7 +251,7 @@ public class AddTaskActivity extends AppCompatActivity {
     }
 
     public static class TimePickerFragment extends DialogFragment
-        implements TimePickerDialog.OnTimeSetListener {
+            implements TimePickerDialog.OnTimeSetListener {
 
         private EditText txtEdit = null;
         public void setTxtEdit(EditText t){
@@ -292,7 +295,7 @@ public class AddTaskActivity extends AppCompatActivity {
     }
 
     public static class DatePickerFragment extends DialogFragment
-        implements DatePickerDialog.OnDateSetListener {
+            implements DatePickerDialog.OnDateSetListener {
 
         private EditText txtEdit = null;
 

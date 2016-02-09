@@ -32,7 +32,6 @@ import java.util.Map;
 public class PlanActivity extends AppCompatActivity {
 
     ArrayList<TaskModel> taskList = new ArrayList<>();
-
     StableArrayAdapter adapter = null;
     ListView listview = null;
 
@@ -43,7 +42,7 @@ public class PlanActivity extends AppCompatActivity {
         setContentView(R.layout.activity_plan);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        //db.deleteTaskTable(db.getWritableDatabase());
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,14 +52,11 @@ public class PlanActivity extends AppCompatActivity {
         });
 
         ListView listview = (ListView) findViewById(R.id.listview);
-
         taskList = (ArrayList<TaskModel>) db.getTaskModelList();
-
         adapter = new StableArrayAdapter(this,
                 android.R.layout.simple_list_item_1, taskList);
 
         listview.setAdapter(adapter);
-
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override

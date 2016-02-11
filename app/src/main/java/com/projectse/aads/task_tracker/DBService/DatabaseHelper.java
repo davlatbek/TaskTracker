@@ -300,51 +300,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     }
 
     /**
-     * Get all tasks that's starttime in 00:00:00 < cur_time < 23:59:59 of given date.
-     * @param date
-     * @return
-     */
-    public List<TaskModel> getTasksForDay(Calendar date){
-
-        Calendar low_date = Calendar.getInstance();
-        Calendar high_date = Calendar.getInstance();
-
-        low_date.setTime(date.getTime());
-        low_date.set(Calendar.HOUR_OF_DAY, 0);
-        low_date.set(Calendar.MINUTE,0);
-        low_date.set(Calendar.SECOND, 0);
-
-        high_date.setTime(date.getTime());
-        high_date.set(Calendar.HOUR_OF_DAY, 23);
-        high_date.set(Calendar.MINUTE,59);
-        high_date.set(Calendar.SECOND, 59);
-
-        List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
-
-        String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE " + TASKS_START_TIME +
-                " BETWEEN " + low_date.getTime().getTime() + " AND " + high_date.getTime().getTime();
-        Log.d(TAG, selectQuery);
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery(selectQuery, null);
-
-        if(c != null) {
-            // looping through all rows and adding to list
-            if (c.moveToFirst()) {
-                do {
-                    TaskModel task = new TaskModel();
-                    task = createTaskByCursor(c);
-
-                    // adding to Task list
-                    tasksArrayList.add(task);
-                } while (c.moveToNext());
-            }
-            return tasksArrayList;
-        }else
-            return null;
-    }
-
-    /**
      * Set isDone true for task with id.
      * @param task_id
      * @throws Exception - if more than one instance has been affected
@@ -416,4 +371,74 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         values.put(TASKS_IS_DONE, task.getIsDone()?1:0);
     }
 
+    /**
+     * Get tasks by SELECT WHERE startTime between low_date AND high_date
+     * @param low_date
+     * @param high_date
+     * @return list of tasks or null
+     */
+    private List<TaskModel> getTasksBetweenDates(Calendar low_date, Calendar high_date){
+        List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
+
+        String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE " + TASKS_START_TIME +
+                " BETWEEN " + low_date.getTime().getTime() + " AND " + high_date.getTime().getTime();
+        Log.d(TAG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if(c != null) {
+            // looping through all rows and adding to list
+            if (c.moveToFirst()) {
+                do {
+                    TaskModel task = new TaskModel();
+                    task = createTaskByCursor(c);
+
+                    // adding to Task list
+                    tasksArrayList.add(task);
+                } while (c.moveToNext());
+            }
+            return tasksArrayList;
+        }else
+            return null;
+    }
+
+    /**
+     * Get all tasks that's starttime in cur_time < x < 23:59:59 of given date.
+     * @return
+     */
+    public List<TaskModel> getTasksForToday(){
+
+        Calendar low_date = Calendar.getInstance();
+        Calendar high_date = Calendar.getInstance();
+
+        high_date.set(Calendar.HOUR_OF_DAY, 23);
+        high_date.set(Calendar.MINUTE, 59);
+        high_date.set(Calendar.SECOND, 59);
+
+        return getTasksBetweenDates(low_date,high_date);
+    }
+
+    /**
+     * Get all tasks that's starttime in 00:00:00 < cur_time < 23:59:59 of given date.
+     * @param date
+     * @return
+     */
+    public List<TaskModel> getTasksForDay(Calendar date){
+
+        Calendar low_date = Calendar.getInstance();
+        Calendar high_date = Calendar.getInstance();
+
+        low_date.setTime(date.getTime());
+        low_date.set(Calendar.HOUR_OF_DAY, 0);
+        low_date.set(Calendar.MINUTE,0);
+        low_date.set(Calendar.SECOND, 0);
+
+        high_date.setTime(date.getTime());
+        high_date.set(Calendar.HOUR_OF_DAY, 23);
+        high_date.set(Calendar.MINUTE,59);
+        high_date.set(Calendar.SECOND, 59);
+
+        return getTasksBetweenDates(low_date,high_date);
+    }
 }

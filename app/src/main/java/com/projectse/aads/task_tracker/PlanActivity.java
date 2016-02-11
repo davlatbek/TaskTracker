@@ -64,9 +64,15 @@ public class PlanActivity extends AppCompatActivity {
                                     int position, long id) {
                 final TaskModel item = (TaskModel) parent.getItemAtPosition(position);
                 callEditTaskActivity(item);
+<<<<<<< HEAD
             }
 
         });
+=======
+           }
+
+       });
+>>>>>>> implement_n_test_db_methods_for_tasks_part1
     }
 
     /**

@@ -40,6 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     // Constructor
     private DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        context.deleteDatabase(DATABASE_NAME);
     }
 
     // Called when the database connection is being configured.
@@ -285,15 +286,16 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 new String[] { String.valueOf(task.getId())});
     }
 
-    // Delete method. Not tested yet!
+    // Delete method.
     public void deleteTask(long id) {
         // delete row in task table based on id
 
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
-        String where = TASKS_KEY_ID + " = ?" + id;
+        String where = TASKS_KEY_ID + " = " + id;
+
         try {
-            db.delete(TABLE_TASKS, where, null);         // Wrong arguments!
+            db.delete(TABLE_TASKS, where, null);
             db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.d(TAG, "Error while trying to delete all posts and users");
@@ -395,8 +397,8 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 settings.setAlwaysNotifyDeadLine(Boolean.getBoolean(c.getString(c.getColumnIndex(SETTINGS_ALWAYS_NOTIFY_DEADLINE))));
                 settings.setNotifyStartTimeXTimes(Integer.getInteger(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_START_TIME_X_TIMES))));
                 settings.setNotifyDeadLineXTimes(Integer.getInteger(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_DEADLINE_X_TIMES))));
-                settings.setNotifyDeadLineBefore(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_DEADLINE_BEFORE)));
-                settings.setNotifyStartTimeBefore(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_START_TIME_BEFORE)));
+                settings.setNotifyDeadLineBefore(Integer.getInteger(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_DEADLINE_BEFORE))));
+                settings.setNotifyStartTimeBefore(Integer.getInteger(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_START_TIME_BEFORE))));
 
             }
         } catch (Exception e) {

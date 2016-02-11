@@ -13,6 +13,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.TaskModel;
@@ -20,6 +21,7 @@ import com.projectse.aads.task_tracker.Models.TaskModel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created by Davlatbek Isroilov on 1/31/2016.
@@ -120,12 +122,17 @@ public class AddTaskActivity extends AppCompatActivity {
 
     /**
      * Validating new task properties
+     *
      * @return True - if all required fileds are filled
      */
     public boolean ValidateTaskFields() {
+        correctTime();
         EditText editName = (EditText) findViewById(R.id.txtName);
         if (editName.getText().toString().trim().equals("")) {
             editName.setError("Enter the task name!");
+            return false;
+        } else if (isNoSimilarTasks(editName.getText().toString())) {
+            editName.setError("Task with this name already exists!");
             return false;
         } else if (deadlineDateView != null) {
             if (deadlineDateView.getText().toString().equals("")) {
@@ -137,10 +144,26 @@ public class AddTaskActivity extends AppCompatActivity {
     }
 
     /**
+     * Checks for two tasks with the same name
+     *
+     * @param newTaskName
+     * @return
+     */
+    public boolean isNoSimilarTasks(String newTaskName) {
+        List<TaskModel> list = databaseHelper.getTaskModelList();
+        for (TaskModel task : list) {
+            if (task.getName().equals(newTaskName))
+                return true;
+        }
+        return false;
+    }
+
+    /**
      * Creating task data and adding to local database
+     *
      * @return True if all data is successfully recorded to database
      */
-    public boolean AddTaskToDatabase(){
+    public boolean AddTaskToDatabase() {
 
         //creating new task and reading to it from fields
         TaskModel task = new TaskModel();
@@ -156,7 +179,11 @@ public class AddTaskActivity extends AppCompatActivity {
         EditText duration = (EditText) findViewById(R.id.txtDuration);
         Calendar deadLineCal, startTimeCal;
         deadLineCal = getCalendarFromTxtEditViews(deadlineDate, deadlineTime);
-        startTimeCal = getCalendarFromTxtEditViews(startDate, startTime);
+
+        if (startDate.getText().toString().equals("") && startTime.getText().toString().equals(""))
+            startTimeCal = Calendar.getInstance();
+        else
+            startTimeCal = getCalendarFromTxtEditViews(startDate, startTime);
 
         //compute duration in hours automatically
         /*long durationInHours = ( deadLineCal.getTimeInMillis() - startTimeCal.getTimeInMillis() ) / (1000*60*60);
@@ -168,7 +195,7 @@ public class AddTaskActivity extends AppCompatActivity {
         task.setStartTime(startTimeCal);
         task.setIsNotifyStartTime(notifyStartTime.isChecked());
         task.setIsNotifyDeadline(notifyDeadLine.isChecked());
-        if (duration.getText().toString().equals("")){
+        if (duration.getText().toString().equals("")) {
             task.setDuration(0L);
         } else
             task.setDuration(Long.parseLong(duration.getText().toString()));
@@ -177,7 +204,52 @@ public class AddTaskActivity extends AppCompatActivity {
         return true;
     }
 
-    private static Calendar getCalendarFromTxtEditViews(EditText dateView, EditText timeView){
+    // flag for recursion exit. Use in correctTime only.
+    private boolean flag = false;
+    // return false, if all was correct
+    public boolean correctTime(){
+        EditText durationView = (EditText) findViewById(R.id.txtDuration);
+        Calendar dCal = getCalendarFromTxtEditViews(deadlineDateView,deadlineTimeView);
+        Calendar stCal = getCalendarFromTxtEditViews(startTimeDateView,startTimeTimeView);
+        boolean isCorrected = false;
+        if(flag == true){flag = false; return false;}
+
+        if(dCal == null && stCal == null)
+            return false;
+        // Case: deadline cannot be earlier than now.
+        // Set default.
+        if(Calendar.getInstance().after(dCal)){
+            flag = true;
+            dCal = Calendar.getInstance();
+            dCal.set(Calendar.HOUR_OF_DAY,23);
+            dCal.set(Calendar.MINUTE,59);
+            dCal.set(Calendar.SECOND,59);
+            setDateTime(deadlineDateView, null, dCal);
+            setDateTime(null, deadlineTimeView, dCal);
+            isCorrected = true;
+        }
+        // Case: if duration more than difference of deadline and startTime.
+        // Don't allow this. Set duration 0.
+        if (!durationView.getText().toString().equals(""))
+            if(dCal.getTime().getTime() - stCal.getTime().getTime() < Long.parseLong(durationView.getText().toString())*60*60*1000){
+                flag = true;
+                Toast.makeText(getApplicationContext(), "Duration cannot be more than defference between start time and deadline.", Toast.LENGTH_SHORT).show();
+                durationView.setText(String.valueOf(0));
+                isCorrected = true;
+        }
+        // Case: start time after deadline.
+        // Set starttime = deadline.
+        if (stCal != null)
+            if(stCal.after(dCal)){
+                flag = true;
+                setDateTime(startTimeDateView, null, dCal);
+                setDateTime(null, startTimeTimeView, dCal);
+                isCorrected = true;
+        }
+        return isCorrected;
+    }
+
+    private static Calendar getCalendarFromTxtEditViews(EditText dateView, EditText timeView) {
         Calendar cal = null;
         try {
             java.util.Date date = dateFormat.parse(String.valueOf(dateView.getText().toString()));
@@ -192,33 +264,34 @@ public class AddTaskActivity extends AppCompatActivity {
 
     /**
      * Set Calendar date to views.
+     *
      * @param dateTxt - date view.
      * @param timeTxt - time view.
-     * @param cal - time, that will be set.
+     * @param cal     - time, that will be set.
      */
-    private static void setDateTime(EditText dateTxt, EditText timeTxt,Calendar cal){
-        if(dateTxt != null) {
+    private static void setDateTime(EditText dateTxt, EditText timeTxt, Calendar cal) {
+        if (dateTxt != null) {
             dateTxt.setText(dateFormat.format(cal.getTime()));
         }
-        if(timeTxt != null) {
+        if (timeTxt != null) {
             timeTxt.setText(timeFormat.format(cal.getTime()));
         }
     }
 
-    public void fillData(){
+    public void fillData() {
         setDateTime(startTimeDateView, startTimeTimeView, Calendar.getInstance());
         setDateTime(deadlineDateView, deadlineTimeView, Calendar.getInstance());
     }
 
     public void showTimePickerDialog(View v) {
         DialogFragment newFragment = null;
-        if(v == findViewById(R.id.btnTimeStartTime)) {
+        if (v == findViewById(R.id.btnTimeStartTime)) {
             newFragment = new TimePickerFragment();
-            ((TimePickerFragment)newFragment).setTxtEdit(startTimeTimeView);
+            ((TimePickerFragment) newFragment).setTxtEdit(startTimeTimeView);
         }
-        if(v == findViewById(R.id.btnTimeDeadline)) {
+        if (v == findViewById(R.id.btnTimeDeadline)) {
             newFragment = new TimePickerFragment();
-            ((TimePickerFragment)newFragment).setTxtEdit(deadlineTimeView);
+            ((TimePickerFragment) newFragment).setTxtEdit(deadlineTimeView);
         }
         if (newFragment == null)
             try {
@@ -232,13 +305,13 @@ public class AddTaskActivity extends AppCompatActivity {
 
     public void showDatePickerDialog(View v) {
         DialogFragment newFragment = null;
-        if(v == findViewById(R.id.btnDateStartTime)){
+        if (v == findViewById(R.id.btnDateStartTime)) {
             newFragment = new DatePickerFragment();
-            ((DatePickerFragment)newFragment).setTxtEdit(startTimeDateView);
+            ((DatePickerFragment) newFragment).setTxtEdit(startTimeDateView);
         }
-        if(v == findViewById(R.id.btnDateDeadline)){
+        if (v == findViewById(R.id.btnDateDeadline)) {
             newFragment = new DatePickerFragment();
-            ((DatePickerFragment)newFragment).setTxtEdit(deadlineDateView);
+            ((DatePickerFragment) newFragment).setTxtEdit(deadlineDateView);
         }
         if (newFragment == null)
             try {
@@ -254,7 +327,8 @@ public class AddTaskActivity extends AppCompatActivity {
             implements TimePickerDialog.OnTimeSetListener {
 
         private EditText txtEdit = null;
-        public void setTxtEdit(EditText t){
+
+        public void setTxtEdit(EditText t) {
             txtEdit = t;
         }
 
@@ -273,7 +347,7 @@ public class AddTaskActivity extends AppCompatActivity {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                if(c != null){
+                if (c != null) {
                     hour = c.get(Calendar.HOUR_OF_DAY);
                     minute = c.get(Calendar.MINUTE);
                 }
@@ -288,8 +362,9 @@ public class AddTaskActivity extends AppCompatActivity {
             Calendar c = Calendar.getInstance();
             c.set(Calendar.HOUR_OF_DAY, hourOfDay);
             c.set(Calendar.MINUTE, minute);
-            if(txtEdit != null) {
+            if (txtEdit != null) {
                 AddTaskActivity.setDateTime(null, txtEdit, c);
+
             }
         }
     }
@@ -299,7 +374,7 @@ public class AddTaskActivity extends AppCompatActivity {
 
         private EditText txtEdit = null;
 
-        public void setTxtEdit(EditText t){
+        public void setTxtEdit(EditText t) {
             txtEdit = t;
         }
 
@@ -318,7 +393,7 @@ public class AddTaskActivity extends AppCompatActivity {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                if(c != null){
+                if (c != null) {
                     year = c.get(Calendar.YEAR);
                     month = c.get(Calendar.MONTH);
                     day = c.get(Calendar.DAY_OF_MONTH);
@@ -335,7 +410,7 @@ public class AddTaskActivity extends AppCompatActivity {
             c.set(Calendar.MONTH, month);
             c.set(Calendar.DAY_OF_MONTH, day);
             if (txtEdit != null)
-                AddTaskActivity.setDateTime(txtEdit,null,c);
+                AddTaskActivity.setDateTime(txtEdit, null, c);
         }
     }
 }

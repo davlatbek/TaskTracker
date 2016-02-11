@@ -277,14 +277,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(TASKS_IS_DONE, bool);
 
             values.put(TASKS_DURATION, task.getDuration());
-            values.put(TASKS_START_TIME, task.getStartTime().getTimeInMillis());
-            values.put(TASKS_DEADLINE, task.getStartTime().getTime().getTime());
+            if (task.getStartTime() != null)
+                values.put(TASKS_START_TIME, task.getStartTime().getTimeInMillis());
+            if (task.getDeadline() != null)
+                values.put(TASKS_DEADLINE, task.getDeadline().getTime().getTime());
 
             // Return id of the added task
             id = db.insertOrThrow(TABLE_TASKS, null, values);
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.d(TAG, "Error while trying to add task to database");
+            Log.d(TAG, "Error while trying to add task to database " + e.toString());
+            e.printStackTrace();
         } finally {
             db.endTransaction();
         }

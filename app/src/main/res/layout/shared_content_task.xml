@@ -48,7 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Start Datetime"
+            android:text="Start Date and Time"
             android:id="@+id/textView" />
 
         <LinearLayout
@@ -99,7 +99,7 @@
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="86dp"
-            android:text=" Notification"
+            android:text=" Notify"
             android:id="@+id/swtStartTimeNotification"
             android:checked="false"
             android:textSize="18dp"
@@ -168,7 +168,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Deadline Datetime"
+            android:text="Deadline Date and Time"
             android:id="@+id/textView2"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true" />
@@ -176,7 +176,7 @@
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="86dp"
-            android:text=" Notification"
+            android:text=" Notify"
             android:id="@+id/swtDeadlineNotification"
             android:checked="false"
             android:textSize="18dp"

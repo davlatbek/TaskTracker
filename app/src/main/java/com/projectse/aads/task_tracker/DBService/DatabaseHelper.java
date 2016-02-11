@@ -37,7 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Constructor
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-//        context.deleteDatabase(DatabaseHelper.DATABASE_NAME);
+        //context.deleteDatabase(DATABASE_NAME);
 
     }
 

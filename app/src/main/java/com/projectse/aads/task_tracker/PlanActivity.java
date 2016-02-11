@@ -30,14 +30,13 @@ import java.util.Map;
  * Shows list of tasks
  */
 public class PlanActivity extends AppCompatActivity {
-
     ArrayList<TaskModel> taskList = new ArrayList<>();
     StableArrayAdapter adapter = null;
     ListView listview = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        final DatabaseHelper db = DatabaseHelper.getsInstance(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -50,6 +49,12 @@ public class PlanActivity extends AppCompatActivity {
                 callAddTaskActivity();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        final DatabaseHelper db = DatabaseHelper.getsInstance(this);
 
         ListView listview = (ListView) findViewById(R.id.listview);
         taskList = (ArrayList<TaskModel>) db.getTaskModelList();
@@ -67,14 +72,6 @@ public class PlanActivity extends AppCompatActivity {
            }
 
        });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // ToDo: implement
-
     }
 
     /**

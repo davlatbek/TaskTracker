@@ -55,7 +55,7 @@ public class PlanActivity extends AppCompatActivity {
 
         adapter = new StableArrayAdapter(this,
                 android.R.layout.simple_list_item_1, list);
-				
+
         listview.setAdapter(adapter);
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -68,6 +68,14 @@ public class PlanActivity extends AppCompatActivity {
             }
 
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // ToDo: implement
+
     }
 
     /**

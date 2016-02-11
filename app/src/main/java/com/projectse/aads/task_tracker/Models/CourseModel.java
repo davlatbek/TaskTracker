@@ -7,12 +7,31 @@ import java.util.List;
  * Created by Andrey Zolin on 07.02.2016.
  */
 public class CourseModel {
+
+    public enum Priority{
+        HIGH, LOW, MEDIUM
+    }
+
+    public Priority fromIntToPriority(int priorityInt) throws Exception {
+        if (priorityInt == 1) return this.priority = Priority.LOW;
+        if (priorityInt == 2) return this.priority = Priority.MEDIUM;
+        if (priorityInt == 3) return this.priority = Priority.HIGH;
+        throw new Exception("Check Priority input value fromIntToPriority");
+    }
+    public int fromPriorityToInt(Priority priority)throws Exception{
+        if (priority.equals(Priority.LOW)) return 1;
+        if (priority.equals(Priority.MEDIUM)) return 2;
+        if (priority.equals(Priority.HIGH)) return 3;
+        throw new Exception("Check priority input value fromPriorityToInt");
+    }
+
     private String name;
     private Long id;
-    private int priority = 0;
+    // by default priority has low level
+    private Priority priority = Priority.LOW;
     private List<TaskModel> tasksList = new ArrayList<TaskModel>();
 
-    public CourseModel(String name, int priority) {
+    public CourseModel(String name, Priority priority) {
         this.name = name;
         this.priority = priority;
     }
@@ -40,17 +59,18 @@ public class CourseModel {
     public void setName(String name) {
         this.name = name;
     }
-    public int getPriority() {
+    public Priority getPriority() {
         return priority;
     }
 
-    public void setPriority(int priority) {
-        this.priority = priority;
+    public void setPriority(Priority p) {
+        this.priority = p;
     }
 
     public Long getId() {
         return id;
     }
+
 
     public void setId(Long id) {
         this.id = id;
@@ -59,7 +79,6 @@ public class CourseModel {
     public String toString() {
         String sb = "";
         sb = "Name:" + this.name + ", priority:" + this.priority;
-
         return sb;
     }
 }

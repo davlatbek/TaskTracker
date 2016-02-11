@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.util.Log;
 
 import com.projectse.aads.task_tracker.Models.CourseModel;
@@ -103,6 +102,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // All keys used in table COURSES_TO_TASKS
     private static final String COURSES_TO_TASKS_CURSE_ID = "course_to_task_curse_id";
     private static final String COURSES_TO_TASKS_TASK_ID = "course_to_task_task_id";
+    private static final String COURSES_TO_TASK_ID = "course_to_task_id";
 
 
     public static String TAG = "tag";
@@ -142,6 +142,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + " INTEGER PRIMARY KEY AUTOINCREMENT," + COURSE_NAME + " TEXT,"
             + COURSE_PRIORITY + " INTEGER);";
 
+
+    /**
+     * CREATE TABLE TABLE_COURSES_TO_TASKS (course_to_task_id INTEGER PRIMARY KEY AUTOINCREMENT,
+     * course_to_task_task_id INTEGER PRIMARY KEY, course_to_task_curse_id INTEGER, FOREIGN KEY(course_to_task_curse_id) REFERENCES courses(course_id))
+     */
+
+    private static final String CREATE_TABLE_COURSES_TO_TASK = "CREATE TABLE "
+            + TABLE_COURSES_TO_TASKS + " (" + COURSES_TO_TASK_ID
+            + " INTEGER PRIMARY KEY AUTOINCREMENT," + COURSES_TO_TASKS_TASK_ID + " INTEGER," + COURSES_TO_TASKS_CURSE_ID + " INTEGER,"
+            + "FOREIGN KEY(" + COURSES_TO_TASKS_CURSE_ID + ") REFERENCES " + TABLE_COURSES + "(" + COURSE_ID + "));";
+
+
     /**
      * This method is called by system if the database is accessed but not yet
      * created.
@@ -153,6 +165,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE_TASKS); // create tasks table
         db.execSQL(CREATE_TABLE_COURSES); // create course table
+        db.execSQL(CREATE_TABLE_COURSES_TO_TASK); // create course to task table
 
     }
 
@@ -195,8 +208,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             ContentValues values = new ContentValues();
             values.put(COURSE_NAME, course.getName());
-            values.put(COURSE_PRIORITY, course.getPriority());
-
+            values.put(COURSE_PRIORITY,course.fromPriorityToInt(course.getPriority()));
+            Log.d("TAG", "add prioritiy in int value in db " + String.valueOf(course.fromPriorityToInt(course.getPriority())));
             id = db.insertOrThrow(TABLE_COURSES, null, values);
             db.setTransactionSuccessful();
 
@@ -208,6 +221,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return id;
     }
+
+    // get course by id
+
+    public CourseModel getCourse(long id) throws Exception {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // SELECT * FROM tasks WHERE id = ?;
+        String selectQuery = "SELECT * FROM " + TABLE_COURSES + " WHERE "
+                + COURSE_ID + " = " + id;
+        Log.d(TAG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null)
+            c.moveToFirst();
+
+        CourseModel course = new CourseModel();
+
+        course.setId(c.getLong(c.getColumnIndex(COURSE_ID)));
+        course.setName(c.getString(c.getColumnIndex(COURSE_NAME)));
+        course.fromIntToPriority(c.getInt(c.getColumnIndex(COURSE_PRIORITY)));
+        Log.d("Tag", "try to convert int into priority --->>>>>" + c.getInt(c.getColumnIndex(COURSE_PRIORITY)));
+        return course;
+    }
+
 
     /**
      * This method is used to delete course from course table
@@ -239,9 +277,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             ContentValues values = new ContentValues();
             values.put(COURSE_NAME, course.getName());
-            values.put(COURSE_PRIORITY, course.getPriority());
+            values.put(COURSE_PRIORITY, String.valueOf(course.getPriority()));
             id = db.update(TABLE_COURSES, values, COURSE_ID + " = ?",
                     new String[]{String.valueOf(course.getId())});
+            db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.d(TAG, "Error while trying to update course");
         } finally {
@@ -373,7 +412,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // RECEIVE LIST OF COURSES
 
-    public List<CourseModel> getCourseModelList() {
+    public List<CourseModel> getCourseModelList() throws Exception {
         List<CourseModel> courseArrayList = new ArrayList<CourseModel>();
         String selectQuery = "SELECT * FROM " + TABLE_COURSES;
         Log.d(TAG, selectQuery);
@@ -386,12 +425,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 CourseModel course = new CourseModel();
                 course.setId(c.getLong(c.getColumnIndex(COURSE_ID)));
                 course.setName(c.getString(c.getColumnIndex(COURSE_NAME)));
-                course.setPriority(c.getInt(c.getColumnIndex(COURSE_PRIORITY)));
+                course.fromIntToPriority(c.getInt(c.getColumnIndex(COURSE_PRIORITY)));
                 courseArrayList.add(course);
             } while (c.moveToNext());
         }
         return courseArrayList;
     }
+
 
     // SETTING METHODS
 

@@ -28,4 +28,13 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/btnIsDone"
         android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:id="@+id/deleteButton"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/btnIsDone"
+        android:layout_marginBottom="35dp" />
 </RelativeLayout>

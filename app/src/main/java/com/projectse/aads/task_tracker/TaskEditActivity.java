@@ -1,15 +1,19 @@
 package com.projectse.aads.task_tracker;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -28,6 +32,7 @@ import java.util.Calendar;
 /**
  * Shows fields for editing current Task
  */
+
 public class TaskEditActivity extends AppCompatActivity {
 
     // Views
@@ -40,6 +45,7 @@ public class TaskEditActivity extends AppCompatActivity {
     private EditText durationView;
     private Switch isStartTimeNotifyView, isDeadlineNotifyView;
 
+    private Button deleteButton;
     private ToggleButton isDoneView;
 
     // Current task
@@ -199,6 +205,14 @@ public class TaskEditActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 task.setIsNotifyDeadline(isChecked);
+            }
+        });
+
+        deleteButton = (Button) findViewById(R.id.deleteButton);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createDialog();
             }
         });
     }
@@ -460,5 +474,37 @@ public class TaskEditActivity extends AppCompatActivity {
         setResult(0);
         super.onDestroy();
         finish();
+    }
+
+    public void callPlanActivity(){
+        Intent intent = new Intent (getApplicationContext(), PlanActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
+    }
+
+    // Conformation form for deleting task
+    private void createDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setMessage("Are you sure you want to delete this task?");
+
+        alertDialog.setCancelable(false);
+        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Long task_id = getIntent().getLongExtra("task_id",-1);
+                DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
+                db.deleteTask(task_id);
+                callPlanActivity();
+            }
+        });
+
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        alertDialog.create().show();
     }
 }

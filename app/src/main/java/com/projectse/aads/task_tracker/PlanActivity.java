@@ -69,6 +69,14 @@ public class PlanActivity extends AppCompatActivity {
        });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // ToDo: implement
+
+    }
+
     /**
      * sub class for taking list item
      */

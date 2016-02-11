@@ -38,6 +38,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
 //        context.deleteDatabase(DatabaseHelper.DATABASE_NAME);
+
     }
 
     // Called when the database connection is being configured.
@@ -302,7 +303,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    // Delete method. Not tested yet!
+    // Delete method.
     public void deleteTask(long id) {
         // delete row in task table based on id
 
@@ -399,6 +400,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         SettingsModel settings = new SettingsModel();
 
+
+
         String selectQuery = "SELECT * FROM" + TABLE_SETTINGS;
         Log.d(TAG, selectQuery);
 
@@ -409,8 +412,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 settings.setAlwaysNotifyDeadLine(Boolean.getBoolean(c.getString(c.getColumnIndex(SETTINGS_ALWAYS_NOTIFY_DEADLINE))));
                 settings.setNotifyStartTimeXTimes(Integer.getInteger(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_START_TIME_X_TIMES))));
                 settings.setNotifyDeadLineXTimes(Integer.getInteger(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_DEADLINE_X_TIMES))));
-                settings.setNotifyDeadLineBefore(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_DEADLINE_BEFORE)));
-                settings.setNotifyStartTimeBefore(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_START_TIME_BEFORE)));
+                settings.setNotifyDeadLineBefore(Integer.getInteger(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_DEADLINE_BEFORE))));
+                settings.setNotifyStartTimeBefore(Integer.getInteger(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_START_TIME_BEFORE))));
 
             }
         } catch (Exception e) {

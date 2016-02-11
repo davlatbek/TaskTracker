@@ -169,7 +169,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-
     /**
      * This method is called when any modifications in database are done like
      * version is updated or database is changed

@@ -12,6 +12,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -40,9 +41,10 @@ public class TaskEditActivity extends AppCompatActivity {
     private static EditText startTimeTimeView;
     private static EditText deadlineDateView;
     private static EditText deadlineTimeView;
-    private EditText durationView
-            ;
+    private EditText durationView;
     private Switch isStartTimeNotifyView, isDeadlineNotifyView;
+
+    private Button deleteButton;
 
     private ToggleButton isDoneView;
 
@@ -203,6 +205,14 @@ public class TaskEditActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 task.setIsNotifyDeadline(isChecked);
+            }
+        });
+
+        deleteButton = (Button) findViewById(R.id.deleteButton);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createDialog();
             }
         });
     }
@@ -463,9 +473,6 @@ public class TaskEditActivity extends AppCompatActivity {
         finish();
     }
 
-    protected void onDeleteClick() {
-        createDialog();
-    }
 
     private void createDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
@@ -475,7 +482,7 @@ public class TaskEditActivity extends AppCompatActivity {
         alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-             //   TaskEditActivity.super.onDeleteClick();
+                //
             }
         }); {
 

@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -45,7 +46,6 @@ public class TaskEditActivity extends AppCompatActivity {
     private Switch isStartTimeNotifyView, isDeadlineNotifyView;
 
     private Button deleteButton;
-
     private ToggleButton isDoneView;
 
     // Current task
@@ -473,19 +473,35 @@ public class TaskEditActivity extends AppCompatActivity {
         finish();
     }
 
+    public void callPlanActivity(){
+        Intent intent = new Intent (getApplicationContext(), PlanActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
+    }
 
+    // Conformation form for deleting task
     private void createDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setMessage("Hi");
+        alertDialog.setMessage("Are you sure you want to delete this task?");
 
         alertDialog.setCancelable(false);
         alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //
+                Long task_id = getIntent().getLongExtra("task_id",-1);
+                DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
+                db.deleteTask(task_id);
+                callPlanActivity();
             }
-        }); {
+        });
 
-        }
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        alertDialog.create().show();
     }
 }

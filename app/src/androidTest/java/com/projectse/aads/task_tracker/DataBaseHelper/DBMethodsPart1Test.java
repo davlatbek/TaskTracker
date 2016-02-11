@@ -5,6 +5,7 @@ import com.projectse.aads.task_tracker.Models.TaskModel;
 import junit.framework.Assert;
 
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created by smith on 2/7/16.
@@ -32,20 +33,41 @@ public class DBMethodsPart1Test extends TestInit {
         t.setName("TestTask");
         long t_id = t.getId();
 
+        String new_name = "TestTask1";
+        t.setName(new_name);
+        Calendar dateSt = Calendar.getInstance();
+        dateSt.set(Calendar.HOUR_OF_DAY, 20);
+        t.setStartTime(dateSt);
+
+        Calendar dateD = Calendar.getInstance();
+        dateD.set(Calendar.HOUR_OF_DAY, 23);
+        t.setDeadline(dateD);
+
         db.updateTask(t);
+
         TaskModel t1 = db.getTask(t_id);
-        assertEquals(t1.getId(), t.getId());
-        assertEquals(t1.getName(), t.getName());
+        assertEquals(t.getId(), t1.getId());
+        assertEquals(new_name, t1.getName());
+        assertEquals(0, t1.getStartTime().compareTo(dateSt));
+        assertEquals(0, t1.getDeadline().compareTo(dateD));
+
     }
 
     public void testDeleteTask(){
         TaskModel t = new TaskModel();
         t.setName("TestTask");
+
+        List<TaskModel> tasks = db.getTaskModelList();
+
         t.setId(db.addTask(t));
         long t_id = t.getId();
 
+        tasks = db.getTaskModelList();
+
         db.deleteTask(t_id);
-        assertEquals(null, db.getTask(t_id)); // instance has been deleted and doesn't exist in DB
+        tasks = db.getTaskModelList();
+        TaskModel t_new = db.getTask(t_id);
+        assertEquals(null, t_new); // instance has been deleted and doesn't exist in DB
     }
 
     public void testGetTaskForDay(){

@@ -37,6 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Constructor
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+//        context.deleteDatabase(DatabaseHelper.DATABASE_NAME);
     }
 
     // Called when the database connection is being configured.
@@ -151,6 +152,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE_TASKS); // create tasks table
         db.execSQL(CREATE_TABLE_COURSES); // create course table
+
     }
 
 
@@ -306,7 +308,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
-        String where = TASKS_KEY_ID + " = ?" + id;
+        String where = TASKS_KEY_ID + " = " + id;
         try {
             db.delete(TABLE_TASKS, where, null);
             db.setTransactionSuccessful();
@@ -488,7 +490,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         task.setDeadline(cal);
         if(!c.isNull(c.getColumnIndex(TASKS_START_TIME))){
             cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_START_TIME)));
-            task.setDeadline(cal);
+            task.setStartTime(cal);
         }
 
         if(!c.isNull(c.getColumnIndex(TASKS_DURATION))) {

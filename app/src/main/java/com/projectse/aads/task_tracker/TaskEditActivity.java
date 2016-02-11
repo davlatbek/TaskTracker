@@ -37,8 +37,7 @@ public class TaskEditActivity extends AppCompatActivity {
     private static EditText startTimeTimeView;
     private static EditText deadlineDateView;
     private static EditText deadlineTimeView;
-    private EditText durationView
-            ;
+    private EditText durationView;
     private Switch isStartTimeNotifyView, isDeadlineNotifyView;
 
     private ToggleButton isDoneView;
@@ -454,9 +453,12 @@ public class TaskEditActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy(){
-        super.onDestroy();
-        setResult(0);
         // write changes to base
+        DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
+        db.updateTask(task);
+
+        setResult(0);
+        super.onDestroy();
         finish();
     }
 }

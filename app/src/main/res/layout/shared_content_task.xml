@@ -70,7 +70,7 @@
                 android:id="@+id/txtDateStartTime"
                 android:layout_weight="0.82"
                 android:enabled="true"
-                android:editable="true" />
+                android:focusable="false" />
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -86,7 +86,8 @@
                 android:ems="10"
                 android:id="@+id/txtTimeStartTime"
                 android:editable="true"
-                android:enabled="true" />
+                android:enabled="true"
+                android:focusable="false"/>
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -138,7 +139,8 @@
                 android:id="@+id/txtDateDeadline"
                 android:layout_weight="0.82"
                 android:editable="true"
-                android:enabled="true" />
+                android:enabled="true"
+                android:focusable="false"/>
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -154,7 +156,8 @@
                 android:ems="10"
                 android:id="@+id/txtTimeDeadline"
                 android:editable="true"
-                android:enabled="true" />
+                android:enabled="true"
+                android:focusable="false"/>
 
             <Button
                 style="?android:attr/buttonStyleSmall"

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -70,41 +71,6 @@ public class AddTaskActivity extends AppCompatActivity {
         deadlineTimeView = (EditText) findViewById(R.id.txtTimeDeadline);
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
     /**
      * On-click button function for saving created task to database
      * and then going back to PlanActivity
@@ -126,7 +92,12 @@ public class AddTaskActivity extends AppCompatActivity {
      * @return True - if all required fileds are filled
      */
     public boolean ValidateTaskFields() {
+        Toast t = new Toast(getApplicationContext());
+        t.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
         correctTime();
+        Calendar dCal = getCalendarFromTxtEditViews(deadlineDateView, deadlineTimeView);
+        Calendar stCal = getCalendarFromTxtEditViews(startTimeDateView, startTimeTimeView);
+        EditText durationView = (EditText) findViewById(R.id.txtDuration);
         EditText editName = (EditText) findViewById(R.id.txtName);
         if (editName.getText().toString().trim().equals("")) {
             editName.setError("Enter the task name!");
@@ -136,9 +107,21 @@ public class AddTaskActivity extends AppCompatActivity {
             return false;
         } else if (deadlineDateView != null) {
             if (deadlineDateView.getText().toString().equals("")) {
-                deadlineDateView.setError("Enter the deadline!");
+                //deadlineDateView.setError("Enter the deadline!");
+                t.makeText(getApplicationContext(), "Enter the deadline!", Toast.LENGTH_SHORT).show();
                 return false;
             }
+            if (stCal != null && stCal.after(dCal)) {
+                //startTimeDateView.setError("Start date should be before deadline!");
+                t.makeText(getApplicationContext(), "Start date should be before deadline!", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        if (!durationView.getText().toString().equals("") &&
+                dCal.getTime().getTime() - stCal.getTime().getTime()
+                        < Long.parseLong(durationView.getText().toString()) * 60 * 60 * 1000) {
+            durationView.setError("Duration can't be more than deadline - start time!");
+            return false;
         }
         return true;
     }
@@ -206,46 +189,52 @@ public class AddTaskActivity extends AppCompatActivity {
 
     // flag for recursion exit. Use in correctTime only.
     private boolean flag = false;
-    // return false, if all was correct
-    public boolean correctTime(){
-        EditText durationView = (EditText) findViewById(R.id.txtDuration);
-        Calendar dCal = getCalendarFromTxtEditViews(deadlineDateView,deadlineTimeView);
-        Calendar stCal = getCalendarFromTxtEditViews(startTimeDateView,startTimeTimeView);
-        boolean isCorrected = false;
-        if(flag == true){flag = false; return false;}
 
-        if(dCal == null && stCal == null)
+    // return false, if all was correct
+    public boolean correctTime() {
+        EditText durationView = (EditText) findViewById(R.id.txtDuration);
+        Calendar dCal = getCalendarFromTxtEditViews(deadlineDateView, deadlineTimeView);
+        Calendar stCal = getCalendarFromTxtEditViews(startTimeDateView, startTimeTimeView);
+        boolean isCorrected = false;
+        if (flag == true) {
+            flag = false;
+            return false;
+        }
+
+        if (dCal == null && stCal == null)
             return false;
         // Case: deadline cannot be earlier than now.
         // Set default.
-        if(Calendar.getInstance().after(dCal)){
+        if (Calendar.getInstance().after(dCal)) {
             flag = true;
             dCal = Calendar.getInstance();
-            dCal.set(Calendar.HOUR_OF_DAY,23);
-            dCal.set(Calendar.MINUTE,59);
-            dCal.set(Calendar.SECOND,59);
+            dCal.set(Calendar.HOUR_OF_DAY, 23);
+            dCal.set(Calendar.MINUTE, 59);
+            dCal.set(Calendar.SECOND, 59);
             setDateTime(deadlineDateView, null, dCal);
             setDateTime(null, deadlineTimeView, dCal);
             isCorrected = true;
         }
         // Case: if duration more than difference of deadline and startTime.
         // Don't allow this. Set duration 0.
-        if (!durationView.getText().toString().equals(""))
-            if(dCal.getTime().getTime() - stCal.getTime().getTime() < Long.parseLong(durationView.getText().toString())*60*60*1000){
+        /*if (!durationView.getText().toString().equals(""))
+            if (dCal.getTime().getTime() - stCal.getTime().getTime()
+                    < Long.parseLong(durationView.getText().toString()) * 60 * 60 * 1000) {
                 flag = true;
-                Toast.makeText(getApplicationContext(), "Duration cannot be more than defference between start time and deadline.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Duration can't be more than " +
+                        "defference between start time and deadline", Toast.LENGTH_SHORT).show();
                 durationView.setText(String.valueOf(0));
                 isCorrected = true;
-        }
+            }
         // Case: start time after deadline.
         // Set starttime = deadline.
         if (stCal != null)
-            if(stCal.after(dCal)){
+            if (stCal.after(dCal)) {
                 flag = true;
                 setDateTime(startTimeDateView, null, dCal);
                 setDateTime(null, startTimeTimeView, dCal);
                 isCorrected = true;
-        }
+            }*/
         return isCorrected;
     }
 
@@ -321,6 +310,14 @@ public class AddTaskActivity extends AppCompatActivity {
                 return;
             }
         newFragment.show(getFragmentManager(), "datePicker");
+
+        Calendar c = Calendar.getInstance();
+        //setDateTime(null, startTimeTimeView, c);
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        c.set(Calendar.MINUTE, 59);
+        c.set(Calendar.SECOND, 59);
+        setDateTime(null, deadlineTimeView, c);
+
     }
 
     public static class TimePickerFragment extends DialogFragment
@@ -364,7 +361,6 @@ public class AddTaskActivity extends AppCompatActivity {
             c.set(Calendar.MINUTE, minute);
             if (txtEdit != null) {
                 AddTaskActivity.setDateTime(null, txtEdit, c);
-
             }
         }
     }
@@ -409,8 +405,45 @@ public class AddTaskActivity extends AppCompatActivity {
             c.set(Calendar.YEAR, year);
             c.set(Calendar.MONTH, month);
             c.set(Calendar.DAY_OF_MONTH, day);
-            if (txtEdit != null)
+            if (txtEdit != null) {
                 AddTaskActivity.setDateTime(txtEdit, null, c);
+            }
         }
     }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
 }

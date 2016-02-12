@@ -330,7 +330,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             fillContentByTask(values, task);
 
-             res = db.update(TABLE_TASKS, values, TASKS_KEY_ID + " = ?",
+            res = db.update(TABLE_TASKS, values, TASKS_KEY_ID + " = ?",
                     new String[]{String.valueOf(task.getId())});
             db.setTransactionSuccessful();
         } catch (Exception e) {

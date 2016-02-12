@@ -13,18 +13,17 @@ public class SettingsModel {
     private Boolean AlwaysNotifyStartTime;
     private Boolean AlwaysNotifyDeadLine;
     // the time between notification and StartTime/DeadLine
-    private String NotifyStartTimeBefore;
-    private String NotifyDeadLineBefore;
+    private Integer NotifyStartTimeBefore;
+    private Integer NotifyDeadLineBefore;
     // number of notifications
     private Integer NotifyStartTimeXTimes;
-
     private Integer NotifyDeadLineXTimes;
 
     public SettingsModel() {
         AlwaysNotifyStartTime = true;
         AlwaysNotifyDeadLine = true;
-        NotifyStartTimeBefore = "";    // integer - number of minutes
-        NotifyDeadLineBefore = "";
+        NotifyStartTimeBefore = 0;
+        NotifyDeadLineBefore = 0;
         NotifyStartTimeXTimes = 1;
         NotifyDeadLineXTimes = 1;
     }
@@ -37,11 +36,11 @@ public class SettingsModel {
         return AlwaysNotifyDeadLine;
     }
 
-    public String getNotifyStartTimeBefore() {
+    public Integer getNotifyStartTimeBefore() {
         return NotifyStartTimeBefore;
     }
 
-    public String getNotifyDeadLineBefore() {
+    public Integer getNotifyDeadLineBefore() {
         return NotifyDeadLineBefore;
     }
 
@@ -61,11 +60,11 @@ public class SettingsModel {
         AlwaysNotifyDeadLine = alwaysNotifyDeadLine;
     }
 
-    public void setNotifyStartTimeBefore(String notifyStartTimeBefore) {
+    public void setNotifyStartTimeBefore(Integer notifyStartTimeBefore) {
         NotifyStartTimeBefore = notifyStartTimeBefore;
     }
 
-    public void setNotifyDeadLineBefore(String notifyDeadLineBefore) {
+    public void setNotifyDeadLineBefore(Integer notifyDeadLineBefore) {
         NotifyDeadLineBefore = notifyDeadLineBefore;
     }
 

@@ -6,12 +6,14 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -40,10 +42,10 @@ public class TaskEditActivity extends AppCompatActivity {
     private static EditText startTimeTimeView;
     private static EditText deadlineDateView;
     private static EditText deadlineTimeView;
-    private EditText durationView
-            ;
+    private EditText durationView;
     private Switch isStartTimeNotifyView, isDeadlineNotifyView;
 
+    private Button deleteButton;
     private ToggleButton isDoneView;
 
     // Current task
@@ -205,6 +207,14 @@ public class TaskEditActivity extends AppCompatActivity {
                 task.setIsNotifyDeadline(isChecked);
             }
         });
+
+        deleteButton = (Button) findViewById(R.id.deleteButton);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createDialog();
+            }
+        });
     }
 
     // flag for recursion exit. Use in correctTime only.
@@ -226,8 +236,8 @@ public class TaskEditActivity extends AppCompatActivity {
             dCal.set(Calendar.HOUR_OF_DAY,23);
             dCal.set(Calendar.MINUTE,59);
             dCal.set(Calendar.SECOND,59);
-            setDateTime(deadlineDateView, null, dCal);
-            setDateTime(null, deadlineTimeView, dCal);
+            setDateTime(deadlineDateView, null, dCal.getTimeInMillis());
+            setDateTime(null, deadlineTimeView, dCal.getTimeInMillis());
             isCorrected = true;
         }
         // Case: if duration more than difference of deadline and startTime.
@@ -242,8 +252,8 @@ public class TaskEditActivity extends AppCompatActivity {
         // Set starttime = deadline.
         if(stCal.after(dCal)){
             flag = true;
-            setDateTime(startTimeDateView, null, dCal);
-            setDateTime(null, startTimeTimeView, dCal);
+            setDateTime(startTimeDateView, null, dCal.getTimeInMillis());
+            setDateTime(null, startTimeTimeView, dCal.getTimeInMillis());
             isCorrected = true;
         }
         return isCorrected;
@@ -253,14 +263,16 @@ public class TaskEditActivity extends AppCompatActivity {
      * Set Calendar date to views.
      * @param dateTxt - date view.
      * @param timeTxt - time view.
-     * @param cal - time, that will be set.
+     * @param calInMillis - time, that will be set.
      */
-    private static void setDateTime(EditText dateTxt, EditText timeTxt,Calendar cal){
+    private static void setDateTime(EditText dateTxt, EditText timeTxt,long calInMillis){
+        Calendar time = Calendar.getInstance();
+        time.setTimeInMillis(calInMillis);
         if(dateTxt != null) {
-            dateTxt.setText(dateFormat.format(cal.getTime()));
+            dateTxt.setText(dateFormat.format(time.getTime()));
         }
         if(timeTxt != null) {
-            timeTxt.setText(timeFormat.format(cal.getTime()));
+            timeTxt.setText(timeFormat.format(time.getTime()));
         }
     }
 
@@ -289,7 +301,7 @@ public class TaskEditActivity extends AppCompatActivity {
 //            startTimeDateView.setText((new Date(task.getStartTime().getTime())).toString());
 //            startTimeTimeView.setText((new Time(task.getStartTime().getTime())).toString());
 
-            setDateTime(startTimeDateView, startTimeTimeView, task.getStartTime());
+            setDateTime(startTimeDateView, startTimeTimeView, task.getStartTime().getTimeInMillis());
         }
 
         isStartTimeNotifyView.setChecked(task.getIsNotifyStartTime());
@@ -298,7 +310,7 @@ public class TaskEditActivity extends AppCompatActivity {
             // TODO obsolete
 //            deadlineDateView.setText((new Date(task.getDeadline().getTime())).toString());
 //            deadlineTimeView.setText((new Time(task.getDeadline().getTime())).toString());
-            setDateTime(deadlineDateView,deadlineTimeView,task.getStartTime());
+            setDateTime(deadlineDateView,deadlineTimeView,task.getDeadline().getTimeInMillis());
         }
 
         isDeadlineNotifyView.setChecked(task.getIsNotifyDeadline());
@@ -365,7 +377,7 @@ public class TaskEditActivity extends AppCompatActivity {
             c.set(Calendar.HOUR_OF_DAY, hourOfDay);
             c.set(Calendar.MINUTE, minute);
             if(txtEdit != null) {
-                TaskEditActivity.setDateTime(null, txtEdit,c);
+                TaskEditActivity.setDateTime(null, txtEdit,c.getTimeInMillis());
             }
         }
     }
@@ -411,7 +423,7 @@ public class TaskEditActivity extends AppCompatActivity {
             c.set(Calendar.MONTH, month);
             c.set(Calendar.DAY_OF_MONTH, day);
             if (txtEdit != null)
-                TaskEditActivity.setDateTime(txtEdit,null,c);
+                TaskEditActivity.setDateTime(txtEdit,null,c.getTimeInMillis());
         }
     }
 
@@ -457,28 +469,44 @@ public class TaskEditActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy(){
-        super.onDestroy();
-        setResult(0);
         // write changes to base
+        DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
+        db.updateTask(task);
+
+        setResult(0);
+        super.onDestroy();
         finish();
     }
 
-    protected void onDeleteClick() {
-        createDialog();
+    public void callPlanActivity(){
+        Intent intent = new Intent (getApplicationContext(), PlanActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
     }
 
+    // Conformation form for deleting task
     private void createDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setMessage("Hi");
+        alertDialog.setMessage("Are you sure you want to delete this task?");
 
         alertDialog.setCancelable(false);
         alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-             //   TaskEditActivity.super.onDeleteClick();
+                Long task_id = getIntent().getLongExtra("task_id",-1);
+                DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
+                db.deleteTask(task_id);
+                callPlanActivity();
             }
-        }); {
+        });
 
-        }
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        alertDialog.create().show();
     }
 }

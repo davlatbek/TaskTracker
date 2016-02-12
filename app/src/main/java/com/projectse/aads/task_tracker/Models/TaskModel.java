@@ -11,9 +11,9 @@ import java.util.List;
  */
 public class TaskModel {
 
-    private String name;
+    private String name = "";
     private Long id;
-    private String description;
+    private String description = "";
 
     private Calendar startTime = Calendar.getInstance();
 

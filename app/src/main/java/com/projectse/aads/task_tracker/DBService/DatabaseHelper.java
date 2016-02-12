@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.util.Log;
 
 import com.projectse.aads.task_tracker.Models.CourseModel;
@@ -35,8 +34,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Constructor
-    private DatabaseHelper(Context context) {
+    public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        //context.deleteDatabase(DATABASE_NAME);
+
     }
 
     // Called when the database connection is being configured.
@@ -101,6 +102,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // All keys used in table COURSES_TO_TASKS
     private static final String COURSES_TO_TASKS_CURSE_ID = "course_to_task_curse_id";
     private static final String COURSES_TO_TASKS_TASK_ID = "course_to_task_task_id";
+    private static final String COURSES_TO_TASK_ID = "course_to_task_id";
 
 
     public static String TAG = "tag";
@@ -114,16 +116,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_TASKS = "CREATE TABLE "
             + TABLE_TASKS + "("
             + TASKS_KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + TASKS_NAME + " TEXT, "
-            + TASKS_DESCRIPTION + " TEXT, "
-            + TASKS_DEADLINE + " INTEGER, "
-            + TASKS_START_TIME + " INTEGER, "
-            + TASKS_DURATION + " INTEGER, "
-            + TASKS_IS_DONE + " INTEGER, "
-            + TASKS_IS_NOTIFY_START_TIME + " INTEGER, "
-            + TASKS_IS_NOTIFY_DEADLINE + " INTEGER, "
-            + TASKS_PRIORITY + " TEXT "
-            + ");";
+            + TASKS_NAME + " TEXT,"
+            + TASKS_DESCRIPTION + " TEXT,"
+            + TASKS_IS_DONE + " BOOLEAN,"
+            + TASKS_START_TIME + " INTEGER,"
+            + TASKS_DEADLINE + " INTEGER,"
+            + TASKS_DURATION + " INTEGER,"
+            + TASKS_IS_NOTIFY_DEADLINE + " BOOLEAN,"
+            + TASKS_IS_NOTIFY_START_TIME + " BOOLEAN);"
+            ;
 
 //    public DatabaseHelper(Context context) {
 //        super(context,DATABASE_NAME,null,DATABASE_VERSION);
@@ -141,6 +142,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + " INTEGER PRIMARY KEY AUTOINCREMENT," + COURSE_NAME + " TEXT,"
             + COURSE_PRIORITY + " INTEGER);";
 
+
+    /**
+     * CREATE TABLE TABLE_COURSES_TO_TASKS (course_to_task_id INTEGER PRIMARY KEY AUTOINCREMENT,
+     * course_to_task_task_id INTEGER PRIMARY KEY, course_to_task_curse_id INTEGER, FOREIGN KEY(course_to_task_curse_id) REFERENCES courses(course_id))
+     */
+
+    private static final String CREATE_TABLE_COURSES_TO_TASK = "CREATE TABLE "
+            + TABLE_COURSES_TO_TASKS + " (" + COURSES_TO_TASK_ID
+            + " INTEGER PRIMARY KEY AUTOINCREMENT," + COURSES_TO_TASKS_TASK_ID + " INTEGER," + COURSES_TO_TASKS_CURSE_ID + " INTEGER,"
+            + "FOREIGN KEY(" + COURSES_TO_TASKS_CURSE_ID + ") REFERENCES " + TABLE_COURSES + "(" + COURSE_ID + "));";
+
+
     /**
      * This method is called by system if the database is accessed but not yet
      * created.
@@ -150,12 +163,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
         db.execSQL(CREATE_TABLE_TASKS); // create tasks table
         db.execSQL(CREATE_TABLE_COURSES); // create course table
+        db.execSQL(CREATE_TABLE_COURSES_TO_TASK); // create course to task table
 
     }
-
 
     /**
      * This method is called when any modifications in database are done like
@@ -195,8 +207,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             ContentValues values = new ContentValues();
             values.put(COURSE_NAME, course.getName());
-            values.put(COURSE_PRIORITY, course.getPriority());
-
+            values.put(COURSE_PRIORITY,course.fromPriorityToInt(course.getPriority()));
+            Log.d("TAG", "add prioritiy in int value in db " + String.valueOf(course.fromPriorityToInt(course.getPriority())));
             id = db.insertOrThrow(TABLE_COURSES, null, values);
             db.setTransactionSuccessful();
 
@@ -208,6 +220,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return id;
     }
+
+    // get course by id
+
+    public CourseModel getCourse(long id) throws Exception {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // SELECT * FROM tasks WHERE id = ?;
+        String selectQuery = "SELECT * FROM " + TABLE_COURSES + " WHERE "
+                + COURSE_ID + " = " + id;
+        Log.d(TAG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null)
+            c.moveToFirst();
+
+        CourseModel course = new CourseModel();
+
+        course.setId(c.getLong(c.getColumnIndex(COURSE_ID)));
+        course.setName(c.getString(c.getColumnIndex(COURSE_NAME)));
+        course.fromIntToPriority(c.getInt(c.getColumnIndex(COURSE_PRIORITY)));
+        Log.d("Tag", "try to convert int into priority --->>>>>" + c.getInt(c.getColumnIndex(COURSE_PRIORITY)));
+        return course;
+    }
+
 
     /**
      * This method is used to delete course from course table
@@ -239,9 +276,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             ContentValues values = new ContentValues();
             values.put(COURSE_NAME, course.getName());
-            values.put(COURSE_PRIORITY, course.getPriority());
+            values.put(COURSE_PRIORITY, String.valueOf(course.getPriority()));
             id = db.update(TABLE_COURSES, values, COURSE_ID + " = ?",
                     new String[]{String.valueOf(course.getId())});
+            db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.d(TAG, "Error while trying to update course");
         } finally {
@@ -265,55 +303,51 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             // Creating content values
             ContentValues values = new ContentValues();
-            values.put(TASKS_NAME, task.getName());
-            values.put(TASKS_DESCRIPTION, task.getDescription());
-
-            //writing 1 or 0 to boolean types
-            int bool = task.getIsNotifyDeadline() ? 1 : 0;
-            values.put(TASKS_IS_NOTIFY_DEADLINE, bool);
-            bool = task.getIsNotifyStartTime() ? 1 : 0;
-            values.put(TASKS_IS_NOTIFY_START_TIME, bool);
-            bool = task.getIsDone() ? 1 : 0;
-            values.put(TASKS_IS_DONE, bool);
-
-            values.put(TASKS_DURATION, task.getDuration());
-            if (task.getStartTime() != null)
-                values.put(TASKS_START_TIME, task.getStartTime().getTimeInMillis());
-            if (task.getDeadline() != null)
-                values.put(TASKS_DEADLINE, task.getDeadline().getTime().getTime());
+            fillContentByTask(values, task);
 
             // Return id of the added task
             id = db.insertOrThrow(TABLE_TASKS, null, values);
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.d(TAG, "Error while trying to add task to database " + e.toString());
-            e.printStackTrace();
+            Log.d(TAG, "Error while trying to add task to database");
         } finally {
             db.endTransaction();
         }
         return id;
     }
 
-    // Add UpDateTask by id
+    /** Add UpDateEntry
+     *
+     * @param task
+     * @return the number of rows affected
+     */
 
     public int updateTask(TaskModel task) {
         SQLiteDatabase db = this.getWritableDatabase();
-        // update row in task table base on task.is value
-        ContentValues values = new ContentValues();
-        values.put(TASKS_NAME, task.getName());
-        values.put(TASKS_DEADLINE, task.getDeadline().getTime().getTime());
+        db.beginTransaction();
+        int res = 0;
+        try {
+            ContentValues values = new ContentValues();
+            fillContentByTask(values, task);
 
-        return db.update(TABLE_TASKS, values, TASKS_KEY_ID + " = ?",
-                new String[]{String.valueOf(task.getId())});
+            res = db.update(TABLE_TASKS, values, TASKS_KEY_ID + " = ?",
+                    new String[]{String.valueOf(task.getId())});
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to update task to database");
+        } finally {
+            db.endTransaction();
+        }
+        return res;
     }
 
-    // Delete method. Not tested yet!
+    // Delete method.
     public void deleteTask(long id) {
         // delete row in task table based on id
 
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
-        String where = TASKS_KEY_ID + " = ?" + id;
+        String where = TASKS_KEY_ID + " = " + id;
         try {
             db.delete(TABLE_TASKS, where, null);
             db.setTransactionSuccessful();
@@ -324,46 +358,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // Get task object by id
-    public TaskModel getTask(long id) {
+    /** Get task object by id
+     *
+     * @param task_id
+     * @return new TaskModel object or null, if row with id doesn't exist.
+     */
+    public TaskModel getTask(long task_id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         // SELECT * FROM tasks WHERE id = ?;
         String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE "
-                + TASKS_KEY_ID + " = " + id;
+                + TASKS_KEY_ID + " = " + task_id;
         Log.d(TAG, selectQuery);
 
         Cursor c = db.rawQuery(selectQuery, null);
 
-        if (c != null)
-            c.moveToFirst();
-
-        TaskModel tasks = new TaskModel();
-        tasks.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
-        tasks.setName(c.getString(c.getColumnIndex(TASKS_NAME)));
-        Calendar calStart = Calendar.getInstance();
-        calStart.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_START_TIME)));
-        tasks.setStartTime(calStart);
-        tasks.setDuration((long) c.getInt(c.getColumnIndex(TASKS_DURATION)));
-
-        int boolInt = c.getInt(c.getColumnIndex(TASKS_IS_DONE));
-        Boolean boolString = boolInt == 1 ? true : false;
-        tasks.setIsDone(boolString);
-
-        boolInt = c.getInt(c.getColumnIndex(TASKS_IS_NOTIFY_DEADLINE));
-        boolString = boolInt == 1;
-        tasks.setIsNotifyDeadline(boolString);
-
-        boolInt = c.getInt(c.getColumnIndex(TASKS_IS_NOTIFY_START_TIME));
-        boolString = boolInt == 1;
-        tasks.setIsNotifyStartTime(boolString);
-        tasks.setDescription(c.getString(c.getColumnIndex(TASKS_DESCRIPTION)));
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
-        tasks.setDeadline(cal);
-
-        return tasks;
+        if (c != null){
+            try {
+                if(c.moveToFirst())
+                    return createTaskByCursor(c);
+            }catch (Exception e){
+                return null;
+            }
+        }
+        return null;
     }
 
 
@@ -381,35 +399,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (c.moveToFirst()) {
             do {
-                TaskModel tasks = new TaskModel();
-                tasks.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
-                tasks.setName(c.getString(c.getColumnIndex(TASKS_NAME)));
-
-                Calendar calStart = Calendar.getInstance();
-                calStart.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_START_TIME)));
-                tasks.setStartTime(calStart);
-                tasks.setDuration((long) c.getInt(c.getColumnIndex(TASKS_DURATION)));
-
-                int boolInt = c.getInt(c.getColumnIndex(TASKS_IS_DONE));
-                Boolean boolString = boolInt == 1 ? true : false;
-                tasks.setIsDone(boolString);
-
-                boolInt = c.getInt(c.getColumnIndex(TASKS_IS_NOTIFY_DEADLINE));
-                boolString = boolInt == 1;
-                tasks.setIsNotifyDeadline(boolString);
-
-                boolInt = c.getInt(c.getColumnIndex(TASKS_IS_NOTIFY_START_TIME));
-                boolString = boolInt == 1;
-                tasks.setIsNotifyStartTime(boolString);
-
-                tasks.setDescription(c.getString(c.getColumnIndex(TASKS_DESCRIPTION)));
-
-                Calendar cal = Calendar.getInstance();
-                cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
-                tasks.setDeadline(cal);
+                TaskModel task = new TaskModel();
+                task = createTaskByCursor(c);
 
                 // adding to Task list
-                tasksArrayList.add(tasks);
+                tasksArrayList.add(task);
             } while (c.moveToNext());
         }
         return tasksArrayList;
@@ -417,7 +411,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // RECEIVE LIST OF COURSES
 
-    public List<CourseModel> getCourseModelList() {
+    public List<CourseModel> getCourseModelList() throws Exception {
         List<CourseModel> courseArrayList = new ArrayList<CourseModel>();
         String selectQuery = "SELECT * FROM " + TABLE_COURSES;
         Log.d(TAG, selectQuery);
@@ -430,12 +424,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 CourseModel course = new CourseModel();
                 course.setId(c.getLong(c.getColumnIndex(COURSE_ID)));
                 course.setName(c.getString(c.getColumnIndex(COURSE_NAME)));
-                course.setPriority(c.getInt(c.getColumnIndex(COURSE_PRIORITY)));
+                course.fromIntToPriority(c.getInt(c.getColumnIndex(COURSE_PRIORITY)));
                 courseArrayList.add(course);
             } while (c.moveToNext());
         }
         return courseArrayList;
     }
+
 
     // SETTING METHODS
 
@@ -443,6 +438,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public SettingsModel getAllSettings() {
         SQLiteDatabase db = this.getReadableDatabase();
         SettingsModel settings = new SettingsModel();
+
+
 
         String selectQuery = "SELECT * FROM" + TABLE_SETTINGS;
         Log.d(TAG, selectQuery);
@@ -454,8 +451,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 settings.setAlwaysNotifyDeadLine(Boolean.getBoolean(c.getString(c.getColumnIndex(SETTINGS_ALWAYS_NOTIFY_DEADLINE))));
                 settings.setNotifyStartTimeXTimes(Integer.getInteger(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_START_TIME_X_TIMES))));
                 settings.setNotifyDeadLineXTimes(Integer.getInteger(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_DEADLINE_X_TIMES))));
-                settings.setNotifyDeadLineBefore(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_DEADLINE_BEFORE)));
-                settings.setNotifyStartTimeBefore(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_START_TIME_BEFORE)));
+                settings.setNotifyDeadLineBefore(Integer.getInteger(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_DEADLINE_BEFORE))));
+                settings.setNotifyStartTimeBefore(Integer.getInteger(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_START_TIME_BEFORE))));
 
             }
         } catch (Exception e) {
@@ -493,5 +490,148 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    /**
+     * Set isDone true for task with id.
+     * @param task_id
+     * @throws Exception - if more than one instance has been affected
+     */
+    public void markTaskAsDone(long task_id) throws Exception {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(TASKS_IS_DONE, 1);
+            if (db.update(TABLE_TASKS, values, TASKS_KEY_ID + " = ?", new String[]{String.valueOf(task_id)}) != 1) {
+                throw new Exception("No or more than one row was affected");
+            }else{
+                db.setTransactionSuccessful();
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to update task to database");
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    /**
+     * Create instance of TaskModel and fill by data stored in cursor.
+     * @param c - cursor with current position. (Warn! Method doesn't move cursor)
+     * @return new TaskModel instance.
+     */
+    private TaskModel createTaskByCursor(Cursor c){
+        if (c == null)
+            return null;
+        TaskModel task = new TaskModel();
+
+        task.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
+        task.setName(c.getString(c.getColumnIndex(TASKS_NAME)));
+        task.setDescription(c.getString(c.getColumnIndex(TASKS_DESCRIPTION)));
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
+        task.setDeadline(cal);
+        if(!c.isNull(c.getColumnIndex(TASKS_START_TIME))){
+            cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_START_TIME)));
+            task.setStartTime(cal);
+        }
+
+        if(!c.isNull(c.getColumnIndex(TASKS_DURATION))) {
+            task.setDuration(c.getLong(c.getColumnIndex(TASKS_DURATION)));
+        }
+        if(!c.isNull(c.getColumnIndex(TASKS_IS_NOTIFY_DEADLINE))) {
+            task.setIsNotifyDeadline(c.getInt(c.getColumnIndex(TASKS_IS_NOTIFY_DEADLINE)) > 0);
+        }
+        if(!c.isNull(c.getColumnIndex(TASKS_IS_NOTIFY_START_TIME))) {
+            task.setIsNotifyStartTime(c.getInt(c.getColumnIndex(TASKS_IS_NOTIFY_START_TIME)) > 0);
+        }
+        if(!c.isNull(c.getColumnIndex(TASKS_IS_DONE))) {
+            task.setIsDone(c.getInt(c.getColumnIndex(TASKS_IS_DONE)) > 0);
+        }
+
+        return task;
+    }
+
+    private void fillContentByTask(ContentValues values, TaskModel task){
+        values.put(TASKS_NAME, task.getName());
+        values.put(TASKS_DESCRIPTION, task.getDescription());
+        values.put(TASKS_DEADLINE, task.getDeadline().getTime().getTime());
+        values.put(TASKS_START_TIME, task.getStartTime().getTime().getTime());
+        values.put(TASKS_DURATION, task.getDuration());
+        values.put(TASKS_IS_NOTIFY_START_TIME,task.getIsNotifyStartTime()?1:0);
+        values.put(TASKS_IS_NOTIFY_DEADLINE,task.getIsNotifyDeadline()?1:0);
+        values.put(TASKS_IS_DONE, task.getIsDone()?1:0);
+    }
+
+    /**
+     * Get tasks by SELECT WHERE startTime between low_date AND high_date
+     * @param low_date
+     * @param high_date
+     * @return list of tasks or null
+     */
+    private List<TaskModel> getTasksBetweenDates(Calendar low_date, Calendar high_date){
+        List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
+
+        String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE " + TASKS_START_TIME +
+                " BETWEEN " + low_date.getTime().getTime() + " AND " + high_date.getTime().getTime();
+        Log.d(TAG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if(c != null) {
+            // looping through all rows and adding to list
+            if (c.moveToFirst()) {
+                do {
+                    TaskModel task = new TaskModel();
+                    task = createTaskByCursor(c);
+
+                    // adding to Task list
+                    tasksArrayList.add(task);
+                } while (c.moveToNext());
+            }
+            return tasksArrayList;
+        }else
+            return null;
+    }
+
+    /**
+     * Get all tasks that's starttime in cur_time < x < 23:59:59 of given date.
+     * @return
+     */
+    public List<TaskModel> getTasksForToday(){
+
+        Calendar low_date = Calendar.getInstance();
+        Calendar high_date = Calendar.getInstance();
+
+        high_date.set(Calendar.HOUR_OF_DAY, 23);
+        high_date.set(Calendar.MINUTE, 59);
+        high_date.set(Calendar.SECOND, 59);
+
+        return getTasksBetweenDates(low_date,high_date);
+    }
+
+    /**
+     * Get all tasks that's starttime in 00:00:00 < cur_time < 23:59:59 of given date.
+     * @param date
+     * @return
+     */
+    public List<TaskModel> getTasksForDay(Calendar date){
+
+        Calendar low_date = Calendar.getInstance();
+        Calendar high_date = Calendar.getInstance();
+
+        low_date.setTime(date.getTime());
+        low_date.set(Calendar.HOUR_OF_DAY, 0);
+        low_date.set(Calendar.MINUTE,0);
+        low_date.set(Calendar.SECOND, 0);
+
+        high_date.setTime(date.getTime());
+        high_date.set(Calendar.HOUR_OF_DAY, 23);
+        high_date.set(Calendar.MINUTE, 59);
+        high_date.set(Calendar.SECOND, 59);
+
+        return getTasksBetweenDates(low_date,high_date);
+    }
 }
+
 

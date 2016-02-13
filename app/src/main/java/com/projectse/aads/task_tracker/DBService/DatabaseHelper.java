@@ -118,12 +118,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + TASKS_KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + TASKS_NAME + " TEXT,"
             + TASKS_DESCRIPTION + " TEXT,"
-            + TASKS_IS_DONE + " BOOLEAN,"
+            + TASKS_IS_DONE + " INTEGER,"
             + TASKS_START_TIME + " INTEGER,"
             + TASKS_DEADLINE + " INTEGER,"
             + TASKS_DURATION + " INTEGER,"
-            + TASKS_IS_NOTIFY_DEADLINE + " BOOLEAN,"
-            + TASKS_IS_NOTIFY_START_TIME + " BOOLEAN);"
+            + TASKS_IS_NOTIFY_DEADLINE + " INTEGER,"
+            + TASKS_IS_NOTIFY_START_TIME + " INTEGER);"
             ;
 
 //    public DatabaseHelper(Context context) {
@@ -303,13 +303,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             // Creating content values
             ContentValues values = new ContentValues();
-            fillContentByTask(values, task);
+            values.put(TASKS_NAME, task.getName());
+            values.put(TASKS_DESCRIPTION, task.getDescription());
+
+            //writing 1 or 0 to boolean types
+            int bool = task.getIsNotifyDeadline() ? 1 : 0;
+            values.put(TASKS_IS_NOTIFY_DEADLINE, bool);
+            bool = task.getIsNotifyStartTime() ? 1 : 0;
+            values.put(TASKS_IS_NOTIFY_START_TIME, bool);
+            bool = task.getIsDone() ? 1 : 0;
+            values.put(TASKS_IS_DONE, bool);
+
+            values.put(TASKS_DURATION, task.getDuration());
+            if (task.getStartTime() != null)
+                values.put(TASKS_START_TIME, task.getStartTime().getTimeInMillis());
+            if (task.getDeadline() != null)
+                values.put(TASKS_DEADLINE, task.getDeadline().getTime().getTime());
 
             // Return id of the added task
             id = db.insertOrThrow(TABLE_TASKS, null, values);
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.d(TAG, "Error while trying to add task to database");
+            Log.d(TAG, "Error while trying to add task to database " + e.toString());
+            e.printStackTrace();
         } finally {
             db.endTransaction();
         }
@@ -358,30 +374,46 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    /** Get task object by id
-     *
-     * @param task_id
-     * @return new TaskModel object or null, if row with id doesn't exist.
-     */
-    public TaskModel getTask(long task_id) {
+    // Get task object by id
+    public TaskModel getTask(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         // SELECT * FROM tasks WHERE id = ?;
         String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE "
-                + TASKS_KEY_ID + " = " + task_id;
+                + TASKS_KEY_ID + " = " + id;
         Log.d(TAG, selectQuery);
 
         Cursor c = db.rawQuery(selectQuery, null);
 
-        if (c != null){
-            try {
-                if(c.moveToFirst())
-                    return createTaskByCursor(c);
-            }catch (Exception e){
-                return null;
-            }
-        }
-        return null;
+        if (c != null)
+            c.moveToFirst();
+
+        TaskModel tasks = new TaskModel();
+        tasks.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
+        tasks.setName(c.getString(c.getColumnIndex(TASKS_NAME)));
+        Calendar calStart = Calendar.getInstance();
+        calStart.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_START_TIME)));
+        tasks.setStartTime(calStart);
+        tasks.setDuration((long) c.getInt(c.getColumnIndex(TASKS_DURATION)));
+
+        int boolInt = c.getInt(c.getColumnIndex(TASKS_IS_DONE));
+        Boolean boolString = boolInt == 1 ? true : false;
+        tasks.setIsDone(boolString);
+
+        boolInt = c.getInt(c.getColumnIndex(TASKS_IS_NOTIFY_DEADLINE));
+        boolString = boolInt == 1;
+        tasks.setIsNotifyDeadline(boolString);
+
+        boolInt = c.getInt(c.getColumnIndex(TASKS_IS_NOTIFY_START_TIME));
+        boolString = boolInt == 1;
+        tasks.setIsNotifyStartTime(boolString);
+        tasks.setDescription(c.getString(c.getColumnIndex(TASKS_DESCRIPTION)));
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
+        tasks.setDeadline(cal);
+
+        return tasks;
     }
 
 

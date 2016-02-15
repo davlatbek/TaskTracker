@@ -2,7 +2,9 @@ package com.projectse.aads.task_tracker.Models;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by smith on 1/27/16.
@@ -22,10 +24,17 @@ public class TaskModel {
     private Boolean isNotifyDeadline = Boolean.FALSE;
     private Boolean isNotifyStartTime = Boolean.FALSE;
     private Boolean isDone = Boolean.FALSE;
+
+    public void setSubtasks_ids(List<Long> subtasks_ids) {
+        this.subtasks_ids.clear();
+        for(Long id : subtasks_ids)
+            this.subtasks_ids.add(id);
+    }
+
+    private List<Long> subtasks_ids = new ArrayList<>();
     // not supported yet
     private Long parentTaskId;
 
-    private List<TaskModel> subtasks = new ArrayList<>();
     private Integer priority = 0;
     public TaskModel(){
 
@@ -45,7 +54,6 @@ public class TaskModel {
         this.id = id;
         this.name = name;
     }
-
     public String getName() {
         return name;
     }
@@ -102,8 +110,6 @@ public class TaskModel {
         return deadline;
     }
 
-
-
     public void setDeadline(Calendar deadline) {
         this.deadline = deadline;
     }
@@ -111,6 +117,8 @@ public class TaskModel {
     public Boolean getIsNotifyStartTime() {
         return isNotifyStartTime;
     }
+
+
 
     public void setIsNotifyStartTime(Boolean isNotifyStartTime) {
         this.isNotifyStartTime = isNotifyStartTime;
@@ -122,6 +130,14 @@ public class TaskModel {
 
     public void setIsDone(Boolean isDone) {
         this.isDone = isDone;
+    }
+
+    public void addSubtask(TaskModel task){
+        this.subtasks_ids.add(task.getId());
+    }
+
+    public List<Long> getSubtasks_ids() {
+        return subtasks_ids;
     }
 
 }

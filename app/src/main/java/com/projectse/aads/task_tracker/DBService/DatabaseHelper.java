@@ -13,7 +13,9 @@ import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Andrey Zolin on 28.01.2016.
@@ -53,10 +55,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static String DATABASE_NAME = "task_tracker_database";
 
     // Current version of database
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Name of tables
     private static final String TABLE_TASKS = "tasks";
+    private static final String TABLE_SUBTASKS = "tasks_to_subtasks";
     private static final String TABLE_COURSES = "courses";
     private static final String TABLE_SETTINGS = "settings";
     private static final String TABLE_PLANS = "plans";
@@ -76,6 +79,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TASKS_PRIORITY = "task_priority";
     private static final String TASKS_IS_DONE = "task_is_done";
     private static final String TASKS_SUB_TASKS = "task_sub_task";
+
+    //All keys used in table SUBTASKS
+    private static final String SUBTASKS_MASTER_ID = "master_id";
+    private static final String SUBTASKS_SLAVE_ID = "slave_id";
 
     // All keys used in table COURSES
     private static final String COURSE_ID = "course_id";
@@ -153,6 +160,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + " INTEGER PRIMARY KEY AUTOINCREMENT," + COURSES_TO_TASKS_TASK_ID + " INTEGER," + COURSES_TO_TASKS_CURSE_ID + " INTEGER,"
             + "FOREIGN KEY(" + COURSES_TO_TASKS_CURSE_ID + ") REFERENCES " + TABLE_COURSES + "(" + COURSE_ID + "));";
 
+    private static final String CREATE_TABLE_SUBTASKS = "CREATE TABLE "
+            + TABLE_SUBTASKS + " (" + SUBTASKS_MASTER_ID
+            + " INTEGER," + SUBTASKS_SLAVE_ID + " INTEGER,"
+            + "FOREIGN KEY(" + SUBTASKS_MASTER_ID + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + "),"
+            + "FOREIGN KEY(" + SUBTASKS_SLAVE_ID + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + ")"
+            + ");";
+
 
     /**
      * This method is called by system if the database is accessed but not yet
@@ -166,7 +180,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_TASKS); // create tasks table
         db.execSQL(CREATE_TABLE_COURSES); // create course table
         db.execSQL(CREATE_TABLE_COURSES_TO_TASK); // create course to task table
-
+        db.execSQL(CREATE_TABLE_SUBTASKS); // create subtasks table
     }
 
     /**
@@ -292,7 +306,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * This method is used to add task in task table
      *
      * @param task
-     * @return
+     * @return id, auto-generized by db
      */
     public long addTask(TaskModel task) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -329,11 +343,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } finally {
             db.endTransaction();
         }
+        updateSubtasks(task);
         return id;
     }
 
-    /** Add UpDateEntry
-     *
+    /**
+     * write changes to db for task
      * @param task
      * @return the number of rows affected
      */
@@ -354,6 +369,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } finally {
             db.endTransaction();
         }
+        updateSubtasks(task);
         return res;
     }
 
@@ -374,7 +390,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // Get task object by id
+    /** Get task object by id
+     *
+     * @param id
+     * @return
+     * TODO check add support of subtasks
+     */
     public TaskModel getTask(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -413,13 +434,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
         tasks.setDeadline(cal);
 
+        getSubtasks(tasks);
         return tasks;
     }
 
 
-    // RECEIVE LIST OF TASKS
+    /** RECEIVE LIST OF TASKS
+     *
+     * @return
+     * TODO add support of subtasks
+     */
 
-    public List<TaskModel> getTaskModelList() {
+    public List<TaskModel>
+    getTaskModelList() {
         List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
 
         String selectQuery = "SELECT * FROM " + TABLE_TASKS;
@@ -580,17 +607,46 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             task.setIsDone(c.getInt(c.getColumnIndex(TASKS_IS_DONE)) > 0);
         }
 
+        getSubtasks(task);
         return task;
     }
 
-    private void fillContentByTask(ContentValues values, TaskModel task){
+    /**
+     * TODO test
+     *
+     * @param task - master task.
+     */
+    private void getSubtasks(TaskModel task) {
+        List<TaskModel> subtasksArrayList = new ArrayList<TaskModel>();
+        List<Long> subtasksIdsArrayList = new ArrayList<>();
+        Map<Long, String> subtasks_map = new HashMap<>();
+
+        String selectQuery = "SELECT * FROM " + TABLE_SUBTASKS
+                + " WHERE " + SUBTASKS_MASTER_ID  + " = " + task.getId()
+                ;
+        Log.d(TAG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (c.moveToFirst()) {
+            do {
+                Log.d(TAG, c.getLong(c.getColumnIndex(SUBTASKS_MASTER_ID)) + " " + c.getLong(c.getColumnIndex(SUBTASKS_SLAVE_ID)));
+                subtasksIdsArrayList.add(c.getLong(c.getColumnIndex(SUBTASKS_SLAVE_ID)));
+            } while (c.moveToNext());
+        }
+        task.setSubtasks_ids(subtasksIdsArrayList);
+    }
+
+    private void fillContentByTask(ContentValues values, TaskModel task) {
         values.put(TASKS_NAME, task.getName());
         values.put(TASKS_DESCRIPTION, task.getDescription());
         values.put(TASKS_DEADLINE, task.getDeadline().getTime().getTime());
         values.put(TASKS_START_TIME, task.getStartTime().getTime().getTime());
         values.put(TASKS_DURATION, task.getDuration());
         values.put(TASKS_IS_NOTIFY_START_TIME,task.getIsNotifyStartTime()?1:0);
-        values.put(TASKS_IS_NOTIFY_DEADLINE,task.getIsNotifyDeadline()?1:0);
+        values.put(TASKS_IS_NOTIFY_DEADLINE,task.getIsNotifyDeadline() ? 1 : 0);
         values.put(TASKS_IS_DONE, task.getIsDone()?1:0);
     }
 
@@ -663,6 +719,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         high_date.set(Calendar.SECOND, 59);
 
         return getTasksBetweenDates(low_date,high_date);
+    }
+
+    /**
+     * TODO test
+     * @param t
+     */
+    private void updateSubtasks(TaskModel t){
+        //DELETE where master_id = t.id
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        String where = SUBTASKS_MASTER_ID + " = " + t.getId();
+        try {
+            db.delete(TABLE_SUBTASKS, where, null);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to delete subtasks for master.id = " + t.getId() + ".");
+        } finally {
+            db.endTransaction();
+        }
+
+        //INSERT master_id, subt.id
+        // Begin Transaction
+        db.beginTransaction();
+        try {
+            for(Long slave_id : t.getSubtasks_ids()){
+                // Creating content values
+                ContentValues values = new ContentValues();
+                values.put(SUBTASKS_MASTER_ID, t.getId());
+                values.put(SUBTASKS_SLAVE_ID, slave_id);
+                db.insert(TABLE_SUBTASKS, null, values);
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to add task to database " + e.toString());
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+        }
     }
 }
 

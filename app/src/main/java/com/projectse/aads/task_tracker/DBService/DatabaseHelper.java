@@ -159,6 +159,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "FOREIGN KEY(" + COURSES_TO_TASKS_TASK_ID + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + ") ON UPDATE CASCADE,"
             + "FOREIGN KEY(" + COURSES_TO_TASKS_CURSE_ID + ") REFERENCES " + TABLE_COURSES + "(" + COURSE_ID + ") ON UPDATE CASCADE);";
 
+    /**
+     * CREATE TABLE SUBTASKS
+     */
+
     private static final String CREATE_TABLE_SUBTASKS = "CREATE TABLE "
             + TABLE_SUBTASKS + " (" + SUBTASKS_MASTER_ID
             + " INTEGER," + SUBTASKS_SLAVE_ID + " INTEGER,"
@@ -178,7 +182,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("PRAGMA foreign_keys=ON"); // Set foreign keys on
         db.execSQL(CREATE_TABLE_TASKS); // create tasks table
-        //db.execSQL(CREATE_TABLE_COURSES); // create course table
+        db.execSQL(CREATE_TABLE_COURSES); // create course table
         db.execSQL(CREATE_TABLE_COURSES_TO_TASK); // create course to task table
         db.execSQL(CREATE_TABLE_SUBTASKS); // create subtasks table
     }
@@ -533,7 +537,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } finally {
             db.endTransaction();
         }
-        Log.d(TAG, id + "update courseToTask update id of Course");
+        Log.d(TAG, id + "<<<<----- update courseToTask update id of Course");
         return id;
     }
 
@@ -555,6 +559,43 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } finally {
             db.endTransaction();
         }
+
+    }
+
+    /**
+     * Select list of tasks by course id
+     *
+     * @return List Task
+     */
+
+    public List<TaskModel> getListOfTasks(long coures_id) {
+        List<TaskModel> taskList = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        String sq = "SELECT " + TASKS_KEY_ID + " FROM " + TABLE_COURSES + ", " + TABLE_TASKS + ", "
+                + TABLE_COURSES_TO_TASKS + " WHERE " + TABLE_TASKS + "." + TASKS_KEY_ID + " = " + TABLE_COURSES_TO_TASKS +
+                "." + COURSES_TO_TASKS_TASK_ID + " AND " + TABLE_COURSES + "." + COURSE_ID + " = " + TABLE_COURSES_TO_TASKS + "." + COURSES_TO_TASKS_CURSE_ID
+                + " AND " + COURSES_TO_TASKS_CURSE_ID + " = " + coures_id;
+
+        Log.d(TAG, sq);
+        Cursor c = db.rawQuery(sq, null);
+
+        db.beginTransaction();
+        try {
+            if (c.moveToFirst()) {
+                do {
+                    taskList.add(getTask(c.getLong(c.getColumnIndex(TASKS_KEY_ID))));
+                    Log.d(TAG,"add to list");
+
+                } while (c.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying select tasks by course_id");
+        } finally {
+            db.endTransaction();
+        }
+
+        return taskList;
+
 
     }
 

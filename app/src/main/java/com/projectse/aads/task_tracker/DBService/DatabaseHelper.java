@@ -178,7 +178,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE_TASKS); // create tasks table
-        db.execSQL(CREATE_TABLE_COURSES); // create course table
+        //db.execSQL(CREATE_TABLE_COURSES); // create course table
         db.execSQL(CREATE_TABLE_COURSES_TO_TASK); // create course to task table
         db.execSQL(CREATE_TABLE_SUBTASKS); // create subtasks table
     }
@@ -195,7 +195,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion != newVersion) {
 
-            db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_TASKS); // drop table if exists
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_TASKS); // drop table if exists
             onCreate(db);
         }
 

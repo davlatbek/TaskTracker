@@ -20,7 +20,17 @@
         </activity>
 
         <activity android:name=".TaskEditActivity"
-            android:label="@string/task_edit_title"
+            android:label="Editing Task"
+            android:parentActivityName=".TaskOverviewActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TaskOverviewActivity" />
+        </activity>
+
+        <activity
+            android:name=".AddTaskActivity"
+            android:label="Adding new task"
             android:parentActivityName=".PlanActivity" >
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -29,8 +39,8 @@
         </activity>
 
         <activity
-            android:name=".AddTaskActivity"
-            android:label="Adding new task"
+            android:name=".TaskOverviewActivity"
+            android:label="Task Overview">
             android:parentActivityName=".PlanActivity" >
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data

@@ -68,7 +68,7 @@ public class PlanActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
                 final TaskModel item = (TaskModel) parent.getItemAtPosition(position);
-                callEditTaskActivity(item);
+                callTaskOverviewActivity(item);
            }
 
        });
@@ -140,5 +140,12 @@ public class PlanActivity extends AppCompatActivity {
     public void callAddTaskActivity(){
         Intent intent = new Intent (getApplicationContext(), AddTaskActivity.class);
         startActivity(intent);
+    }
+
+    public void callTaskOverviewActivity(TaskModel taskModel){
+        Intent intent = new Intent (getApplicationContext(), TaskOverviewActivity.class);
+        intent.putExtra("task_id", taskModel.getId());
+        startActivityForResult(intent,0);
+        adapter.notifyDataSetChanged();
     }
 }

@@ -32,6 +32,15 @@ public class TaskModel {
     }
 
     private List<Long> subtasks_ids = new ArrayList<>();
+
+    public Long getParentTaskId() {
+        return parentTaskId;
+    }
+
+    public void setParentTaskId(Long parentTaskId) {
+        this.parentTaskId = parentTaskId;
+    }
+
     // not supported yet
     private Long parentTaskId;
 
@@ -134,6 +143,7 @@ public class TaskModel {
 
     public void addSubtask(TaskModel task){
         this.subtasks_ids.add(task.getId());
+        task.setParentTaskId(this.id);
     }
 
     public List<Long> getSubtasks_ids() {

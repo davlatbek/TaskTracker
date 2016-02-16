@@ -38,7 +38,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Constructor
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-//        context.deleteDatabase(DATABASE_NAME);
+        context.deleteDatabase(DATABASE_NAME);
 
     }
 
@@ -78,11 +78,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TASKS_PARENT_TASK = "task_parent_task";
     private static final String TASKS_PRIORITY = "task_priority";
     private static final String TASKS_IS_DONE = "task_is_done";
-    private static final String TASKS_SUB_TASKS = "task_sub_task";
-
-    //All keys used in table SUBTASKS
-    private static final String SUBTASKS_MASTER_ID = "master_id";
-    private static final String SUBTASKS_SLAVE_ID = "slave_id";
 
     // All keys used in table COURSES
     private static final String COURSE_ID = "course_id";
@@ -125,12 +120,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + TASKS_KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + TASKS_NAME + " TEXT,"
             + TASKS_DESCRIPTION + " TEXT,"
+            + TASKS_PARENT_TASK + " INTEGER, "
             + TASKS_IS_DONE + " INTEGER,"
             + TASKS_START_TIME + " INTEGER,"
             + TASKS_DEADLINE + " INTEGER,"
             + TASKS_DURATION + " INTEGER,"
             + TASKS_IS_NOTIFY_DEADLINE + " INTEGER,"
-            + TASKS_IS_NOTIFY_START_TIME + " INTEGER);"
+            + TASKS_IS_NOTIFY_START_TIME + " INTEGER,"
+            + "FOREIGN KEY(" + TASKS_PARENT_TASK + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + ")"
+            + ");"
             ;
 
 //    public DatabaseHelper(Context context) {
@@ -160,13 +158,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + " INTEGER PRIMARY KEY AUTOINCREMENT," + COURSES_TO_TASKS_TASK_ID + " INTEGER," + COURSES_TO_TASKS_CURSE_ID + " INTEGER,"
             + "FOREIGN KEY(" + COURSES_TO_TASKS_CURSE_ID + ") REFERENCES " + TABLE_COURSES + "(" + COURSE_ID + "));";
 
-    private static final String CREATE_TABLE_SUBTASKS = "CREATE TABLE "
-            + TABLE_SUBTASKS + " (" + SUBTASKS_MASTER_ID
-            + " INTEGER," + SUBTASKS_SLAVE_ID + " INTEGER,"
-            + "FOREIGN KEY(" + SUBTASKS_MASTER_ID + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + "),"
-            + "FOREIGN KEY(" + SUBTASKS_SLAVE_ID + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + ")"
-            + ");";
-
 
     /**
      * This method is called by system if the database is accessed but not yet
@@ -180,7 +171,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_TASKS); // create tasks table
         //db.execSQL(CREATE_TABLE_COURSES); // create course table
         db.execSQL(CREATE_TABLE_COURSES_TO_TASK); // create course to task table
-        db.execSQL(CREATE_TABLE_SUBTASKS); // create subtasks table
     }
 
     /**
@@ -202,7 +192,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public void deleteTaskTable(SQLiteDatabase db){
+
+    /**
+     * Drop and recreate task table
+     * @param db
+     */
+    public void updateTaskTable(SQLiteDatabase db){
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TASKS + ";");
         db.execSQL(CREATE_TABLE_TASKS); // create course table
     }
@@ -394,7 +389,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      *
      * @param id
      * @return
-     * TODO check add support of subtasks
      */
     public TaskModel getTask(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -442,7 +436,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /** RECEIVE LIST OF TASKS
      *
      * @return
-     * TODO add support of subtasks
      */
 
     public List<TaskModel>
@@ -612,7 +605,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * TODO test
      *
      * @param task - master task.
      */
@@ -621,8 +613,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Long> subtasksIdsArrayList = new ArrayList<>();
         Map<Long, String> subtasks_map = new HashMap<>();
 
-        String selectQuery = "SELECT * FROM " + TABLE_SUBTASKS
-                + " WHERE " + SUBTASKS_MASTER_ID  + " = " + task.getId()
+        String selectQuery = "SELECT * FROM " + TABLE_TASKS
+                + " WHERE " + TASKS_PARENT_TASK  + " = " + task.getId()
                 ;
         Log.d(TAG, selectQuery);
 
@@ -632,8 +624,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (c.moveToFirst()) {
             do {
-                Log.d(TAG, c.getLong(c.getColumnIndex(SUBTASKS_MASTER_ID)) + " " + c.getLong(c.getColumnIndex(SUBTASKS_SLAVE_ID)));
-                subtasksIdsArrayList.add(c.getLong(c.getColumnIndex(SUBTASKS_SLAVE_ID)));
+                Log.d(TAG, c.getLong(c.getColumnIndex(TASKS_PARENT_TASK)) + " " + c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
+                subtasksIdsArrayList.add(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
             } while (c.moveToNext());
         }
         task.setSubtasks_ids(subtasksIdsArrayList);
@@ -722,37 +714,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * TODO test
      * @param t
      */
     private void updateSubtasks(TaskModel t){
-        //DELETE where master_id = t.id
+        // UPDATE PARENT_ID = NULL
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
-        String where = SUBTASKS_MASTER_ID + " = " + t.getId();
+        String where = TASKS_PARENT_TASK + " = " + t.getId();
         try {
-            db.delete(TABLE_SUBTASKS, where, null);
+            ContentValues values = new ContentValues();
+            values.putNull(TASKS_PARENT_TASK);
+            db.update(TABLE_TASKS, values, where, null);
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.d(TAG, "Error while trying to delete subtasks for master.id = " + t.getId() + ".");
+            Log.d(TAG, "Error while trying to set null for tasks with parent_id = " + t.getId() + ". "+ e.toString());
         } finally {
             db.endTransaction();
         }
 
-        //INSERT master_id, subt.id
+        // UPDATE PARENT_ID
         // Begin Transaction
         db.beginTransaction();
         try {
+            // Creating content values
+            ContentValues values = new ContentValues();
+            values.put(TASKS_PARENT_TASK, t.getId());
             for(Long slave_id : t.getSubtasks_ids()){
-                // Creating content values
-                ContentValues values = new ContentValues();
-                values.put(SUBTASKS_MASTER_ID, t.getId());
-                values.put(SUBTASKS_SLAVE_ID, slave_id);
-                db.insert(TABLE_SUBTASKS, null, values);
+                String wheres = TASKS_KEY_ID + " = " + slave_id;
+                db.update(TABLE_TASKS, values, wheres, null);
             }
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.d(TAG, "Error while trying to add task to database " + e.toString());
+            Log.d(TAG, "Error while trying to set parent task " + e.toString());
             e.printStackTrace();
         } finally {
             db.endTransaction();

@@ -46,9 +46,6 @@ public class TaskEditActivity extends AppCompatActivity {
     private EditText durationView;
     private Switch isStartTimeNotifyView, isDeadlineNotifyView;
 
-    private Button deleteButton;
-    private ToggleButton isDoneView;
-
     // Current task
     private static TaskModel task = null;
 
@@ -190,12 +187,6 @@ public class TaskEditActivity extends AppCompatActivity {
             }
         });
 
-        isDoneView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                task.setIsDone(isChecked);
-            }
-        });
         isStartTimeNotifyView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -284,8 +275,6 @@ public class TaskEditActivity extends AppCompatActivity {
 
     private void fillData() {
 
-        isDoneView.setChecked(task.getIsDone());
-
         if (task.getName() != null ) nameView.setText(task.getName());
         if (task.getDescription() != null ) descView.setText(task.getDescription());
 
@@ -325,8 +314,6 @@ public class TaskEditActivity extends AppCompatActivity {
 
         isStartTimeNotifyView = (Switch) findViewById(R.id.swtStartTimeNotification);
         isDeadlineNotifyView = (Switch) findViewById(R.id.swtDeadlineNotification);
-
-        isDoneView = (ToggleButton) findViewById(R.id.btnIsDone);
     }
 
 

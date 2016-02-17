@@ -3,6 +3,7 @@ package com.projectse.aads.task_tracker;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.TaskModel;

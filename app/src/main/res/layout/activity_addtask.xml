@@ -17,6 +17,6 @@
         android:id="@+id/addTaskButton"
         android:background="#ffffff"
         android:layout_gravity="center_horizontal"
-        android:onClick="AddAndSaveToDb" />
+        android:onClick="addAndSaveToDb" />
 
 </LinearLayout>

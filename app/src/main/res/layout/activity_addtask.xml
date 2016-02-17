@@ -3,16 +3,6 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="New task"
-        android:id="@+id/textView2"
-        android:layout_marginTop="10dp"
-        android:textAlignment="center"
-        android:textStyle="bold" />
-
     <include layout="@layout/shared_content_task"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,6 +17,6 @@
         android:id="@+id/addTaskButton"
         android:background="#ffffff"
         android:layout_gravity="center_horizontal"
-        android:onClick="AddAndSaveToDb" />
+        android:onClick="addAndSaveToDb" />
 
 </LinearLayout>

@@ -1,5 +1,7 @@
 package com.projectse.aads.task_tracker.Models;
 
+import android.graphics.Color;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +9,14 @@ import java.util.List;
  * Created by Andrey Zolin on 07.02.2016.
  */
 public class CourseModel {
+
+    public Color getClr() {
+        return clr;
+    }
+
+    public void setClr(Color clr) {
+        this.clr = clr;
+    }
 
     public enum Priority{
         HIGH, LOW, MEDIUM
@@ -27,6 +37,7 @@ public class CourseModel {
 
     private String name;
     private Long id;
+    private Color clr =null;
     // by default priority has low level
     private Priority priority = Priority.LOW;
     private List<TaskModel> tasksList = new ArrayList<TaskModel>();

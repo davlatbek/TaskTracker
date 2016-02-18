@@ -77,7 +77,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnDateStartTime"
-                android:onClick="showDatePickerDialog" />
+                android:onClick="showDatePickerDialog"
+                android:background="@android:drawable/ic_menu_today"
+                android:backgroundTint="@android:color/black" />
 
             <EditText
                 android:layout_width="111dp"
@@ -94,7 +96,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnTimeStartTime"
-                android:onClick="showTimePickerDialog" />
+                android:onClick="showTimePickerDialog"
+                android:background="@android:drawable/ic_menu_recent_history"
+                android:backgroundTint="@android:color/black" />
         </LinearLayout>
 
         <Switch
@@ -147,7 +151,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnDateDeadline"
-                android:onClick="showDatePickerDialog" />
+                android:onClick="showDatePickerDialog"
+                android:background="@android:drawable/ic_menu_today"
+                android:backgroundTint="@android:color/black" />
 
             <EditText
                 android:layout_width="111dp"
@@ -164,7 +170,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnTimeDeadline"
-                android:onClick="showTimePickerDialog" />
+                android:onClick="showTimePickerDialog"
+                android:background="@android:drawable/ic_menu_recent_history"
+                android:backgroundTint="@android:color/black" />
         </LinearLayout>
 
         <TextView
@@ -218,5 +226,80 @@
             android:id="@+id/textView3"
             android:layout_weight="0.08" />
     </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/scrollView" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="fill">
+
+            <RelativeLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="0dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="0dp"
+                android:id="@+id/relativeLayout">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Subtasks:"
+                    android:id="@+id/textViewSubtasks"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_row="0"
+                    android:layout_column="0"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="0dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="9dp" />
+
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="31dp"
+                    android:layout_height="34dp"
+                    android:id="@+id/btnAddSubtask"
+                    android:layout_row="0"
+                    android:layout_column="17"
+                    android:background="@android:drawable/ic_input_add"
+                    android:layout_marginLeft="158dp"
+                    android:layout_marginEnd="46dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignBottom="@+id/textViewSubtasks"
+                    android:backgroundTint="#26ff00" />
+
+                <Button
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="31dp"
+                    android:layout_height="34dp"
+                    android:id="@+id/btnClearSubtasks"
+                    android:layout_row="0"
+                    android:layout_column="18"
+                    android:background="#582828"
+                    android:layout_marginLeft="220dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignBottom="@+id/btnAddSubtask" />
+            </RelativeLayout>
+
+            <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="166dp"
+                android:id="@+id/listViewSubtasks"
+                android:layout_row="5"
+                android:layout_column="0"
+                android:layout_marginLeft="0dp"
+                android:layout_below="@+id/relativeLayout"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="false" />
+        </RelativeLayout>
+    </ScrollView>
 
 </LinearLayout>

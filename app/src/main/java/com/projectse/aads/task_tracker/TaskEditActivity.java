@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -13,10 +14,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -27,7 +31,11 @@ import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Shows fields for editing current Task
@@ -54,17 +62,21 @@ public class TaskEditActivity extends AppCompatActivity {
     private static java.text.DateFormat dateFormat = new SimpleDateFormat("dd-MM-yy");
     private static java.text.DateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
+    DatabaseHelper db = null;
+    private ListView subtasks_list = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        db = DatabaseHelper.getsInstance(getApplicationContext());
         setContentView(R.layout.activity_task_edit);
 //        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         getViews();
 
-        Long task_id = getIntent().getLongExtra("task_id",-1);
+        Long task_id = getIntent().getLongExtra("task_id", -1);
 
-        DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
+
         task = db.getTask(task_id);
 
         if (task != null) fillData();
@@ -316,6 +328,29 @@ public class TaskEditActivity extends AppCompatActivity {
         isDeadlineNotifyView.setChecked(task.getIsNotifyDeadline());
 
         if (task.getDuration() != null ) durationView.setText(task.getDuration().toString());
+
+        List<TaskModel> subtasks = new ArrayList<>();
+        for(Long id : task.getSubtasks_ids()){
+            subtasks.add(db.getTask(id));
+        }
+        final StableArrayAdapter<TaskModel> adapter = new StableArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, subtasks);
+
+        subtasks_list = (ListView) findViewById(R.id.listViewSubtasks);
+        subtasks_list.setAdapter(adapter);
+        subtasks_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, final View view,
+                                    int position, long id) {
+                final TaskModel item = (TaskModel) parent.getItemAtPosition(position);
+                Toast.makeText(getApplicationContext(),
+                        item.toString(),
+                        Toast.LENGTH_SHORT).show();
+            }
+
+        });
+
     }
 
     private void getViews(){
@@ -508,5 +543,30 @@ public class TaskEditActivity extends AppCompatActivity {
         });
 
         alertDialog.create().show();
+    }
+
+    private class StableArrayAdapter<T extends Object> extends ArrayAdapter<T> {
+
+        HashMap<T, Integer> mIdMap = new HashMap<T, Integer>();
+
+        public StableArrayAdapter(Context context, int textViewResourceId,
+                                  List<T> objects) {
+            super(context, textViewResourceId, objects);
+            for (int i = 0; i < objects.size(); ++i) {
+                mIdMap.put(objects.get(i), i);
+            }
+        }
+
+        @Override
+        public long getItemId(int position) {
+            T item = getItem(position);
+            return mIdMap.get(item);
+        }
+
+        @Override
+        public boolean hasStableIds() {
+            return true;
+        }
+
     }
 }

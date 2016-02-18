@@ -4,14 +4,18 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -21,8 +25,13 @@ import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Davlatbek Isroilov on 1/31/2016.
@@ -37,12 +46,36 @@ public class AddTaskActivity extends AppCompatActivity {
     private static java.text.DateFormat dateFormat = new SimpleDateFormat("dd-MM-yy");
     private static java.text.DateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
+    private ListView subtasks_list = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addtask);
         getViews();
         databaseHelper = DatabaseHelper.getsInstance(this);
+
+        String[] items = new String[]{"Medium", "High", "Low", "Flow", "Mowq", "Tow", "Row"};
+
+
+        final StableArrayAdapter<String> adapter = new StableArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, Arrays.asList(items));
+
+        subtasks_list = (ListView) findViewById(R.id.listViewSubtasks);
+        subtasks_list.setAdapter(adapter);
+        subtasks_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, final View view,
+                                    int position, long id) {
+                final String item = (String) parent.getItemAtPosition(position);
+                Toast.makeText(getApplicationContext(),
+                        item,
+                        Toast.LENGTH_SHORT).show();
+            }
+
+        });
+
         //fillData();
         /*Spinner dropdown = (Spinner) findViewById(R.id.spinner);
         String[] items = new String[]{"Medium", "High", "Low"};
@@ -446,4 +479,28 @@ public class AddTaskActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    private class StableArrayAdapter<T extends Object> extends ArrayAdapter<T> {
+
+        HashMap<T, Integer> mIdMap = new HashMap<T, Integer>();
+
+        public StableArrayAdapter(Context context, int textViewResourceId,
+                                  List<T> objects) {
+            super(context, textViewResourceId, objects);
+            for (int i = 0; i < objects.size(); ++i) {
+                mIdMap.put(objects.get(i), i);
+            }
+        }
+
+        @Override
+        public long getItemId(int position) {
+            T item = getItem(position);
+            return mIdMap.get(item);
+        }
+
+        @Override
+        public boolean hasStableIds() {
+            return true;
+        }
+
+    }
 }

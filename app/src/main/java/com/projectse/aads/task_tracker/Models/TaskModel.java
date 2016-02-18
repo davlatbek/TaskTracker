@@ -20,7 +20,7 @@ public class TaskModel {
     private Calendar startTime = Calendar.getInstance();
 
     private Calendar deadline = Calendar.getInstance();
-    private Long duration = new Long( 0 );
+    private Long duration;
     private Boolean isNotifyDeadline = Boolean.FALSE;
     private Boolean isNotifyStartTime = Boolean.FALSE;
     private Boolean isDone = Boolean.FALSE;

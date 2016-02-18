@@ -43,7 +43,7 @@ public class AddTaskActivity extends AppCompatActivity {
         setContentView(R.layout.activity_addtask);
         databaseHelper = DatabaseHelper.getsInstance(this);
         getViews();
-        //fillData();
+
         /*Spinner dropdown = (Spinner) findViewById(R.id.spinner);
         String[] items = new String[]{"Medium", "High", "Low"};
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -79,9 +79,8 @@ public class AddTaskActivity extends AppCompatActivity {
      * @return True - if all required fileds are filled
      */
     public boolean validateTaskFields() {
-        Toast t = new Toast(getApplicationContext());
-        t.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-        correctTime();
+        Toast toast = new Toast(getApplicationContext());
+        toast.setGravity(Gravity.TOP | Gravity.LEFT, 0, 0);
 
         Calendar dCal = getCalendarFromTxtEditViews(deadlineDateView, deadlineTimeView);
         Calendar stCal = getCalendarFromTxtEditViews(startTimeDateView, startTimeTimeView);
@@ -89,41 +88,46 @@ public class AddTaskActivity extends AppCompatActivity {
         EditText editName = (EditText) findViewById(R.id.txtName);
 
         if (editName.getText().toString().trim().equals("")) {
-            editName.setError("Enter the task name!");
+            toast.makeText(getApplicationContext(), "Enter the task name!", Toast.LENGTH_SHORT).show();
             return false;
         }
 
         if (isNoSimilarTasks(editName.getText().toString())) {
-            editName.setError("Task with this name already exists!");
+            toast.makeText(getApplicationContext(), "Task with this name already exists!",
+                    Toast.LENGTH_SHORT).show();
             return false;
         }
 
         if (deadlineDateView != null) {
             if (deadlineDateView.getText().toString().equals("")) {
-                //deadlineDateView.setError("Enter the deadline!");
-                t.makeText(getApplicationContext(), "Enter the deadline!", Toast.LENGTH_SHORT).show();
+                toast.makeText(getApplicationContext(), "Enter the deadline!",
+                        Toast.LENGTH_SHORT).show();
                 return false;
             }
             if (stCal != null && stCal.after(dCal)) {
-                //startTimeDateView.setError("Start date should be before deadline!");
-                t.makeText(getApplicationContext(), "Start date should be before deadline!", Toast.LENGTH_SHORT).show();
+                toast.makeText(getApplicationContext(), "Start date must be before deadline!",
+                        Toast.LENGTH_SHORT).show();
                 return false;
             }
         }
 
-        //in case there is start time and deadline duration must be less than deadline - start time
+        //in case there is start time and deadline: duration must be less than deadline - start time
         if (stCal != null && !durationView.getText().toString().equals("") &&
                 dCal.getTime().getTime() - stCal.getTime().getTime()
                         < Long.parseLong(durationView.getText().toString()) * 60 * 60 * 1000) {
-            durationView.setError("Duration can't be more than deadline - start time!");
+            toast.makeText(getApplicationContext(),
+                    "Duration can't be more than time between deadline and start time!",
+                    Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        //in case there is no start time duration must be less than deadline - current time
+        //in case there is no start time: duration must be less than deadline - current time
         if (stCal == null && !durationView.getText().toString().equals("") &&
                 dCal.getTime().getTime() - Calendar.getInstance().getTime().getTime()
                         < Long.parseLong(durationView.getText().toString()) * 60 * 60 * 1000) {
-            durationView.setError("Duration can't be more than deadline - current time!");
+            toast.makeText(getApplicationContext(),
+                    "Duration can't be more than time between deadline and current time!",
+                    Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -368,56 +372,4 @@ public class AddTaskActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
     }
-
-    // flag for recursion exit. Use in correctTime only.
-    private boolean flag = false;
-
-    // return false, if all was correct
-    public boolean correctTime() {
-        EditText durationView = (EditText) findViewById(R.id.txtDuration);
-        Calendar dCal = getCalendarFromTxtEditViews(deadlineDateView, deadlineTimeView);
-        Calendar stCal = getCalendarFromTxtEditViews(startTimeDateView, startTimeTimeView);
-        boolean isCorrected = false;
-        if (flag == true) {
-            flag = false;
-            return false;
-        }
-
-        if (dCal == null && stCal == null)
-            return false;
-        // Case: deadline cannot be earlier than now.
-        // Set default.
-        if (Calendar.getInstance().after(dCal)) {
-            flag = true;
-            dCal = Calendar.getInstance();
-            dCal.set(Calendar.HOUR_OF_DAY, 23);
-            dCal.set(Calendar.MINUTE, 59);
-            dCal.set(Calendar.SECOND, 59);
-            setDateTime(deadlineDateView, null, dCal);
-            setDateTime(null, deadlineTimeView, dCal);
-            isCorrected = true;
-        }
-        // Case: if duration more than difference of deadline and startTime.
-        // Don't allow this. Set duration 0.
-        /*if (!durationView.getText().toString().equals(""))
-            if (dCal.getTime().getTime() - stCal.getTime().getTime()
-                    < Long.parseLong(durationView.getText().toString()) * 60 * 60 * 1000) {
-                flag = true;
-                Toast.makeText(getApplicationContext(), "Duration can't be more than " +
-                        "defference between start time and deadline", Toast.LENGTH_SHORT).show();
-                durationView.setText(String.valueOf(0));
-                isCorrected = true;
-            }
-        // Case: start time after deadline.
-        // Set starttime = deadline.
-        if (stCal != null)
-            if (stCal.after(dCal)) {
-                flag = true;
-                setDateTime(startTimeDateView, null, dCal);
-                setDateTime(null, startTimeTimeView, dCal);
-                isCorrected = true;
-            }*/
-        return isCorrected;
-    }
-
 }

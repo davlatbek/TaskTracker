@@ -148,7 +148,7 @@ public class TaskOverviewActivity extends AppCompatActivity {
             setDateTime(deadlineDateView, deadlineTimeView, task.getDeadline().getTimeInMillis());
         }
         isDeadlineNotifyView.setChecked(task.getIsNotifyDeadline());
-        if (task.getDuration() != null ) durationView.setText(task.getDuration().toString());
+        if (task.getDuration() > 0L ) durationView.setText(task.getDuration().toString());
     }
 
     /**

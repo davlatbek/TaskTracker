@@ -181,9 +181,7 @@ public class AddTaskActivity extends AppCompatActivity {
         task.setStartTime(startTimeCal);
         task.setIsNotifyStartTime(notifyStartTime.isChecked());
         task.setIsNotifyDeadline(notifyDeadLine.isChecked());
-        if (duration.getText().toString().equals("")) {
-            task.setDuration(0L);
-        } else
+        if (!duration.getText().toString().equals(""))
             task.setDuration(Long.parseLong(duration.getText().toString()));
 
         databaseHelper.addTask(task);

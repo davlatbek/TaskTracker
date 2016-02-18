@@ -35,6 +35,5 @@
         android:text="Delete"
         android:id="@+id/deleteButton"
         android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@+id/btnIsDone"
-        android:layout_marginBottom="35dp" />
+        android:layout_alignEnd="@+id/btnIsDone" />
 </RelativeLayout>

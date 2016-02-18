@@ -22,7 +22,8 @@
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="10"
-        android:id="@+id/txtName" />
+        android:id="@+id/txtName"
+        android:hint="Type a name for a task..." />
 
     <TextView
         android:layout_width="wrap_content"
@@ -36,7 +37,8 @@
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="10"
-        android:id="@+id/txtDescription" />
+        android:id="@+id/txtDescription"
+        android:hint="More about task..." />
 
     <RelativeLayout
         android:orientation="vertical"
@@ -70,7 +72,8 @@
                 android:id="@+id/txtDateStartTime"
                 android:layout_weight="0.82"
                 android:enabled="true"
-                android:focusable="false" />
+                android:focusable="false"
+                android:hint="Set date..." />
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -89,7 +92,8 @@
                 android:id="@+id/txtTimeStartTime"
                 android:editable="true"
                 android:enabled="true"
-                android:focusable="false"/>
+                android:focusable="false"
+                android:hint="Set time..." />
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -144,7 +148,8 @@
                 android:layout_weight="0.82"
                 android:editable="true"
                 android:enabled="true"
-                android:focusable="false"/>
+                android:focusable="false"
+                android:hint="Set date..." />
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -163,7 +168,8 @@
                 android:id="@+id/txtTimeDeadline"
                 android:editable="true"
                 android:enabled="true"
-                android:focusable="false"/>
+                android:focusable="false"
+                android:hint="Set time..." />
 
             <Button
                 style="?android:attr/buttonStyleSmall"
@@ -232,10 +238,10 @@
         android:layout_height="200dp"
         android:id="@+id/scrollView" >
 
-        <RelativeLayout
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="fill">
+            android:layout_height="match_parent">
 
             <RelativeLayout
                 android:orientation="horizontal"
@@ -273,7 +279,8 @@
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
                     android:layout_alignBottom="@+id/textViewSubtasks"
-                    android:backgroundTint="#26ff00" />
+                    android:backgroundTint="#26ff00"
+                    android:onClick="callAddSubtaskDialog" />
 
                 <Button
                     style="?android:attr/buttonStyleSmall"
@@ -282,11 +289,12 @@
                     android:id="@+id/btnClearSubtasks"
                     android:layout_row="0"
                     android:layout_column="18"
-                    android:background="#582828"
+                    android:background="@android:drawable/ic_menu_delete"
                     android:layout_marginLeft="220dp"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignBottom="@+id/btnAddSubtask" />
+                    android:layout_alignBottom="@+id/btnAddSubtask"
+                    android:backgroundTint="#851d1d" />
             </RelativeLayout>
 
             <ListView
@@ -298,8 +306,9 @@
                 android:layout_marginLeft="0dp"
                 android:layout_below="@+id/relativeLayout"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="false" />
-        </RelativeLayout>
+                android:layout_alignParentEnd="false"
+                android:drawSelectorOnTop="false" />
+        </LinearLayout>
     </ScrollView>
 
 </LinearLayout>

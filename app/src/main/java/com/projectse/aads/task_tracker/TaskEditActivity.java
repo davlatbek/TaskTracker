@@ -1,5 +1,7 @@
 package com.projectse.aads.task_tracker;
 
+import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -8,20 +10,29 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -301,6 +312,7 @@ public class TaskEditActivity extends AppCompatActivity {
         return cal;
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     private void fillData() {
 
         isDoneView.setChecked(task.getIsDone());
@@ -337,7 +349,18 @@ public class TaskEditActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1, subtasks);
 
         subtasks_list = (ListView) findViewById(R.id.listViewSubtasks);
+        TextView emptyList = new TextView(this);
+
+        emptyList.setText("The list of subtasks is empty");
+
         subtasks_list.setAdapter(adapter);
+        subtasks_list.setEmptyView(emptyList);
+        ((ViewGroup)subtasks_list.getParent()).addView(emptyList);
+        emptyList.setTextSize(25);
+        emptyList.setGravity(Gravity.CENTER);
+        emptyList.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
+
         subtasks_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -543,6 +566,90 @@ public class TaskEditActivity extends AppCompatActivity {
         });
 
         alertDialog.create().show();
+    }
+
+    public void callAddSubtaskDialog(View view){
+        DialogFragment newFragment = null;
+        newFragment = new MyDialog();
+        newFragment.show(getFragmentManager(), "sas");
+    }
+
+    public class MyDialog extends DialogFragment {
+
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+//			ListView listview = (ListView) findViewById(R.id.listview);
+
+            final Button btn = new Button(getApplicationContext());
+
+            btn.setText("Create new task");
+
+            // Set click listener for button
+            btn.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Toast.makeText(getApplicationContext(),
+                            "CREATE TASK... :",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+
+            LinearLayout l = new LinearLayout(getApplicationContext());
+            l.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
+
+            TextView t = new TextView(getApplicationContext());
+            t.setText("Add subtask.");
+            t.setTextSize(25);
+            t.setTextColor(Color.BLACK);
+            t.setLayoutParams(params);
+            btn.setLayoutParams(params);
+            l.addView(t);
+            l.addView(btn);
+            // Inflate and set the layout for the dialog
+            List<Long> candidates_ids = db.getSubtasksCandidates(task.getId());
+            List<TaskModel> candidates = new ArrayList<>();
+            for(Long id : candidates_ids){
+                candidates.add(db.getTask(id));
+            }
+
+            final ListAdapter adapter = new ArrayAdapter<TaskModel>(getActivity(),android.R.layout.simple_list_item_1, candidates);
+
+            // Pass null as the parent view because its going in the dialog layout
+            builder
+//					.setView(inflater.inflate(R.layout.dialog, null))
+//					.setView(btn)
+                    .setCustomTitle(l)
+//					.setTitle("Add Subtask")
+                    .setAdapter(adapter, new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int which) {
+                            final String item = (String) adapter.getItem(which);
+                            Toast.makeText(getApplicationContext(),
+                                    "Clicked " + item,
+                                    Toast.LENGTH_LONG).show();
+
+                        }
+
+                    })
+                            // Add action buttons
+                    .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            // sign in the user ...
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            MyDialog.this.getDialog().cancel();
+                        }
+                    });
+            return builder.create();
+        }
+
     }
 
     private class StableArrayAdapter<T extends Object> extends ArrayAdapter<T> {

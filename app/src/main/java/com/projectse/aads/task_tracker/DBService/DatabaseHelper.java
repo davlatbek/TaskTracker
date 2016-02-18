@@ -38,7 +38,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Constructor
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-//        context.deleteDatabase(DATABASE_NAME);
+        context.deleteDatabase(DATABASE_NAME);
 
     }
 
@@ -120,7 +120,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + TASKS_KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + TASKS_NAME + " TEXT,"
             + TASKS_DESCRIPTION + " TEXT,"
-            + TASKS_PARENT_TASK + " INTEGER, "
+            + TASKS_PARENT_TASK + " INTEGER DEFAULT NULL, "
             + TASKS_IS_DONE + " INTEGER,"
             + TASKS_START_TIME + " INTEGER,"
             + TASKS_DEADLINE + " INTEGER,"
@@ -423,6 +423,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         boolString = boolInt == 1;
         tasks.setIsNotifyStartTime(boolString);
         tasks.setDescription(c.getString(c.getColumnIndex(TASKS_DESCRIPTION)));
+        tasks.setParentTaskId(c.getLong(c.getColumnIndex(TASKS_PARENT_TASK)));
 
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
@@ -599,6 +600,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if(!c.isNull(c.getColumnIndex(TASKS_IS_DONE))) {
             task.setIsDone(c.getInt(c.getColumnIndex(TASKS_IS_DONE)) > 0);
         }
+        if (!c.isNull(c.getColumnIndex(TASKS_PARENT_TASK)))
+            task.setParentTaskId(c.getLong(c.getColumnIndex(TASKS_PARENT_TASK)));
 
         getSubtasks(task);
         return task;
@@ -631,6 +634,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         task.setSubtasks_ids(subtasksIdsArrayList);
     }
 
+    /**
+     * Get candidates for subtask
+     * @param task_id - task id, that's candidates we are looking for.
+     * @return list of id, task is available to be subtask
+     */
+    public List<Long> getSubtasksCandidates(Long task_id) {
+        List<Long> subtasksIdsArrayList = new ArrayList<>();
+
+        String selectQuery = "SELECT * FROM " + TABLE_TASKS
+                + " WHERE " + TASKS_KEY_ID + "!=" + task_id + " AND "  + TASKS_PARENT_TASK  + " IS NULL"
+                ;
+        Log.d(TAG, selectQuery);
+
+        List<TaskModel> list = getTaskModelList();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (c.moveToFirst()) {
+            do {
+                Log.d(TAG, c.getLong(c.getColumnIndex(TASKS_PARENT_TASK)) + " " + c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
+                subtasksIdsArrayList.add(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
+            } while (c.moveToNext());
+        }
+        return subtasksIdsArrayList;
+    }
+
     private void fillContentByTask(ContentValues values, TaskModel task) {
         values.put(TASKS_NAME, task.getName());
         values.put(TASKS_DESCRIPTION, task.getDescription());
@@ -639,7 +670,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(TASKS_DURATION, task.getDuration());
         values.put(TASKS_IS_NOTIFY_START_TIME,task.getIsNotifyStartTime()?1:0);
         values.put(TASKS_IS_NOTIFY_DEADLINE,task.getIsNotifyDeadline() ? 1 : 0);
-        values.put(TASKS_IS_DONE, task.getIsDone()?1:0);
+        values.put(TASKS_IS_DONE, task.getIsDone() ? 1 : 0);
     }
 
     /**

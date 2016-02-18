@@ -268,7 +268,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * This method is used to delete course from course table
      */
 
-    public void deleteCourse(long id) {
+    public boolean deleteCourse(long id) {
         // delete row in course table based on id
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -277,11 +277,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             db.delete(TABLE_COURSES, where, null);
             db.setTransactionSuccessful();
+            return true;
         } catch (Exception e) {
             Log.d(TAG, "Error while trying to delete course");
+            return false;
         } finally {
             db.endTransaction();
         }
+
     }
 
     /**
@@ -294,7 +297,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             ContentValues values = new ContentValues();
             values.put(COURSE_NAME, course.getName());
-            values.put(COURSE_PRIORITY, String.valueOf(course.getPriority()));
+            values.put(COURSE_PRIORITY, String.valueOf(course.fromPriorityToInt(course.getPriority())));
             id = db.update(TABLE_COURSES, values, COURSE_ID + " = ?",
                     new String[]{String.valueOf(course.getId())});
             db.setTransactionSuccessful();
@@ -522,7 +525,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Update course to task
      */
-    public long updateCourseToTask(long course_id, long task_id) {
+    public long updateCourseToTask(long task_id, long course_id) {
         SQLiteDatabase db = this.getWritableDatabase();
         int id = 0;
         db.beginTransaction();
@@ -584,7 +587,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (c.moveToFirst()) {
                 do {
                     taskList.add(getTask(c.getLong(c.getColumnIndex(TASKS_KEY_ID))));
-                    Log.d(TAG,"add to list");
+                    Log.d(TAG, "add to list");
 
                 } while (c.moveToNext());
             }

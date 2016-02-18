@@ -170,6 +170,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "FOREIGN KEY(" + SUBTASKS_SLAVE_ID + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + ")"
             + ");";
 
+    private static final String CREATE_TABLE_SETTINGS = "CREATE TABLE" +
+            TABLE_SETTINGS + " (" +
+            SETTINGS_ALWAYS_NOTIFY_START_TIME + " TEXT," +
+            SETTINGS_ALWAYS_NOTIFY_DEADLINE  + " TEXT," +
+            SETTINGS_NOTIFY_START_TIME_BEFORE  + " INTEGER," +
+            SETTINGS_NOTIFY_DEADLINE_BEFORE  + " INTEGER," +
+            SETTINGS_NOTIFY_START_TIME_X_TIMES + " INTEGER," +
+            SETTINGS_NOTIFY_DEADLINE_X_TIMES + " INTEGER);";
+
 
     /**
      * This method is called by system if the database is accessed but not yet
@@ -185,6 +194,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_COURSES); // create course table
         db.execSQL(CREATE_TABLE_COURSES_TO_TASK); // create course to task table
         db.execSQL(CREATE_TABLE_SUBTASKS); // create subtasks table
+        db.execSQL(CREATE_TABLE_SETTINGS); // create settings table
     }
 
     /**

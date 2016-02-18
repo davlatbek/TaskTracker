@@ -12,7 +12,7 @@ public class SettingsModel {
     // allow notify
     private Boolean AlwaysNotifyStartTime;
     private Boolean AlwaysNotifyDeadLine;
-    // the time between notification and StartTime/DeadLine
+    // the time (in minutes) between notification and StartTime/DeadLine
     private Integer NotifyStartTimeBefore;
     private Integer NotifyDeadLineBefore;
     // number of notifications

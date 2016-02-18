@@ -667,6 +667,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    // update particular setting in database by name and new value
+    public int updateSetting(String settingName, String value) {
+        int res = 0;
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(settingName, value);
+            res = db.update(TABLE_SETTINGS, values, settingName + "!= ",  new String[]{value});
+
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to update settings " + settingName + " in database");
+        } finally {
+            db.endTransaction();
+        }
+
+        return res;
+    }
+
     /**
      * Set isDone true for task with id.
      *

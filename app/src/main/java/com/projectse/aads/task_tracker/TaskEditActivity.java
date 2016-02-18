@@ -2,6 +2,7 @@ package com.projectse.aads.task_tracker;
 
 import android.annotation.TargetApi;
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -20,17 +21,16 @@ import android.text.format.DateFormat;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -43,7 +43,6 @@ import com.projectse.aads.task_tracker.Models.TaskModel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -74,7 +73,9 @@ public class TaskEditActivity extends AppCompatActivity {
     private static java.text.DateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
     DatabaseHelper db = null;
-    private ListView subtasks_list = null;
+    private ListView subtasksListView = null;
+    private List<TaskModel> subtasks_list = new ArrayList<>();
+    private static StableArrayAdapter<TaskModel> subtasks_adapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,7 +209,7 @@ public class TaskEditActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
 //                if(correctTime())
                 correctTime();
-                    task.setDeadline(getCalendarFromTxtEditViews(deadlineDateView, deadlineTimeView));
+                task.setDeadline(getCalendarFromTxtEditViews(deadlineDateView, deadlineTimeView));
             }
         });
 
@@ -235,11 +236,17 @@ public class TaskEditActivity extends AppCompatActivity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createDialog();
+                callDeleteConfirmDialog();
             }
         });
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        task = db.getTask(getIntent().getLongExtra("task_id", -1));
+        fillData();
+    }
     // flag for recursion exit. Use in correctTime only.
     private boolean flag = false;
     // return false, if all was correct
@@ -341,27 +348,27 @@ public class TaskEditActivity extends AppCompatActivity {
 
         if (task.getDuration() != null ) durationView.setText(task.getDuration().toString());
 
-        List<TaskModel> subtasks = new ArrayList<>();
+        subtasks_list.clear();
         for(Long id : task.getSubtasks_ids()){
-            subtasks.add(db.getTask(id));
+            subtasks_list.add(db.getTask(id));
         }
-        final StableArrayAdapter<TaskModel> adapter = new StableArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, subtasks);
+        subtasks_adapter = new StableArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, subtasks_list);
 
-        subtasks_list = (ListView) findViewById(R.id.listViewSubtasks);
+        subtasksListView = (ListView) findViewById(R.id.listViewSubtasks);
         TextView emptyList = new TextView(this);
 
         emptyList.setText("The list of subtasks is empty");
 
-        subtasks_list.setAdapter(adapter);
-        subtasks_list.setEmptyView(emptyList);
-        ((ViewGroup)subtasks_list.getParent()).addView(emptyList);
+        subtasksListView.setAdapter(subtasks_adapter);
+        subtasksListView.setEmptyView(emptyList);
+        ((ViewGroup) subtasksListView.getParent()).addView(emptyList);
         emptyList.setTextSize(25);
         emptyList.setGravity(Gravity.CENTER);
         emptyList.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT));
 
-        subtasks_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        subtasksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
@@ -543,12 +550,12 @@ public class TaskEditActivity extends AppCompatActivity {
     }
 
     // Conformation form for deleting task
-    private void createDialog() {
+    private void callDeleteConfirmDialog() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setMessage("Are you sure you want to delete this task?");
 
         alertDialog.setCancelable(false);
-        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Long task_id = getIntent().getLongExtra("task_id",-1);
@@ -558,7 +565,7 @@ public class TaskEditActivity extends AppCompatActivity {
             }
         });
 
-        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        alertDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -569,17 +576,29 @@ public class TaskEditActivity extends AppCompatActivity {
     }
 
     public void callAddSubtaskDialog(View view){
-        DialogFragment newFragment = null;
-        newFragment = new MyDialog();
+        MyDialog newFragment = new MyDialog();
+        newFragment.parent = this;
         newFragment.show(getFragmentManager(), "sas");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                subtasks_adapter.notifyDataSetChanged();
+            }
+        });
+//
+//        Toast.makeText(getApplicationContext(),
+//                "Subs " + subtasks_adapter.getCount(),
+//                Toast.LENGTH_LONG).show();
     }
 
     public class MyDialog extends DialogFragment {
 
+        Activity parent = null;
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
 
 //			ListView listview = (ListView) findViewById(R.id.listview);
 
@@ -590,9 +609,7 @@ public class TaskEditActivity extends AppCompatActivity {
             // Set click listener for button
             btn.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(),
-                            "CREATE TASK... :",
-                            Toast.LENGTH_LONG).show();
+                    callAddTaskActivity();
                 }
             });
 
@@ -616,7 +633,7 @@ public class TaskEditActivity extends AppCompatActivity {
                 candidates.add(db.getTask(id));
             }
 
-            final ListAdapter adapter = new ArrayAdapter<TaskModel>(getActivity(),android.R.layout.simple_list_item_1, candidates);
+            final ListAdapter adapter_candidates = new ArrayAdapter<TaskModel>(getActivity(),android.R.layout.simple_list_item_1, candidates);
 
             // Pass null as the parent view because its going in the dialog layout
             builder
@@ -624,30 +641,21 @@ public class TaskEditActivity extends AppCompatActivity {
 //					.setView(btn)
                     .setCustomTitle(l)
 //					.setTitle("Add Subtask")
-                    .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                    .setAdapter(adapter_candidates, new DialogInterface.OnClickListener() {
 
                         public void onClick(DialogInterface dialog, int which) {
-                            final String item = (String) adapter.getItem(which);
-                            Toast.makeText(getApplicationContext(),
-                                    "Clicked " + item,
-                                    Toast.LENGTH_LONG).show();
-
+                            TaskModel item = (TaskModel) adapter_candidates.getItem(which);
+                            addSubtask(item);
+                            ((TaskEditActivity)parent).onResume();
                         }
 
-                    })
-                            // Add action buttons
-                    .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int id) {
-                            // sign in the user ...
-                        }
-                    })
-                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            MyDialog.this.getDialog().cancel();
-                        }
                     });
             return builder.create();
+        }
+
+        public void callAddTaskActivity(){
+            Intent intent = new Intent (getApplicationContext(), AddTaskActivity.class);
+            startActivity(intent);
         }
 
     }
@@ -675,5 +683,13 @@ public class TaskEditActivity extends AppCompatActivity {
             return true;
         }
 
+    }
+
+    public void addSubtask(TaskModel subtask){
+        StableArrayAdapter<TaskModel> adapter = (StableArrayAdapter<TaskModel>) subtasksListView.getAdapter();
+        if( task == null || adapter == null)
+            return;
+        task.addSubtask(subtask);
+        db.updateTask(task);
     }
 }

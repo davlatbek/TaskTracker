@@ -3,13 +3,17 @@ package com.projectse.aads.task_tracker;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.ToggleButton;
@@ -40,7 +44,7 @@ public class TaskOverviewActivity extends AppCompatActivity {
     private Button deleteButton;
     private Button editButton;
     private Button buttonStartDate, buttonDeadline, buttonStartTime, buttonDeadlineTime;
-    private ToggleButton isDoneView;
+    private Switch switchFinished;
     private Spinner spinner;
 
     // Current task
@@ -62,12 +66,25 @@ public class TaskOverviewActivity extends AppCompatActivity {
         task = db.getTask(task_id);
         if (task != null)
             fillData();
-        isDoneView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        switchFinished.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 task.setIsDone(isChecked);
             }
         });
+
+        /*editButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        editButton.setBackgroundColor(Color.GREEN);
+                        break;
+                    }
+                }
+                return true;
+            }
+        });*/
     }
 
     private void getViews() {
@@ -80,7 +97,7 @@ public class TaskOverviewActivity extends AppCompatActivity {
         isStartTimeNotifyView = (Switch) findViewById(R.id.swtStartTimeNotification);
         isDeadlineNotifyView = (Switch) findViewById(R.id.swtDeadlineNotification);
         durationView = (EditText) findViewById(R.id.txtDuration);
-        isDoneView = (ToggleButton) findViewById(R.id.btnIsDone);
+        switchFinished = (Switch) findViewById(R.id.switchFinished);
         editButton = (Button) findViewById(R.id.editTaskButton);
         deleteButton = (Button) findViewById(R.id.deleteTaskButton);
         editButton.setOnClickListener(new View.OnClickListener() {
@@ -137,7 +154,7 @@ public class TaskOverviewActivity extends AppCompatActivity {
     }
 
     private void fillData() {
-        isDoneView.setChecked(task.getIsDone());
+        switchFinished.setChecked(task.getIsDone());
         if (task.getName() != null ) nameView.setText(task.getName());
         if (task.getDescription() != null ) descView.setText(task.getDescription());
         if (task.getStartTime() != null ) {
@@ -148,7 +165,7 @@ public class TaskOverviewActivity extends AppCompatActivity {
             setDateTime(deadlineDateView, deadlineTimeView, task.getDeadline().getTimeInMillis());
         }
         isDeadlineNotifyView.setChecked(task.getIsNotifyDeadline());
-        if (task.getDuration() != null ) durationView.setText(task.getDuration().toString());
+        if (task.getDuration() > 0L ) durationView.setText(task.getDuration().toString());
     }
 
     /**

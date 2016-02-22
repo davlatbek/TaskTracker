@@ -878,19 +878,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Gets a day as an input and returns list of tasks for a randomly chosen week
      *
-     * @param day Choose day starting from which tasks will be returned for a week
+     * @param startingDay Choose day starting from which tasks will be returned for a week
      * @return List of random week tasks
      */
-    public List<TaskModel> getTasksForAChosenWeek(Calendar day) {
+    public List<TaskModel> getTasksForAChosenWeek(Calendar startingDay) {
         List<TaskModel> tasks = new ArrayList<>();
 
         //setting starting day time
-        day.set(Calendar.HOUR_OF_DAY, 00);
-        day.set(Calendar.MINUTE, 00);
-        day.set(Calendar.SECOND, 01);
+        startingDay.set(Calendar.HOUR_OF_DAY, 00);
+        startingDay.set(Calendar.MINUTE, 00);
+        startingDay.set(Calendar.SECOND, 01);
 
         //setting last day of random week
-        Calendar lastDay = day;
+        Calendar lastDay = startingDay;
         lastDay.add(Calendar.DATE, 7);
         lastDay.set(Calendar.HOUR_OF_DAY, 23);
         lastDay.set(Calendar.MINUTE, 59);
@@ -907,7 +907,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             do {
                 TaskModel task = new TaskModel();
                 cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
-                if (cal.getTime().getTime() >= day.getTime().getTime() &&
+                /*if (cal.getTime().getTime() >= startingDay.getTime().getTime() &&
+                        cal.getTime().getTime() <= lastDay.getTime().getTime()) {*/
+                if (cal.after(startingDay) &&
                         cal.getTime().getTime() <= lastDay.getTime().getTime()) {
                     task.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
                     task.setName(c.getString(c.getColumnIndex(TASKS_NAME)));

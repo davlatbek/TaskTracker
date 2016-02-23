@@ -775,10 +775,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (c.moveToFirst()) {
             do {
                 Log.d(TAG, c.getLong(c.getColumnIndex(TASKS_PARENT_TASK)) + " " + c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
-                subtasksIdsArrayList.add(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
+                Long tid = c.getLong(c.getColumnIndex(TASKS_KEY_ID));
+                if(!isAnyChildrenForTask(tid))
+                    subtasksIdsArrayList.add(tid);
             } while (c.moveToNext());
         }
         return subtasksIdsArrayList;
+    }
+
+    /**
+     *
+     * @param task_id
+     * @return true if children exist, else false
+     */
+    private boolean isAnyChildrenForTask(Long task_id){
+        String selectQuery = "SELECT * FROM " + TABLE_TASKS
+                + " WHERE " + TASKS_PARENT_TASK + "=" + task_id
+                ;
+        Log.d(TAG, selectQuery);
+
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (c.moveToFirst())
+            return true;
+        return false;
     }
 
     private void fillContentByTask(ContentValues values, TaskModel task) {

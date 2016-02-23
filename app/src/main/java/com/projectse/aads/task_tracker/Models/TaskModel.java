@@ -56,6 +56,8 @@ public class TaskModel {
         deadline.set(Calendar.MINUTE, 59);
         deadline.set(Calendar.SECOND, 59);
 
+        duration = Long.valueOf(0);
+
     }
 
     public TaskModel(Long id, String name) {

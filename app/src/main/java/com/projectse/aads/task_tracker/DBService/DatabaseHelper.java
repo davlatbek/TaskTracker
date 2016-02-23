@@ -312,7 +312,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public long addTask(TaskModel task) {
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = 0;
+        long id = -1;
 
         // Begin Transaction
         db.beginTransaction();
@@ -329,6 +329,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(TASKS_IS_NOTIFY_START_TIME, bool);
             bool = task.getIsDone() ? 1 : 0;
             values.put(TASKS_IS_DONE, bool);
+
+            if( (task.getParentTaskId()) != null && (!(task.getParentTaskId() < 0)) )
+                values.put(TASKS_PARENT_TASK, task.getParentTaskId());
 
             values.put(TASKS_DURATION, task.getDuration());
             if (task.getStartTime() != null)
@@ -400,6 +403,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return TaskModel object or null
      */
     public TaskModel getTask(long id) {
+        if (id < 0) return null;
+
         SQLiteDatabase db = this.getReadableDatabase();
 
         // SELECT * FROM tasks WHERE id = ?;
@@ -762,8 +767,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Long> subtasksIdsArrayList = new ArrayList<>();
 
         String selectQuery = "SELECT * FROM " + TABLE_TASKS
-                + " WHERE " + TASKS_KEY_ID + "!=" + task_id + " AND "  + TASKS_PARENT_TASK  + " IS NULL"
-                ;
+                + " WHERE " + TASKS_KEY_ID + "!=" + task_id + " AND "  + TASKS_PARENT_TASK  + " IS NULL";
         Log.d(TAG, selectQuery);
 
         List<TaskModel> list = getTaskModelList();

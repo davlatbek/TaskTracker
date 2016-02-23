@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
@@ -136,7 +137,7 @@ public class TaskOverviewActivity extends TaskActivity {
     public void callEditTaskActivity(TaskModel task){
         Intent intent = new Intent (this, TaskEditActivity.class);
         intent.putExtra("task_id", task.getId());
-        startActivityForResult(intent, 0);
+        startActivityForResult(intent, RequestCode.REQ_CODE_EDITTASK);
     }
 
     private void callPlanActivity() {
@@ -189,17 +190,14 @@ public class TaskOverviewActivity extends TaskActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == RESULT_OK){
+            switch (requestCode){
+                case RequestCode.REQ_CODE_EDITTASK:
+                    Long task_id = data.getLongExtra("task_id", -1L);
+                    task = db.getTask(task_id);
+                    break;
+            }
+        }
     }
 }

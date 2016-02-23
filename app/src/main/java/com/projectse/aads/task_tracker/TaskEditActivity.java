@@ -273,9 +273,10 @@ public class TaskEditActivity extends TaskActivity {
             case android.R.id.home:
                 DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
                 db.updateTask(task);
-                Intent intent = new Intent(this, TaskOverviewActivity.class);
+                Intent intent = new Intent();
                 intent.putExtra("task_id", task.getId());
-                startActivity(intent);
+                setResult(RESULT_OK, intent);
+                finish();
                 return true;
         }
         return super.onOptionsItemSelected(item);

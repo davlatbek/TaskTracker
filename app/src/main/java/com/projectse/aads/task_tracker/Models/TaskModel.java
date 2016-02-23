@@ -145,7 +145,7 @@ public class TaskModel {
 
     public void addSubtask(TaskModel task){
         this.subtasks_ids.add(task.getId());
-        task.setParentTaskId(this.id);
+        if(this.id != null)task.setParentTaskId(this.id);
     }
 
     public List<Long> getSubtasks_ids() {

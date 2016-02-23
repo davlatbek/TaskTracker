@@ -33,6 +33,7 @@ import java.util.List;
  * Innopolis University
  */
 public class AddTaskActivity extends TaskActivity {
+    private Long parent_id = -1L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,7 @@ public class AddTaskActivity extends TaskActivity {
         setContentView(R.layout.activity_addtask);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         db = DatabaseHelper.getsInstance(this);
+        parent_id = getIntent().getLongExtra("parent_id", -1L);
         task = new TaskModel();
         getViews();
         fillData();
@@ -64,10 +66,11 @@ public class AddTaskActivity extends TaskActivity {
      */
     public void addAndSaveToDb(View v) {
         if (validateTaskFields()) {
-            if (addTaskToDatabase()) {
-                Intent intent = new Intent(this, PlanActivity.class);
-                startActivity(intent);
-            }
+            long task_id = addTaskToDatabase();
+            Intent intent = new Intent();
+            intent.putExtra("task_id", (Long)task_id);
+            setResult(RESULT_OK, intent);
+            finish();
         }
     }
 
@@ -151,7 +154,7 @@ public class AddTaskActivity extends TaskActivity {
      *
      * @return True if all data is successfully recorded to database
      */
-    public boolean addTaskToDatabase() {
+    public long addTaskToDatabase() {
         Calendar deadLineCal, startTimeCal;
         deadLineCal = getCalendarFromTxtEditViews(deadlineDateView, deadlineTimeView);
 
@@ -169,7 +172,9 @@ public class AddTaskActivity extends TaskActivity {
         if (!durationView.getText().toString().equals(""))
             task.setDuration(Long.parseLong(durationView.getText().toString()));
 
-        db.addTask(task);
-        return true;
+        if(!(parent_id < 0))
+            task.setParentTaskId(parent_id);
+
+        return db.addTask(task);
     }
 }

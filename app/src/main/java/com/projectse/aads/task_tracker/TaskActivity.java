@@ -44,9 +44,6 @@ import java.util.List;
  */
 public abstract class TaskActivity extends AppCompatActivity {
 
-    //TODO delete this
-    private boolean flag = false;
-
     // Views
     protected EditText nameView;
     protected EditText descView;
@@ -86,6 +83,7 @@ public abstract class TaskActivity extends AppCompatActivity {
     }
 
     protected void fillData() {
+        db = DatabaseHelper.getsInstance(getApplicationContext());
         if (task.getName() != null ) nameView.setText(task.getName());
         if (task.getDescription() != null ) descView.setText(task.getDescription());
         if (task.getStartTime() != null ) {
@@ -118,20 +116,17 @@ public abstract class TaskActivity extends AppCompatActivity {
 
         subtasksListView = (ListView) findViewById(R.id.listViewSubtasks);
 
-        if (!flag) {
-            TextView emptyList = new TextView(this);
-            emptyList.setText("The list of subtasks is empty");
+        TextView emptyList = new TextView(this);
+        emptyList.setText("The list of subtasks is empty");
 
-            subtasksListView.setAdapter(subtasks_adapter);
+        subtasksListView.setAdapter(subtasks_adapter);
 
-            subtasksListView.setEmptyView(emptyList);
-            ((ViewGroup) subtasksListView.getParent()).addView(emptyList);
-            emptyList.setTextSize(25);
-            emptyList.setGravity(Gravity.CENTER);
-            emptyList.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT));
-//            flag = true;
-        }
+        subtasksListView.setEmptyView(emptyList);
+        ((ViewGroup) subtasksListView.getParent()).addView(emptyList);
+        emptyList.setTextSize(25);
+        emptyList.setGravity(Gravity.CENTER);
+        emptyList.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
 
         subtasksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -331,6 +326,9 @@ public abstract class TaskActivity extends AppCompatActivity {
     public class AddSubtaskDialog extends DialogFragment {
 
         Activity parent = null;
+        List<TaskModel> candidates = new ArrayList<>();
+        ListAdapter adapter_candidates = null;
+        TaskModel stored_task = task;
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -365,12 +363,12 @@ public abstract class TaskActivity extends AppCompatActivity {
             l.addView(btn);
             // Inflate and set the layout for the dialog
             List<Long> candidates_ids = db.getSubtasksCandidates(task.getId());
-            List<TaskModel> candidates = new ArrayList<>();
+            candidates.clear();
             for(Long id : candidates_ids){
                 candidates.add(db.getTask(id));
             }
 
-            final ListAdapter adapter_candidates = new ArrayAdapter<TaskModel>(getActivity(),android.R.layout.simple_list_item_1, candidates);
+            adapter_candidates = new ArrayAdapter<TaskModel>(getActivity(),android.R.layout.simple_list_item_1, candidates);
 
             // Pass null as the parent view because its going in the dialog layout
             builder
@@ -384,16 +382,36 @@ public abstract class TaskActivity extends AppCompatActivity {
                             TaskModel item = (TaskModel) adapter_candidates.getItem(which);
                             addSubtask(item);
                             ((TaskEditActivity)parent).onResume();
+//                            dismiss();
                         }
 
                     });
             return builder.create();
         }
 
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            if(resultCode == RESULT_OK){
+                switch (requestCode){
+                    case RequestCode.REQ_CODE_ADDTASK:
+                        TaskModel item = db.getTask(data.getLongExtra("task_id",-1));
+                        task = stored_task;
+                        addSubtask(item);
+//                        ((TaskEditActivity)parent).onResume();
+                        dismiss();
+                        break;
+                }
+            }
+        }
+
         public void callAddTaskActivity(){
             Intent intent = new Intent (getApplicationContext(), AddTaskActivity.class);
-            startActivity(intent);
+            intent.putExtra("parent_id",task.getId());
+            startActivityForResult(intent, RequestCode.REQ_CODE_ADDTASK);
         }
 
     }
+
+
 }

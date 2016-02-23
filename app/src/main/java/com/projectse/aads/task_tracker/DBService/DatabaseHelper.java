@@ -402,7 +402,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Get task object by id
      *
      * @param id
-     * @return TODO check add support of subtasks
+     * @return TaskModel object or null
      */
     public TaskModel getTask(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -414,8 +414,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Cursor c = db.rawQuery(selectQuery, null);
 
-        if (c != null)
-            c.moveToFirst();
+        if(!c.moveToFirst())
+            return null;
 
         TaskModel tasks = new TaskModel();
         tasks.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));

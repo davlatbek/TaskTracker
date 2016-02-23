@@ -794,11 +794,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ;
         Log.d(TAG, selectQuery);
 
-
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);
 
-        // looping through all rows and adding to list
+        // is cursor stores anything
         if (c.moveToFirst())
             return true;
         return false;

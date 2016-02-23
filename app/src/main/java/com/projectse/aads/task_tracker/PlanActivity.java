@@ -68,6 +68,7 @@ public class PlanActivity extends AppCompatActivity {
 //            t.addSubtask(t_buf);
 //        }
         t.setSubtasks_ids(subts);
+        List<TaskModel> list1 = db.getTaskModelList();
         try {
             db.updateTask(t);
         } catch (Exception e) {

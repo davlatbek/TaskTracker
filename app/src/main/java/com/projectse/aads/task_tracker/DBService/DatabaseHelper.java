@@ -332,6 +332,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             if( (task.getParentTaskId()) != null && (!(task.getParentTaskId() < 0)) )
                 values.put(TASKS_PARENT_TASK, task.getParentTaskId());
+            else
+                values.putNull(TASKS_PARENT_TASK);
 
             values.put(TASKS_DURATION, task.getDuration());
             if (task.getStartTime() != null)
@@ -451,11 +453,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * RECEIVE LIST OF TASKS
      *
-<<<<<<< HEAD
      * @return
-=======
-     * @return TODO add support of subtasks
->>>>>>> develop
      */
 
     public List<TaskModel>

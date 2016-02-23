@@ -14,6 +14,8 @@ import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -45,6 +47,15 @@ public class AddTaskActivity extends TaskActivity {
         task = new TaskModel();
         getViews();
         fillData();
+    }
+
+    @Override
+    protected void getViews() {
+        super.getViews();
+        if(getIntent().getBooleanExtra("hide_subtasks",false)){
+            ScrollView sub_l = (ScrollView) findViewById(R.id.subtasksScrollView);
+            sub_l.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override

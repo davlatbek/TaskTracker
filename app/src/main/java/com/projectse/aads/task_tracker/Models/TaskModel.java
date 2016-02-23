@@ -42,7 +42,7 @@ public class TaskModel {
     }
 
     // not supported yet
-    private Long parentTaskId;
+    private Long parentTaskId = -1L;
 
     private Integer priority = 0;
     public TaskModel(){

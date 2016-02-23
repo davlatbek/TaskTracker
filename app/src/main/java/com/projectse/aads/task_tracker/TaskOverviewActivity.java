@@ -15,6 +15,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -154,6 +155,7 @@ public class TaskOverviewActivity extends TaskActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
     }
 
     @Override

@@ -14,7 +14,9 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
@@ -179,6 +181,11 @@ public class TaskEditActivity extends TaskActivity {
         Long task_id = getIntent().getLongExtra("task_id", -1);
         task = db.getTask(task_id);
 
+        ScrollView sub_l = (ScrollView) findViewById(R.id.subtasksScrollView);
+        sub_l.setVisibility(View.VISIBLE);
+        if( task !=null && task.getParentTaskId()!=null && task.getParentTaskId() > 0 ) {
+            sub_l.setVisibility(View.INVISIBLE);
+        }
         if (task != null) fillData();
         setListeners();
     }
@@ -230,41 +237,9 @@ public class TaskEditActivity extends TaskActivity {
         DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
         db.updateTask(task);
 
-        setResult(0);
+        setResult(RESULT_OK);
         super.onDestroy();
         finish();
-    }
-
-    public void callPlanActivity(){
-        Intent intent = new Intent (getApplicationContext(), PlanActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        startActivity(intent);
-    }
-
-    // Conformation form for deleting task
-    private void callDeleteConfirmDialog() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setMessage("Are you sure you want to delete this task?");
-
-        alertDialog.setCancelable(false);
-        alertDialog.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Long task_id = getIntent().getLongExtra("task_id", -1);
-                DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
-                db.deleteTask(task_id);
-                callPlanActivity();
-            }
-        });
-
-        alertDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-
-        alertDialog.create().show();
     }
 
     @Override

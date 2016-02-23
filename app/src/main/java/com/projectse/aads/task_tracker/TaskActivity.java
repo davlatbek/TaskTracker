@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -66,6 +67,8 @@ public abstract class TaskActivity extends AppCompatActivity {
     // Current task
     protected static TaskModel task = null;
 
+    private boolean isEmptyListSet = false;
+
     protected void getViews(){
         nameView = (EditText) findViewById(R.id.txtName);
         descView = (EditText) findViewById(R.id.txtDescription);
@@ -80,6 +83,8 @@ public abstract class TaskActivity extends AppCompatActivity {
 
         isStartTimeNotifyView = (Switch) findViewById(R.id.swtStartTimeNotification);
         isDeadlineNotifyView = (Switch) findViewById(R.id.swtDeadlineNotification);
+
+
     }
 
     protected void fillData() {
@@ -100,7 +105,7 @@ public abstract class TaskActivity extends AppCompatActivity {
             // TODO obsolete
 //            deadlineDateView.setText((new Date(task.getDeadline().getTime())).toString());
 //            deadlineTimeView.setText((new Time(task.getDeadline().getTime())).toString());
-            setDateTime(deadlineDateView,deadlineTimeView,task.getDeadline().getTimeInMillis());
+            setDateTime(deadlineDateView, deadlineTimeView, task.getDeadline().getTimeInMillis());
         }
 
         isDeadlineNotifyView.setChecked(task.getIsNotifyDeadline());
@@ -115,18 +120,19 @@ public abstract class TaskActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1, subtasks_list);
 
         subtasksListView = (ListView) findViewById(R.id.listViewSubtasks);
-
-        TextView emptyList = new TextView(this);
-        emptyList.setText("The list of subtasks is empty");
-
         subtasksListView.setAdapter(subtasks_adapter);
 
-        subtasksListView.setEmptyView(emptyList);
-        ((ViewGroup) subtasksListView.getParent()).addView(emptyList);
-        emptyList.setTextSize(25);
-        emptyList.setGravity(Gravity.CENTER);
-        emptyList.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT));
+        if(!isEmptyListSet){
+            TextView emptyList = new TextView(this);
+            emptyList.setText("The list of subtasks is empty");
+            subtasksListView.setEmptyView(emptyList);
+            ((ViewGroup) subtasksListView.getParent()).addView(emptyList);
+            emptyList.setTextSize(25);
+            emptyList.setGravity(Gravity.CENTER);
+            emptyList.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT));
+            isEmptyListSet = true;
+        }
 
         subtasksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -140,7 +146,6 @@ public abstract class TaskActivity extends AppCompatActivity {
             }
 
         });
-
     }
 
     /**
@@ -408,6 +413,7 @@ public abstract class TaskActivity extends AppCompatActivity {
         public void callAddTaskActivity(){
             Intent intent = new Intent (getApplicationContext(), AddTaskActivity.class);
             intent.putExtra("parent_id",task.getId());
+            intent.putExtra("hide_subtasks",true);
             startActivityForResult(intent, RequestCode.REQ_CODE_ADDTASK);
         }
 

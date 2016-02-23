@@ -3,6 +3,7 @@ package com.projectse.aads.task_tracker;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -10,12 +11,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.TaskModel;
@@ -68,7 +71,7 @@ public class PlanActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
                 final TaskModel item = (TaskModel) parent.getItemAtPosition(position);
-                callEditTaskActivity(item);
+                callTaskOverviewActivity(item);
            }
 
        });
@@ -140,5 +143,12 @@ public class PlanActivity extends AppCompatActivity {
     public void callAddTaskActivity(){
         Intent intent = new Intent (getApplicationContext(), AddTaskActivity.class);
         startActivity(intent);
+    }
+
+    public void callTaskOverviewActivity(TaskModel taskModel){
+        Intent intent = new Intent (getApplicationContext(), TaskOverviewActivity.class);
+        intent.putExtra("task_id", taskModel.getId());
+        startActivityForResult(intent,0);
+        adapter.notifyDataSetChanged();
     }
 }

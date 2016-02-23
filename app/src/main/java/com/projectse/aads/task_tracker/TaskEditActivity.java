@@ -19,6 +19,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -62,9 +63,6 @@ public class TaskEditActivity extends AppCompatActivity {
     private static EditText deadlineTimeView;
     private EditText durationView;
     private Switch isStartTimeNotifyView, isDeadlineNotifyView;
-
-    private Button deleteButton;
-    private ToggleButton isDoneView;
 
     // Current task
     private static TaskModel task = null;
@@ -193,7 +191,7 @@ public class TaskEditActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
 //                if(correctTime())
                 correctTime();
-                    task.setDeadline(getCalendarFromTxtEditViews(deadlineDateView, deadlineTimeView));
+                task.setDeadline(getCalendarFromTxtEditViews(deadlineDateView, deadlineTimeView));
             }
         });
         deadlineDateView.addTextChangedListener(new TextWatcher() {
@@ -213,12 +211,6 @@ public class TaskEditActivity extends AppCompatActivity {
             }
         });
 
-        isDoneView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                task.setIsDone(isChecked);
-            }
-        });
         isStartTimeNotifyView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -229,14 +221,6 @@ public class TaskEditActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 task.setIsNotifyDeadline(isChecked);
-            }
-        });
-
-        deleteButton = (Button) findViewById(R.id.deleteButton);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                callDeleteConfirmDialog();
             }
         });
     }
@@ -322,8 +306,6 @@ public class TaskEditActivity extends AppCompatActivity {
     @TargetApi(Build.VERSION_CODES.M)
     private void fillData() {
 
-        isDoneView.setChecked(task.getIsDone());
-
         if (task.getName() != null ) nameView.setText(task.getName());
         if (task.getDescription() != null ) descView.setText(task.getDescription());
 
@@ -397,8 +379,6 @@ public class TaskEditActivity extends AppCompatActivity {
 
         isStartTimeNotifyView = (Switch) findViewById(R.id.swtStartTimeNotification);
         isDeadlineNotifyView = (Switch) findViewById(R.id.swtDeadlineNotification);
-
-        isDoneView = (ToggleButton) findViewById(R.id.btnIsDone);
     }
 
 
@@ -558,7 +538,7 @@ public class TaskEditActivity extends AppCompatActivity {
         alertDialog.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Long task_id = getIntent().getLongExtra("task_id",-1);
+                Long task_id = getIntent().getLongExtra("task_id", -1);
                 DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
                 db.deleteTask(task_id);
                 callPlanActivity();
@@ -691,5 +671,19 @@ public class TaskEditActivity extends AppCompatActivity {
             return;
         task.addSubtask(subtask);
         db.updateTask(task);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
+                db.updateTask(task);
+                Intent intent = new Intent(this, TaskOverviewActivity.class);
+                intent.putExtra("task_id", task.getId());
+                startActivity(intent);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

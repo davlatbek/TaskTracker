@@ -29,6 +29,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Course:"
+        android:id="@+id/textViewCourseName" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinnerCourseName"
+        android:spinnerMode="dropdown"
+
+        android:foregroundGravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:focusable="false"
+        android:layout_marginLeft="-5dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Description:"
         android:id="@+id/textViewDesc" />
 
@@ -45,13 +64,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Start Date and Time"
-            android:id="@+id/textView" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -81,6 +93,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/btnDateStartTime"
                 android:onClick="showDatePickerDialog"
+                android:clickable="false"
                 android:background="@android:drawable/ic_menu_today"
                 android:backgroundTint="@android:color/black" />
 
@@ -104,6 +117,13 @@
                 android:background="@android:drawable/ic_menu_recent_history"
                 android:backgroundTint="@android:color/black" />
         </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Start Date and Time"
+            android:id="@+id/textView" />
 
         <Switch
             android:layout_width="wrap_content"

@@ -111,7 +111,10 @@ public abstract class TaskActivity extends AppCompatActivity {
         isDeadlineNotifyView.setChecked(task.getIsNotifyDeadline());
 
         if (task.getDuration() != null ) durationView.setText(task.getDuration().toString());
+        fillSubtasks();
+    }
 
+    private void fillSubtasks(){
         subtasks_list.clear();
         for(Long id : task.getSubtasks_ids()){
             subtasks_list.add(db.getTask(id));

@@ -1,5 +1,6 @@
 package com.projectse.aads.task_tracker.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -11,7 +12,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
+import com.projectse.aads.task_tracker.TaskActivity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -50,15 +53,19 @@ public class SubtasksAdapter<T extends Object> extends ArrayAdapter<T> {
         }
 
         TextView textChild = (TextView) convertView.findViewById(R.id.txtSubtaskName);
-        textChild.setText(getItem(position).toString());
+        final TaskModel task = (TaskModel)getItem(position);
+        textChild.setText(task.toString());
         textChild.setTextColor(Color.BLACK);
         textChild.setPaintFlags(textChild.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
-        Button button = (Button)convertView.findViewById(R.id.buttonChild);
+        Button button = (Button)convertView.findViewById(R.id.btnDeleteSubtask);
+
         button.setOnClickListener(new View.OnClickListener() {
+            long id = task.getId();
             @Override
             public void onClick(View view) {
                 Toast.makeText(getContext(), "button is pressed", Toast.LENGTH_SHORT).show();
+                ((TaskActivity)getContext()).createDeleteSubtaskDialog(id);
             }
         });
         return convertView;

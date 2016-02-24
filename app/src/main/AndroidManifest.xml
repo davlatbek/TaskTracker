@@ -30,22 +30,12 @@
 
         <activity
             android:name=".AddTaskActivity"
-            android:label="Adding new task"
-            android:parentActivityName=".PlanActivity" >
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".PlanActivity" />
+            android:label="Adding new task">
         </activity>
 
         <activity
             android:name=".TaskOverviewActivity"
             android:label="Task Overview">
-            android:parentActivityName=".PlanActivity" >
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".PlanActivity" />
         </activity>
 
     </application>

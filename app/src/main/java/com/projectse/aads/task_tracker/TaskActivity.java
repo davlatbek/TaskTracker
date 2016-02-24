@@ -7,6 +7,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -55,9 +56,9 @@ public abstract class TaskActivity extends AppCompatActivity {
     protected EditText durationView;
     protected Switch isStartTimeNotifyView, isDeadlineNotifyView;
 
-    protected DatabaseHelper db = null;
+    protected static DatabaseHelper db = null;
     protected ListView subtasksListView = null;
-    protected List<TaskModel> subtasks_list = new ArrayList<>();
+    protected static List<TaskModel> subtasks_list = new ArrayList<>();
     protected static SubtasksAdapter<TaskModel> subtasks_adapter = null;
 
 
@@ -114,11 +115,15 @@ public abstract class TaskActivity extends AppCompatActivity {
         fillSubtasks();
     }
 
-    private void fillSubtasks(){
+    private static void fillSubtasksList(){
         subtasks_list.clear();
         for(Long id : task.getSubtasks_ids()){
             subtasks_list.add(db.getTask(id));
         }
+    }
+
+    public void fillSubtasks(){
+        fillSubtasksList();
         subtasks_adapter = new SubtasksAdapter<>(this,
                 android.R.layout.simple_list_item_1, subtasks_list);
 
@@ -430,17 +435,15 @@ public abstract class TaskActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == RESULT_OK){
-            switch (requestCode){
-                case RequestCode.REQ_CODE_VIEWTASK:
-                    if(data.getLongExtra("deleted_task_id",-1) > 0){
-                        subtasks_list.clear();
-                        for(Long id : task.getSubtasks_ids()){
-                            subtasks_list.add(db.getTask(id));
-                        }
-                        subtasks_adapter.notifyDataSetChanged();
-                    }
-                    break;
-            }
+            fillSubtasksList();
+            subtasks_adapter.notifyDataSetChanged();
         }
     }
+
+    public void createDeleteSubtaskDialog(final Long subtask_id) {
+        task.deleteSubtask(subtask_id);
+        db.updateTask(task);
+        onResume();
+    }
+
 }

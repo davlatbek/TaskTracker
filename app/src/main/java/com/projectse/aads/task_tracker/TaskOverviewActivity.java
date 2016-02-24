@@ -170,6 +170,7 @@ public class TaskOverviewActivity extends TaskActivity {
     protected void onResume() {
         super.onResume();
         getViews();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Long task_id = getIntent().getLongExtra("task_id", -1);
         db = DatabaseHelper.getsInstance(getApplicationContext());
         task = db.getTask(task_id);
@@ -187,8 +188,12 @@ public class TaskOverviewActivity extends TaskActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent intent = new Intent (this, PlanActivity.class);
-                startActivity(intent);
+                DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
+                db.updateTask(task);
+                Intent intent = new Intent();
+                intent.putExtra("task_id", task.getId());
+                setResult(RESULT_OK, intent);
+                finish();
                 return true;
         }
         return super.onOptionsItemSelected(item);

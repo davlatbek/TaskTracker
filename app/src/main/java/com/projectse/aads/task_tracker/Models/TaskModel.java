@@ -32,8 +32,17 @@ public class TaskModel {
     }
 
     private List<Long> subtasks_ids = new ArrayList<>();
+
+    public Long getParentTaskId() {
+        return parentTaskId;
+    }
+
+    public void setParentTaskId(Long parentTaskId) {
+        this.parentTaskId = parentTaskId;
+    }
+
     // not supported yet
-    private Long parentTaskId;
+    private Long parentTaskId = -1L;
 
     private Integer priority = 0;
     public TaskModel(){
@@ -46,6 +55,8 @@ public class TaskModel {
         deadline.set(Calendar.HOUR_OF_DAY, 23);
         deadline.set(Calendar.MINUTE, 59);
         deadline.set(Calendar.SECOND, 59);
+
+        duration = Long.valueOf(0);
 
     }
 
@@ -134,6 +145,7 @@ public class TaskModel {
 
     public void addSubtask(TaskModel task){
         this.subtasks_ids.add(task.getId());
+        if(this.id != null)task.setParentTaskId(this.id);
     }
 
     public List<Long> getSubtasks_ids() {

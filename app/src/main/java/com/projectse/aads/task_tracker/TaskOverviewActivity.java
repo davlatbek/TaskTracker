@@ -3,15 +3,22 @@ package com.projectse.aads.task_tracker;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
@@ -26,61 +33,42 @@ import static com.projectse.aads.task_tracker.R.layout.activity_taskoverview;
  * Created by Davlatbek Isroilov on 2/16/2016.
  * Innopolis University
  */
-public class TaskOverviewActivity extends AppCompatActivity {
+public class TaskOverviewActivity extends TaskActivity {
 
     // Views
-    private EditText nameView;
-    private EditText descView;
-    private static EditText startTimeDateView;
-    private static EditText startTimeTimeView;
-    private static EditText deadlineDateView;
-    private static EditText deadlineTimeView;
-    private EditText durationView;
-    private Switch isStartTimeNotifyView, isDeadlineNotifyView;
+
     private Button deleteButton;
     private Button editButton;
     private Button buttonStartDate, buttonDeadline, buttonStartTime, buttonDeadlineTime;
-    private ToggleButton isDoneView;
+    private Switch switchFinished;
     private Spinner spinner;
-
-    // Current task
-    private static TaskModel task = null;
 
     //Database instance
     DatabaseHelper db = null;
-
-    private static java.text.DateFormat dateFormat = new SimpleDateFormat("dd-MM-yy");
-    private static java.text.DateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(activity_taskoverview);
-        getViews();
-        Long task_id = getIntent().getLongExtra("task_id", -1);
-        db = DatabaseHelper.getsInstance(getApplicationContext());
-        task = db.getTask(task_id);
-        if (task != null)
-            fillData();
-        isDoneView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        /*editButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                task.setIsDone(isChecked);
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        editButton.setBackgroundColor(Color.GREEN);
+                        break;
+                    }
+                }
+                return true;
             }
-        });
+        });*/
     }
 
-    private void getViews() {
-        nameView = (EditText) findViewById(R.id.txtName);
-        descView = (EditText) findViewById(R.id.txtDescription);
-        startTimeDateView = (EditText) findViewById(R.id.txtDateStartTime);
-        startTimeTimeView = (EditText) findViewById(R.id.txtTimeStartTime);
-        deadlineDateView = (EditText) findViewById(R.id.txtDateDeadline);
-        deadlineTimeView = (EditText) findViewById(R.id.txtTimeDeadline);
-        isStartTimeNotifyView = (Switch) findViewById(R.id.swtStartTimeNotification);
-        isDeadlineNotifyView = (Switch) findViewById(R.id.swtDeadlineNotification);
-        durationView = (EditText) findViewById(R.id.txtDuration);
-        isDoneView = (ToggleButton) findViewById(R.id.btnIsDone);
+    @Override
+    protected void getViews() {
+        super.getViews();
+        switchFinished = (Switch) findViewById(R.id.switchFinished);
         editButton = (Button) findViewById(R.id.editTaskButton);
         deleteButton = (Button) findViewById(R.id.deleteTaskButton);
         editButton.setOnClickListener(new View.OnClickListener() {
@@ -110,6 +98,11 @@ public class TaskOverviewActivity extends AppCompatActivity {
         durationView.setFocusable(false);
         spinner = (Spinner) findViewById(R.id.spinnerCourseName);
         spinner.setFocusable(false);
+
+        Button addSubtasks = (Button) findViewById(R.id.btnAddSubtask);
+        Button clearSubtasks = (Button) findViewById(R.id.btnClearSubtasks);
+        addSubtasks.setVisibility(View.INVISIBLE);
+        clearSubtasks.setVisibility(View.INVISIBLE);
     }
 
     private void createDeleteDialog() {
@@ -136,42 +129,16 @@ public class TaskOverviewActivity extends AppCompatActivity {
         alertDialog.create().show();
     }
 
-    private void fillData() {
-        isDoneView.setChecked(task.getIsDone());
-        if (task.getName() != null ) nameView.setText(task.getName());
-        if (task.getDescription() != null ) descView.setText(task.getDescription());
-        if (task.getStartTime() != null ) {
-            setDateTime(startTimeDateView, startTimeTimeView, task.getStartTime().getTimeInMillis());
-        }
-        isStartTimeNotifyView.setChecked(task.getIsNotifyStartTime());
-        if (task.getDeadline() != null ) {
-            setDateTime(deadlineDateView, deadlineTimeView, task.getDeadline().getTimeInMillis());
-        }
-        isDeadlineNotifyView.setChecked(task.getIsNotifyDeadline());
-        if (task.getDuration() > 0L ) durationView.setText(task.getDuration().toString());
-    }
-
-    /**
-     * Set Calendar date to views.
-     * @param dateTxt - date view.
-     * @param timeTxt - time view.
-     * @param calInMillis - time, that will be set.
-     */
-    private static void setDateTime(EditText dateTxt, EditText timeTxt,long calInMillis){
-        Calendar time = Calendar.getInstance();
-        time.setTimeInMillis(calInMillis);
-        if(dateTxt != null) {
-            dateTxt.setText(dateFormat.format(time.getTime()));
-        }
-        if(timeTxt != null) {
-            timeTxt.setText(timeFormat.format(time.getTime()));
-        }
+    @Override
+    protected void fillData() {
+        super.fillData();
+        switchFinished.setChecked(task.getIsDone());
     }
 
     public void callEditTaskActivity(TaskModel task){
         Intent intent = new Intent (this, TaskEditActivity.class);
         intent.putExtra("task_id", task.getId());
-        startActivityForResult(intent, 0);
+        startActivityForResult(intent, RequestCode.REQ_CODE_EDITTASK);
     }
 
     private void callPlanActivity() {
@@ -188,6 +155,7 @@ public class TaskOverviewActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
     }
 
     @Override
@@ -204,13 +172,18 @@ public class TaskOverviewActivity extends AppCompatActivity {
         task = db.getTask(task_id);
         if (task != null)
             fillData();
+        switchFinished.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                task.setIsDone(isChecked);
+            }
+        });
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                db.updateTask(task);
                 Intent intent = new Intent (this, PlanActivity.class);
                 startActivity(intent);
                 return true;
@@ -219,17 +192,14 @@ public class TaskOverviewActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == RESULT_OK){
+            switch (requestCode){
+                case RequestCode.REQ_CODE_EDITTASK:
+                    Long task_id = data.getLongExtra("task_id", -1L);
+                    task = db.getTask(task_id);
+                    break;
+            }
+        }
     }
 }

@@ -140,9 +140,7 @@ public abstract class TaskActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
                 final TaskModel item = (TaskModel) parent.getItemAtPosition(position);
-                Toast.makeText(getApplicationContext(),
-                        item.toString(),
-                        Toast.LENGTH_SHORT).show();
+                callTaskOverviewActivity(item);
             }
 
         });
@@ -419,5 +417,27 @@ public abstract class TaskActivity extends AppCompatActivity {
 
     }
 
+    public void callTaskOverviewActivity(TaskModel taskModel){
+        Intent intent = new Intent (getApplicationContext(), TaskOverviewActivity.class);
+        intent.putExtra("task_id", taskModel.getId());
+        startActivityForResult(intent, RequestCode.REQ_CODE_VIEWTASK);
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == RESULT_OK){
+            switch (requestCode){
+                case RequestCode.REQ_CODE_VIEWTASK:
+                    if(data.getLongExtra("deleted_task_id",-1) > 0){
+                        subtasks_list.clear();
+                        for(Long id : task.getSubtasks_ids()){
+                            subtasks_list.add(db.getTask(id));
+                        }
+                        subtasks_adapter.notifyDataSetChanged();
+                    }
+                    break;
+            }
+        }
+    }
 }

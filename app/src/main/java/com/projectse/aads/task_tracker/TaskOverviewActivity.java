@@ -115,7 +115,10 @@ public class TaskOverviewActivity extends TaskActivity {
             public void onClick(DialogInterface dialog, int which) {
                 Long task_id = getIntent().getLongExtra("task_id",-1);
                 db.deleteTask(task_id);
-                callPlanActivity();
+                Intent intent = new Intent();
+                intent.putExtra("deleted_task_id", task_id);
+                setResult(RESULT_OK, intent);
+                finish();
             }
         });
 

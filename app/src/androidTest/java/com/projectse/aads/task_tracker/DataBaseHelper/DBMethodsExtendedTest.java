@@ -30,6 +30,7 @@ public class DBMethodsExtendedTest extends TestInit {
         t.setName("TestTaskMaster");
         t.setId(db.addTask(t));
 
+        List<TaskModel> list = db.getTaskModelList();
         Assert.assertTrue(db.getTask(t.getId()).getSubtasks_ids().size() == 0);
 
         for(Long id : subts ){
@@ -43,7 +44,6 @@ public class DBMethodsExtendedTest extends TestInit {
             e.printStackTrace();
             Assert.assertTrue(false);
         }
-        List<TaskModel> list = db.getTaskModelList();
         TaskModel t_new = db.getTask(t.getId());
         Assert.assertTrue(t_new.getSubtasks_ids().size() == 2);
     }

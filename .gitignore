@@ -10,3 +10,5 @@
 /settings.gradle
 /task-tracker.iml
 /app/app.iml
+.navigation/
+

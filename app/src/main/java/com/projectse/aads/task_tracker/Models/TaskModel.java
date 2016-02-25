@@ -154,8 +154,16 @@ public class TaskModel implements Comparable<TaskModel>{
         return subtasks_ids;
     }
 
+
     @Override
     public int compareTo(TaskModel another) {
         return Long.compare(getStartTime().getTime().getTime(), another.getStartTime().getTime().getTime());
+
+    public boolean deleteSubtask(Long subtask_id){
+            return subtasks_ids.remove(subtask_id);
+    }
+
+    public void clearSubtasks() {
+        subtasks_ids.clear();
     }
 }

@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:nestedScrollingEnabled="false">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/scrollView" >
+<<<<<<< HEAD
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="vertical"
@@ -32,5 +34,32 @@
         </LinearLayout>
     </ScrollView>
 
+=======
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:nestedScrollingEnabled="false" >
+
+            <include
+                layout="@layout/shared_content_task"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btnIsDone"
+                android:layout_alignParentStart="true" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="288dp"
+                android:layout_height="wrap_content"
+                android:text="Create task and go to plan overview"
+                android:id="@+id/button"
+                android:background="#ffffff"
+                android:layout_gravity="center_horizontal"
+                android:onClick="addAndSaveToDb" />
+        </LinearLayout>
+    </ScrollView>
+>>>>>>> 2a819a61a6b5108f348bc0847d48b5b3c2385bd3
 
 </LinearLayout>

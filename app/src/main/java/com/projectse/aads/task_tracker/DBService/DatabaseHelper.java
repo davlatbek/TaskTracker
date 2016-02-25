@@ -705,9 +705,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
         task.setDeadline(cal);
+        Calendar cal1 = Calendar.getInstance();
         if (!c.isNull(c.getColumnIndex(TASKS_START_TIME))) {
-            cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_START_TIME)));
-            task.setStartTime(cal);
+            cal1.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_START_TIME)));
+            task.setStartTime(cal1);
         }
 
         if (!c.isNull(c.getColumnIndex(TASKS_DURATION))) {

@@ -7,7 +7,6 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -25,14 +24,13 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.Adapters.SubtasksAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Dialogs.AddSubtaskDialog;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.text.ParseException;
@@ -44,7 +42,7 @@ import java.util.List;
 /**
  * Created by smith on 2/23/16.
  */
-public abstract class TaskActivity extends AppCompatActivity {
+public abstract class TaskActivity extends AppCompatActivity implements AddSubtaskDialog.NoticeDialogListener {
 
     // Views
     protected EditText nameView;
@@ -66,7 +64,7 @@ public abstract class TaskActivity extends AppCompatActivity {
     private static java.text.DateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
     // Current task
-    protected static TaskModel task = null;
+    public static TaskModel task = null;
 
     private boolean isEmptyListSet = false;
 
@@ -236,12 +234,12 @@ public abstract class TaskActivity extends AppCompatActivity {
         AddSubtaskDialog newFragment = new AddSubtaskDialog();
         newFragment.parent = this;
         newFragment.show(getFragmentManager(), "sas");
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                subtasks_adapter.notifyDataSetChanged();
-            }
-        });
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                subtasks_adapter.notifyDataSetChanged();
+//            }
+//        });
     }
 
     public static class TimePickerFragment extends DialogFragment
@@ -334,96 +332,7 @@ public abstract class TaskActivity extends AppCompatActivity {
         }
     }
 
-    public class AddSubtaskDialog extends DialogFragment {
 
-        Activity parent = null;
-        List<TaskModel> candidates = new ArrayList<>();
-        ListAdapter adapter_candidates = null;
-        TaskModel stored_task = task;
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-
-//			ListView listview = (ListView) findViewById(R.id.listview);
-
-            final Button btn = new Button(getApplicationContext());
-
-            btn.setText("Create new task");
-
-            // Set click listener for button
-            btn.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    callAddTaskActivity();
-                }
-            });
-
-            LinearLayout l = new LinearLayout(getApplicationContext());
-            l.setOrientation(LinearLayout.VERTICAL);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
-
-            TextView t = new TextView(getApplicationContext());
-            t.setText("Add subtask.");
-            t.setTextSize(25);
-            t.setTextColor(Color.BLACK);
-            t.setLayoutParams(params);
-            btn.setLayoutParams(params);
-            l.addView(t);
-            l.addView(btn);
-            // Inflate and set the layout for the dialog
-            List<Long> candidates_ids = db.getSubtasksCandidates(task.getId());
-            candidates.clear();
-            for(Long id : candidates_ids){
-                candidates.add(db.getTask(id));
-            }
-
-            adapter_candidates = new ArrayAdapter<TaskModel>(getActivity(),android.R.layout.simple_list_item_1, candidates);
-
-            // Pass null as the parent view because its going in the dialog layout
-            builder
-//					.setView(inflater.inflate(R.layout.dialog, null))
-//					.setView(btn)
-                    .setCustomTitle(l)
-//					.setTitle("Add Subtask")
-                    .setAdapter(adapter_candidates, new DialogInterface.OnClickListener() {
-
-                        public void onClick(DialogInterface dialog, int which) {
-                            TaskModel item = (TaskModel) adapter_candidates.getItem(which);
-                            addSubtask(item);
-                            ((TaskEditActivity)parent).onResume();
-//                            dismiss();
-                        }
-
-                    });
-            return builder.create();
-        }
-
-
-        @Override
-        public void onActivityResult(int requestCode, int resultCode, Intent data) {
-            if(resultCode == RESULT_OK){
-                switch (requestCode){
-                    case RequestCode.REQ_CODE_ADDTASK:
-                        TaskModel item = db.getTask(data.getLongExtra("task_id",-1));
-                        task = stored_task;
-                        addSubtask(item);
-//                        ((TaskEditActivity)parent).onResume();
-                        dismiss();
-                        break;
-                }
-            }
-        }
-
-        public void callAddTaskActivity(){
-            Intent intent = new Intent (getApplicationContext(), AddTaskActivity.class);
-            intent.putExtra("parent_id",task.getId());
-            intent.putExtra("hide_subtasks",true);
-            startActivityForResult(intent, RequestCode.REQ_CODE_ADDTASK);
-        }
-
-    }
 
     public void callTaskOverviewActivity(TaskModel taskModel){
         Intent intent = new Intent (getApplicationContext(), TaskOverviewActivity.class);
@@ -433,17 +342,31 @@ public abstract class TaskActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected synchronized void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == RESULT_OK){
             fillSubtasksList();
             subtasks_adapter.notifyDataSetChanged();
         }
     }
 
-    public void createDeleteSubtaskDialog(final Long subtask_id) {
+    public synchronized void deleteSubtask(final Long subtask_id) {
         task.deleteSubtask(subtask_id);
         db.updateTask(task);
         onResume();
+    }
+
+    public synchronized void OnClearSubtasks(View v) {
+        task.clearSubtasks();
+        db.updateTask(task);
+        onResume();
+    }
+
+    @Override
+    public synchronized void onDialogDismiss(DialogFragment dialog, TaskModel item){
+        task = db.getTask(getIntent().getLongExtra("task_id",-1L));
+        addSubtask(item);
+        onResume();
+//        subtasks_adapter.notifyDataSetChanged();
     }
 
 }

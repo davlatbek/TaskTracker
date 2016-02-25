@@ -1,6 +1,5 @@
 package com.projectse.aads.task_tracker.Adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -65,7 +64,7 @@ public class SubtasksAdapter<T extends Object> extends ArrayAdapter<T> {
             @Override
             public void onClick(View view) {
                 Toast.makeText(getContext(), "button is pressed", Toast.LENGTH_SHORT).show();
-                ((TaskActivity)getContext()).createDeleteSubtaskDialog(id);
+                ((TaskActivity)getContext()).deleteSubtask(id);
             }
         });
         return convertView;

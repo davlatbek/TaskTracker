@@ -315,7 +315,8 @@
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
                     android:layout_alignBottom="@+id/btnAddSubtask"
-                    android:backgroundTint="#851d1d" />
+                    android:backgroundTint="#851d1d"
+                    android:onClick="OnClearSubtasks" />
             </RelativeLayout>
 
             <ListView

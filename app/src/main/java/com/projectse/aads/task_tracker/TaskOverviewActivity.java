@@ -106,19 +106,48 @@ public class TaskOverviewActivity extends TaskActivity {
     }
 
     private void createDeleteDialog() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setMessage("Are you sure you want to delete this task?");
 
         alertDialog.setCancelable(false);
         alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Long task_id = getIntent().getLongExtra("task_id",-1);
-                db.deleteTask(task_id);
-                Intent intent = new Intent();
-                intent.putExtra("deleted_task_id", task_id);
-                setResult(RESULT_OK, intent);
-                finish();
+                if(task.getSubtasks_ids().size() > 0){
+                    AlertDialog.Builder alertDialog1 = new AlertDialog.Builder(alertDialog.getContext());
+                    alertDialog1.setMessage("Task contains subtasks.\n They also will be deleted. Are you sure?");
+
+                    alertDialog1.setCancelable(false);
+                    alertDialog1.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Long task_id = getIntent().getLongExtra("task_id", -1);
+                            for(Long sub_id: task.getSubtasks_ids())
+                                db.deleteTask(sub_id);
+                            db.deleteTask(task_id);
+                            Intent intent = new Intent();
+                            intent.putExtra("deleted_task_id", task_id);
+                            setResult(RESULT_OK, intent);
+                            finish();
+                        }
+                    });
+
+                    alertDialog1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+
+                    alertDialog1.create().show();
+                }else{
+                    Long task_id = getIntent().getLongExtra("task_id",-1);
+                    db.deleteTask(task_id);
+                    Intent intent = new Intent();
+                    intent.putExtra("deleted_task_id", task_id);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
             }
         });
 
@@ -167,7 +196,7 @@ public class TaskOverviewActivity extends TaskActivity {
     }
 
     @Override
-    protected void onResume() {
+    protected synchronized void onResume() {
         super.onResume();
         getViews();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

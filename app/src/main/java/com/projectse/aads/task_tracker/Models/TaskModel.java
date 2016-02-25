@@ -152,4 +152,11 @@ public class TaskModel {
         return subtasks_ids;
     }
 
+    public boolean deleteSubtask(Long subtask_id){
+            return subtasks_ids.remove(subtask_id);
+    }
+
+    public void clearSubtasks() {
+        subtasks_ids.clear();
+    }
 }

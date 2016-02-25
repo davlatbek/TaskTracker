@@ -35,7 +35,7 @@ public class TaskEditActivity extends TaskActivity {
         super.onCreate(savedInstanceState);
         db = DatabaseHelper.getsInstance(getApplicationContext());
         setContentView(R.layout.activity_task_edit);
-//        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         getViews();
 

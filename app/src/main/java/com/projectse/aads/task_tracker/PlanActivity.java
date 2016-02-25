@@ -17,9 +17,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.projectse.aads.task_tracker.Adapters.PlanAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
@@ -37,6 +39,7 @@ import java.util.Map;
 public class PlanActivity extends AppCompatActivity {
     ArrayList<TaskModel> taskList = new ArrayList<>();
     StableArrayAdapter adapter = null;
+    PlanAdapter adapter_new = null;
     ListView listview = null;
 
     @Override
@@ -45,11 +48,41 @@ public class PlanActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
+
+        ArrayList<Long> subts = new ArrayList<>();
+
+        TaskModel t1 = new TaskModel();
+        t1.setName("TestTask1");
+        t1.setId(db.addTask(t1));
+        subts.add(t1.getId());
+
+        TaskModel t2 = new TaskModel();
+        t2.setName("TestTask2");
+        t2.setId(db.addTask(t2));
+        subts.add(t2.getId());
+
+        TaskModel t = new TaskModel();
+        t.setName("TestTaskMaster");
+        t.setId(db.addTask(t));
+
+        List<TaskModel> list = db.getTaskModelList();
+        Assert.assertTrue(db.getTask(t.getId()).getSubtasks_ids().size() == 0);
+
+        for(Long id : subts ){
+            TaskModel t_buf = db.getTask(id);
+            t.addSubtask(t_buf);
+        }
+        t.setSubtasks_ids(subts);
+        try {
+            db.updateTask(t);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.assertTrue(false);
+        }
         
         setContentView(R.layout.activity_plan);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //db.deleteTaskTable(db.getWritableDatabase());
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,11 +98,26 @@ public class PlanActivity extends AppCompatActivity {
         final DatabaseHelper db = DatabaseHelper.getsInstance(this);
 
         ListView listview = (ListView) findViewById(R.id.listview);
+        ExpandableListView expListview = (ExpandableListView) findViewById(R.id.expListView);
         taskList = (ArrayList<TaskModel>) db.getTaskModelList();
+        Map<TaskModel,List<TaskModel>> task_hierarchy = new HashMap<>();
+        for(TaskModel task : taskList)
+            if(task.isSupertask())
+                task_hierarchy.put(task,new ArrayList<TaskModel>());
+        for(TaskModel task : taskList)
+            if(task.isSubtask()) {
+                for(TaskModel super_task : task_hierarchy.keySet()){
+                    if(super_task.getId().compareTo(task.getParentTaskId()) == 0)
+                        task_hierarchy.get(super_task).add(task);
+                }
+            }
         adapter = new StableArrayAdapter(this,
                 android.R.layout.simple_list_item_1, taskList);
+        adapter_new = new PlanAdapter(this,task_hierarchy);
 
         listview.setAdapter(adapter);
+        listview.setVisibility(View.INVISIBLE);
+        expListview.setAdapter(adapter_new);
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -130,19 +178,6 @@ public class PlanActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * sending task object and starting Edit Task activity
-     * @param task
-     */
-    public void callEditTaskActivity(TaskModel task){
-        Intent intent = new Intent (getApplicationContext(), TaskEditActivity.class);
-        intent.putExtra("task_id", task.getId());
-//        onPause();
-        startActivityForResult(intent,0);
-        adapter.notifyDataSetChanged();
-//        onResume();
     }
 
     public void callAddTaskActivity(){

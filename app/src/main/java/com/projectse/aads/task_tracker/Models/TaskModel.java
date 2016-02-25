@@ -159,4 +159,12 @@ public class TaskModel {
     public void clearSubtasks() {
         subtasks_ids.clear();
     }
+
+    public boolean isSubtask() {
+        return parentTaskId!=null && parentTaskId > 0;
+    }
+
+    public boolean isSupertask() {
+        return !isSubtask();
+    }
 }

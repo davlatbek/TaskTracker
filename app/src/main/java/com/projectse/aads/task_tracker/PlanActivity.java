@@ -9,6 +9,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.CharacterPickerDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,7 +20,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.TaskModel;
@@ -27,6 +31,9 @@ import com.projectse.aads.task_tracker.Models.TaskModel;
 import junit.framework.Assert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,14 +45,14 @@ public class PlanActivity extends AppCompatActivity {
     ArrayList<TaskModel> taskList = new ArrayList<>();
     StableArrayAdapter adapter = null;
     ListView listview = null;
+    DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
 
-        DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
-        
+        db = DatabaseHelper.getsInstance(getApplicationContext());
         setContentView(R.layout.activity_plan);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -57,12 +64,71 @@ public class PlanActivity extends AppCompatActivity {
                 callAddTaskActivity();
             }
         });
+        setSpinner();
+        Log.d("d", log());
+    }
+
+    public void setSpinner(){
+        Spinner dropdown = (Spinner)findViewById(R.id.spinner1);
+        String[] sortParams = new String[]{"Start Time", "Deadline", "Priority"};
+        ArrayAdapter<String> adapter2 = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, sortParams);
+        dropdown.setAdapter(adapter2);
+
+        dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0: {
+                        Toast.makeText(getApplicationContext(), "Sorted by start time", Toast.LENGTH_LONG).show();
+                        break;
+                    }
+                    case 1: {
+                        taskList = (ArrayList<TaskModel>) db.getTaskModelList();
+                        Collections.sort(taskList);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.notifyDataSetChanged();
+                            }
+                        });
+                        Toast.makeText(getApplicationContext(), "Sorted by deadline", Toast.LENGTH_LONG).show();
+                        break;
+                    }
+                    case 3: {
+                        Toast.makeText(getApplicationContext(), "Sorted by priority", Toast.LENGTH_LONG).show();
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
+    private String log() {
+        //final DatabaseHelper db = DatabaseHelper.getsInstance(this);
+        List<TaskModel> list = db.getTaskModelList();
+        StringBuilder s = new StringBuilder();
+        s.append("The database content\n===================================\n");
+        s.append("Start times\n===================================\n");
+        for (TaskModel t : list){
+            s.append(t.getName() + "   " + t.getStartTime().getTime().toString() + "\n");
+        }
+        s.append("Deadlines\n===================================\n");
+        for (TaskModel t : list){
+            s.append(t.getName() + "   " + t.getDeadline().getTime().toString() + "\n");
+        }
+        s.append("============================================\n");
+        return s.toString();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        final DatabaseHelper db = DatabaseHelper.getsInstance(this);
+        //final DatabaseHelper db = DatabaseHelper.getsInstance(this);
 
         ListView listview = (ListView) findViewById(R.id.listview);
         taskList = (ArrayList<TaskModel>) db.getTaskModelList();

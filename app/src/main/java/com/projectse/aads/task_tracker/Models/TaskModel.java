@@ -1,5 +1,7 @@
 package com.projectse.aads.task_tracker.Models;
 
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -11,7 +13,7 @@ import java.util.Map;
  *
  * Contain data of task entity.
  */
-public class TaskModel {
+public class TaskModel implements Comparable<TaskModel>{
 
     private String name = "";
     private Long id;
@@ -152,4 +154,8 @@ public class TaskModel {
         return subtasks_ids;
     }
 
+    @Override
+    public int compareTo(TaskModel another) {
+        return Long.compare(getStartTime().getTime().getTime(), another.getStartTime().getTime().getTime());
+    }
 }

@@ -69,6 +69,14 @@ public class PlanActivity extends AppCompatActivity {
     }
 
     public void setSpinner(){
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_MONTH, 29);
+        TaskModel t1 = new TaskModel();
+        t1.setName("1");
+        t1.setDeadline(c);
+        db.addTask(t1);
+        Log.d("d", db.getTask(1).getDeadline().getTime().toString());
+
         Spinner dropdown = (Spinner)findViewById(R.id.spinner1);
         String[] sortParams = new String[]{"Start Time", "Deadline", "Priority"};
         ArrayAdapter<String> adapter2 = new ArrayAdapter<>(this,

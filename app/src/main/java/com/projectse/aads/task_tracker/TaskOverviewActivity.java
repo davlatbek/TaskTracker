@@ -101,8 +101,10 @@ public class TaskOverviewActivity extends TaskActivity {
 
         Button addSubtasks = (Button) findViewById(R.id.btnAddSubtask);
         Button clearSubtasks = (Button) findViewById(R.id.btnClearSubtasks);
+
         addSubtasks.setVisibility(View.INVISIBLE);
         clearSubtasks.setVisibility(View.INVISIBLE);
+
     }
 
     private void createDeleteDialog() {
@@ -165,6 +167,7 @@ public class TaskOverviewActivity extends TaskActivity {
     protected void fillData() {
         super.fillData();
         switchFinished.setChecked(task.getIsDone());
+
     }
 
     public void callEditTaskActivity(TaskModel task){

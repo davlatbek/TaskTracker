@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Created by smith on 1/27/16.
@@ -17,9 +19,9 @@ public class TaskModel {
     private Long id;
     private String description = "";
 
-    private Calendar startTime = Calendar.getInstance();
+    private Calendar startTime = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
 
-    private Calendar deadline = Calendar.getInstance();
+    private Calendar deadline = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
     private Long duration;
     private Boolean isNotifyDeadline = Boolean.FALSE;
     private Boolean isNotifyStartTime = Boolean.FALSE;

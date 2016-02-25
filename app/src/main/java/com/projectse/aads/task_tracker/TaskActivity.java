@@ -38,6 +38,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by smith on 2/23/16.
@@ -65,6 +67,13 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
 
     // Current task
     public static TaskModel task = null;
+
+    public TaskActivity(){
+        super();
+        TimeZone timeZone = TimeZone.getTimeZone("UTC");
+        dateFormat.setTimeZone(timeZone);
+        timeFormat.setTimeZone(timeZone);
+    }
 
     private boolean isEmptyListSet = false;
 
@@ -159,7 +168,7 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
      * @param calInMillis - time, that will be set.
      */
     protected static void setDateTime(EditText dateTxt, EditText timeTxt,long calInMillis){
-        Calendar time = Calendar.getInstance();
+        Calendar time = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         time.setTimeInMillis(calInMillis);
         if(dateTxt != null) {
             dateTxt.setText(dateFormat.format(time.getTime()));
@@ -174,7 +183,7 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
         try {
             java.util.Date date = dateFormat.parse(String.valueOf(dateView.getText()));
             date.setTime(date.getTime() + timeFormat.parse(String.valueOf(timeView.getText())).getTime());
-            cal = Calendar.getInstance();
+            cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
             cal.setTime(date);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -255,13 +264,13 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
         public Dialog onCreateDialog(Bundle savedInstanceState) {
 
             int hour, minute;
-            final Calendar curr = Calendar.getInstance();
+            final Calendar curr = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
             hour = curr.get(Calendar.HOUR_OF_DAY);
             minute = curr.get(Calendar.MINUTE);
             if (txtEdit != null) {
                 Calendar c = null;
                 try {
-                    c = Calendar.getInstance();
+                    c = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
                     c.setTime(timeFormat.parse(String.valueOf(txtEdit.getText())));
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -278,7 +287,7 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
         }
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            Calendar c = Calendar.getInstance();
+            Calendar c = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
             c.set(Calendar.HOUR_OF_DAY, hourOfDay);
             c.set(Calendar.MINUTE, minute);
             if(txtEdit != null) {
@@ -299,14 +308,14 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             int year, month, day;
-            final Calendar curr = Calendar.getInstance();
+            final Calendar curr = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
             year = curr.get(Calendar.YEAR);
             month = curr.get(Calendar.MONTH);
             day = curr.get(Calendar.DAY_OF_MONTH);
             if (txtEdit != null) {
                 Calendar c = null;
                 try {
-                    c = Calendar.getInstance();
+                    c = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
                     c.setTime(dateFormat.parse(String.valueOf(txtEdit.getText())));
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -323,7 +332,7 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
         }
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            Calendar c = Calendar.getInstance();
+            Calendar c = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
             c.set(Calendar.YEAR, year);
             c.set(Calendar.MONTH, month);
             c.set(Calendar.DAY_OF_MONTH, day);

@@ -15,7 +15,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Created by Andrey Zolin on 28.01.2016.
@@ -422,7 +424,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         TaskModel tasks = new TaskModel();
         tasks.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
         tasks.setName(c.getString(c.getColumnIndex(TASKS_NAME)));
-        Calendar calStart = Calendar.getInstance();
+        Calendar calStart = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         calStart.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_START_TIME)));
         tasks.setStartTime(calStart);
         tasks.setDuration((long) c.getInt(c.getColumnIndex(TASKS_DURATION)));
@@ -441,7 +443,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         tasks.setDescription(c.getString(c.getColumnIndex(TASKS_DESCRIPTION)));
         tasks.setParentTaskId(c.getLong(c.getColumnIndex(TASKS_PARENT_TASK)));
 
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
         tasks.setDeadline(cal);
 
@@ -702,10 +704,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         task.setName(c.getString(c.getColumnIndex(TASKS_NAME)));
         task.setDescription(c.getString(c.getColumnIndex(TASKS_DESCRIPTION)));
 
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
         task.setDeadline(cal);
-        Calendar cal1 = Calendar.getInstance();
+        Calendar cal1 = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         if (!c.isNull(c.getColumnIndex(TASKS_START_TIME))) {
             cal1.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_START_TIME)));
             task.setStartTime(cal1);
@@ -809,8 +811,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private void fillContentByTask(ContentValues values, TaskModel task) {
         values.put(TASKS_NAME, task.getName());
         values.put(TASKS_DESCRIPTION, task.getDescription());
-        values.put(TASKS_DEADLINE, task.getDeadline().getTime().getTime());
-        values.put(TASKS_START_TIME, task.getStartTime().getTime().getTime());
+        values.put(TASKS_DEADLINE, task.getDeadline().getTimeInMillis()); //TODO TimezoneProblem
+        values.put(TASKS_START_TIME, task.getStartTime().getTimeInMillis());
         values.put(TASKS_DURATION, task.getDuration());
         values.put(TASKS_IS_NOTIFY_START_TIME, task.getIsNotifyStartTime() ? 1 : 0);
         values.put(TASKS_IS_NOTIFY_DEADLINE, task.getIsNotifyDeadline() ? 1 : 0);
@@ -857,8 +859,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public List<TaskModel> getTasksForToday() {
 
-        Calendar low_date = Calendar.getInstance();
-        Calendar high_date = Calendar.getInstance();
+        Calendar low_date = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        Calendar high_date = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
 
         high_date.set(Calendar.HOUR_OF_DAY, 23);
         high_date.set(Calendar.MINUTE, 59);
@@ -875,8 +877,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public List<TaskModel> getTasksForDay(Calendar date) {
 
-        Calendar low_date = Calendar.getInstance();
-        Calendar high_date = Calendar.getInstance();
+        Calendar low_date = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        Calendar high_date = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
 
         low_date.setTime(date.getTime());
         low_date.set(Calendar.HOUR_OF_DAY, 0);
@@ -950,7 +952,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         lastDay.set(Calendar.HOUR_OF_DAY, 23);
         lastDay.set(Calendar.MINUTE, 59);
         lastDay.set(Calendar.SECOND, 59);
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
 
         /*String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE "
                 + TASKS_START_TIME + " > " + day.getTime().getTime() +
@@ -985,12 +987,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<TaskModel> tasks = new ArrayList<>();
 
         //setting last day of current week
-        Calendar lastDayOfCurrentWeek = Calendar.getInstance();
+        Calendar lastDayOfCurrentWeek = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         lastDayOfCurrentWeek.add(Calendar.DATE, 7);
         lastDayOfCurrentWeek.set(Calendar.HOUR_OF_DAY, 23);
         lastDayOfCurrentWeek.set(Calendar.MINUTE, 59);
         lastDayOfCurrentWeek.set(Calendar.SECOND, 59);
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         String selectQuery = "SELECT * FROM " + TABLE_TASKS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);

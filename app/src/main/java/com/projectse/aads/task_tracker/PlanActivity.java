@@ -28,8 +28,8 @@ import java.util.Map;
  * Shows list of tasks
  */
 public class PlanActivity extends AppCompatActivity {
-    ArrayList<TaskModel> taskList = new ArrayList<>();
-    PlanAdapter tasks_adapter = null;
+    protected List<TaskModel> taskList = new ArrayList<>();
+    protected PlanAdapter tasks_adapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +69,7 @@ public class PlanActivity extends AppCompatActivity {
             Assert.assertTrue(false);
         }
         
-        setContentView(R.layout.activity_plan);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setContentView(R.layout.activity_dayly_plan); //TODO replace
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,10 +84,12 @@ public class PlanActivity extends AppCompatActivity {
         super.onResume();
         final DatabaseHelper db = DatabaseHelper.getsInstance(this);
 
+        if(taskList.isEmpty())
+            taskList = db.getTaskModelList();
+
         ExpandableListView expListview = (ExpandableListView) findViewById(R.id.expListView);
         expListview.setIndicatorBounds(expListview.getWidth()-40,expListview.getWidth());
 
-        taskList = (ArrayList<TaskModel>) db.getTaskModelList();
         Map<TaskModel,List<TaskModel>> task_hierarchy = new HashMap<>();
         for(TaskModel task : taskList)
             if(task.isSupertask())

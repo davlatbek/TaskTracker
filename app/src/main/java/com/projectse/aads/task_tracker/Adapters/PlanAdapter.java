@@ -2,7 +2,6 @@ package com.projectse.aads.task_tracker.Adapters;
 
 import android.content.Context;
 import android.graphics.Paint;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,10 +77,8 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         }
 
         if (isExpanded){
-            //Изменяем что-нибудь, если текущая Group раскрыта
         }
         else{
-            //Изменяем что-нибудь, если текущая Group скрыта
         }
         final TaskModel supertask = (TaskModel)getGroup(groupPosition);
 
@@ -94,12 +91,9 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         });
 
         TextView textSubs = (TextView) convertView.findViewById(R.id.txtSubsCount);
-//        textSupertaskName.setText("Group " + Integer.toString(groupPosition));
-//        textSubs.setText("Contains " + Integer.toString(groupPosition));
         textSupertaskName.setText(supertask.toString());
         int children_count = getChildrenCount(groupPosition);
         textSubs.setText(children_count + " subtasks");
-
 
         if( supertask.getIsDone() )
             textSupertaskName.setPaintFlags(textSupertaskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);

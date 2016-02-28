@@ -1,37 +1,29 @@
 package com.projectse.aads.task_tracker.Adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Paint;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.PlanActivity;
 import com.projectse.aads.task_tracker.R;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class PlanAdapter extends BaseExpandableListAdapter {
 
-    private ArrayList<ArrayList<String>> mGroups;
-    private Context mContext;
+    private Context context;
     private Map<TaskModel,List<TaskModel>> task_hierarchy = new HashMap<>();
 
-    public PlanAdapter(Context context, ArrayList<ArrayList<String>> groups){
-        mContext = context;
-        mGroups = groups;
-    }
-
     public PlanAdapter(Context context, Map<TaskModel,List<TaskModel>> groups){
-        mContext = context;
+        this.context = context;
         task_hierarchy = groups;
     }
 
@@ -81,7 +73,7 @@ public class PlanAdapter extends BaseExpandableListAdapter {
                              ViewGroup parent) {
 
         if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.plan_list_supertask_view, null);
         }
 
@@ -97,7 +89,7 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         textSupertaskName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PlanActivity)mContext).callTaskOverviewActivity(supertask);
+                ((PlanActivity) context).callTaskOverviewActivity(supertask);
             }
         });
 
@@ -105,7 +97,10 @@ public class PlanAdapter extends BaseExpandableListAdapter {
 //        textSupertaskName.setText("Group " + Integer.toString(groupPosition));
 //        textSubs.setText("Contains " + Integer.toString(groupPosition));
         textSupertaskName.setText(supertask.toString());
-        textSubs.setText(getChildrenCount(groupPosition) + " subtasks");
+        int children_count = getChildrenCount(groupPosition);
+        textSubs.setText(children_count + " subtasks");
+
+
         if( supertask.getIsDone() )
             textSupertaskName.setPaintFlags(textSupertaskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
@@ -117,7 +112,7 @@ public class PlanAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
                              View convertView, ViewGroup parent) {
         if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.plan_list_subtask_view, null);
         }
 
@@ -127,7 +122,7 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         textSubtaskName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PlanActivity)mContext).callTaskOverviewActivity(subtask);
+                ((PlanActivity) context).callTaskOverviewActivity(subtask);
             }
         });
         textSubtaskName.setText(subtask.toString());

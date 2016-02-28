@@ -1,25 +1,16 @@
 package com.projectse.aads.task_tracker;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.projectse.aads.task_tracker.Adapters.PlanAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
@@ -38,8 +29,7 @@ import java.util.Map;
  */
 public class PlanActivity extends AppCompatActivity {
     ArrayList<TaskModel> taskList = new ArrayList<>();
-    StableArrayAdapter adapter = null;
-    PlanAdapter adapter_new = null;
+    PlanAdapter tasks_adapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,8 +86,9 @@ public class PlanActivity extends AppCompatActivity {
         super.onResume();
         final DatabaseHelper db = DatabaseHelper.getsInstance(this);
 
-        ListView listview = (ListView) findViewById(R.id.listview);
         ExpandableListView expListview = (ExpandableListView) findViewById(R.id.expListView);
+        expListview.setIndicatorBounds(expListview.getWidth()-40,expListview.getWidth());
+
         taskList = (ArrayList<TaskModel>) db.getTaskModelList();
         Map<TaskModel,List<TaskModel>> task_hierarchy = new HashMap<>();
         for(TaskModel task : taskList)
@@ -110,23 +101,9 @@ public class PlanActivity extends AppCompatActivity {
                         task_hierarchy.get(super_task).add(task);
                 }
             }
-        adapter = new StableArrayAdapter(this,
-                android.R.layout.simple_list_item_1, taskList);
-        adapter_new = new PlanAdapter(this,task_hierarchy);
 
-        listview.setAdapter(adapter);
-        listview.setVisibility(View.INVISIBLE);
-        expListview.setAdapter(adapter_new);
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, final View view,
-                                    int position, long id) {
-                final TaskModel item = (TaskModel) parent.getItemAtPosition(position);
-                callTaskOverviewActivity(item);
-           }
-
-       });
+        tasks_adapter = new PlanAdapter(this,task_hierarchy);
+        expListview.setAdapter(tasks_adapter);
     }
 
     /**
@@ -187,7 +164,7 @@ public class PlanActivity extends AppCompatActivity {
     public void callTaskOverviewActivity(TaskModel taskModel){
         Intent intent = new Intent (getApplicationContext(), TaskOverviewActivity.class);
         intent.putExtra("task_id", taskModel.getId());
-        startActivityForResult(intent,0);
-        adapter.notifyDataSetChanged();
+        startActivityForResult(intent, 0);
+        tasks_adapter.notifyDataSetChanged();
     }
 }

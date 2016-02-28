@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.Models.TaskModel;
+import com.projectse.aads.task_tracker.PlanActivity;
 import com.projectse.aads.task_tracker.R;
 
 import java.util.ArrayList;
@@ -90,9 +91,16 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         else{
             //Изменяем что-нибудь, если текущая Group скрыта
         }
-        TaskModel supertask = (TaskModel)getGroup(groupPosition);
+        final TaskModel supertask = (TaskModel)getGroup(groupPosition);
 
         TextView textSupertaskName = (TextView) convertView.findViewById(R.id.txtSuperTaskName);
+        textSupertaskName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((PlanActivity)mContext).callTaskOverviewActivity(supertask);
+            }
+        });
+
         TextView textSubs = (TextView) convertView.findViewById(R.id.txtSubsCount);
 //        textSupertaskName.setText("Group " + Integer.toString(groupPosition));
 //        textSubs.setText("Contains " + Integer.toString(groupPosition));
@@ -113,11 +121,18 @@ public class PlanAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.plan_list_subtask_view, null);
         }
 
-        TaskModel subtask = (TaskModel) getChild(groupPosition, childPosition);
-        TextView textChild = (TextView) convertView.findViewById(R.id.txtSubtaskName);
-        textChild.setText(subtask.toString());
+        final TaskModel subtask = (TaskModel) getChild(groupPosition, childPosition);
+        TextView textSubtaskName = (TextView) convertView.findViewById(R.id.txtSubtaskName);
+
+        textSubtaskName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((PlanActivity)mContext).callTaskOverviewActivity(subtask);
+            }
+        });
+        textSubtaskName.setText(subtask.toString());
         if( subtask.getIsDone() )
-            textChild.setPaintFlags(textChild.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            textSubtaskName.setPaintFlags(textSubtaskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
         return convertView;
     }

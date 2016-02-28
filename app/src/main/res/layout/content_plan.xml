@@ -18,7 +18,8 @@
         android:layout_height="wrap_content" />
 
     <ExpandableListView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/expListView" />
+        android:id="@+id/expListView"
+        android:childIndicator="@android:drawable/btn_star_big_off" />
 </RelativeLayout>

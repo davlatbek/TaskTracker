@@ -40,7 +40,6 @@ public class PlanActivity extends AppCompatActivity {
     ArrayList<TaskModel> taskList = new ArrayList<>();
     StableArrayAdapter adapter = null;
     PlanAdapter adapter_new = null;
-    ListView listview = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

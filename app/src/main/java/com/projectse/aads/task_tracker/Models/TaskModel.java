@@ -52,11 +52,11 @@ public class TaskModel {
         //set last second for a current day as default for startTime and deadline.
         startTime.set(Calendar.HOUR_OF_DAY, 23);
         startTime.set(Calendar.MINUTE, 59);
-        startTime.set(Calendar.SECOND, 59);
+        startTime.set(Calendar.SECOND, 58);
 
         deadline.set(Calendar.HOUR_OF_DAY, 23);
         deadline.set(Calendar.MINUTE, 59);
-        deadline.set(Calendar.SECOND, 59);
+        deadline.set(Calendar.SECOND, 58);
 
         duration = Long.valueOf(0);
 

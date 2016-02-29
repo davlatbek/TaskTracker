@@ -9,7 +9,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.projectse.aads.task_tracker.Adapters.PlanAdapter;
@@ -40,7 +42,6 @@ public class DaylyPlanActivity extends PlanActivity {
 
         super.onCreate(savedInstanceState);
         
-        setContentView(R.layout.activity_dayly_plan); //TODO replace
         Long time = getIntent().getLongExtra("day", -1);
         if(time > 0)
             day.setTime(new Date(time));
@@ -52,12 +53,28 @@ public class DaylyPlanActivity extends PlanActivity {
                 callAddTaskActivity();
             }
         });
+
+        ImageView nextBtn = (ImageView) findViewById(R.id.imgRight);
+        nextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onDayForward();
+            }
+        });
+        ImageView backBtn = (ImageView) findViewById(R.id.imgLeft);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onDayBack();
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         final DatabaseHelper db = DatabaseHelper.getsInstance(this);
-        taskList = (ArrayList<TaskModel>) db.getTasksForDay(day);
+        taskList.clear();
+        taskList = db.getTasksForDay(day);
         super.onResume();
     }
 
@@ -67,10 +84,19 @@ public class DaylyPlanActivity extends PlanActivity {
     }
 
     public void onDayForward(){
-
+        day.add(Calendar.DAY_OF_MONTH,1);
+        callDaylyPlan();
     }
 
     public void onDayBack(){
+        day.add(Calendar.DAY_OF_MONTH,-1);
+        callDaylyPlan();
+    }
 
+    public void callDaylyPlan(){
+        Intent intent = new Intent (getApplicationContext(), DaylyPlanActivity.class);
+        intent.putExtra("day", day.getTimeInMillis());
+        startActivity(intent);
+        //should call finish() ?
     }
 }

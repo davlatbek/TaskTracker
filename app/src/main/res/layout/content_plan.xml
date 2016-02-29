@@ -12,8 +12,9 @@
     tools:context="com.projectse.aads.task_tracker.PlanActivity"
     tools:showIn="@layout/activity_plan">
 
-    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/listview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <ExpandableListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/expListView"
+        android:childIndicator="@android:drawable/ic_menu_agenda" />
 </RelativeLayout>

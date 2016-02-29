@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -53,6 +54,7 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
     protected static EditText deadlineTimeView;
     protected EditText durationView;
     protected Switch isStartTimeNotifyView, isDeadlineNotifyView;
+    protected Spinner spinnerPriority;
 
     protected static DatabaseHelper db = null;
     protected ListView subtasksListView = null;
@@ -83,7 +85,7 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
         isStartTimeNotifyView = (Switch) findViewById(R.id.swtStartTimeNotification);
         isDeadlineNotifyView = (Switch) findViewById(R.id.swtDeadlineNotification);
 
-
+        spinnerPriority = (Spinner) findViewById(R.id.spinnerPriority);
     }
 
     protected void fillData() {
@@ -109,7 +111,17 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
 
         isDeadlineNotifyView.setChecked(task.getIsNotifyDeadline());
 
-        if (task.getDuration() != null ) durationView.setText(task.getDuration().toString());
+        /*if (task.getDuration() != null ) durationView.setText(task.getDuration().toString());
+        switch (task.getPriority()){
+            case LOW: spinnerPriority.setId(0);
+                break;
+            case MEDIUM: spinnerPriority.;
+        }*/
+        /*try {
+            spinnerPriority.setSelection(task.priorityToInt(task.getPriority()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
         fillSubtasks();
     }
 

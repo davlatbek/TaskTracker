@@ -33,14 +33,24 @@
         android:orientation="horizontal"
         android:weightSum="1">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Sorted by"
+            android:textSize="18dp"
+            android:id="@+id/textViewSortedBy"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="40dp" />
+
         <Spinner
-            android:id="@+id/spinner1"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:id="@+id/spinnerSortTasks"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
             android:background="@android:drawable/btn_dropdown"
             android:spinnerMode="dropdown"
             android:layout_marginTop="50dp"
-            android:layout_marginBottom="150dp"/>
+            android:backgroundTint="#eee" />
 
     </LinearLayout>
 
@@ -54,7 +64,7 @@
         <include layout="@layout/content_plan"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginTop="100dp" />
+            android:layout_marginTop="90dp" />
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton

@@ -126,6 +126,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + TASKS_DURATION + " INTEGER,"
             + TASKS_IS_NOTIFY_DEADLINE + " INTEGER,"
             + TASKS_IS_NOTIFY_START_TIME + " INTEGER,"
+            + TASKS_PRIORITY + " INTEGER, "
             + "FOREIGN KEY(" + TASKS_PARENT_TASK + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + ")"
             + ");"
             ;
@@ -341,6 +342,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (task.getDeadline() != null)
                 values.put(TASKS_DEADLINE, task.getDeadline().getTime().getTime());
 
+            if (task.getPriority() != null) {
+                values.put(TASKS_PRIORITY, task.priorityToInt(task.getPriority()));
+            }
+
             // Return id of the added task
             id = db.insertOrThrow(TABLE_TASKS, null, values);
             db.setTransactionSuccessful();
@@ -456,8 +461,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return
      */
 
-    public List<TaskModel>
-    getTaskModelList() {
+    public List<TaskModel> getTaskModelList() {
         List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
 
         String selectQuery = "SELECT * FROM " + TABLE_TASKS;
@@ -725,6 +729,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         if (!c.isNull(c.getColumnIndex(TASKS_PARENT_TASK)))
             task.setParentTaskId(c.getLong(c.getColumnIndex(TASKS_PARENT_TASK)));
+        if (!c.isNull(c.getColumnIndex(TASKS_PRIORITY))){
+            try {
+                task.setPriority(task.intToPriority(c.getInt(c.getColumnIndex(TASKS_PRIORITY))));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         getSubtasks(task);
         return task;
@@ -815,6 +826,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(TASKS_IS_NOTIFY_START_TIME, task.getIsNotifyStartTime() ? 1 : 0);
         values.put(TASKS_IS_NOTIFY_DEADLINE, task.getIsNotifyDeadline() ? 1 : 0);
         values.put(TASKS_IS_DONE, task.getIsDone() ? 1 : 0);
+        try {
+            values.put(TASKS_PRIORITY, task.priorityToInt(task.getPriority()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -1009,4 +1025,3 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return tasks;
     }
 }
-

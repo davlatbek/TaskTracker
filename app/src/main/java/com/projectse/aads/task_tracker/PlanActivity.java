@@ -1,42 +1,30 @@
 package com.projectse.aads.task_tracker;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.method.CharacterPickerDialog;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 
-import junit.framework.Assert;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Shows list of tasks
@@ -46,6 +34,8 @@ public class PlanActivity extends AppCompatActivity {
     StableArrayAdapter adapter = null;
     ListView listview = null;
     DatabaseHelper db;
+    int sortMethod = 0;
+    Spinner dropdownSorting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,50 +54,22 @@ public class PlanActivity extends AppCompatActivity {
                 callAddTaskActivity();
             }
         });
-        setSpinner();
+        setSortSpinner();
         Log.d("d", log());
     }
 
-    public void setSpinner(){
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.DAY_OF_MONTH, 29);
-        TaskModel t1 = new TaskModel();
-        t1.setName("1");
-        t1.setDeadline(c);
-        db.addTask(t1);
-        Log.d("d", db.getTask(1).getDeadline().getTime().toString());
-
-        Spinner dropdown = (Spinner)findViewById(R.id.spinner1);
-        String[] sortParams = new String[]{"Start Time", "Deadline", "Priority"};
+    public void setSortSpinner() {
+        dropdownSorting = (Spinner) findViewById(R.id.spinnerSortTasks);
+        final String[] sortParams = new String[]{"Start Time", "Deadline", "Priority", "Name", "Duration"};
         ArrayAdapter<String> adapter2 = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, sortParams);
-        dropdown.setAdapter(adapter2);
+        dropdownSorting.setAdapter(adapter2);
 
-        dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        dropdownSorting.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
-                    case 0: {
-                        Toast.makeText(getApplicationContext(), "Sorted by start time", Toast.LENGTH_LONG).show();
-                        break;
-                    }
-                    case 1: {
-                        taskList = (ArrayList<TaskModel>) db.getTaskModelList();
-                        Collections.sort(taskList);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
-                        Toast.makeText(getApplicationContext(), "Sorted by deadline", Toast.LENGTH_LONG).show();
-                        break;
-                    }
-                    case 3: {
-                        Toast.makeText(getApplicationContext(), "Sorted by priority", Toast.LENGTH_LONG).show();
-                        break;
-                    }
-                }
+                sortMethod = position;
+                onResume();
             }
 
             @Override
@@ -116,17 +78,74 @@ public class PlanActivity extends AppCompatActivity {
         });
     }
 
+    private void sortTaskList(List<TaskModel> tasks, SortingMethod sortingMethod) {
+        switch (sortingMethod) {
+            case STARTDATE:
+                Collections.sort(tasks, new Comparator<TaskModel>() {
+                    @Override
+                    public int compare(TaskModel lhs, TaskModel rhs) {
+                        return Long.compare(lhs.getStartTime().getTime().getTime(), rhs.getStartTime().getTime().getTime());
+                    }
+                });
+                break;
+            case DEADLINE:
+                Collections.sort(tasks, new Comparator<TaskModel>() {
+                    @Override
+                    public int compare(TaskModel lhs, TaskModel rhs) {
+                        return Long.compare(lhs.getDeadline().getTime().getTime(), rhs.getDeadline().getTime().getTime());
+                    }
+                });
+                break;
+            case PRIORITY:
+                Collections.sort(tasks, new Comparator<TaskModel>() {
+                    @Override
+                    public int compare(TaskModel lhs, TaskModel rhs) {
+                        try {
+                            return Integer.compare(lhs.priorityToInt(lhs.getPriority()), rhs.priorityToInt(rhs.getPriority()));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        return 0;
+                    }
+                });
+                break;
+            case NAME:
+                Collections.sort(tasks, new Comparator<TaskModel>() {
+                    @Override
+                    public int compare(TaskModel lhs, TaskModel rhs) {
+                        return 0;
+                    }
+                });
+                break;
+            case DURATION:
+                Collections.sort(tasks, new Comparator<TaskModel>() {
+                    @Override
+                    public int compare(TaskModel lhs, TaskModel rhs) {
+                        return Long.compare(lhs.getDuration(), rhs.getDuration());
+                    }
+                });
+                break;
+        }
+    }
+
+    public enum SortingMethod {
+        PRIORITY,
+        STARTDATE,
+        DEADLINE,
+        NAME,
+        DURATION
+    }
+
     private String log() {
-        //final DatabaseHelper db = DatabaseHelper.getsInstance(this);
         List<TaskModel> list = db.getTaskModelList();
         StringBuilder s = new StringBuilder();
         s.append("The database content\n===================================\n");
         s.append("Start times\n===================================\n");
-        for (TaskModel t : list){
+        for (TaskModel t : list) {
             s.append(t.getName() + "   " + t.getStartTime().getTime().toString() + "\n");
         }
         s.append("Deadlines\n===================================\n");
-        for (TaskModel t : list){
+        for (TaskModel t : list) {
             s.append(t.getName() + "   " + t.getDeadline().getTime().toString() + "\n");
         }
         s.append("============================================\n");
@@ -136,13 +155,27 @@ public class PlanActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //final DatabaseHelper db = DatabaseHelper.getsInstance(this);
-
-        ListView listview = (ListView) findViewById(R.id.listview);
         taskList = (ArrayList<TaskModel>) db.getTaskModelList();
+        switch (sortMethod) {
+            case 0:
+                sortTaskList(taskList, SortingMethod.STARTDATE);
+                Toast.makeText(getApplicationContext(),
+                        "Sorted by start time", Toast.LENGTH_SHORT).show();
+                break;
+            case 1:
+                sortTaskList(taskList, SortingMethod.DEADLINE);
+                Toast.makeText(getApplicationContext(),
+                        "Sorted by deadline", Toast.LENGTH_SHORT).show();
+                break;
+            case 2:
+                sortTaskList(taskList, SortingMethod.PRIORITY);
+                Toast.makeText(getApplicationContext(),
+                        "Sorted by priority", Toast.LENGTH_SHORT).show();
+                break;
+        }
+        ListView listview = (ListView) findViewById(R.id.listview);
         adapter = new StableArrayAdapter(this,
                 android.R.layout.simple_list_item_1, taskList);
-
         listview.setAdapter(adapter);
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -151,9 +184,9 @@ public class PlanActivity extends AppCompatActivity {
                                     int position, long id) {
                 final TaskModel item = (TaskModel) parent.getItemAtPosition(position);
                 callTaskOverviewActivity(item);
-           }
+            }
 
-       });
+        });
     }
 
     /**
@@ -206,28 +239,15 @@ public class PlanActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * sending task object and starting Edit Task activity
-     * @param task
-     */
-    public void callEditTaskActivity(TaskModel task){
-        Intent intent = new Intent (getApplicationContext(), TaskEditActivity.class);
-        intent.putExtra("task_id", task.getId());
-//        onPause();
-        startActivityForResult(intent,0);
-        adapter.notifyDataSetChanged();
-//        onResume();
-    }
-
-    public void callAddTaskActivity(){
-        Intent intent = new Intent (getApplicationContext(), AddTaskActivity.class);
+    public void callAddTaskActivity() {
+        Intent intent = new Intent(getApplicationContext(), AddTaskActivity.class);
         startActivity(intent);
     }
 
-    public void callTaskOverviewActivity(TaskModel taskModel){
-        Intent intent = new Intent (getApplicationContext(), TaskOverviewActivity.class);
+    public void callTaskOverviewActivity(TaskModel taskModel) {
+        Intent intent = new Intent(getApplicationContext(), TaskOverviewActivity.class);
         intent.putExtra("task_id", taskModel.getId());
-        startActivityForResult(intent,0);
+        startActivityForResult(intent, 0);
         adapter.notifyDataSetChanged();
     }
 }

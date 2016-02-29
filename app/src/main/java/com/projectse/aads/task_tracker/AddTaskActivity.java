@@ -1,32 +1,20 @@
 package com.projectse.aads.task_tracker;
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.DatePicker;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.Switch;
-import android.widget.TimePicker;
+import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.projectse.aads.task_tracker.Adapters.SubtasksAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -47,6 +35,7 @@ public class AddTaskActivity extends TaskActivity {
         task = new TaskModel();
         getViews();
         fillData();
+        setPrioritySpinner();
     }
 
     @Override
@@ -187,5 +176,27 @@ public class AddTaskActivity extends TaskActivity {
             task.setParentTaskId(parent_id);
 
         return db.addTask(task);
+    }
+
+    public void setPrioritySpinner(){
+        Spinner spinnerPriority = (Spinner) findViewById(R.id.spinnerPriority);
+        final String[] priorities = new String[] {"Low", "Medium", "High"};
+        ArrayAdapter<String> adapterPrioritySpinner = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, priorities);
+        spinnerPriority.setAdapter(adapterPrioritySpinner);
+        spinnerPriority.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    task.setPriority(task.intToPriority(position));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
 }

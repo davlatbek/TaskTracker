@@ -253,6 +253,23 @@
             android:layout_weight="0.08" />
     </LinearLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Priority"
+        android:id="@+id/textViewPriority" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinnerPriority"
+        android:spinnerMode="dropdown"
+
+        android:foregroundGravity="center"
+        android:layout_marginLeft="-5dp"
+        android:layout_marginBottom="30dp" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="200dp"

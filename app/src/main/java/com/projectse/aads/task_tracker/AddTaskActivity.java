@@ -29,6 +29,8 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by Davlatbek Isroilov on 1/31/2016.
@@ -135,7 +137,7 @@ public class AddTaskActivity extends TaskActivity {
 
         //in case there is no start time: duration must be less than deadline - current time
         if (stCal == null && !durationView.getText().toString().equals("") &&
-                dCal.getTime().getTime() - Calendar.getInstance().getTime().getTime()
+                dCal.getTime().getTime() - Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault()).getTime().getTime()
                         < Long.parseLong(durationView.getText().toString()) * 60 * 60 * 1000) {
             toast.makeText(getApplicationContext(),
                     "Duration can't be more than time between deadline and current time!",
@@ -170,7 +172,7 @@ public class AddTaskActivity extends TaskActivity {
         deadLineCal = getCalendarFromTxtEditViews(deadlineDateView, deadlineTimeView);
 
         if (startTimeDateView.getText().toString().equals("") && startTimeTimeView.getText().toString().equals(""))
-            startTimeCal = Calendar.getInstance();
+            startTimeCal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         else
             startTimeCal = getCalendarFromTxtEditViews(startTimeDateView, startTimeTimeView);
 

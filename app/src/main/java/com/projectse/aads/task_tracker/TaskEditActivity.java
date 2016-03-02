@@ -22,6 +22,9 @@ import android.widget.Toast;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 
 import java.util.Calendar;
+import java.util.Locale;
+import java.util.TimeZone;
+
 /**
  * Shows fields for editing current Task
  */
@@ -35,7 +38,7 @@ public class TaskEditActivity extends TaskActivity {
         super.onCreate(savedInstanceState);
         db = DatabaseHelper.getsInstance(getApplicationContext());
         setContentView(R.layout.activity_task_edit);
-//        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         getViews();
 
@@ -202,9 +205,9 @@ public class TaskEditActivity extends TaskActivity {
             return false;
         // Case: deadline cannot be earlier than now.
         // Set default.
-        if(Calendar.getInstance().after(dCal)){
+        if(Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault()).after(dCal)){
             flag = true;
-            dCal = Calendar.getInstance();
+            dCal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
             dCal.set(Calendar.HOUR_OF_DAY,23);
             dCal.set(Calendar.MINUTE,59);
             dCal.set(Calendar.SECOND,59);

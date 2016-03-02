@@ -1,30 +1,20 @@
 package com.projectse.aads.task_tracker;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.ExpandableListView;
 
+import com.projectse.aads.task_tracker.Adapters.PlanAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
-
-import junit.framework.Assert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,21 +25,17 @@ import java.util.Map;
  * Shows list of tasks
  */
 public class PlanActivity extends AppCompatActivity {
-    ArrayList<TaskModel> taskList = new ArrayList<>();
-    StableArrayAdapter adapter = null;
-    ListView listview = null;
+    protected List<TaskModel> taskList = new ArrayList<>();
+    protected PlanAdapter tasks_adapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
 
-        DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
+
         
         setContentView(R.layout.activity_plan);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        //db.deleteTaskTable(db.getWritableDatabase());
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,27 +45,33 @@ public class PlanActivity extends AppCompatActivity {
         });
     }
 
+
+
     @Override
     protected void onResume() {
         super.onResume();
         final DatabaseHelper db = DatabaseHelper.getsInstance(this);
 
-        ListView listview = (ListView) findViewById(R.id.listview);
-        taskList = (ArrayList<TaskModel>) db.getTaskModelList();
-        adapter = new StableArrayAdapter(this,
-                android.R.layout.simple_list_item_1, taskList);
+//        if(taskList.isEmpty())
+//            taskList = db.getTaskModelList();
 
-        listview.setAdapter(adapter);
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ExpandableListView expListview = (ExpandableListView) findViewById(R.id.expListView);
+        expListview.setIndicatorBounds(expListview.getWidth()-40,expListview.getWidth());
 
-            @Override
-            public void onItemClick(AdapterView<?> parent, final View view,
-                                    int position, long id) {
-                final TaskModel item = (TaskModel) parent.getItemAtPosition(position);
-                callTaskOverviewActivity(item);
-           }
+        Map<TaskModel,List<TaskModel>> task_hierarchy = new HashMap<>();
+        for(TaskModel task : taskList)
+            if(task.isSupertask())
+                task_hierarchy.put(task,new ArrayList<TaskModel>());
+        for(TaskModel task : taskList)
+            if(task.isSubtask()) {
+                for(TaskModel super_task : task_hierarchy.keySet()){
+                    if(super_task.getId().compareTo(task.getParentTaskId()) == 0)
+                        task_hierarchy.get(super_task).add(task);
+                }
+            }
 
-       });
+        tasks_adapter = new PlanAdapter(this,task_hierarchy);
+        expListview.setAdapter(tasks_adapter);
     }
 
     /**
@@ -132,19 +124,6 @@ public class PlanActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * sending task object and starting Edit Task activity
-     * @param task
-     */
-    public void callEditTaskActivity(TaskModel task){
-        Intent intent = new Intent (getApplicationContext(), TaskEditActivity.class);
-        intent.putExtra("task_id", task.getId());
-//        onPause();
-        startActivityForResult(intent,0);
-        adapter.notifyDataSetChanged();
-//        onResume();
-    }
-
     public void callAddTaskActivity(){
         Intent intent = new Intent (getApplicationContext(), AddTaskActivity.class);
         startActivity(intent);
@@ -153,7 +132,7 @@ public class PlanActivity extends AppCompatActivity {
     public void callTaskOverviewActivity(TaskModel taskModel){
         Intent intent = new Intent (getApplicationContext(), TaskOverviewActivity.class);
         intent.putExtra("task_id", taskModel.getId());
-        startActivityForResult(intent,0);
-        adapter.notifyDataSetChanged();
+        startActivityForResult(intent, 0);
+        tasks_adapter.notifyDataSetChanged();
     }
 }

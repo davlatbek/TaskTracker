@@ -6,6 +6,8 @@ import junit.framework.Assert;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by smith on 2/7/16.
@@ -35,11 +37,11 @@ public class DBMethodsPart1Test extends TestInit {
 
         String new_name = "TestTask1";
         t.setName(new_name);
-        Calendar dateSt = Calendar.getInstance();
+        Calendar dateSt = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         dateSt.set(Calendar.HOUR_OF_DAY, 20);
         t.setStartTime(dateSt);
 
-        Calendar dateD = Calendar.getInstance();
+        Calendar dateD = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         dateD.set(Calendar.HOUR_OF_DAY, 23);
         t.setDeadline(dateD);
 
@@ -72,21 +74,21 @@ public class DBMethodsPart1Test extends TestInit {
 
     public void testGetTaskForDay(){
         //init dates
-        Calendar dateTarget = Calendar.getInstance();
+        Calendar dateTarget = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         dateTarget.add(Calendar.DAY_OF_MONTH, -1);
 
-        Calendar dateRight1 = Calendar.getInstance();
+        Calendar dateRight1 = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         dateRight1.add(Calendar.DAY_OF_MONTH, -1);
         dateRight1.set(Calendar.HOUR_OF_DAY, 23);
 
-        Calendar dateRight2 = Calendar.getInstance();
+        Calendar dateRight2 = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         dateRight2.add(Calendar.DAY_OF_MONTH, -1);
         dateRight2.set(Calendar.HOUR_OF_DAY, 0);
 
-        Calendar dateWrong1 = Calendar.getInstance();
+        Calendar dateWrong1 = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         dateWrong1.add(Calendar.DAY_OF_MONTH, -2);
 
-        Calendar dateWrong2 = Calendar.getInstance();
+        Calendar dateWrong2 = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
 
         TaskModel t = new TaskModel();
 
@@ -108,16 +110,16 @@ public class DBMethodsPart1Test extends TestInit {
     public void testGetTaskForToday(){
         //init dates
 
-        Calendar dateRight1 = Calendar.getInstance();
+        Calendar dateRight1 = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         dateRight1.set(Calendar.HOUR_OF_DAY, 23);
-        Calendar dateRight2 = Calendar.getInstance();
+        Calendar dateRight2 = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         dateRight2.add(Calendar.SECOND, 2);
 
 
-        Calendar dateWrong1 = Calendar.getInstance();
+        Calendar dateWrong1 = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         dateWrong1.add(Calendar.DAY_OF_MONTH, -2);
 
-        Calendar dateWrong2 = Calendar.getInstance();
+        Calendar dateWrong2 = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         dateWrong2.set(Calendar.HOUR_OF_DAY, 0);
 
         TaskModel t = new TaskModel();

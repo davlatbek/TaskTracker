@@ -8,6 +8,8 @@ import junit.framework.Assert;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by Davlatbek Isroilov on 2/18/2016.
@@ -18,7 +20,7 @@ public class DBMethodsPart2Test extends TestInit {
 
     public void testAddTask() {
         TaskModel task = new TaskModel(2L, "Task 1");
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         cal.set(Calendar.DATE, 1);
         task.setDeadline(cal);
         long id = db.addTask(task);
@@ -36,18 +38,18 @@ public class DBMethodsPart2Test extends TestInit {
 
     public void testGetTasksForACurrentWeek() {
 
-        Calendar currentDate = Calendar.getInstance();
+        Calendar currentDate = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         currentDate.set(Calendar.HOUR_OF_DAY, 23);
         currentDate.set(Calendar.MINUTE, 59);
         currentDate.set(Calendar.SECOND, 59);
 
-        Calendar beforeCurrentDate = Calendar.getInstance();
+        Calendar beforeCurrentDate = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         beforeCurrentDate.add(Calendar.DATE, -1);
         beforeCurrentDate.set(Calendar.HOUR_OF_DAY, 23);
         beforeCurrentDate.set(Calendar.MINUTE, 59);
         beforeCurrentDate.set(Calendar.SECOND, 59);
 
-        Calendar afterCurrentDate = Calendar.getInstance();
+        Calendar afterCurrentDate = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         afterCurrentDate.add(Calendar.DATE, 8);
         afterCurrentDate.set(Calendar.HOUR_OF_DAY, 0);
         afterCurrentDate.set(Calendar.MINUTE, 0);
@@ -66,25 +68,25 @@ public class DBMethodsPart2Test extends TestInit {
 
     public void testGetTasksForAChosenWeek() {
 
-        Calendar startDate = Calendar.getInstance();
+        Calendar startDate = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         startDate.add(Calendar.DAY_OF_MONTH, 15);
         startDate.add(Calendar.HOUR_OF_DAY, 15);
         startDate.add(Calendar.MINUTE, 15);
         startDate.add(Calendar.SECOND, 15);
 
-        Calendar currentDate = Calendar.getInstance();
+        Calendar currentDate = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         currentDate.set(Calendar.HOUR_OF_DAY, 02);
         currentDate.set(Calendar.MINUTE, 02);
         currentDate.set(Calendar.SECOND, 02);
 
-        Calendar beforeCurrentDate = Calendar.getInstance();
+        Calendar beforeCurrentDate = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         //beforeCurrentDate.set(2016, 01, 01);
         beforeCurrentDate.set(Calendar.DATE, -2);
         beforeCurrentDate.set(Calendar.HOUR_OF_DAY, 01);
         beforeCurrentDate.set(Calendar.MINUTE, 01);
         beforeCurrentDate.set(Calendar.SECOND, 01);
 
-        Calendar afterCurrentDate = Calendar.getInstance();
+        Calendar afterCurrentDate = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         afterCurrentDate.set(2016, 12, 12);
         afterCurrentDate.set(Calendar.HOUR_OF_DAY, 03);
         afterCurrentDate.set(Calendar.MINUTE, 03);

@@ -963,31 +963,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         startingDay.set(Calendar.SECOND, 01);
 
         //setting last day of random week
-        Calendar lastDay = startingDay;
+        Calendar lastDay = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        lastDay.setTimeInMillis(startingDay.getTimeInMillis());
+
         lastDay.add(Calendar.DATE, 7);
         lastDay.set(Calendar.HOUR_OF_DAY, 23);
         lastDay.set(Calendar.MINUTE, 59);
         lastDay.set(Calendar.SECOND, 59);
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
 
-        /*String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE "
-                + TASKS_START_TIME + " > " + day.getTime().getTime() +
-                " AND " + TASKS_DEADLINE + " < " + lastDay.getTime().getTime();*/
         String selectQuery = "SELECT * FROM " + TABLE_TASKS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);
         if (c.moveToFirst()) {
             do {
                 TaskModel task = new TaskModel();
-                cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
-                /*if (cal.getTime().getTime() >= startingDay.getTime().getTime() &&
-                        cal.getTime().getTime() <= lastDay.getTime().getTime()) {*/
+                cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_START_TIME)));
+
                 if (cal.after(startingDay) &&
                         cal.getTime().getTime() <= lastDay.getTime().getTime()) {
-                    task.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
-                    task.setName(c.getString(c.getColumnIndex(TASKS_NAME)));
-                    task.setDeadline(cal);
-                    tasks.add(task);
+                    tasks.add(createTaskByCursor(c));
                 }
             } while (c.moveToNext());
         }
@@ -1009,18 +1004,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         lastDayOfCurrentWeek.set(Calendar.MINUTE, 59);
         lastDayOfCurrentWeek.set(Calendar.SECOND, 59);
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        Calendar today = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        today.set(Calendar.HOUR_OF_DAY, 00);
+        today.set(Calendar.MINUTE, 00);
+        today.set(Calendar.SECOND, 01);
         String selectQuery = "SELECT * FROM " + TABLE_TASKS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);
         if (c.moveToFirst()) {
             do {
                 TaskModel task = new TaskModel();
-                cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
-                if (cal.getTime().getTime() <= lastDayOfCurrentWeek.getTime().getTime()) {
-                    task.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
+                cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_START_TIME)));
+                if (cal.getTimeInMillis() >= today.getTimeInMillis() &&
+                        cal.getTimeInMillis() <= lastDayOfCurrentWeek.getTimeInMillis()) {
+                    tasks.add(createTaskByCursor(c));
+                    /*task.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
                     task.setName(c.getString(c.getColumnIndex(TASKS_NAME)));
                     task.setDeadline(cal);
-                    tasks.add(task);
+                    tasks.add(task);*/
                 }
             } while (c.moveToNext());
         }

@@ -54,7 +54,7 @@ public class PlanActivity extends AppCompatActivity {
 
         db = DatabaseHelper.getsInstance(getApplicationContext());
 
-/*        ArrayList<Long> subts = new ArrayList<>();
+        /*ArrayList<Long> subts = new ArrayList<>();
 
         TaskModel t1 = new TaskModel();
         t1.setName("TestTask1");

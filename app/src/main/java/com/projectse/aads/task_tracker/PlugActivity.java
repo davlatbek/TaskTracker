@@ -24,7 +24,7 @@ public class PlugActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plug);
-        initDebugData();
+        //initDebugData();
     }
 
     public void initDebugData(){

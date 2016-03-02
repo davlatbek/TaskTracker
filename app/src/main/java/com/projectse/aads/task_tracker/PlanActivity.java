@@ -99,7 +99,7 @@ public class PlanActivity extends AppCompatActivity {
 
     public void setSortSpinner() {
         dropdownSorting = (Spinner) findViewById(R.id.spinnerSortTasks);
-        final String[] sortParams = new String[]{"Start Time", "Deadline", "Priority", "Name", "Duration"};
+        final String[] sortParams = new String[] {"Start Time", "Deadline", "Priority", "Name", "Duration"};
         ArrayAdapter<String> adapter2 = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, sortParams);
         dropdownSorting.setAdapter(adapter2);
@@ -152,7 +152,7 @@ public class PlanActivity extends AppCompatActivity {
                 Collections.sort(tasks, new Comparator<TaskModel>() {
                     @Override
                     public int compare(TaskModel lhs, TaskModel rhs) {
-                        return 0;
+                        return lhs.getName().compareTo(rhs.getName());
                     }
                 });
                 break;
@@ -168,9 +168,9 @@ public class PlanActivity extends AppCompatActivity {
     }
 
     public enum SortingMethod {
-        PRIORITY,
         STARTDATE,
         DEADLINE,
+        PRIORITY,
         NAME,
         DURATION
     }
@@ -191,12 +191,10 @@ public class PlanActivity extends AppCompatActivity {
         return s.toString();
     }
 
-
-
     @Override
     protected void onResume() {
         super.onResume();
-        /*taskList = (ArrayList<TaskModel>) db.getTaskModelList();
+        taskList = (ArrayList<TaskModel>) db.getTaskModelList();
         switch (sortMethod) {
             case 0:
                 sortTaskList(taskList, SortingMethod.STARTDATE);
@@ -213,43 +211,37 @@ public class PlanActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),
                         "Sorted by priority", Toast.LENGTH_SHORT).show();
                 break;
-        }*/
-        /*ListView listview = (ListView) findViewById(R.id.listview);
-        adapter = new StableArrayAdapter(this,
-                android.R.layout.simple_list_item_1, taskList);
-        listview.setAdapter(adapter);
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, final View view,
-                                    int position, long id) {
-                final TaskModel item = (TaskModel) parent.getItemAtPosition(position);
-                callTaskOverviewActivity(item);
-            }
-
-        });*/
-
-        final DatabaseHelper db = DatabaseHelper.getsInstance(this);
+            case 3:
+                sortTaskList(taskList, SortingMethod.NAME);
+                Toast.makeText(getApplicationContext(),
+                        "Sorted by name", Toast.LENGTH_SHORT).show();
+                break;
+            case 4:
+                sortTaskList(taskList, SortingMethod.DURATION);
+                Toast.makeText(getApplicationContext(),
+                        "Sorted by duration", Toast.LENGTH_SHORT).show();
+                break;
+        }
 
 //        if(taskList.isEmpty())
 //            taskList = db.getTaskModelList();
 
         ExpandableListView expListview = (ExpandableListView) findViewById(R.id.expListView);
-        expListview.setIndicatorBounds(expListview.getWidth()-40,expListview.getWidth());
+        expListview.setIndicatorBounds(expListview.getWidth() - 40, expListview.getWidth());
 
-        Map<TaskModel,List<TaskModel>> task_hierarchy = new HashMap<>();
-        for(TaskModel task : taskList)
-            if(task.isSupertask())
-                task_hierarchy.put(task,new ArrayList<TaskModel>());
-        for(TaskModel task : taskList)
-            if(task.isSubtask()) {
-                for(TaskModel super_task : task_hierarchy.keySet()){
-                    if(super_task.getId().compareTo(task.getParentTaskId()) == 0)
+        Map<TaskModel, List<TaskModel>> task_hierarchy = new HashMap<>();
+        for (TaskModel task : taskList)
+            if (task.isSupertask())
+                task_hierarchy.put(task, new ArrayList<TaskModel>());
+        for (TaskModel task : taskList)
+            if (task.isSubtask()) {
+                for (TaskModel super_task : task_hierarchy.keySet()) {
+                    if (super_task.getId().compareTo(task.getParentTaskId()) == 0)
                         task_hierarchy.get(super_task).add(task);
                 }
             }
 
-        tasks_adapter = new PlanAdapter(this,task_hierarchy);
+        tasks_adapter = new PlanAdapter(this, task_hierarchy);
         expListview.setAdapter(tasks_adapter);
     }
 

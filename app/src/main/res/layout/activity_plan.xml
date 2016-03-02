@@ -62,14 +62,14 @@
         android:id="@+id/textViewSort"
         android:layout_alignParentStart="true"
         android:layout_alignBottom="@+id/spinnerSortTasks"
-        android:autoText="false"
         android:paddingLeft="5dp"
         android:layout_below="@+id/relativeLayout"
-        android:paddingTop="12dp" />
+        android:paddingTop="12dp"
+        android:layout_toStartOf="@+id/spinnerSortTasks" />
 
     <Spinner
         android:id="@+id/spinnerSortTasks"
-        android:layout_width="300dp"
+        android:layout_width="290dp"
         android:layout_height="50dp"
         android:background="@android:drawable/btn_dropdown"
         android:spinnerMode="dropdown"

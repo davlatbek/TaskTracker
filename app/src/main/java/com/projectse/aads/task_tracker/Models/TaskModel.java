@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Created by smith on 1/27/16.
@@ -17,9 +19,9 @@ public class TaskModel {
     private Long id;
     private String description = "";
 
-    private Calendar startTime = Calendar.getInstance();
+    private Calendar startTime = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
 
-    private Calendar deadline = Calendar.getInstance();
+    private Calendar deadline = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
     private Long duration;
     private Boolean isNotifyDeadline = Boolean.FALSE;
     private Boolean isNotifyStartTime = Boolean.FALSE;
@@ -50,11 +52,11 @@ public class TaskModel {
         //set last second for a current day as default for startTime and deadline.
         startTime.set(Calendar.HOUR_OF_DAY, 23);
         startTime.set(Calendar.MINUTE, 59);
-        startTime.set(Calendar.SECOND, 59);
+        startTime.set(Calendar.SECOND, 58);
 
         deadline.set(Calendar.HOUR_OF_DAY, 23);
         deadline.set(Calendar.MINUTE, 59);
-        deadline.set(Calendar.SECOND, 59);
+        deadline.set(Calendar.SECOND, 58);
 
         duration = Long.valueOf(0);
 
@@ -152,4 +154,19 @@ public class TaskModel {
         return subtasks_ids;
     }
 
+    public boolean deleteSubtask(Long subtask_id){
+            return subtasks_ids.remove(subtask_id);
+    }
+
+    public void clearSubtasks() {
+        subtasks_ids.clear();
+    }
+
+    public boolean isSubtask() {
+        return parentTaskId!=null && parentTaskId > 0;
+    }
+
+    public boolean isSupertask() {
+        return !isSubtask();
+    }
 }

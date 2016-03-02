@@ -1,80 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context="com.projectse.aads.task_tracker.PlanActivity">
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-    </android.support.design.widget.AppBarLayout>
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="100dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="10dp"
-        android:orientation="horizontal"
-        android:weightSum="1">
-
-        <TextView
+        android:background="#293039"
+        android:paddingLeft="25dp"
+        android:paddingRight="25dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp"
+        android:id="@+id/relativeLayout">
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Sorted by"
-            android:textSize="18dp"
-            android:id="@+id/textViewSortedBy"
-            android:layout_marginTop="50dp"
-            android:layout_marginLeft="40dp" />
-
-        <Spinner
-            android:id="@+id/spinnerSortTasks"
-            android:layout_width="200dp"
-            android:layout_height="40dp"
-            android:background="@android:drawable/btn_dropdown"
-            android:spinnerMode="dropdown"
-            android:layout_marginTop="50dp"
-            android:backgroundTint="#eee" />
-
-    </LinearLayout>
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <include layout="@layout/content_plan"
+            android:layout_centerVertical="true"
+            android:id="@+id/imgLeft"
+            android:src="@android:drawable/ic_media_previous"/>
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginTop="90dp" />
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtDay"
+                android:textStyle="bold"
+                android:text="Week"
+                android:textColor="#fff"
+                android:textSize="20sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="4dp"
+                android:id="@+id/txtYear"
+                android:textColor="#fff"
+                android:textStyle="bold"
+                android:textSize="18sp"/>
+        </LinearLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:id="@+id/imgRight"
+            android:layout_alignParentRight="true"
+            android:src="@android:drawable/ic_media_next"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Sorted by "
+        android:id="@+id/textViewSort"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/spinnerSortTasks"
+        android:autoText="false"
+        android:paddingLeft="5dp"
+        android:layout_below="@+id/relativeLayout"
+        android:paddingTop="12dp" />
+
+    <Spinner
+        android:id="@+id/spinnerSortTasks"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:background="@android:drawable/btn_dropdown"
+        android:spinnerMode="dropdown"
+        android:layout_below="@+id/relativeLayout"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentRight="true"
+        android:clickable="true" />
+
+    <ExpandableListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/expListView"
+        android:childIndicator="@android:drawable/ic_menu_agenda"
+        android:layout_marginLeft="0dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textViewSort" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
         android:src="@android:drawable/ic_input_add"
         android:theme="@style/TextAppearance.AppCompat.Button"
-        android:onClick="addTask" />
+        android:onClick="addTask"
+        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="25dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
 
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

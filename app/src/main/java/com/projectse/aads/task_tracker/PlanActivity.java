@@ -39,11 +39,13 @@ import java.util.Map;
  * Shows list of tasks
  */
 public class PlanActivity extends AppCompatActivity {
-    ArrayList<TaskModel> taskList = new ArrayList<>();
+
     DatabaseHelper db;
     int sortMethod = 0;
     Spinner dropdownSorting;
-    PlanAdapter tasks_adapter = null;
+
+    protected List<TaskModel> taskList = new ArrayList<>();
+    protected PlanAdapter tasks_adapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +54,7 @@ public class PlanActivity extends AppCompatActivity {
 
         db = DatabaseHelper.getsInstance(getApplicationContext());
 
-        ArrayList<Long> subts = new ArrayList<>();
+/*        ArrayList<Long> subts = new ArrayList<>();
 
         TaskModel t1 = new TaskModel();
         t1.setName("TestTask1");
@@ -81,11 +83,9 @@ public class PlanActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
             Assert.assertTrue(false);
-        }
+        }*/
 
         setContentView(R.layout.activity_plan);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,6 +191,8 @@ public class PlanActivity extends AppCompatActivity {
         return s.toString();
     }
 
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -229,10 +231,12 @@ public class PlanActivity extends AppCompatActivity {
 
         final DatabaseHelper db = DatabaseHelper.getsInstance(this);
 
+//        if(taskList.isEmpty())
+//            taskList = db.getTaskModelList();
+
         ExpandableListView expListview = (ExpandableListView) findViewById(R.id.expListView);
         expListview.setIndicatorBounds(expListview.getWidth()-40,expListview.getWidth());
 
-        taskList = (ArrayList<TaskModel>) db.getTaskModelList();
         Map<TaskModel,List<TaskModel>> task_hierarchy = new HashMap<>();
         for(TaskModel task : taskList)
             if(task.isSupertask())

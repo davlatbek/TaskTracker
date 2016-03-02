@@ -162,12 +162,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * CREATE TABLE SUBTASKS
      */
 
-    private static final String CREATE_TABLE_SUBTASKS = "CREATE TABLE "
-            + TABLE_SUBTASKS + " (" + SUBTASKS_MASTER_ID
-            + " INTEGER," + SUBTASKS_SLAVE_ID + " INTEGER,"
-            + "FOREIGN KEY(" + SUBTASKS_MASTER_ID + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + "),"
-            + "FOREIGN KEY(" + SUBTASKS_SLAVE_ID + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + ")"
-            + ");";
+//    private static final String CREATE_TABLE_SUBTASKS = "CREATE TABLE "
+//            + TABLE_SUBTASKS + " (" + SUBTASKS_MASTER_ID
+//            + " INTEGER," + SUBTASKS_SLAVE_ID + " INTEGER,"
+//            + "FOREIGN KEY(" + SUBTASKS_MASTER_ID + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + "),"
+//            + "FOREIGN KEY(" + SUBTASKS_SLAVE_ID + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + ")"
+//            + ");";
 
     private static final String CREATE_TABLE_SETTINGS = "CREATE TABLE" +
             TABLE_SETTINGS + " (" +
@@ -191,7 +191,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_TASKS); // create tasks table
         db.execSQL(CREATE_TABLE_COURSES); // create course table
         db.execSQL(CREATE_TABLE_COURSES_TO_TASK); // create course to task table
-        db.execSQL(CREATE_TABLE_SUBTASKS); // create subtasks table
+  //      db.execSQL(CREATE_TABLE_SUBTASKS); // create subtasks table
         db.execSQL(CREATE_TABLE_SETTINGS); // create settings table
     }
 

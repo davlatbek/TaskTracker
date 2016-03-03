@@ -97,8 +97,8 @@ public class TaskOverviewActivity extends TaskActivity {
         buttonDeadline.setVisibility(View.INVISIBLE);
         buttonDeadlineTime.setVisibility(View.INVISIBLE);
         durationView.setFocusable(false);
-        spinnerCourseName = (Spinner) findViewById(R.id.spinnerCourseName);
-        spinnerCourseName.setFocusable(false);
+        //spinnerCourseName = (Spinner) findViewById(R.id.spinnerCourseName);
+        //spinnerCourseName.setFocusable(false);
         spinnerPriority = (Spinner) findViewById(R.id.spinnerPriority);
         spinnerPriority.setFocusable(false);
         spinnerPriority.setEnabled(false);

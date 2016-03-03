@@ -237,34 +237,6 @@ public class PlanActivity extends AppCompatActivity {
         expListview.setAdapter(tasks_adapter);
     }
 
-    /**
-     * sub class for taking list item
-     */
-    private class StableArrayAdapter extends ArrayAdapter<TaskModel> {
-
-        HashMap<TaskModel, Integer> mIdMap = new HashMap<TaskModel, Integer>();
-
-        public StableArrayAdapter(Context context, int textViewResourceId,
-                                  ArrayList<TaskModel> objects) {
-            super(context, textViewResourceId, objects);
-            for (int i = 0; i < objects.size(); ++i) {
-                mIdMap.put(objects.get(i), i);
-            }
-        }
-
-        @Override
-        public long getItemId(int position) {
-            TaskModel item = getItem(position);
-            return mIdMap.get(item);
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return true;
-        }
-
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

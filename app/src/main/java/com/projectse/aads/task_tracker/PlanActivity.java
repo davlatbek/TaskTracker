@@ -186,7 +186,7 @@ public class PlanActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        taskList = (ArrayList<TaskModel>) db.getTaskModelList();
+        //taskList = (ArrayList<TaskModel>) db.getTaskModelList();
         switch (sortMethod) {
             case 0:
                 sortTaskList(taskList, SortingMethod.STARTDATE);

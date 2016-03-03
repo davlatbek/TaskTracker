@@ -37,9 +37,9 @@ public class DBCourseToTaskMethodsTest extends TestInit {
     }
 
     public boolean isTableExists(String tableName) {
-        Cursor cursor = db.getReadableDatabase().rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"+tableName+"'", null);
-        if(cursor!=null) {
-            if(cursor.getCount()>0) {
+        Cursor cursor = db.getReadableDatabase().rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '" + tableName + "'", null);
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
                 cursor.close();
                 return true;
             }
@@ -60,11 +60,11 @@ public class DBCourseToTaskMethodsTest extends TestInit {
         course.setPriority(CourseModel.Priority.HIGH);
         db.addCourse(course);
 
-        Assert.assertTrue("List of courses should be not empty",db.getCourseModelList().size() > 0);
+        Assert.assertTrue("List of courses should be not empty", db.getCourseModelList().size() > 0);
 
     }
 
-    public void testAddCourse() throws  Exception {
+    public void testAddCourse() throws Exception {
         CourseModel course = new CourseModel();
         course.setName("test3");
         course.setPriority(CourseModel.Priority.HIGH);
@@ -112,37 +112,40 @@ public class DBCourseToTaskMethodsTest extends TestInit {
 
         long coursetotaskid = db.addCourseToTask(db.addTask(task));
 
-        Assert.assertTrue("Number of updated rows should be == 1",db.updateCourseToTask(coursetotaskid,course_id_1) == 1);
+        Assert.assertTrue("Number of updated rows should be == 1", db.updateCourseToTask(coursetotaskid, course_id_1) == 1);
     }
 
-    public void testSelectListOfTasks() throws Exception {
-        CourseModel course_2 = new CourseModel();
-        course_2.setName("Course-2");
-        course_2.setPriority(CourseModel.Priority.HIGH);
-        long course_id_2 = db.addCourse(course_2);
+    public void testSelectListOfTasks1() throws Exception {
+        CourseModel course_one = new CourseModel();
+        course_one.setName("Course-1");
+        course_one.setPriority(CourseModel.Priority.HIGH);
+        long course_id_one = db.addCourse(course_one);
 
-        CourseModel course_3 = new CourseModel();
-        course_3.setName("Course-3");
-        course_3.setPriority(CourseModel.Priority.HIGH);
-        long course_id_3 = db.addCourse(course_3);
+        TaskModel task_one = new TaskModel();
+        task_one.setName("Task-1");
+        long task_id_1 = db.addTask(task_one);
 
-        TaskModel task = new TaskModel();
-        task.setName("Task-1");
+        db.addCourseToTask(db.addTask(task_one));
+        db.updateCourseToTask(task_id_1, course_id_one);
+        Assert.assertTrue(db.getListOfTasks(course_id_one).size() == 1);
 
-        TaskModel task2 = new TaskModel();
-        task.setName("Task-2");
+    }
 
-        long task_id_1 = db.addTask(task);
-        long task_id_2 = db.addTask(task2);
+    public void testSelectListOfTasks2() throws Exception {
 
 
-        long coursetotaskid = db.addCourseToTask(db.addTask(task));
-        long coursetotaskid2 = db.addCourseToTask(db.addTask(task2));
-        long course_id2 = db.updateCourseToTask(coursetotaskid, course_id_2);
-        long course_id3 = db.updateCourseToTask(coursetotaskid2, course_id_3);
+        CourseModel course_two = new CourseModel();
+        course_two.setName("Course-2");
+        course_two.setPriority(CourseModel.Priority.HIGH);
+        long course_id_two = db.addCourse(course_two);
 
+        TaskModel task_two = new TaskModel();
+        task_two.setName("Task-2");
+        long task_id_2 = db.addTask(task_two);
 
-        Assert.assertTrue(db.getListOfTasks(course_id2).size()!=0 & db.getListOfTasks(course_id3).size()!=0);
+        db.addCourseToTask(db.addTask(task_two));
+        db.updateCourseToTask(task_id_2, course_id_two);
+        Assert.assertTrue(db.getListOfTasks(course_id_two).size() == 1);
 
     }
 }

@@ -45,7 +45,7 @@ public class AddTaskActivity extends TaskActivity {
         task = new TaskModel();
         getViews();
         fillData();
-        setPrioritySpinner();
+
         //List of courses dialog
 
     }

@@ -80,12 +80,6 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
         timeFormat.setTimeZone(timeZone);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        dialogFragmentBuilder = new ListOfCourses(this, new DatabaseHelper(this));
-    }
-
     private boolean isEmptyListSet = false;
 
     protected void getViews(){
@@ -104,6 +98,9 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
         isDeadlineNotifyView = (Switch) findViewById(R.id.swtDeadlineNotification);
 
         spinnerPriority = (Spinner) findViewById(R.id.spinnerPriority);
+        setPrioritySpinner();
+
+        dialogFragmentBuilder = new ListOfCourses(this, new DatabaseHelper(this));
     }
 
     protected void fillData() {

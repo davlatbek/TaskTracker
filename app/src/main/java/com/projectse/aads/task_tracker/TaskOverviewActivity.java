@@ -29,7 +29,7 @@ public class TaskOverviewActivity extends TaskActivity {
     private Button editButton;
     private Button buttonStartDate, buttonDeadline, buttonStartTime, buttonDeadlineTime;
     private Switch switchFinished;
-    private Spinner spinnerCourseName, spinnerPriority;
+    private Spinner spinnerPriority;
 
     //Database instance
     DatabaseHelper db = null;
@@ -88,8 +88,6 @@ public class TaskOverviewActivity extends TaskActivity {
         buttonDeadline.setVisibility(View.INVISIBLE);
         buttonDeadlineTime.setVisibility(View.INVISIBLE);
         durationView.setFocusable(false);
-        spinnerCourseName = (Spinner) findViewById(R.id.spinnerCourseName);
-        spinnerCourseName.setFocusable(false);
         spinnerPriority = (Spinner) findViewById(R.id.spinnerPriority);
         spinnerPriority.setFocusable(false);
         spinnerPriority.setEnabled(false);

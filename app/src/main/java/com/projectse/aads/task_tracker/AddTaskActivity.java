@@ -1,5 +1,6 @@
 package com.projectse.aads.task_tracker;
 
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -13,6 +14,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Dialogs.ListOfCourses;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.util.Calendar;
@@ -26,6 +28,7 @@ import java.util.TimeZone;
  */
 public class AddTaskActivity extends TaskActivity {
     private Long parent_id = -1L;
+    DialogFragment dialogFragmentBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,8 @@ public class AddTaskActivity extends TaskActivity {
         getViews();
         fillData();
         setPrioritySpinner();
+        //List of courses dialog
+        dialogFragmentBuilder = new ListOfCourses(this, new DatabaseHelper(this));
     }
 
     @Override
@@ -46,6 +51,16 @@ public class AddTaskActivity extends TaskActivity {
         if(getIntent().getBooleanExtra("hide_subtasks",false)){
             ScrollView sub_l = (ScrollView) findViewById(R.id.subtasksScrollView);
             sub_l.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public void onClickCourseList(View view) {
+        switch (view.getId()) {
+            case R.id.selectCourse:
+                dialogFragmentBuilder.show(getFragmentManager(), "selectcourse");
+                break;
+            default:
+                break;
         }
     }
 
@@ -179,6 +194,7 @@ public class AddTaskActivity extends TaskActivity {
 
         return db.addTask(task);
     }
+
 
     public void setPrioritySpinner(){
         Spinner spinnerPriority = (Spinner) findViewById(R.id.spinnerPriority);

@@ -101,8 +101,12 @@ public class TaskOverviewActivity extends TaskActivity {
         spinnerPriority.setFocusable(false);
         spinnerPriority.setEnabled(false);
 
+        Button buttonSelectCourse = (Button) findViewById(R.id.selectCourse);
+        buttonSelectCourse.setVisibility(View.INVISIBLE);
+
         Button addSubtasks = (Button) findViewById(R.id.btnAddSubtask);
         Button clearSubtasks = (Button) findViewById(R.id.btnClearSubtasks);
+
 
         addSubtasks.setVisibility(View.INVISIBLE);
         clearSubtasks.setVisibility(View.INVISIBLE);

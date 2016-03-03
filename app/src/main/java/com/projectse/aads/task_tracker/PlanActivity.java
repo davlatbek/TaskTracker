@@ -5,28 +5,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 
 import com.projectse.aads.task_tracker.Adapters.PlanAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
-
-import junit.framework.Assert;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -296,7 +288,7 @@ public class PlanActivity extends AppCompatActivity {
     }
 
     public void callAddTaskActivity() {
-        Intent intent = new Intent(getApplicationContext(), AddTaskActivity.class);
+        Intent intent = new Intent(getApplicationContext(), TaskAddActivity.class);
         startActivity(intent);
     }
 

@@ -1,6 +1,5 @@
 package com.projectse.aads.task_tracker;
 
-import android.app.DialogFragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,15 +9,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ScrollView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
-import com.projectse.aads.task_tracker.Dialogs.ListOfCourses;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.util.Calendar;
@@ -30,7 +25,7 @@ import java.util.TimeZone;
  * Created by Davlatbek Isroilov on 1/31/2016.
  * Innopolis University
  */
-public class AddTaskActivity extends TaskActivity {
+public class TaskAddActivity extends TaskActivity {
     private Long parent_id = -1L;
 
 
@@ -206,7 +201,7 @@ public class AddTaskActivity extends TaskActivity {
             view.setOnTouchListener(new View.OnTouchListener() {
 
                 public boolean onTouch(View v, MotionEvent event) {
-                    hideSoftKeyboard(AddTaskActivity.this);
+                    hideSoftKeyboard(TaskAddActivity.this);
                     return false;
                 }
 

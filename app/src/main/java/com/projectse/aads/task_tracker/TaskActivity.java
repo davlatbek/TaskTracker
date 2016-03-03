@@ -390,6 +390,28 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
         }
     }
 
+    public void setPrioritySpinner(){
+        Spinner spinnerPriority = (Spinner) findViewById(R.id.spinnerPriority);
+        final String[] priorities = new String[] {"Low", "Medium", "High"};
+        ArrayAdapter<String> adapterPrioritySpinner = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, priorities);
+        spinnerPriority.setAdapter(adapterPrioritySpinner);
+        spinnerPriority.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    task.setPriority(task.intToPriority(position));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
     public synchronized void deleteSubtask(final Long subtask_id) {
         task.deleteSubtask(subtask_id);
         db.updateTask(task);

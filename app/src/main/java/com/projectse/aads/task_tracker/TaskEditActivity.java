@@ -217,11 +217,13 @@ public class TaskEditActivity extends TaskActivity {
         }
         // Case: if duration more than difference of deadline and startTime.
         // Don't allow this. Set duration 0.
-        if(dCal.getTime().getTime() - stCal.getTime().getTime() < Long.parseLong(durationView.getText().toString())*60*60*1000){
-            flag = true;
-            Toast.makeText(getApplicationContext(), "Duration cannot be more than defference between start time and deadline.", Toast.LENGTH_SHORT).show();
-            durationView.setText(String.valueOf(0));
-            isCorrected = true;
+        if (!durationView.getText().toString().equals("")) {
+            if (dCal.getTime().getTime() - stCal.getTime().getTime() < Long.parseLong(durationView.getText().toString()) * 60 * 60 * 1000) {
+                flag = true;
+                Toast.makeText(getApplicationContext(), "Duration cannot be more than defference between start time and deadline.", Toast.LENGTH_SHORT).show();
+                durationView.setText(String.valueOf(0));
+                isCorrected = true;
+            }
         }
         // Case: start time after deadline.
         // Set starttime = deadline.

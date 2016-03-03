@@ -32,7 +32,7 @@ import java.util.TimeZone;
  */
 public class AddTaskActivity extends TaskActivity {
     private Long parent_id = -1L;
-    DialogFragment dialogFragmentBuilder;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +47,7 @@ public class AddTaskActivity extends TaskActivity {
         fillData();
         setPrioritySpinner();
         //List of courses dialog
-        dialogFragmentBuilder = new ListOfCourses(this, new DatabaseHelper(this));
+
     }
 
     @Override
@@ -56,16 +56,6 @@ public class AddTaskActivity extends TaskActivity {
         if(getIntent().getBooleanExtra("hide_subtasks",false)){
             ScrollView sub_l = (ScrollView) findViewById(R.id.subtasksScrollView);
             sub_l.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    public void onClickCourseList(View view) {
-        switch (view.getId()) {
-            case R.id.selectCourse:
-                dialogFragmentBuilder.show(getFragmentManager(), "selectcourse");
-                break;
-            default:
-                break;
         }
     }
 

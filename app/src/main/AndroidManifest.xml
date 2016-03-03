@@ -14,7 +14,7 @@
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity
-            android:name=".DaylyPlanActivity"
+            android:name=".DailyPlanActivity"
             android:label="Task Tracker" >
         </activity>
         <activity

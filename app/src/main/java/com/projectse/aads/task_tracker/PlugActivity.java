@@ -102,7 +102,7 @@ public class PlugActivity extends Activity {
     }
 
     public void callDaylyPlan(View v){
-        Intent intent = new Intent (getApplicationContext(), DaylyPlanActivity.class);
+        Intent intent = new Intent (getApplicationContext(), DailyPlanActivity.class);
         startActivity(intent);
     }
 }

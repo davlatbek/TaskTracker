@@ -19,6 +19,7 @@ import com.projectse.aads.task_tracker.AddTaskActivity;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.R;
+import com.projectse.aads.task_tracker.TaskActivity;
 
 import java.util.List;
 
@@ -27,12 +28,12 @@ import java.util.List;
  */
 public class ListOfCourses extends DialogFragment implements DialogInterface.OnClickListener {
     final String TAG = "TAG";
-    private AddTaskActivity testActivity;
+    private TaskActivity testActivity;
     final CourseModel course = new CourseModel();
     private DatabaseHelper db;
 
 
-    public ListOfCourses(AddTaskActivity testActivity, DatabaseHelper db) {
+    public ListOfCourses(TaskActivity testActivity, DatabaseHelper db) {
         this.db = db;
         this.testActivity = testActivity;
     }

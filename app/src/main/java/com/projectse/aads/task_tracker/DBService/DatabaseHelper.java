@@ -149,6 +149,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + " INTEGER PRIMARY KEY AUTOINCREMENT," + COURSE_NAME + " TEXT,"
             + COURSE_PRIORITY + " INTEGER);";
 
+    /**
+     * INSERT DEFAULT COURSE
+     */
+
+    private static final String INSERT_DEFAULT_COURSE = "INSERT INTO "
+            + TABLE_COURSES + "("+COURSE_NAME
+            + ", "+COURSE_PRIORITY+") "+"VALUES('Non Academical', 1);";
 
     /**
      * CREATE TABLE TABLE_COURSES_TO_TASKS
@@ -179,6 +186,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_TASKS); // create tasks table
         db.execSQL(CREATE_TABLE_COURSES); // create course table
         db.execSQL(CREATE_TABLE_COURSES_TO_TASK); // create course to task table
+        String selectQuery = "SELECT * FROM " + TABLE_COURSES + " WHERE "
+                + COURSE_ID + " = 1";
+        Cursor c = db.rawQuery(selectQuery, null);
+        if(!c.moveToFirst()){
+            db.execSQL(INSERT_DEFAULT_COURSE);
+        }
     }
 
     /**
@@ -607,6 +620,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         return taskList;
+
+
+    }
+
+    // Get course id by task id
+
+    public long getCourseIdByTaskId(long task_id) {
+        long course_id = 0;
+        SQLiteDatabase db = getReadableDatabase();
+        String sq = "SELECT " + COURSE_ID + " FROM " + TABLE_COURSES + ", " + TABLE_TASKS + ", "
+                + TABLE_COURSES_TO_TASKS + " WHERE " + TABLE_TASKS + "." + TASKS_KEY_ID + " = " + TABLE_COURSES_TO_TASKS +
+                "." + COURSES_TO_TASKS_TASK_ID + " AND " + TABLE_COURSES + "." + COURSE_ID + " = " + TABLE_COURSES_TO_TASKS + "." + COURSES_TO_TASKS_CURSE_ID
+                + " AND " + COURSES_TO_TASKS_TASK_ID + " = " + task_id;
+
+        Log.d(TAG, sq);
+        Cursor c = db.rawQuery(sq, null);
+
+        db.beginTransaction();
+        try {
+            if (c.moveToFirst()) {
+                do {
+                    course_id = c.getLong(c.getColumnIndex(COURSE_ID));
+                    Log.d(TAG, "add to list");
+
+                } while (c.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying select tasks by course_id");
+        } finally {
+            db.endTransaction();
+        }
+
+        return course_id;
 
 
     }

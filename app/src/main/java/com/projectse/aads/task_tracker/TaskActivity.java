@@ -33,6 +33,7 @@ import com.projectse.aads.task_tracker.Adapters.SubtasksAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Dialogs.AddSubtaskDialog;
 import com.projectse.aads.task_tracker.Dialogs.ListOfCourses;
+import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.text.ParseException;
@@ -51,6 +52,7 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
     // Views
     protected EditText nameView;
     protected EditText descView;
+    protected TextView courseView;
     protected static EditText startTimeDateView;
     protected static EditText startTimeTimeView;
     protected static EditText deadlineDateView;
@@ -68,10 +70,11 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
     private static java.text.DateFormat dateFormat = new SimpleDateFormat("dd-MM-yy");
     private static java.text.DateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
-    protected DialogFragment dialogFragmentBuilder;
+    protected ListOfCourses dialogFragmentBuilder;
 
     // Current task
     public static TaskModel task = null;
+    public static CourseModel course = null;
 
     public TaskActivity(){
         super();
@@ -85,6 +88,7 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
     protected void getViews(){
         nameView = (EditText) findViewById(R.id.txtName);
         descView = (EditText) findViewById(R.id.txtDescription);
+        courseView = (TextView) findViewById(R.id.coursename);
 
         startTimeDateView = (EditText) findViewById(R.id.txtDateStartTime);
         startTimeTimeView = (EditText) findViewById(R.id.txtTimeStartTime);

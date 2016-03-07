@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,8 +15,10 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import static com.projectse.aads.task_tracker.R.layout.activity_taskoverview;
@@ -54,6 +57,7 @@ public class TaskOverviewActivity extends TaskActivity {
         switchFinished = (Switch) findViewById(R.id.switchFinished);
         editButton = (Button) findViewById(R.id.editTaskButton);
         deleteButton = (Button) findViewById(R.id.deleteTaskButton);
+        courseView = (TextView) findViewById(R.id.textSelectedCourse);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,7 +125,7 @@ public class TaskOverviewActivity extends TaskActivity {
         alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(task.getSubtasks_ids().size() > 0){
+                if (task.getSubtasks_ids().size() > 0) {
                     AlertDialog.Builder alertDialog1 = new AlertDialog.Builder(alertDialog.getContext());
                     alertDialog1.setMessage("Task contains subtasks.\n They also will be deleted. Are you sure?");
 
@@ -130,7 +134,7 @@ public class TaskOverviewActivity extends TaskActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Long task_id = getIntent().getLongExtra("task_id", -1);
-                            for(Long sub_id: task.getSubtasks_ids())
+                            for (Long sub_id : task.getSubtasks_ids())
                                 db.deleteTask(sub_id);
                             db.deleteTask(task_id);
                             Intent intent = new Intent();
@@ -148,8 +152,8 @@ public class TaskOverviewActivity extends TaskActivity {
                     });
 
                     alertDialog1.create().show();
-                }else{
-                    Long task_id = getIntent().getLongExtra("task_id",-1);
+                } else {
+                    Long task_id = getIntent().getLongExtra("task_id", -1);
                     db.deleteTask(task_id);
                     Intent intent = new Intent();
                     intent.putExtra("deleted_task_id", task_id);
@@ -182,8 +186,8 @@ public class TaskOverviewActivity extends TaskActivity {
 
     }
 
-    public void callEditTaskActivity(TaskModel task){
-        Intent intent = new Intent (this, TaskEditActivity.class);
+    public void callEditTaskActivity(TaskModel task) {
+        Intent intent = new Intent(this, TaskEditActivity.class);
         intent.putExtra("task_id", task.getId());
         startActivityForResult(intent, RequestCode.REQ_CODE_EDITTASK);
     }
@@ -218,6 +222,13 @@ public class TaskOverviewActivity extends TaskActivity {
         Long task_id = getIntent().getLongExtra("task_id", -1);
         db = DatabaseHelper.getsInstance(getApplicationContext());
         task = db.getTask(task_id);
+        Long course_id = db.getCourseIdByTaskId(task_id);
+        try {
+            course = db.getCourse(course_id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        courseView.setText("Course name: " + course.getName());
         if (task != null)
             fillData();
         switchFinished.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -245,8 +256,8 @@ public class TaskOverviewActivity extends TaskActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == RESULT_OK){
-            switch (requestCode){
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
                 case RequestCode.REQ_CODE_EDITTASK:
                     Long task_id = data.getLongExtra("task_id", -1L);
                     task = db.getTask(task_id);

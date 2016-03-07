@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
@@ -184,6 +186,15 @@ public class TaskEditActivity extends TaskActivity {
         super.onResume();
         Long task_id = getIntent().getLongExtra("task_id", -1);
         task = db.getTask(task_id);
+        long course_id = db.getCourseIdByTaskId(task_id);
+        try {
+            course = db.getCourse(course_id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        TextView t = (TextView) findViewById(R.id.textSelectedCourse);
+        t.setText("Selected course: "
+                + course.getName());
 
         ScrollView sub_l = (ScrollView) findViewById(R.id.subtasksScrollView);
         sub_l.setVisibility(View.VISIBLE);
@@ -201,7 +212,7 @@ public class TaskEditActivity extends TaskActivity {
         Calendar dCal = getCalendarFromTxtEditViews(deadlineDateView,deadlineTimeView);
         Calendar stCal = getCalendarFromTxtEditViews(startTimeDateView,startTimeTimeView);
         boolean isCorrected = false;
-        if(flag == true){flag = false; return false;}
+        if(flag){flag = false; return false;}
 
         if(dCal == null && stCal == null)
             return false;
@@ -243,7 +254,8 @@ public class TaskEditActivity extends TaskActivity {
         // write changes to base
         DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
         db.updateTask(task);
-
+        long sadas=db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
+        Log.d("UPDATE COURSE",sadas+"");
         setResult(RESULT_OK);
         super.onDestroy();
         finish();

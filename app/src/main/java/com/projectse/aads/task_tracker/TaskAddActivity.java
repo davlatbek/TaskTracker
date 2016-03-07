@@ -2,7 +2,9 @@ package com.projectse.aads.task_tracker;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -14,6 +16,7 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.util.Calendar;
@@ -38,6 +41,7 @@ public class TaskAddActivity extends TaskActivity {
         db = DatabaseHelper.getsInstance(this);
         parent_id = getIntent().getLongExtra("parent_id", -1L);
         task = new TaskModel();
+        course = new CourseModel();
         getViews();
         fillData();
 
@@ -48,7 +52,7 @@ public class TaskAddActivity extends TaskActivity {
     @Override
     protected void getViews() {
         super.getViews();
-        if(getIntent().getBooleanExtra("hide_subtasks",false)){
+        if (getIntent().getBooleanExtra("hide_subtasks", false)) {
             ScrollView sub_l = (ScrollView) findViewById(R.id.subtasksScrollView);
             sub_l.setVisibility(View.INVISIBLE);
         }
@@ -74,8 +78,12 @@ public class TaskAddActivity extends TaskActivity {
     public void addAndSaveToDb(View v) {
         if (validateTaskFields()) {
             long task_id = addTaskToDatabase();
+            long course_id = dialogFragmentBuilder.getCourseId();
+            db.addCourseToTask(task_id);
+            db.updateCourseToTask(task_id, course_id);
+            Log.d("course id", course_id + "");
             Intent intent = new Intent();
-            intent.putExtra("task_id", (Long)task_id);
+            intent.putExtra("task_id", (Long) task_id);
             setResult(RESULT_OK, intent);
             finish();
         }
@@ -179,24 +187,21 @@ public class TaskAddActivity extends TaskActivity {
         if (!durationView.getText().toString().equals(""))
             task.setDuration(Long.parseLong(durationView.getText().toString()));
 
-        if(!(parent_id < 0))
+        if (!(parent_id < 0))
             task.setParentTaskId(parent_id);
-
         return db.addTask(task);
     }
 
 
-
-
     public static void hideSoftKeyboard(Activity activity) {
-        InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
 
     public void setupUI(View view) {
 
         //Set up touch listener for non-text box views to hide keyboard.
-        if(!(view instanceof EditText)) {
+        if (!(view instanceof EditText)) {
 
             view.setOnTouchListener(new View.OnTouchListener() {
 

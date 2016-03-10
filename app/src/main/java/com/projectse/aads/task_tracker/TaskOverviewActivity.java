@@ -4,28 +4,19 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Switch;
-import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.TaskModel;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 import static com.projectse.aads.task_tracker.R.layout.activity_taskoverview;
 
@@ -41,7 +32,7 @@ public class TaskOverviewActivity extends TaskActivity {
     private Button editButton;
     private Button buttonStartDate, buttonDeadline, buttonStartTime, buttonDeadlineTime;
     private Switch switchFinished;
-    private Spinner spinner;
+    private Spinner spinnerPriority;
 
     //Database instance
     DatabaseHelper db = null;
@@ -50,19 +41,11 @@ public class TaskOverviewActivity extends TaskActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(activity_taskoverview);
-
-        /*editButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN: {
-                        editButton.setBackgroundColor(Color.GREEN);
-                        break;
-                    }
-                }
-                return true;
-            }
-        });*/
+        spinnerPriority = (Spinner) findViewById(R.id.spinnerPriority);
+        final String[] paramPriorities = new String[]{"Low", "Medium", "High"};
+        ArrayAdapter<String> priorityAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, paramPriorities);
+        spinnerPriority.setAdapter(priorityAdapter);
     }
 
     @Override
@@ -75,6 +58,24 @@ public class TaskOverviewActivity extends TaskActivity {
             @Override
             public void onClick(View v) {
                 callEditTaskActivity(task);
+            }
+        });
+        editButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        v.getBackground().setColorFilter(0xe0f47521, PorterDuff.Mode.SRC_ATOP);
+                        v.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        v.getBackground().clearColorFilter();
+                        v.invalidate();
+                        break;
+                    }
+                }
+                return false;
             }
         });
         deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -96,11 +97,16 @@ public class TaskOverviewActivity extends TaskActivity {
         buttonDeadline.setVisibility(View.INVISIBLE);
         buttonDeadlineTime.setVisibility(View.INVISIBLE);
         durationView.setFocusable(false);
-        spinner = (Spinner) findViewById(R.id.spinnerCourseName);
-        spinner.setFocusable(false);
+        spinnerPriority = (Spinner) findViewById(R.id.spinnerPriority);
+        spinnerPriority.setFocusable(false);
+        spinnerPriority.setEnabled(false);
+
+        Button buttonSelectCourse = (Button) findViewById(R.id.selectCourse);
+        buttonSelectCourse.setVisibility(View.INVISIBLE);
 
         Button addSubtasks = (Button) findViewById(R.id.btnAddSubtask);
         Button clearSubtasks = (Button) findViewById(R.id.btnClearSubtasks);
+
 
         addSubtasks.setVisibility(View.INVISIBLE);
         clearSubtasks.setVisibility(View.INVISIBLE);
@@ -167,6 +173,12 @@ public class TaskOverviewActivity extends TaskActivity {
     protected void fillData() {
         super.fillData();
         switchFinished.setChecked(task.getIsDone());
+        try {
+            spinnerPriority.setSelection(task.priorityToInt(task.getPriority()));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 

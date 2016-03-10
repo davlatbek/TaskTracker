@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -31,6 +32,7 @@ import android.widget.TimePicker;
 import com.projectse.aads.task_tracker.Adapters.SubtasksAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Dialogs.AddSubtaskDialog;
+import com.projectse.aads.task_tracker.Dialogs.ListOfCourses;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.text.ParseException;
@@ -55,6 +57,7 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
     protected static EditText deadlineTimeView;
     protected EditText durationView;
     protected Switch isStartTimeNotifyView, isDeadlineNotifyView;
+    protected Spinner spinnerPriority;
 
     protected static DatabaseHelper db = null;
     protected ListView subtasksListView = null;
@@ -64,6 +67,8 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
 
     private static java.text.DateFormat dateFormat = new SimpleDateFormat("dd-MM-yy");
     private static java.text.DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+
+    protected DialogFragment dialogFragmentBuilder;
 
     // Current task
     public static TaskModel task = null;
@@ -92,7 +97,10 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
         isStartTimeNotifyView = (Switch) findViewById(R.id.swtStartTimeNotification);
         isDeadlineNotifyView = (Switch) findViewById(R.id.swtDeadlineNotification);
 
+        spinnerPriority = (Spinner) findViewById(R.id.spinnerPriority);
+        setPrioritySpinner();
 
+        dialogFragmentBuilder = new ListOfCourses(this, new DatabaseHelper(this));
     }
 
     protected void fillData() {
@@ -118,7 +126,17 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
 
         isDeadlineNotifyView.setChecked(task.getIsNotifyDeadline());
 
-        if (task.getDuration() != null ) durationView.setText(task.getDuration().toString());
+        /*if (task.getDuration() != null ) durationView.setText(task.getDuration().toString());
+        switch (task.getPriority()){
+            case LOW: spinnerPriority.setId(0);
+                break;
+            case MEDIUM: spinnerPriority.;
+        }*/
+        /*try {
+            spinnerPriority.setSelection(task.priorityToInt(task.getPriority()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
         fillSubtasks();
     }
 
@@ -356,6 +374,39 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
             fillSubtasksList();
             subtasks_adapter.notifyDataSetChanged();
         }
+    }
+
+
+    public void onClickCourseList(View view) {
+        switch (view.getId()) {
+            case R.id.selectCourse:
+                dialogFragmentBuilder.show(getFragmentManager(), "selectcourse");
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void setPrioritySpinner(){
+        Spinner spinnerPriority = (Spinner) findViewById(R.id.spinnerPriority);
+        final String[] priorities = new String[] {"Low", "Medium", "High"};
+        ArrayAdapter<String> adapterPrioritySpinner = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, priorities);
+        spinnerPriority.setAdapter(adapterPrioritySpinner);
+        spinnerPriority.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    task.setPriority(task.intToPriority(position));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
 
     public synchronized void deleteSubtask(final Long subtask_id) {

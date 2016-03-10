@@ -16,12 +16,11 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import com.projectse.aads.task_tracker.AddTaskActivity;
+import com.projectse.aads.task_tracker.TaskAddActivity;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.RequestCode;
 import com.projectse.aads.task_tracker.TaskActivity;
-import com.projectse.aads.task_tracker.TaskEditActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,7 +135,7 @@ public class AddSubtaskDialog extends DialogFragment {
     }
 
     public synchronized void callAddTaskActivity(){
-        Intent intent = new Intent (parent.getApplicationContext(), AddTaskActivity.class);
+        Intent intent = new Intent (parent.getApplicationContext(), TaskAddActivity.class);
         intent.putExtra("parent_id",stored_task.getId());
         intent.putExtra("hide_subtasks",true);
         startActivityForResult(intent, RequestCode.REQ_CODE_ADDTASK);

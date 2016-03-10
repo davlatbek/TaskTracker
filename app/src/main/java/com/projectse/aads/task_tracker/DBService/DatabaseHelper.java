@@ -40,7 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Constructor
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        context.deleteDatabase(DATABASE_NAME);
+//        context.deleteDatabase(DATABASE_NAME);
 
     }
 
@@ -128,6 +128,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + TASKS_DURATION + " INTEGER,"
             + TASKS_IS_NOTIFY_DEADLINE + " INTEGER,"
             + TASKS_IS_NOTIFY_START_TIME + " INTEGER,"
+            + TASKS_PRIORITY + " INTEGER, "
             + "FOREIGN KEY(" + TASKS_PARENT_TASK + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + ")"
             + ");"
             ;
@@ -360,6 +361,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (task.getDeadline() != null)
                 values.put(TASKS_DEADLINE, task.getDeadline().getTime().getTime());
 
+            if (task.getPriority() != null) {
+                values.put(TASKS_PRIORITY, task.priorityToInt(task.getPriority()));
+            }
+
             // Return id of the added task
             id = db.insertOrThrow(TABLE_TASKS, null, values);
             db.setTransactionSuccessful();
@@ -475,8 +480,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return
      */
 
-    public List<TaskModel>
-    getTaskModelList() {
+    public List<TaskModel> getTaskModelList() {
         List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
 
         String selectQuery = "SELECT * FROM " + TABLE_TASKS;
@@ -763,6 +767,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         if (!c.isNull(c.getColumnIndex(TASKS_PARENT_TASK)))
             task.setParentTaskId(c.getLong(c.getColumnIndex(TASKS_PARENT_TASK)));
+        if (!c.isNull(c.getColumnIndex(TASKS_PRIORITY))){
+            try {
+                task.setPriority(task.intToPriority(c.getInt(c.getColumnIndex(TASKS_PRIORITY))));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         getSubtasks(task);
         return task;
@@ -853,6 +864,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(TASKS_IS_NOTIFY_START_TIME, task.getIsNotifyStartTime() ? 1 : 0);
         values.put(TASKS_IS_NOTIFY_DEADLINE, task.getIsNotifyDeadline() ? 1 : 0);
         values.put(TASKS_IS_DONE, task.getIsDone() ? 1 : 0);
+        try {
+            values.put(TASKS_PRIORITY, task.priorityToInt(task.getPriority()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -983,31 +999,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         startingDay.set(Calendar.SECOND, 01);
 
         //setting last day of random week
-        Calendar lastDay = startingDay;
+        Calendar lastDay = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        lastDay.setTimeInMillis(startingDay.getTimeInMillis());
+
         lastDay.add(Calendar.DATE, 7);
         lastDay.set(Calendar.HOUR_OF_DAY, 23);
         lastDay.set(Calendar.MINUTE, 59);
         lastDay.set(Calendar.SECOND, 59);
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
 
-        /*String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE "
-                + TASKS_START_TIME + " > " + day.getTime().getTime() +
-                " AND " + TASKS_DEADLINE + " < " + lastDay.getTime().getTime();*/
         String selectQuery = "SELECT * FROM " + TABLE_TASKS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);
         if (c.moveToFirst()) {
             do {
                 TaskModel task = new TaskModel();
-                cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
-                /*if (cal.getTime().getTime() >= startingDay.getTime().getTime() &&
-                        cal.getTime().getTime() <= lastDay.getTime().getTime()) {*/
+                cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_START_TIME)));
+
                 if (cal.after(startingDay) &&
                         cal.getTime().getTime() <= lastDay.getTime().getTime()) {
-                    task.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
-                    task.setName(c.getString(c.getColumnIndex(TASKS_NAME)));
-                    task.setDeadline(cal);
-                    tasks.add(task);
+                    tasks.add(createTaskByCursor(c));
                 }
             } while (c.moveToNext());
         }
@@ -1029,22 +1040,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         lastDayOfCurrentWeek.set(Calendar.MINUTE, 59);
         lastDayOfCurrentWeek.set(Calendar.SECOND, 59);
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        Calendar today = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        today.set(Calendar.HOUR_OF_DAY, 00);
+        today.set(Calendar.MINUTE, 00);
+        today.set(Calendar.SECOND, 01);
         String selectQuery = "SELECT * FROM " + TABLE_TASKS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);
         if (c.moveToFirst()) {
             do {
                 TaskModel task = new TaskModel();
-                cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
-                if (cal.getTime().getTime() <= lastDayOfCurrentWeek.getTime().getTime()) {
-                    task.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
+                cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_START_TIME)));
+                if (cal.getTimeInMillis() >= today.getTimeInMillis() &&
+                        cal.getTimeInMillis() <= lastDayOfCurrentWeek.getTimeInMillis()) {
+                    tasks.add(createTaskByCursor(c));
+                    /*task.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
                     task.setName(c.getString(c.getColumnIndex(TASKS_NAME)));
                     task.setDeadline(cal);
-                    tasks.add(task);
+                    tasks.add(task);*/
                 }
             } while (c.moveToNext());
         }
         return tasks;
     }
 }
-

@@ -14,8 +14,12 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
@@ -31,17 +35,14 @@ import java.util.TimeZone;
 
 public class TaskEditActivity extends TaskActivity {
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = DatabaseHelper.getsInstance(getApplicationContext());
         setContentView(R.layout.activity_task_edit);
+        setupUI(findViewById(R.id.parentIdEdit));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         getViews();
-
     }
 
     private void setListeners(){
@@ -192,6 +193,7 @@ public class TaskEditActivity extends TaskActivity {
         if (task != null) fillData();
         setListeners();
     }
+
     // flag for recursion exit. Use in correctTime only.
     private boolean flag = false;
     // return false, if all was correct
@@ -217,11 +219,13 @@ public class TaskEditActivity extends TaskActivity {
         }
         // Case: if duration more than difference of deadline and startTime.
         // Don't allow this. Set duration 0.
-        if(dCal.getTime().getTime() - stCal.getTime().getTime() < Long.parseLong(durationView.getText().toString())*60*60*1000){
-            flag = true;
-            Toast.makeText(getApplicationContext(), "Duration cannot be more than defference between start time and deadline.", Toast.LENGTH_SHORT).show();
-            durationView.setText(String.valueOf(0));
-            isCorrected = true;
+        if (!durationView.getText().toString().equals("")) {
+            if (dCal.getTime().getTime() - stCal.getTime().getTime() < Long.parseLong(durationView.getText().toString()) * 60 * 60 * 1000) {
+                flag = true;
+                Toast.makeText(getApplicationContext(), "Duration cannot be more than defference between start time and deadline.", Toast.LENGTH_SHORT).show();
+                durationView.setText(String.valueOf(0));
+                isCorrected = true;
+            }
         }
         // Case: start time after deadline.
         // Set starttime = deadline.
@@ -258,5 +262,37 @@ public class TaskEditActivity extends TaskActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    }
+
+    public void setupUI(View view) {
+
+        //Set up touch listener for non-text box views to hide keyboard.
+        if(!(view instanceof EditText)) {
+
+            view.setOnTouchListener(new View.OnTouchListener() {
+
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard(TaskEditActivity.this);
+                    return false;
+                }
+
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+
+                View innerView = ((ViewGroup) view).getChildAt(i);
+
+                setupUI(innerView);
+            }
+        }
     }
 }

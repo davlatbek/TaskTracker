@@ -10,11 +10,11 @@ import java.util.List;
  */
 public class CourseModel {
 
-    public Color getClr() {
+    public int getClr() {
         return clr;
     }
 
-    public void setClr(Color clr) {
+    public void setClr(int clr) {
         this.clr = clr;
     }
 
@@ -37,7 +37,7 @@ public class CourseModel {
 
     private String name;
     private Long id;
-    private Color clr =null;
+    private int clr =0;
     // by default priority has low level
     private Priority priority = Priority.LOW;
     private List<TaskModel> tasksList = new ArrayList<TaskModel>();
@@ -87,9 +87,13 @@ public class CourseModel {
         this.id = id;
     }
 
-    public String toString() {
+    public String toStringWithPriority() {
         String sb = "";
         sb = "Name:" + this.name + ", priority:" + this.priority;
         return sb;
+    }
+
+    public String toString() {
+        return this.name;
     }
 }

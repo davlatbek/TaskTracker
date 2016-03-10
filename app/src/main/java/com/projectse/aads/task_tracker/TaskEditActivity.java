@@ -193,8 +193,9 @@ public class TaskEditActivity extends TaskActivity {
             e.printStackTrace();
         }
         TextView t = (TextView) findViewById(R.id.textSelectedCourse);
-        t.setText("Selected course: "
+        t.setText("Course: "
                 + course.getName());
+        t.setBackgroundColor(course.getClr());
 
         ScrollView sub_l = (ScrollView) findViewById(R.id.subtasksScrollView);
         sub_l.setVisibility(View.VISIBLE);

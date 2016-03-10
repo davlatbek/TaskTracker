@@ -228,7 +228,8 @@ public class TaskOverviewActivity extends TaskActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        courseView.setText("Course name: " + course.getName());
+        courseView.setText("Course: " + course.getName());
+        courseView.setBackgroundColor(course.getClr());
         if (task != null)
             fillData();
         switchFinished.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

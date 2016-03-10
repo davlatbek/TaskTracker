@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -69,8 +70,32 @@ public class ListOfCourses extends DialogFragment implements DialogInterface.OnC
                                 "Selected course: "
                                         + finalCourseModelList.get(which),
                                 Toast.LENGTH_SHORT).show();
-                        t.setText("Selected course: "
+                        t.setText("Course: "
                                 + finalCourseModelList.get(which));
+                        int p = finalCourseModelList.get(which).getClr();
+                        Log.d("COLOR",p+"");
+                        switch (finalCourseModelList.get(which).getClr()) {
+                            case 7617718:  int parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor1)));
+                                t.setBackgroundColor(parsedColor);
+                                break;
+                            case 16728876: parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor2)));
+                                t.setBackgroundColor(parsedColor);
+                                break;
+                            case 5317:  parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor3)));
+                                t.setBackgroundColor(parsedColor);
+                                break;
+                            case 2937298:  parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor4)));
+                                t.setBackgroundColor(parsedColor);
+                                break;
+                            case 10011977:  parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor5)));
+                                t.setBackgroundColor(parsedColor);
+                                break;
+                            case 12627531:  parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor6)));
+                                t.setBackgroundColor(parsedColor);
+                                break;
+                        }
+                        t.setBackgroundColor(finalCourseModelList.get(which).getClr());
+
                         setCourseId(finalCourseModelList.get(which).getId());
                         dismiss();
                     }
@@ -92,16 +117,17 @@ public class ListOfCourses extends DialogFragment implements DialogInterface.OnC
                                         course.setName(courseName.getText().toString());
                                         // Get color from slider
                                         Integer intColor = shadeSlider.getColor();
-                                        String hexColor = "#" + Integer.toHexString(intColor).substring(2);
-                                        int color = Integer.parseInt(hexColor.replaceFirst("^#", ""), 16);
-                                        Log.d(TAG,color+"<-<-<-<-CHOOSED COLOR");
-                                        course.setClr(color);
+//                                        String hexColor = "#" + Integer.toHexString(intColor).substring(2);
+//                                        int color = Integer.parseInt(hexColor.replaceFirst("^#", ""), 16);
+                                        Log.d(TAG,intColor+"<-<-<-<-CHOOSED COLOR");
+                                        course.setClr(intColor);
                                         long id = db.addCourse(course);
                                         Log.d(TAG, id + "");
                                         setCourseId(id);
                                         TextView t = (TextView) testActivity.findViewById(R.id.textSelectedCourse);
-                                        t.setText("Selected course: "
+                                        t.setText("Course: "
                                                 + course.getName());
+                                        t.setBackgroundColor(course.getClr());
                                     }
 
                                 })

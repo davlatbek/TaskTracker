@@ -3,4 +3,12 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="coursecolor1">#8bc34a</color>
+    <color name="coursecolor2">#28c4d8</color>
+    <color name="coursecolor3">#ffeb3b</color>
+    <color name="coursecolor4">#d32e2e</color>
+    <color name="coursecolor5">#673ab7</color>
+    <color name="coursecolor6">#3f51b5</color>
+
 </resources>

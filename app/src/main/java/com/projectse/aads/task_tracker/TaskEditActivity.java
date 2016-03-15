@@ -47,13 +47,16 @@ public class TaskEditActivity extends TaskActivity {
         getViews();
     }
 
-    private void setListeners(){
+    private void setListeners() {
+
         nameView.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -89,10 +92,10 @@ public class TaskEditActivity extends TaskActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if((s.toString()).matches("\\d+")) {
+                if ((s.toString()).matches("\\d+")) {
                     task.setDuration(Long.parseLong(s.toString()));
-                }else{
-                    Toast.makeText(getApplicationContext(), "Duration is number only" ,Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Duration is number only", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -182,7 +185,7 @@ public class TaskEditActivity extends TaskActivity {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         Long task_id = getIntent().getLongExtra("task_id", -1);
         task = db.getTask(task_id);
@@ -199,7 +202,7 @@ public class TaskEditActivity extends TaskActivity {
 
         ScrollView sub_l = (ScrollView) findViewById(R.id.subtasksScrollView);
         sub_l.setVisibility(View.VISIBLE);
-        if( task !=null && task.getParentTaskId()!=null && task.getParentTaskId() > 0 ) {
+        if (task != null && task.getParentTaskId() != null && task.getParentTaskId() > 0) {
             sub_l.setVisibility(View.INVISIBLE);
         }
         if (task != null) fillData();
@@ -208,23 +211,27 @@ public class TaskEditActivity extends TaskActivity {
 
     // flag for recursion exit. Use in correctTime only.
     private boolean flag = false;
-    // return false, if all was correct
-    public boolean correctTime(){
-        Calendar dCal = getCalendarFromTxtEditViews(deadlineDateView,deadlineTimeView);
-        Calendar stCal = getCalendarFromTxtEditViews(startTimeDateView,startTimeTimeView);
-        boolean isCorrected = false;
-        if(flag){flag = false; return false;}
 
-        if(dCal == null && stCal == null)
+    // return false, if all was correct
+    public boolean correctTime() {
+        Calendar dCal = getCalendarFromTxtEditViews(deadlineDateView, deadlineTimeView);
+        Calendar stCal = getCalendarFromTxtEditViews(startTimeDateView, startTimeTimeView);
+        boolean isCorrected = false;
+        if (flag) {
+            flag = false;
+            return false;
+        }
+
+        if (dCal == null && stCal == null)
             return false;
         // Case: deadline cannot be earlier than now.
         // Set default.
-        if(Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault()).after(dCal)){
+        if (Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault()).after(dCal)) {
             flag = true;
             dCal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
-            dCal.set(Calendar.HOUR_OF_DAY,23);
-            dCal.set(Calendar.MINUTE,59);
-            dCal.set(Calendar.SECOND,59);
+            dCal.set(Calendar.HOUR_OF_DAY, 23);
+            dCal.set(Calendar.MINUTE, 59);
+            dCal.set(Calendar.SECOND, 59);
             setDateTime(deadlineDateView, null, dCal.getTimeInMillis());
             setDateTime(null, deadlineTimeView, dCal.getTimeInMillis());
             isCorrected = true;
@@ -241,7 +248,7 @@ public class TaskEditActivity extends TaskActivity {
         }
         // Case: start time after deadline.
         // Set starttime = deadline.
-        if(stCal.after(dCal)){
+        if (stCal.after(dCal)) {
             flag = true;
             setDateTime(startTimeDateView, null, dCal.getTimeInMillis());
             setDateTime(null, startTimeTimeView, dCal.getTimeInMillis());
@@ -251,12 +258,21 @@ public class TaskEditActivity extends TaskActivity {
     }
 
     @Override
-    protected void onDestroy(){
+    protected void onPause() {
+        DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
+        db.updateTask(task);
+        long courseID = db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
+        Log.d("UPDATE COURSE", courseID + "");
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
         // write changes to base
         DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
         db.updateTask(task);
-        long sadas=db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
-        Log.d("UPDATE COURSE",sadas+"");
+        long courseID = db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
+        Log.d("UPDATE COURSE", courseID + "");
         setResult(RESULT_OK);
         super.onDestroy();
         finish();
@@ -278,14 +294,14 @@ public class TaskEditActivity extends TaskActivity {
     }
 
     public static void hideSoftKeyboard(Activity activity) {
-        InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
 
     public void setupUI(View view) {
 
         //Set up touch listener for non-text box views to hide keyboard.
-        if(!(view instanceof EditText)) {
+        if (!(view instanceof EditText)) {
 
             view.setOnTouchListener(new View.OnTouchListener() {
 

@@ -108,14 +108,6 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
     }
 
     protected void fillData() {
-        db = DatabaseHelper.getsInstance(getApplicationContext());
-        db.getCourseIdByTaskId(task.getId());
-        try {
-            course = db.getCourse(task.getId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        courseView.setText(course.getName());
         if (task.getName() != null ) nameView.setText(task.getName());
         if (task.getDescription() != null ) descView.setText(task.getDescription());
         if (task.getStartTime() != null ) {

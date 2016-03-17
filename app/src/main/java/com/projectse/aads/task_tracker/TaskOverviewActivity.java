@@ -44,11 +44,15 @@ public class TaskOverviewActivity extends TaskActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(activity_taskoverview);
+        courseView = (TextView) findViewById(R.id.textSelectedCourse);
         spinnerPriority = (Spinner) findViewById(R.id.spinnerPriority);
         final String[] paramPriorities = new String[]{"Low", "Medium", "High"};
         ArrayAdapter<String> priorityAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, paramPriorities);
         spinnerPriority.setAdapter(priorityAdapter);
+
+        courseView.setText("Course is not selected");
+
     }
 
     @Override
@@ -204,14 +208,33 @@ public class TaskOverviewActivity extends TaskActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        Long task_id = getIntent().getLongExtra("task_id", -1);
+        db = DatabaseHelper.getsInstance(getApplicationContext());
+        task = db.getTask(task_id);
+        Long course_id = db.getCourseIdByTaskId(task_id);
+        checkCourse(course_id);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
-
+        Long task_id = getIntent().getLongExtra("task_id", -1);
+        db = DatabaseHelper.getsInstance(getApplicationContext());
+        task = db.getTask(task_id);
+        Long course_id = db.getCourseIdByTaskId(task_id);
+        checkCourse(course_id);
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
+        Long task_id = getIntent().getLongExtra("task_id", -1);
+        db = DatabaseHelper.getsInstance(getApplicationContext());
+        task = db.getTask(task_id);
+        Long course_id = db.getCourseIdByTaskId(task_id);
+        checkCourse(course_id);
     }
 
     @Override
@@ -223,13 +246,7 @@ public class TaskOverviewActivity extends TaskActivity {
         db = DatabaseHelper.getsInstance(getApplicationContext());
         task = db.getTask(task_id);
         Long course_id = db.getCourseIdByTaskId(task_id);
-        try {
-            course = db.getCourse(course_id);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        courseView.setText("Course: " + course.getName());
-        courseView.setBackgroundColor(course.getClr());
+        checkCourse(course_id);
         if (task != null)
             fillData();
         switchFinished.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -238,6 +255,20 @@ public class TaskOverviewActivity extends TaskActivity {
                 task.setIsDone(isChecked);
             }
         });
+    }
+
+    public void checkCourse(long course_id) {
+        try {
+            course = db.getCourse(course_id);
+            if (course_id > 0) {
+                courseView.setText("Course: " + course.getName());
+                courseView.setBackgroundColor(course.getClr());
+            } else {
+                courseView.setText("Course is not selected");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

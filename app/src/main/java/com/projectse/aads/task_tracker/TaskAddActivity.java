@@ -79,9 +79,12 @@ public class TaskAddActivity extends TaskActivity {
         if (validateTaskFields()) {
             long task_id = addTaskToDatabase();
             long course_id = dialogFragmentBuilder.getCourseId();
-            db.addCourseToTask(task_id);
-            db.updateCourseToTask(task_id, course_id);
-            Log.d("course id", course_id + "");
+            if (course_id != 0){
+                db.addCourseToTask(task_id);
+                db.updateCourseToTask(task_id, course_id);
+                Log.d("course id", course_id + "");
+            }
+
             Intent intent = new Intent();
             intent.putExtra("task_id", (Long) task_id);
             setResult(RESULT_OK, intent);

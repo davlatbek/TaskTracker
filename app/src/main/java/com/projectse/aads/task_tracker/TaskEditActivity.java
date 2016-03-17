@@ -184,22 +184,30 @@ public class TaskEditActivity extends TaskActivity {
         });
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Long task_id = getIntent().getLongExtra("task_id", -1);
-        task = db.getTask(task_id);
-        long course_id = db.getCourseIdByTaskId(task_id);
+    public void checkCourse(long course_id) {
+        TextView t = (TextView) findViewById(R.id.textSelectedCourse);
         try {
             course = db.getCourse(course_id);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        TextView t = (TextView) findViewById(R.id.textSelectedCourse);
-        t.setText("Course: "
-                + course.getName());
-        t.setBackgroundColor(course.getClr());
+        if (course_id > 0) {
+            t.setText("Course: "
+                    + course.getName());
+            t.setBackgroundColor(course.getClr());
+        } else {
+            t.setText("Course is not selected");
+        }
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        TextView t = (TextView) findViewById(R.id.textSelectedCourse);
+        Long task_id = getIntent().getLongExtra("task_id", -1);
+        task = db.getTask(task_id);
+        long course_id = db.getCourseIdByTaskId(task_id);
+        checkCourse(course_id);
         ScrollView sub_l = (ScrollView) findViewById(R.id.subtasksScrollView);
         sub_l.setVisibility(View.VISIBLE);
         if (task != null && task.getParentTaskId() != null && task.getParentTaskId() > 0) {
@@ -261,6 +269,7 @@ public class TaskEditActivity extends TaskActivity {
     protected void onPause() {
         DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
         db.updateTask(task);
+        db.addCourseToTask(task.getId());
         long courseID = db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
         Log.d("UPDATE COURSE", courseID + "");
         super.onPause();

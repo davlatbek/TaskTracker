@@ -1,6 +1,9 @@
 package com.projectse.aads.task_tracker;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.nfc.Tag;
 import android.os.Bundle;
@@ -18,8 +21,11 @@ import android.widget.Toast;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
+import com.projectse.aads.task_tracker.NotifyService.AlertReceiver;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -79,7 +85,7 @@ public class TaskAddActivity extends TaskActivity {
         if (validateTaskFields()) {
             long task_id = addTaskToDatabase();
             long course_id = dialogFragmentBuilder.getCourseId();
-            if (course_id != 0){
+            if (course_id != 0) {
                 db.addCourseToTask(task_id);
                 db.updateCourseToTask(task_id, course_id);
                 Log.d("course id", course_id + "");
@@ -192,13 +198,28 @@ public class TaskAddActivity extends TaskActivity {
 
         if (!(parent_id < 0))
             task.setParentTaskId(parent_id);
+        setAlarmNotif();
         return db.addTask(task);
+
     }
 
 
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    }
+
+    public void setAlarmNotif() {
+        //time = time + 10 * 1000;
+        Long time = new GregorianCalendar().getTimeInMillis() + 5 * 1000;
+
+        Log.d("TIME_NOTIFICATIONS SET", time.toString() + "");
+        Intent alertIntent = new Intent(this, AlertReceiver.class);
+        AlarmManager alarmManager = (AlarmManager)
+                getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, time, PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+
+
     }
 
     public void setupUI(View view) {

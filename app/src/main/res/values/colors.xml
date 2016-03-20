@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="colorToolbarBackground">#8bc34a</color>
+    <color name="colorContentBackground">#dcedc8</color>
+
+    <color name="lowPriority">#4daf51</color>
+    <color name="mediumPriority">#ffc107</color>
+    <color name="hignPriority">#f44336</color>
+
+
     <color name="colorPrimary">#8ac24a</color>
     <color name="colorPrimaryDark">#dbecc7</color>
     <color name="colorAccent">#67c200</color>

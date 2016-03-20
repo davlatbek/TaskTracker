@@ -73,7 +73,7 @@ public class PlanAdapter extends BaseExpandableListAdapter {
 
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.plan_list_supertask_view, null);
+            convertView = inflater.inflate(R.layout.supertask_listitem_view, null);
         }
 
         if (isExpanded){

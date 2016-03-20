@@ -241,7 +241,7 @@ public class TaskOverviewActivity extends TaskActivity {
     protected synchronized void onResume() {
         super.onResume();
         getViews();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Long task_id = getIntent().getLongExtra("task_id", -1);
         db = DatabaseHelper.getsInstance(getApplicationContext());
         task = db.getTask(task_id);

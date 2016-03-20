@@ -43,7 +43,7 @@ public class TaskAddActivity extends TaskActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addtask);
         setupUI(findViewById(R.id.parentId));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         db = DatabaseHelper.getsInstance(this);
         parent_id = getIntent().getLongExtra("parent_id", -1L);
         task = new TaskModel();

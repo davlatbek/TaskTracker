@@ -4,32 +4,71 @@
     android:layout_width="fill_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <RelativeLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="90dp"
+        android:background="@color/colorToolbarBackground"
+        android:baselineAligned="true"
+        android:id="@+id/linearLayout3">
 
-        <TextView
-            android:id="@+id/txtSuperTaskName"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="0dp"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="8dp"
+            android:layout_height="match_parent"
+            android:background="@color/lowPriority"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="false"
-            android:layout_centerHorizontal="true"
-            android:text="@string/app_name"
-            android:textColor="@android:color/black"
-            android:textAlignment="gravity"
-            android:gravity="center_vertical" />
-        <TextView
-            android:layout_width="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
+            android:id="@+id/linearLayout4"></LinearLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:id="@+id/txtSubsCount"
-            android:textColor="@android:color/darker_gray"
-            android:layout_marginLeft="70dp" />
-    </LinearLayout>
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true">
+
+            <TextView
+                android:id="@+id/txtSuperTaskName"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginLeft="60dp"
+                android:layout_marginTop="0dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:text="@string/app_name"
+                android:textColor="@android:color/black"
+                android:textAlignment="gravity"
+                android:gravity="center_vertical" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1">
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="32dp"
+                android:text="NaN"
+                android:id="@+id/btnCourse"
+                android:textSize="@dimen/abc_text_size_caption_material"
+                android:clickable="false"
+                android:layout_marginLeft="@dimen/abc_action_bar_icon_vertical_padding_material" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:id="@+id/txtSubsCount"
+                android:text="More than just text"
+                android:textColor="@android:color/black"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"/>
+        </LinearLayout>
+        </LinearLayout>
+
+    </RelativeLayout>
 
 
 </RelativeLayout>

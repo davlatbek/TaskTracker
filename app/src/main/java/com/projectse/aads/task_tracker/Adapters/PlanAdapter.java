@@ -1,6 +1,7 @@
 package com.projectse.aads.task_tracker.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
+import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.PlanActivity;
 import com.projectse.aads.task_tracker.R;
@@ -15,8 +17,6 @@ import com.projectse.aads.task_tracker.R;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.projectse.aads.task_tracker.R.color.hignPriority;
 
 public class PlanAdapter extends BaseExpandableListAdapter {
 
@@ -93,6 +93,17 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         });
 
         setPriority(convertView.findViewById(R.id.priority), supertask.getPriority());
+
+        CourseModel course = supertask.getCourse();
+        if(course != null){
+            TextView course_label = (TextView)convertView.findViewById(R.id.lblCourse);
+            course_label.setText(course.getName());
+            course_label.setBackgroundColor(course.getClr());
+        }else{
+            TextView course_label = (TextView)convertView.findViewById(R.id.lblCourse);
+            course_label.setText("NaN");
+            course_label.setBackgroundColor(Color.DKGRAY);
+        }
 
         TextView textSubs = (TextView) convertView.findViewById(R.id.txtSubsCount);
         int children_count = getChildrenCount(groupPosition);

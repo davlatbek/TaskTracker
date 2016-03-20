@@ -475,6 +475,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
 
+        try {
+            tasks.setCourse(getCourse(getCourseIdByTaskId(id)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         getSubtasks(tasks);
         return tasks;
     }
@@ -794,6 +800,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+        try {
+            task.setCourse(getCourse(getCourseIdByTaskId(task.getId())));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         getSubtasks(task);

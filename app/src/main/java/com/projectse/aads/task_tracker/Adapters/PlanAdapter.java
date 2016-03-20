@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.projectse.aads.task_tracker.R.color.hignPriority;
+
 public class PlanAdapter extends BaseExpandableListAdapter {
 
     private Context context;
@@ -90,6 +92,8 @@ public class PlanAdapter extends BaseExpandableListAdapter {
             }
         });
 
+        setPriority(convertView.findViewById(R.id.priority), supertask.getPriority());
+
         TextView textSubs = (TextView) convertView.findViewById(R.id.txtSubsCount);
         int children_count = getChildrenCount(groupPosition);
         if(children_count > 0){
@@ -134,5 +138,20 @@ public class PlanAdapter extends BaseExpandableListAdapter {
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
+    }
+
+    void setPriority(View viewById, TaskModel.Priority priority){
+        switch (priority){
+            case HIGH:
+                viewById.setBackgroundResource(R.color.hignPriority);
+                break;
+            case MEDIUM:
+                viewById.setBackgroundResource(R.color.mediumPriority);
+                break;
+            case LOW:
+                viewById.setBackgroundResource(R.color.lowPriority);
+                break;
+        }
+
     }
 }

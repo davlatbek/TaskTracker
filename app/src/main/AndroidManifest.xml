@@ -45,11 +45,12 @@
             android:label="Task Overview">
         </activity>
 
-        <service android:name=".NotificationService"
+        <service android:name=".NotifyService.AlertReceiver"
             android:enabled="true"
             android:exported="true"
             android:process=":notificationservice">
         </service>
+        <receiver android:name=".NotifyService.AlertReceiver"></receiver>
 
     </application>
 

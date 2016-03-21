@@ -1,9 +1,5 @@
 <resources>
-<<<<<<< HEAD
     <string name="app_name">Task tracker</string>
-=======
-    <string name="app_name">Task Tracker</string>
->>>>>>> fcb24978fd4c9b462e322b113270c615f76ba6b7
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
 

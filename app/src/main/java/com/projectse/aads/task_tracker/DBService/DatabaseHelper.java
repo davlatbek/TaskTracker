@@ -173,12 +173,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * CREATE TABLE SUBTASKS
      */
 
-    private static final String CREATE_TABLE_SUBTASKS = "CREATE TABLE "
+    /*private static final String CREATE_TABLE_SUBTASKS = "CREATE TABLE "
             + TABLE_SUBTASKS + " (" + SUBTASKS_MASTER_ID
             + " INTEGER," + SUBTASKS_SLAVE_ID + " INTEGER,"
             + "FOREIGN KEY(" + SUBTASKS_MASTER_ID + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + "),"
             + "FOREIGN KEY(" + SUBTASKS_SLAVE_ID + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + ")"
-            + ");";
+            + ");";*/
 
     private static final String CREATE_TABLE_SETTINGS = "CREATE TABLE" +
             TABLE_SETTINGS + " (" +
@@ -202,17 +202,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_TASKS); // create tasks table
         db.execSQL(CREATE_TABLE_COURSES); // create course table
         db.execSQL(CREATE_TABLE_COURSES_TO_TASK); // create course to task table
-<<<<<<< HEAD
-        db.execSQL(CREATE_TABLE_SUBTASKS); // create subtasks table
+   //     db.execSQL(CREATE_TABLE_SUBTASKS); // create subtasks table
         db.execSQL(CREATE_TABLE_SETTINGS); // create settings table
-=======
-//        String selectQuery = "SELECT * FROM " + TABLE_COURSES + " WHERE "
-//                + COURSE_ID + " = 1";
-//        Cursor c = db.rawQuery(selectQuery, null);
-//        if (!c.moveToFirst()) {
-//            db.execSQL(INSERT_DEFAULT_COURSE);
-//        }
->>>>>>> fcb24978fd4c9b462e322b113270c615f76ba6b7
     }
 
     /**

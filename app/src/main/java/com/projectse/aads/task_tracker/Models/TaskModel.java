@@ -1,5 +1,7 @@
 package com.projectse.aads.task_tracker.Models;
 
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -10,44 +12,54 @@ import java.util.TimeZone;
 
 /**
  * Created by smith on 1/27/16.
- *
+ * <p/>
  * Contain data of task entity.
  */
 public class TaskModel {
-
     private String name = "";
     private Long id;
     private String description = "";
-
     private Calendar startTime = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
-
     private Calendar deadline = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
     private Long duration;
     private Boolean isNotifyDeadline = Boolean.FALSE;
     private Boolean isNotifyStartTime = Boolean.FALSE;
     private Boolean isDone = Boolean.FALSE;
-
-    public void setSubtasks_ids(List<Long> subtasks_ids) {
-        this.subtasks_ids.clear();
-        for(Long id : subtasks_ids)
-            this.subtasks_ids.add(id);
-    }
-
     private List<Long> subtasks_ids = new ArrayList<>();
-
-    public Long getParentTaskId() {
-        return parentTaskId;
-    }
-
-    public void setParentTaskId(Long parentTaskId) {
-        this.parentTaskId = parentTaskId;
-    }
-
-    // not supported yet
     private Long parentTaskId = -1L;
+    private Priority priority = Priority.LOW;
 
-    private Integer priority = 0;
-    public TaskModel(){
+    public enum Priority {
+        HIGH,
+        MEDIUM,
+        LOW
+    }
+
+    public Priority intToPriority(int priorityInt) throws Exception {
+        switch (priorityInt) {
+            case 0:
+                return this.priority = Priority.LOW;
+            case 1:
+                return this.priority = Priority.MEDIUM;
+            case 2:
+                return this.priority = Priority.HIGH;
+        }
+        throw new Exception("Check priority input value in intToPriority()");
+    }
+
+    public int priorityToInt(Priority priority) throws Exception {
+        switch (priority) {
+            case LOW:
+                return 0;
+            case MEDIUM:
+                return 1;
+            case HIGH:
+                return 2;
+        }
+        throw new Exception("Check priority input value in priorityToInt()");
+    }
+
+    public TaskModel() {
 
         //set last second for a current day as default for startTime and deadline.
         startTime.set(Calendar.HOUR_OF_DAY, 23);
@@ -67,6 +79,29 @@ public class TaskModel {
         this.id = id;
         this.name = name;
     }
+
+    public void setSubtasks_ids(List<Long> subtasks_ids) {
+        this.subtasks_ids.clear();
+        for (Long id : subtasks_ids)
+            this.subtasks_ids.add(id);
+    }
+
+    public Long getParentTaskId() {
+        return parentTaskId;
+    }
+
+    public void setParentTaskId(Long parentTaskId) {
+        this.parentTaskId = parentTaskId;
+    }
+
+    public Priority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Priority priority) {
+        this.priority = priority;
+    }
+
     public String getName() {
         return name;
     }
@@ -131,8 +166,6 @@ public class TaskModel {
         return isNotifyStartTime;
     }
 
-
-
     public void setIsNotifyStartTime(Boolean isNotifyStartTime) {
         this.isNotifyStartTime = isNotifyStartTime;
     }
@@ -145,17 +178,17 @@ public class TaskModel {
         this.isDone = isDone;
     }
 
-    public void addSubtask(TaskModel task){
+    public void addSubtask(TaskModel task) {
         this.subtasks_ids.add(task.getId());
-        if(this.id != null)task.setParentTaskId(this.id);
+        if (this.id != null) task.setParentTaskId(this.id);
     }
 
     public List<Long> getSubtasks_ids() {
         return subtasks_ids;
     }
 
-    public boolean deleteSubtask(Long subtask_id){
-            return subtasks_ids.remove(subtask_id);
+    public boolean deleteSubtask(Long subtask_id) {
+        return subtasks_ids.remove(subtask_id);
     }
 
     public void clearSubtasks() {

@@ -4,28 +4,22 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Switch;
-import android.widget.Toast;
-import android.widget.ToggleButton;
+import android.widget.TextView;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 import static com.projectse.aads.task_tracker.R.layout.activity_taskoverview;
 
@@ -41,7 +35,7 @@ public class TaskOverviewActivity extends TaskActivity {
     private Button editButton;
     private Button buttonStartDate, buttonDeadline, buttonStartTime, buttonDeadlineTime;
     private Switch switchFinished;
-    private Spinner spinner;
+    private Spinner spinnerPriority;
 
     //Database instance
     DatabaseHelper db = null;
@@ -50,19 +44,15 @@ public class TaskOverviewActivity extends TaskActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(activity_taskoverview);
+        courseView = (TextView) findViewById(R.id.textSelectedCourse);
+        spinnerPriority = (Spinner) findViewById(R.id.spinnerPriority);
+        final String[] paramPriorities = new String[]{"Low", "Medium", "High"};
+        ArrayAdapter<String> priorityAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, paramPriorities);
+        spinnerPriority.setAdapter(priorityAdapter);
 
-        /*editButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN: {
-                        editButton.setBackgroundColor(Color.GREEN);
-                        break;
-                    }
-                }
-                return true;
-            }
-        });*/
+        courseView.setText("Course is not selected");
+
     }
 
     @Override
@@ -71,10 +61,29 @@ public class TaskOverviewActivity extends TaskActivity {
         switchFinished = (Switch) findViewById(R.id.switchFinished);
         editButton = (Button) findViewById(R.id.editTaskButton);
         deleteButton = (Button) findViewById(R.id.deleteTaskButton);
+        courseView = (TextView) findViewById(R.id.textSelectedCourse);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 callEditTaskActivity(task);
+            }
+        });
+        editButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        v.getBackground().setColorFilter(0xe0f47521, PorterDuff.Mode.SRC_ATOP);
+                        v.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        v.getBackground().clearColorFilter();
+                        v.invalidate();
+                        break;
+                    }
+                }
+                return false;
             }
         });
         deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -96,11 +105,16 @@ public class TaskOverviewActivity extends TaskActivity {
         buttonDeadline.setVisibility(View.INVISIBLE);
         buttonDeadlineTime.setVisibility(View.INVISIBLE);
         durationView.setFocusable(false);
-        spinner = (Spinner) findViewById(R.id.spinnerCourseName);
-        spinner.setFocusable(false);
+        spinnerPriority = (Spinner) findViewById(R.id.spinnerPriority);
+        spinnerPriority.setFocusable(false);
+        spinnerPriority.setEnabled(false);
+
+        Button buttonSelectCourse = (Button) findViewById(R.id.selectCourse);
+        buttonSelectCourse.setVisibility(View.INVISIBLE);
 
         Button addSubtasks = (Button) findViewById(R.id.btnAddSubtask);
         Button clearSubtasks = (Button) findViewById(R.id.btnClearSubtasks);
+
 
         addSubtasks.setVisibility(View.INVISIBLE);
         clearSubtasks.setVisibility(View.INVISIBLE);
@@ -115,7 +129,7 @@ public class TaskOverviewActivity extends TaskActivity {
         alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(task.getSubtasks_ids().size() > 0){
+                if (task.getSubtasks_ids().size() > 0) {
                     AlertDialog.Builder alertDialog1 = new AlertDialog.Builder(alertDialog.getContext());
                     alertDialog1.setMessage("Task contains subtasks.\n They also will be deleted. Are you sure?");
 
@@ -124,7 +138,7 @@ public class TaskOverviewActivity extends TaskActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Long task_id = getIntent().getLongExtra("task_id", -1);
-                            for(Long sub_id: task.getSubtasks_ids())
+                            for (Long sub_id : task.getSubtasks_ids())
                                 db.deleteTask(sub_id);
                             db.deleteTask(task_id);
                             Intent intent = new Intent();
@@ -142,8 +156,8 @@ public class TaskOverviewActivity extends TaskActivity {
                     });
 
                     alertDialog1.create().show();
-                }else{
-                    Long task_id = getIntent().getLongExtra("task_id",-1);
+                } else {
+                    Long task_id = getIntent().getLongExtra("task_id", -1);
                     db.deleteTask(task_id);
                     Intent intent = new Intent();
                     intent.putExtra("deleted_task_id", task_id);
@@ -167,11 +181,17 @@ public class TaskOverviewActivity extends TaskActivity {
     protected void fillData() {
         super.fillData();
         switchFinished.setChecked(task.getIsDone());
+        try {
+            spinnerPriority.setSelection(task.priorityToInt(task.getPriority()));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
-    public void callEditTaskActivity(TaskModel task){
-        Intent intent = new Intent (this, TaskEditActivity.class);
+    public void callEditTaskActivity(TaskModel task) {
+        Intent intent = new Intent(this, TaskEditActivity.class);
         intent.putExtra("task_id", task.getId());
         startActivityForResult(intent, RequestCode.REQ_CODE_EDITTASK);
     }
@@ -188,24 +208,45 @@ public class TaskOverviewActivity extends TaskActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        Long task_id = getIntent().getLongExtra("task_id", -1);
+        db = DatabaseHelper.getsInstance(getApplicationContext());
+        task = db.getTask(task_id);
+        Long course_id = db.getCourseIdByTaskId(task_id);
+        checkCourse(course_id);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
-
+        Long task_id = getIntent().getLongExtra("task_id", -1);
+        db = DatabaseHelper.getsInstance(getApplicationContext());
+        task = db.getTask(task_id);
+        Long course_id = db.getCourseIdByTaskId(task_id);
+        checkCourse(course_id);
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
+        Long task_id = getIntent().getLongExtra("task_id", -1);
+        db = DatabaseHelper.getsInstance(getApplicationContext());
+        task = db.getTask(task_id);
+        Long course_id = db.getCourseIdByTaskId(task_id);
+        checkCourse(course_id);
     }
 
     @Override
     protected synchronized void onResume() {
         super.onResume();
         getViews();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Long task_id = getIntent().getLongExtra("task_id", -1);
         db = DatabaseHelper.getsInstance(getApplicationContext());
         task = db.getTask(task_id);
+        Long course_id = db.getCourseIdByTaskId(task_id);
+        checkCourse(course_id);
         if (task != null)
             fillData();
         switchFinished.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -214,6 +255,20 @@ public class TaskOverviewActivity extends TaskActivity {
                 task.setIsDone(isChecked);
             }
         });
+    }
+
+    public void checkCourse(long course_id) {
+        try {
+            course = db.getCourse(course_id);
+            if (course_id > 0) {
+                courseView.setText("Course: " + course.getName());
+                courseView.setBackgroundColor(course.getClr());
+            } else {
+                courseView.setText("Course is not selected");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -233,8 +288,8 @@ public class TaskOverviewActivity extends TaskActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == RESULT_OK){
-            switch (requestCode){
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
                 case RequestCode.REQ_CODE_EDITTASK:
                     Long task_id = data.getLongExtra("task_id", -1L);
                     task = db.getTask(task_id);

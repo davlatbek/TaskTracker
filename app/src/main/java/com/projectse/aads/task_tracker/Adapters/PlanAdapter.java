@@ -73,7 +73,7 @@ public class PlanAdapter extends BaseExpandableListAdapter {
 
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.plan_list_supertask_view, null);
+            convertView = inflater.inflate(R.layout.supertask_listitem_view, null);
         }
 
         if (isExpanded){
@@ -91,9 +91,14 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         });
 
         TextView textSubs = (TextView) convertView.findViewById(R.id.txtSubsCount);
-        textSupertaskName.setText(supertask.toString());
         int children_count = getChildrenCount(groupPosition);
-        textSubs.setText(children_count + " subtasks");
+        if(children_count > 0){
+            textSupertaskName.setText(supertask.toString() + " (" + children_count + " subtasks)");
+            textSubs.setText(children_count + " subtasks");
+            //TODO hide indicator
+        }else{
+            textSupertaskName.setText(supertask.toString());
+        }
 
         if( supertask.getIsDone() )
             textSupertaskName.setPaintFlags(textSupertaskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);

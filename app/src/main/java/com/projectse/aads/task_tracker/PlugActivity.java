@@ -24,7 +24,7 @@ public class PlugActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plug);
-        initDebugData();
+        //initDebugData();
     }
 
     public void initDebugData(){
@@ -102,7 +102,7 @@ public class PlugActivity extends Activity {
     }
 
     public void callDaylyPlan(View v){
-        Intent intent = new Intent (getApplicationContext(), DaylyPlanActivity.class);
+        Intent intent = new Intent (getApplicationContext(), DailyPlanActivity.class);
         startActivity(intent);
     }
 }

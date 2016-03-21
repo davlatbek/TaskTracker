@@ -1,33 +1,31 @@
 package com.projectse.aads.task_tracker;
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.app.TimePickerDialog;
+import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
-import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.DatePicker;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.Switch;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.projectse.aads.task_tracker.Adapters.SubtasksAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
+import com.projectse.aads.task_tracker.NotifyService.AlertReceiver;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -36,25 +34,31 @@ import java.util.TimeZone;
  * Created by Davlatbek Isroilov on 1/31/2016.
  * Innopolis University
  */
-public class AddTaskActivity extends TaskActivity {
+public class TaskAddActivity extends TaskActivity {
     private Long parent_id = -1L;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addtask);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setupUI(findViewById(R.id.parentId));
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         db = DatabaseHelper.getsInstance(this);
         parent_id = getIntent().getLongExtra("parent_id", -1L);
         task = new TaskModel();
+        course = new CourseModel();
         getViews();
         fillData();
+
+        //List of courses dialog
+
     }
 
     @Override
     protected void getViews() {
         super.getViews();
-        if(getIntent().getBooleanExtra("hide_subtasks",false)){
+        if (getIntent().getBooleanExtra("hide_subtasks", false)) {
             ScrollView sub_l = (ScrollView) findViewById(R.id.subtasksScrollView);
             sub_l.setVisibility(View.INVISIBLE);
         }
@@ -80,8 +84,15 @@ public class AddTaskActivity extends TaskActivity {
     public void addAndSaveToDb(View v) {
         if (validateTaskFields()) {
             long task_id = addTaskToDatabase();
+            long course_id = dialogFragmentBuilder.getCourseId();
+            if (course_id != 0) {
+                db.addCourseToTask(task_id);
+                db.updateCourseToTask(task_id, course_id);
+                Log.d("course id", course_id + "");
+            }
+
             Intent intent = new Intent();
-            intent.putExtra("task_id", (Long)task_id);
+            intent.putExtra("task_id", (Long) task_id);
             setResult(RESULT_OK, intent);
             finish();
         }
@@ -185,9 +196,56 @@ public class AddTaskActivity extends TaskActivity {
         if (!durationView.getText().toString().equals(""))
             task.setDuration(Long.parseLong(durationView.getText().toString()));
 
-        if(!(parent_id < 0))
+        if (!(parent_id < 0))
             task.setParentTaskId(parent_id);
-
+        setAlarmNotif();
         return db.addTask(task);
+
+    }
+
+
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    }
+
+    public void setAlarmNotif() {
+        //time = time + 10 * 1000;
+        Long time = new GregorianCalendar().getTimeInMillis() + 5 * 1000;
+
+        Log.d("TIME_NOTIFICATIONS SET", time.toString() + "");
+        Intent alertIntent = new Intent(this, AlertReceiver.class);
+        AlarmManager alarmManager = (AlarmManager)
+                getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, time, PendingIntent.getBroadcast(this, 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+
+
+    }
+
+    public void setupUI(View view) {
+
+        //Set up touch listener for non-text box views to hide keyboard.
+        if (!(view instanceof EditText)) {
+
+            view.setOnTouchListener(new View.OnTouchListener() {
+
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard(TaskAddActivity.this);
+                    return false;
+                }
+
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+
+                View innerView = ((ViewGroup) view).getChildAt(i);
+
+                setupUI(innerView);
+            }
+        }
     }
 }

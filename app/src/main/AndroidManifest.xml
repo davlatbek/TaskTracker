@@ -18,12 +18,20 @@
             android:label="Task Tracker" >
         </activity>
         <activity
+            android:name=".CoursePlanActivity"
+            android:label="Course Plan">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".PlugActivity"
             android:label="Plug !for debug only!">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
+
+
+
         </activity>
 
         <activity android:name=".TaskEditActivity"
@@ -44,6 +52,8 @@
             android:name=".TaskOverviewActivity"
             android:label="Task Overview">
         </activity>
+
+
 
     </application>
 

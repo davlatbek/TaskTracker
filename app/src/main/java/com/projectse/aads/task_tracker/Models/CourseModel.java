@@ -10,6 +10,11 @@ import java.util.List;
  */
 public class CourseModel {
 
+    private String name;
+    private Long id;
+    private int clr =0;
+    private String abbreviation;
+
     public int getClr() {
         return clr;
     }
@@ -35,9 +40,6 @@ public class CourseModel {
         throw new Exception("Check priority input value fromPriorityToInt");
     }
 
-    private String name;
-    private Long id;
-    private int clr =0;
     // by default priority has low level
     private Priority priority = Priority.LOW;
     private List<TaskModel> tasksList = new ArrayList<TaskModel>();
@@ -69,6 +71,7 @@ public class CourseModel {
     }
     public void setName(String name) {
         this.name = name;
+
     }
     public Priority getPriority() {
         return priority;

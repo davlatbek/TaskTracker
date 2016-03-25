@@ -24,50 +24,19 @@ import java.util.TimeZone;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    // Create new instance of our database
-    // In any activity just pass the context and use the singleton method
-    // DatabaseHelper helper = DatabaseHelper.getInstance(this);
-    private static DatabaseHelper sInstance;
-
-    // Using just only one instance to connect
-    public static synchronized DatabaseHelper getsInstance(Context context) {
-        if (sInstance == null) {
-            sInstance = new DatabaseHelper(context.getApplicationContext());
-        }
-        return sInstance;
-    }
-
-    // Constructor
-    public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-//        context.deleteDatabase(DATABASE_NAME);
-
-    }
-
-    // Called when the database connection is being configured.
-    // Configure database settings for things like foreign key support
-
-    @Override
-    public void onConfigure(SQLiteDatabase db) {
-        super.onConfigure(db);
-        db.setForeignKeyConstraintsEnabled(true);
-    }
-
-    // Database Name
-    public static String DATABASE_NAME = "task_tracker_database";
-
     // Current version of database
     private static final int DATABASE_VERSION = 1;
-
     // Name of tables
     private static final String TABLE_TASKS = "tasks";
     private static final String TABLE_SUBTASKS = "tasks_to_subtasks";
+
+    // Called when the database connection is being configured.
+    // Configure database settings for things like foreign key support
     private static final String TABLE_COURSES = "courses";
     private static final String TABLE_SETTINGS = "settings";
     private static final String TABLE_PLANS = "plans";
     private static final String TABLE_PLANS_TO_TASKS = "plans_to_tasks";
     private static final String TABLE_COURSES_TO_TASKS = "courses_to_tasks";
-
     // All Keys used in table TASKS
     private static final String TASKS_KEY_ID = "task_id";
     private static final String TASKS_NAME = "task_name";
@@ -80,13 +49,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TASKS_PARENT_TASK = "task_parent_task";
     private static final String TASKS_PRIORITY = "task_priority";
     private static final String TASKS_IS_DONE = "task_is_done";
-
     // All keys used in table COURSES
     private static final String COURSE_ID = "course_id";
     private static final String COURSE_NAME = "course_name";
     private static final String COURSE_PRIORITY = "course_priority";
     private static final String COURSE_COLOR = "course_color";
-
     // All keys used in table SETTINGS
     private static final String SETTINGS_ALWAYS_NOTIFY_START_TIME = "setting_always_notify_start_time";
     private static final String SETTINGS_ALWAYS_NOTIFY_DEADLINE = "setting_always_notify_deadline";
@@ -94,25 +61,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SETTINGS_NOTIFY_DEADLINE_BEFORE = "setting_notify_deadline_before";
     private static final String SETTINGS_NOTIFY_START_TIME_X_TIMES = "setting_notify_start_time_x_times";
     private static final String SETTINGS_NOTIFY_DEADLINE_X_TIMES = "setting_notify_deadline_x_times";
-
     // All keys used in table PLANS
     private static final String PLANS_ID = "plan_id";
     private static final String PLANS_TYPE = "plan_type";
     private static final String PLANS_DAY = "plan_day";
-
     // All keys used in table PLANS_TO_TASKS
     private static final String PLANS_TO_TASKS_PLAN_ID = "plan_to_task_plan_id";
     private static final String PLANS_TO_TASKS_TASK_ID = "plan_to_task_task_id";
-
     // All keys used in table COURSES_TO_TASKS
     private static final String COURSES_TO_TASKS_CURSE_ID = "courses_to_tasks_curse_id";
     private static final String COURSES_TO_TASKS_TASK_ID = "courses_to_tasks_task_id";
-
-
-    public static String TAG = "tag";
-
-
-    // Tasks Table Create Query
     /**
      * CREATE TABLE tasks (task_id INTEGER PRIMARY KEY AUTOINCREMENT, task_name TEXT,
      * task_description TEXT, task_deadline INTEGER)
@@ -132,13 +90,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + TASKS_PRIORITY + " INTEGER, "
             + "FOREIGN KEY(" + TASKS_PARENT_TASK + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + ")"
             + ");";
-
-//    public DatabaseHelper(Context context) {
-//        super(context,DATABASE_NAME,null,DATABASE_VERSION);
-//    }
-
-
-    // Course Table Create Query
     /**
      * CREATE TABLE courses (course_id INTEGER PRIMARY KEY AUTOINCREMENT, course_name TEXT,
      * course_color INTEGER, course_priority INTEGER)
@@ -149,7 +100,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + " INTEGER PRIMARY KEY AUTOINCREMENT," + COURSE_NAME + " TEXT,"
             + COURSE_COLOR + " INTEGER, "
             + COURSE_PRIORITY + " INTEGER);";
-
     /**
      * INSERT DEFAULT COURSE
      */
@@ -157,7 +107,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String INSERT_DEFAULT_COURSE = "INSERT INTO "
             + TABLE_COURSES + "(" + COURSE_NAME
             + ", " + COURSE_PRIORITY + ") " + "VALUES('Non Academical', 34523, 1);";
-
     /**
      * CREATE TABLE TABLE_COURSES_TO_TASKS
      */
@@ -168,11 +117,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "PRIMARY KEY (" + COURSES_TO_TASKS_TASK_ID + ", " + COURSES_TO_TASKS_CURSE_ID + "), "
             + "FOREIGN KEY(" + COURSES_TO_TASKS_TASK_ID + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + ") ON UPDATE CASCADE,"
             + "FOREIGN KEY(" + COURSES_TO_TASKS_CURSE_ID + ") REFERENCES " + TABLE_COURSES + "(" + COURSE_ID + ") ON UPDATE CASCADE);";
+    // Database Name
+    public static String DATABASE_NAME = "task_tracker_database";
+    public static String TAG = "tag";
+
+
+    // Tasks Table Create Query
+    // Create new instance of our database
+    // In any activity just pass the context and use the singleton method
+    // DatabaseHelper helper = DatabaseHelper.getInstance(this);
+    private static DatabaseHelper sInstance;
+
+//    public DatabaseHelper(Context context) {
+//        super(context,DATABASE_NAME,null,DATABASE_VERSION);
+//    }
+
+
+    // Course Table Create Query
+    // Constructor
+    public DatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+//        context.deleteDatabase(DATABASE_NAME);
+
+    }
+
+    // Using just only one instance to connect
+    public static synchronized DatabaseHelper getsInstance(Context context) {
+        if (sInstance == null) {
+            sInstance = new DatabaseHelper(context.getApplicationContext());
+        }
+        return sInstance;
+    }
+
+    @Override
+    public void onConfigure(SQLiteDatabase db) {
+        super.onConfigure(db);
+        db.setForeignKeyConstraintsEnabled(true);
+    }
 
     /**
      * CREATE TABLE SUBTASKS
      */
-
 
     /**
      * This method is called by system if the database is accessed but not yet
@@ -187,12 +172,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_TASKS); // create tasks table
         db.execSQL(CREATE_TABLE_COURSES); // create course table
         db.execSQL(CREATE_TABLE_COURSES_TO_TASK); // create course to task table
-//        String selectQuery = "SELECT * FROM " + TABLE_COURSES + " WHERE "
-//                + COURSE_ID + " = 1";
-//        Cursor c = db.rawQuery(selectQuery, null);
-//        if (!c.moveToFirst()) {
-//            db.execSQL(INSERT_DEFAULT_COURSE);
-//        }
     }
 
     /**
@@ -313,7 +292,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put(COURSE_NAME, course.getName());
             values.put(COURSE_PRIORITY, String.valueOf(course.fromPriorityToInt(course.getPriority())));
-            values.put(COURSE_COLOR,course.getClr());
+            values.put(COURSE_COLOR, course.getClr());
             id = db.update(TABLE_COURSES, values, COURSE_ID + " = ?",
                     new String[]{String.valueOf(course.getId())});
             db.setTransactionSuccessful();

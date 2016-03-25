@@ -27,22 +27,22 @@ import java.util.List;
  */
 public class ListOfCourses extends DialogFragment implements DialogInterface.OnClickListener {
     final String TAG = "TAG";
-    private TaskActivity testActivity;
     final CourseModel course = new CourseModel();
+    private TaskActivity testActivity;
     private DatabaseHelper db;
     private long courseID = 0;
-
-    public long getCourseId(){
-        return this.courseID;
-    }
-    private void setCourseId(long course_id){
-        this.courseID = course_id;
-    }
-
 
     public ListOfCourses(TaskActivity testActivity, DatabaseHelper db) {
         this.db = db;
         this.testActivity = testActivity;
+    }
+
+    public long getCourseId() {
+        return this.courseID;
+    }
+
+    private void setCourseId(long course_id) {
+        this.courseID = course_id;
     }
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -73,24 +73,30 @@ public class ListOfCourses extends DialogFragment implements DialogInterface.OnC
                         t.setText("Course: "
                                 + finalCourseModelList.get(which));
                         int p = finalCourseModelList.get(which).getClr();
-                        Log.d("COLOR",p+"");
+                        Log.d("COLOR", p + "");
                         switch (finalCourseModelList.get(which).getClr()) {
-                            case 7617718:  int parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor1)));
+                            case 7617718:
+                                int parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor1)));
                                 t.setBackgroundColor(parsedColor);
                                 break;
-                            case 16728876: parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor2)));
+                            case 16728876:
+                                parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor2)));
                                 t.setBackgroundColor(parsedColor);
                                 break;
-                            case 5317:  parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor3)));
+                            case 5317:
+                                parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor3)));
                                 t.setBackgroundColor(parsedColor);
                                 break;
-                            case 2937298:  parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor4)));
+                            case 2937298:
+                                parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor4)));
                                 t.setBackgroundColor(parsedColor);
                                 break;
-                            case 10011977:  parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor5)));
+                            case 10011977:
+                                parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor5)));
                                 t.setBackgroundColor(parsedColor);
                                 break;
-                            case 12627531:  parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor6)));
+                            case 12627531:
+                                parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor6)));
                                 t.setBackgroundColor(parsedColor);
                                 break;
                         }
@@ -117,9 +123,7 @@ public class ListOfCourses extends DialogFragment implements DialogInterface.OnC
                                         course.setName(courseName.getText().toString());
                                         // Get color from slider
                                         Integer intColor = shadeSlider.getColor();
-//                                        String hexColor = "#" + Integer.toHexString(intColor).substring(2);
-//                                        int color = Integer.parseInt(hexColor.replaceFirst("^#", ""), 16);
-                                        Log.d(TAG,intColor+"<-<-<-<-CHOOSED COLOR");
+                                        Log.d(TAG, intColor + "<-<-<-<-CHOOSED COLOR");
                                         course.setClr(intColor);
                                         long id = db.addCourse(course);
                                         Log.d(TAG, id + "");

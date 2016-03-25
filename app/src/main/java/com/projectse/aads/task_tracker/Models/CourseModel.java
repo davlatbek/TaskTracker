@@ -3,6 +3,7 @@ package com.projectse.aads.task_tracker.Models;
 import android.graphics.Color;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -69,9 +70,33 @@ public class CourseModel {
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
 
+        String[] word = name.split("\\s+");
+        abbreviation = "";
+        String[] prepositions = {"in", "at", "of", "the", "for", "through",
+                "vs", "on", "from", "as", "an", "a"};
+
+        if (word.length == 1) {
+            abbreviation = name.substring(0, 1).toUpperCase() + name.substring(1);
+        } else {
+            for (int i = 0; i < word.length; ++i) {
+                if (Arrays.asList(prepositions).contains(word[i])) {
+                    continue;
+                }
+
+                if (word[i].equals(word[i].toUpperCase())) {
+                    abbreviation = abbreviation + word[i];
+                } else {
+                    abbreviation = abbreviation + word[i].substring(0, 1).toUpperCase();
+                }
+            }
+        }
+        if (abbreviation.length() > 3) {
+            abbreviation = abbreviation.substring(0, 3);
+        }
     }
     public Priority getPriority() {
         return priority;

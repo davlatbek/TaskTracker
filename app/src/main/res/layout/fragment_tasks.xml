@@ -1,69 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="fill_parent"
     android:background="#dbecc7"
     android:orientation="vertical"
-    android:weightSum="2">
+    android:weightSum="2"
+    android:gravity="center_vertical">
 
-    <Button
-        android:id="@+id/over_due_button"
-        android:layout_width="170dip"
-        android:layout_height="135dip"
-        android:layout_marginLeft="10dp"
-        android:background="#add480"
-        android:drawableTop="@drawable/vector_drawable_ic_error_outline_black___px"
-        android:paddingBottom="20dp"
-        android:paddingTop="40dp"
-        android:text="Over Due"
-        android:layout_weight="1"
-        android:layout_alignBaseline="@+id/actual_button"
-        android:layout_alignBottom="@+id/actual_button"
-        android:layout_alignParentStart="true" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="480dp"
+        android:id="@+id/tasks_categories_buttons">
 
-    <Button
-        android:id="@+id/actual_button"
-        android:layout_width="170dip"
-        android:layout_height="135dip"
-        android:layout_marginLeft="10dp"
-        android:background="#add480"
-        android:drawableTop="@drawable/ic_access_time_24dp"
-        android:paddingBottom="20dp"
-        android:paddingTop="40dp"
-        android:text="Actual"
-        android:layout_weight="1"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="88dp"
-        android:layout_marginRight="10dp" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-    <Button
-        android:id="@+id/add_task_button"
-        android:layout_width="170dip"
-        android:layout_height="135dip"
-        android:background="#558a2f"
-        android:drawableTop="@drawable/ic_add_circle_outline_24dp"
-        android:paddingBottom="20dp"
-        android:paddingTop="40dp"
-        android:text="Add Task"
-        android:textColor="#ffffff"
-        android:layout_weight="1"
-        android:layout_below="@+id/over_due_button"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="10dp" />
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#add480"
+                android:gravity="center_vertical|center_horizontal"
+                android:layout_margin="10dp"
+                android:id="@+id/over_due_btn">
 
-    <Button
-        android:id="@+id/done_button"
-        android:layout_width="170dip"
-        android:layout_height="135dip"
-        android:background="#acd380"
-        android:drawableTop="@drawable/ic_drawable_checked"
-        android:paddingBottom="20dp"
-        android:paddingTop="40dp"
-        android:text="Done"
-        android:layout_weight="1"
-        android:layout_below="@+id/over_due_button"
-        android:layout_alignStart="@+id/over_due_button"
-        android:layout_marginTop="20dp" />
-</RelativeLayout>
+                <TextView
+                    android:id="@+id/over_due_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#add480"
+                    android:drawableTop="@drawable/vector_drawable_ic_error_outline_black___px"
+                    android:text="Over Due"
+                    android:layout_weight="1"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="10dp"
+                    android:gravity="center_horizontal"
+                    android:layout_centerInParent="true" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#add480"
+                android:gravity="center_vertical|center_horizontal"
+                android:layout_margin="10dp"
+                android:id="@+id/actual_btn">
+
+                <TextView
+                    android:id="@+id/actual_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#add480"
+                    android:drawableTop="@drawable/ic_access_time_24dp"
+                    android:text="Actual"
+                    android:layout_weight="1"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="10dp"
+                    android:gravity="center_horizontal"
+                    android:layout_centerInParent="true" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="visible"
+            android:layout_weight="1">
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#add480"
+                android:gravity="center_vertical|center_horizontal"
+                android:layout_margin="10dp"
+                android:id="@+id/done_btn">
+
+                <TextView
+                    android:id="@+id/done_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#add480"
+                    android:drawableTop="@drawable/ic_drawable_checked"
+                    android:text="Done"
+                    android:layout_weight="1"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="10dp"
+                    android:gravity="center_horizontal"
+                    android:layout_centerInParent="true" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#558a2f"
+                android:gravity="center_vertical|center_horizontal"
+                android:layout_margin="10dp"
+                android:id="@+id/add_task_btn">
+
+                <TextView
+                    android:id="@+id/add_task_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#558a2f"
+                    android:textColor="#ffffff"
+                    android:drawableTop="@drawable/ic_add_circle_outline_24dp"
+                    android:text="Add Task"
+                    android:layout_weight="1"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="10dp"
+                    android:gravity="center_horizontal"
+                    android:layout_centerInParent="true" />
+            </RelativeLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

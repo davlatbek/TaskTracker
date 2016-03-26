@@ -19,14 +19,14 @@ import java.util.List;
  */
 public class PlanFragment extends Fragment {
 
-    WeekSliderFragment.onWeekSliderEventListener someEventListener;
+    PlanViewWeekSliderFragment.onWeekSliderEventListener someEventListener;
 
     @Override
     public void onAttach(Activity context) {
         super.onAttach(context);
         Activity activity = context;
         try {
-            someEventListener = (WeekSliderFragment.onWeekSliderEventListener) activity;
+            someEventListener = (PlanViewWeekSliderFragment.onWeekSliderEventListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement onSomeEventListener");
         }
@@ -41,7 +41,7 @@ public class PlanFragment extends Fragment {
         Calendar week_first_day = Calendar.getInstance();
         week_first_day.setFirstDayOfWeek(Calendar.MONDAY);
         week_first_day.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-        if(someEventListener != null) someEventListener.setWeek(week_first_day);
+        if(someEventListener != null) someEventListener.setWeekInPlanView(week_first_day);
 
         return v;
     }

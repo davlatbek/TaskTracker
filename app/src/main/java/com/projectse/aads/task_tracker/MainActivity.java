@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Fragments.CoursesFragment;
 import com.projectse.aads.task_tracker.Fragments.PlanFragment;
+import com.projectse.aads.task_tracker.Fragments.PlanViewWeekSliderFragment;
 import com.projectse.aads.task_tracker.Fragments.ProgressFragment;
 import com.projectse.aads.task_tracker.Fragments.SettingsFragment;
 import com.projectse.aads.task_tracker.Fragments.TasksFragment;
@@ -30,7 +31,7 @@ import java.util.Calendar;
 /**
  * Created by Andrey Zolin on 20.03.2016.
  */
-public class MainActivity extends AppCompatActivity implements WeekSliderFragment.onWeekSliderEventListener, WeekDaysFragment.onSomeWeekDaysListener {
+public class MainActivity extends AppCompatActivity implements PlanViewWeekSliderFragment.onWeekSliderEventListener, WeekDaysFragment.onSomeWeekDaysListener {
     private DrawerLayout menuDrawer;
     private android.support.v7.widget.Toolbar toolbar;
     private NavigationView nvDrawer;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements WeekSliderFragmen
         setupDrawerContent(nvDrawer);
 
         db = DatabaseHelper.getsInstance(getApplicationContext());
+        PlugActivity.initDebugData(db);
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
@@ -155,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements WeekSliderFragmen
     }
 
     @Override
-    public void setWeek(Calendar date_src) {
+    public void setWeekInPlanView(Calendar date_src) {
         Calendar date = (Calendar) date_src.clone();
         TasksListFragment fragList = (TasksListFragment) getFragmentManager().findFragmentById(R.id.fragment_tasks_list);
         WeekDaysFragment fragWD = (WeekDaysFragment) getFragmentManager().findFragmentById(R.id.fragment_week_days);

@@ -62,7 +62,13 @@ public class WeekSlider extends Fragment {
     }
 
     private String weekToString(){
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
-        return sdf.format(week_first_day.getTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        Calendar week_last_day = (Calendar) week_first_day.clone();
+        week_last_day.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        return sdf.format(week_first_day.getTime()) + " - " + sdf.format(week_last_day.getTime());
+    }
+
+    public void updateLabel(){
+
     }
 }

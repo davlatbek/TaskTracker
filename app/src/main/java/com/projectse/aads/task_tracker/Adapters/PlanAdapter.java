@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
+import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.PlanActivity;
@@ -88,7 +89,7 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         textSupertaskName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PlanActivity) context).callTaskOverviewActivity(supertask);
+                ((MainActivity) context).callTaskOverviewActivity(supertask);
             }
         });
 
@@ -136,7 +137,7 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         textSubtaskName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PlanActivity) context).callTaskOverviewActivity(subtask);
+                ((MainActivity) context).callTaskOverviewActivity(subtask);
             }
         });
         textSubtaskName.setText(subtask.toString());

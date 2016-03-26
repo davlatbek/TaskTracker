@@ -1,6 +1,7 @@
 package com.projectse.aads.task_tracker;
 
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -145,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements WeekSlider.onWeek
     /**************************************WEEK PLAN************************************************/
     /**
      *
-     * @param s
+     * @param weekDay
      */
     @Override
     public void setWeekDay(int weekDay) {
@@ -162,5 +163,16 @@ public class MainActivity extends AppCompatActivity implements WeekSlider.onWeek
         WeekDaysFragment fragWD = (WeekDaysFragment) getFragmentManager().findFragmentById(R.id.fragment_week_days);
         fragList.setWeekData(date);
         setWeekDay(fragWD.getCurrentDay());
+    }
+
+    public void callAddTaskActivity() {
+        Intent intent = new Intent(getApplicationContext(), TaskAddActivity.class);
+        startActivity(intent);
+    }
+
+    public void callTaskOverviewActivity(TaskModel taskModel) {
+        Intent intent = new Intent(getApplicationContext(), TaskOverviewActivity.class);
+        intent.putExtra("task_id", taskModel.getId());
+        startActivityForResult(intent, 0);
     }
 }

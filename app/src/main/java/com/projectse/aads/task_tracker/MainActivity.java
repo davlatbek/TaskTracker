@@ -23,6 +23,7 @@ import com.projectse.aads.task_tracker.Fragments.TasksFragment;
 import com.projectse.aads.task_tracker.Fragments.TasksListFragment;
 import com.projectse.aads.task_tracker.Fragments.WeekDaysFragment;
 import com.projectse.aads.task_tracker.Fragments.WeekSliderFragment;
+import com.projectse.aads.task_tracker.Fragments.WeekViewWeekSliderFragment;
 import com.projectse.aads.task_tracker.Fragments.WeeklyViewFragment;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
@@ -31,7 +32,10 @@ import java.util.Calendar;
 /**
  * Created by Andrey Zolin on 20.03.2016.
  */
-public class MainActivity extends AppCompatActivity implements PlanViewWeekSliderFragment.onWeekSliderEventListener, WeekDaysFragment.onSomeWeekDaysListener {
+public class MainActivity extends AppCompatActivity
+        implements PlanViewWeekSliderFragment.onWeekSliderEventListener, WeekDaysFragment.onSomeWeekDaysListener,
+        WeekViewWeekSliderFragment.onWeekViewWeekSliderEventListener
+{
     private DrawerLayout menuDrawer;
     private android.support.v7.widget.Toolbar toolbar;
     private NavigationView nvDrawer;
@@ -162,10 +166,13 @@ public class MainActivity extends AppCompatActivity implements PlanViewWeekSlide
         TasksListFragment fragList = (TasksListFragment) getFragmentManager().findFragmentById(R.id.fragment_tasks_list);
         WeekDaysFragment fragWD = (WeekDaysFragment) getFragmentManager().findFragmentById(R.id.fragment_week_days);
         WeekSliderFragment fragSlider = (WeekSliderFragment) getFragmentManager().findFragmentById(R.id.fragment_week_slider);
-        fragSlider.updateLabel();
 
-        fragList.setWeekData(date);
-        setWeekDay(fragWD.getCurrentDay());
+        if(fragSlider != null)
+            fragSlider.updateLabel();
+        if(fragList != null)
+            fragList.setWeekData(date);
+        if(fragWD != null)
+            setWeekDay(fragWD.getCurrentDay());
     }
 
     public void callAddTaskActivity() {
@@ -177,5 +184,10 @@ public class MainActivity extends AppCompatActivity implements PlanViewWeekSlide
         Intent intent = new Intent(getApplicationContext(), TaskOverviewActivity.class);
         intent.putExtra("task_id", taskModel.getId());
         startActivityForResult(intent, 0);
+    }
+
+    @Override
+    public void setWeekInWeekView(Calendar date) {
+
     }
 }

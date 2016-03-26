@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 
-public class WeekDaysFragment extends Fragment {
+public class WeekDaysFragment extends XMLFragment {
     public interface onSomeWeekDaysListener {
         public void setWeekDay(int weekDay);
     }

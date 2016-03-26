@@ -15,8 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 
-public class WeekViewWeekSliderFragment extends Fragment {
-    Calendar week_first_day = Calendar.getInstance();
+public class WeekViewWeekSliderFragment extends WeekSliderFragment {
 
     public WeekViewWeekSliderFragment(){
         week_first_day.setFirstDayOfWeek(Calendar.MONDAY);
@@ -24,7 +23,7 @@ public class WeekViewWeekSliderFragment extends Fragment {
     }
 
     public interface onWeekViewWeekSliderEventListener {
-        public void setWeek(Calendar date);
+        public void setWeekInWeekView(Calendar date);
     }
 
     onWeekViewWeekSliderEventListener someEventListener;
@@ -42,34 +41,22 @@ public class WeekViewWeekSliderFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_week_slider, null);
+        View v = super.onCreateView(inflater, container, savedInstanceState);
         ImageButton buttonNextWeek = (ImageButton) v.findViewById(R.id.btnNextWeek);
         ImageButton buttonPrevWeek = (ImageButton) v.findViewById(R.id.btnPrevWeek);
         buttonPrevWeek.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 week_first_day.add(Calendar.DAY_OF_MONTH, -7);
-                someEventListener.setWeek(week_first_day);
+                someEventListener.setWeekInWeekView(week_first_day);
             }
         });
         buttonNextWeek.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 week_first_day.add(Calendar.DAY_OF_MONTH, 7);
-                someEventListener.setWeek(week_first_day);
+                someEventListener.setWeekInWeekView(week_first_day);
             }
         });
 
         return v;
-    }
-
-    private String weekToString(){
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-        Calendar week_last_day = (Calendar) week_first_day.clone();
-        week_last_day.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-        return sdf.format(week_first_day.getTime()) + " - " + sdf.format(week_last_day.getTime());
-    }
-
-    public void updateLabel(){
-        TextView label = (TextView) getView().findViewById(R.id.week_label);
-        label.setText(weekToString());
     }
 }

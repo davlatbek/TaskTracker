@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/colorContentBackground"
+    android:orientation="vertical">
+    <fragment
+        android:id="@+id/fragment_week_slider"
+        android:name="com.projectse.aads.task_tracker.Fragments.WeekSlider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout="@layout/fragment_week_slider">
+    </fragment>
+    <fragment
+        android:id="@+id/fragment_week_days"
+        android:name="com.projectse.aads.task_tracker.Fragments.WeekDaysFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout="@layout/fragment_week_days">
+    </fragment>
+    <fragment
+        android:id="@+id/fragment_tasks_list"
+        android:name="com.projectse.aads.task_tracker.Fragments.TasksListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout="@layout/fragment_tasks_list">
+    </fragment>
+</LinearLayout>

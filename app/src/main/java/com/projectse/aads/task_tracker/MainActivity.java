@@ -12,21 +12,31 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Fragments.CoursesFragment;
 import com.projectse.aads.task_tracker.Fragments.PlanFragment;
 import com.projectse.aads.task_tracker.Fragments.ProgressFragment;
 import com.projectse.aads.task_tracker.Fragments.SettingsFragment;
 import com.projectse.aads.task_tracker.Fragments.TasksFragment;
+import com.projectse.aads.task_tracker.Fragments.TasksListFragment;
+import com.projectse.aads.task_tracker.Fragments.WeekDaysFragment;
+import com.projectse.aads.task_tracker.Fragments.WeekSlider;
 import com.projectse.aads.task_tracker.Fragments.WeeklyViewFragment;
+import com.projectse.aads.task_tracker.Models.TaskModel;
+
+import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created by Andrey Zolin on 20.03.2016.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements WeekSlider.onWeekSliderEventListener, WeekDaysFragment.onSomeWeekDaysListener {
     private DrawerLayout menuDrawer;
     private android.support.v7.widget.Toolbar toolbar;
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
+
+    DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +55,8 @@ public class MainActivity extends AppCompatActivity {
         menuDrawer.setDrawerListener(drawerToggle);
         setupDrawerContent(nvDrawer);
 
-
+        db = DatabaseHelper.getsInstance(getApplicationContext());
+        PlugActivity.initDebugData(db);
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
@@ -131,4 +142,25 @@ public class MainActivity extends AppCompatActivity {
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
+    /**************************************WEEK PLAN************************************************/
+    /**
+     *
+     * @param s
+     */
+    @Override
+    public void setWeekDay(int weekDay) {
+        TasksListFragment frag = (TasksListFragment) getFragmentManager().findFragmentById(R.id.fragment_tasks_list);
+        if(weekDay >= Calendar.SUNDAY && weekDay <= Calendar.SATURDAY){
+            frag.setCurrentDayOfWeek(weekDay);
+        }
+    }
+
+    @Override
+    public void setWeek(Calendar date_src) {
+        Calendar date = (Calendar) date_src.clone();
+        TasksListFragment fragList = (TasksListFragment) getFragmentManager().findFragmentById(R.id.fragment_tasks_list);
+        WeekDaysFragment fragWD = (WeekDaysFragment) getFragmentManager().findFragmentById(R.id.fragment_week_days);
+        fragList.setWeekData(date);
+        setWeekDay(fragWD.getCurrentDay());
+    }
 }

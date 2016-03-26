@@ -7,7 +7,7 @@
     android:orientation="vertical">
     <fragment
         android:id="@+id/fragment_week_slider"
-        android:name="com.projectse.aads.task_tracker.Fragments.WeekSlider"
+        android:name="com.projectse.aads.task_tracker.Fragments.WeekSliderFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:layout="@layout/fragment_week_slider">

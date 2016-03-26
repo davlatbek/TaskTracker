@@ -21,17 +21,16 @@ import com.projectse.aads.task_tracker.Fragments.SettingsFragment;
 import com.projectse.aads.task_tracker.Fragments.TasksFragment;
 import com.projectse.aads.task_tracker.Fragments.TasksListFragment;
 import com.projectse.aads.task_tracker.Fragments.WeekDaysFragment;
-import com.projectse.aads.task_tracker.Fragments.WeekSlider;
+import com.projectse.aads.task_tracker.Fragments.WeekSliderFragment;
 import com.projectse.aads.task_tracker.Fragments.WeeklyViewFragment;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * Created by Andrey Zolin on 20.03.2016.
  */
-public class MainActivity extends AppCompatActivity implements WeekSlider.onWeekSliderEventListener, WeekDaysFragment.onSomeWeekDaysListener {
+public class MainActivity extends AppCompatActivity implements WeekSliderFragment.onWeekSliderEventListener, WeekDaysFragment.onSomeWeekDaysListener {
     private DrawerLayout menuDrawer;
     private android.support.v7.widget.Toolbar toolbar;
     private NavigationView nvDrawer;
@@ -161,6 +160,9 @@ public class MainActivity extends AppCompatActivity implements WeekSlider.onWeek
         Calendar date = (Calendar) date_src.clone();
         TasksListFragment fragList = (TasksListFragment) getFragmentManager().findFragmentById(R.id.fragment_tasks_list);
         WeekDaysFragment fragWD = (WeekDaysFragment) getFragmentManager().findFragmentById(R.id.fragment_week_days);
+        WeekSliderFragment fragSlider = (WeekSliderFragment) getFragmentManager().findFragmentById(R.id.fragment_week_slider);
+        fragSlider.updateLabel();
+
         fragList.setWeekData(date);
         setWeekDay(fragWD.getCurrentDay());
     }

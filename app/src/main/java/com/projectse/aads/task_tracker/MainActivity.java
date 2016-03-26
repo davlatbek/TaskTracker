@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity implements WeekSliderFragmen
         setupDrawerContent(nvDrawer);
 
         db = DatabaseHelper.getsInstance(getApplicationContext());
-        PlugActivity.initDebugData(db);
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {

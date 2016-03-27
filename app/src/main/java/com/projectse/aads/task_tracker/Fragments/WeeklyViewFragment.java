@@ -117,15 +117,6 @@ public class WeeklyViewFragment extends Fragment implements WeekSliderFragment.o
             RelativeLayout day_button = (RelativeLayout) view.findViewById(btn_id);
             final int finalDay = day;
 
-            if ( day_button instanceof ViewGroup ) {
-                ViewGroup group = (ViewGroup)view;
-
-                for ( int idx = 0 ; idx < group.getChildCount() ; idx++ ) {
-                    View v = group.getChildAt(idx);
-                    v.setOnTouchListener(null);
-                    v.setOnClickListener(null);
-                }
-            }
             day_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

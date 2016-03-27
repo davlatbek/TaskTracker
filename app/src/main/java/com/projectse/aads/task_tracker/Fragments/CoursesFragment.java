@@ -20,8 +20,12 @@ import android.widget.Toast;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Dialogs.ListOfCourses;
 import com.projectse.aads.task_tracker.MainActivity;
+import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.R;
 import com.projectse.aads.task_tracker.TaskAddActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -32,7 +36,7 @@ public class CoursesFragment extends Fragment {
 //    public interface onSomeEventListener {
 //        public void someEvent(String s);
 //    }
-//
+
 //    onSomeEventListener someEventListener;
 
 //    @Override
@@ -61,11 +65,21 @@ public class CoursesFragment extends Fragment {
         ImageButton addRequestButton = (ImageButton) view.findViewById(R.id.create_request_fab);
         addRequestButton.setOnClickListener(requestButtonListener);
 
-        for(int i = 0; i < 3; i++) {
+        DatabaseHelper db = new DatabaseHelper(getActivity());
+        List<CourseModel> course_list = new ArrayList<>();
+        try {
+             course_list = db.getCourseModelList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        for(CourseModel c : course_list) {
+
+            // get data from DB
             View requestListItemView = inflater.inflate(R.layout.course_list_item, null);
             TableLayout requestItemsTable = (TableLayout) view.findViewById(R.id.request_items_table);
             TextView tv = (TextView)requestListItemView.findViewById(R.id.request_name);
-            tv.setText("Request " + i);
+            tv.setText(c.getName());
             requestListItemView.setOnClickListener(requestItemListener);
             requestItemsTable.addView(requestListItemView);
         }
@@ -79,9 +93,9 @@ public class CoursesFragment extends Fragment {
     private View.OnClickListener requestItemListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getActivity(), TaskAddActivity.class);
-            intent.putExtra("course_id", 0);
-           // Toast.makeText(getActivity(), ((TextView) v.findViewById(R.id.request_name)).getText() + " item selected", Toast.LENGTH_SHORT).show();
+
+            // call course
+          //  Toast.makeText(getActivity(), ((TextView) v.findViewById(R.id.request_name)).getText() + " item selected", Toast.LENGTH_SHORT).show();
         }
     };
 

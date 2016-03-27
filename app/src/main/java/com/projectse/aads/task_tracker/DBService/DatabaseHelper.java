@@ -40,7 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Constructor
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-//        context.deleteDatabase(DATABASE_NAME);
+        context.deleteDatabase(DATABASE_NAME);
 
     }
 
@@ -260,8 +260,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Cursor c = db.rawQuery(selectQuery, null);
 
-        if (c != null)
-            c.moveToFirst();
+        if (!c.moveToFirst())
+            return null;
 
         CourseModel course = new CourseModel();
 

@@ -1,24 +1,110 @@
 package com.projectse.aads.task_tracker.Fragments;
 
+import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.ListFragment;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
+import android.widget.TableLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Dialogs.ListOfCourses;
+import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.R;
+import com.projectse.aads.task_tracker.TaskAddActivity;
 
 
 /**
  * Created by Andrey Zolin on 20.03.2016.
  */
 public class CoursesFragment extends Fragment {
+
+//    public interface onSomeEventListener {
+//        public void someEvent(String s);
+//    }
+//
+//    onSomeEventListener someEventListener;
+
+//    @Override
+//    public void onAttach(Activity activity) {
+//        super.onAttach(activity);
+//        try {
+//            someEventListener = (onSomeEventListener) activity;
+//        } catch (ClassCastException e) {
+//            throw new ClassCastException(activity.toString() + " must implement onSomeEventListener");
+//        }
+//    }
+
+ //   protected ListOfCourses dialogFragmentBuilder;
+
+//    @Override
+//    public void onAttach(Activity activity) {
+//        super.onAttach(activity);
+//        DatabaseHelper db = new DatabaseHelper(activity);
+//    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle("Courses");
         View view = inflater.inflate(R.layout.fragment_course_list, container, false);
 
+        ImageButton addRequestButton = (ImageButton) view.findViewById(R.id.create_request_fab);
+        addRequestButton.setOnClickListener(requestButtonListener);
+
+        for(int i = 0; i < 3; i++) {
+            View requestListItemView = inflater.inflate(R.layout.course_list_item, null);
+            TableLayout requestItemsTable = (TableLayout) view.findViewById(R.id.request_items_table);
+            TextView tv = (TextView)requestListItemView.findViewById(R.id.request_name);
+            tv.setText("Request " + i);
+            requestListItemView.setOnClickListener(requestItemListener);
+            requestItemsTable.addView(requestListItemView);
+        }
+
+
+     //   dialogFragmentBuilder = new ListOfCourses(MainActivity.class, new DatabaseHelper(getActivity()));
+
         return view;
     }
+
+    private View.OnClickListener requestItemListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getActivity(), TaskAddActivity.class);
+            intent.putExtra("course_id", 0);
+           // Toast.makeText(getActivity(), ((TextView) v.findViewById(R.id.request_name)).getText() + " item selected", Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    private View.OnClickListener requestButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+              //  someEventListener.someEvent("Test text to Fragment1");
+
+
+//            switch (v.getId()) {
+//                case R.id.selectCourse:
+//                    dialogFragmentBuilder.show(getFragmentManager(), "selectcourse");
+//                    break;
+//                default:
+//                    break;
+//            }
+            //fragment a
+            //  EditApplication editRequestFragment = new EditApplication();
+            //  android.support.v4.app.FragmentTransaction ft = getFragmentManager().beginTransaction();
+            //  ft.replace(R.id.frame_container, editRequestFragment);
+            //  ft.addToBackStack(null);
+            //  ft.commit();
+        }
+    };
 }

@@ -1,22 +1,27 @@
 package com.projectse.aads.task_tracker.Fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.ListFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Dialogs.ListOfCourses;
 import com.projectse.aads.task_tracker.MainActivity;
@@ -32,6 +37,7 @@ import java.util.List;
  * Created by Andrey Zolin on 20.03.2016.
  */
 public class CoursesFragment extends Fragment {
+
     public interface onCourseClickListener{
         public void callCourseOverviewFragment(int course_id);
     }
@@ -86,10 +92,18 @@ public class CoursesFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if(activity instanceof onCourseClickListener){
+            courseClickEventListener = (onCourseClickListener) activity;
+        }
+    }
+
     private View.OnClickListener requestItemListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            int course_id = 0;
+            int course_id = 3;
             if(courseClickEventListener != null){
                 courseClickEventListener.callCourseOverviewFragment(course_id);
             }
@@ -104,6 +118,42 @@ public class CoursesFragment extends Fragment {
     private View.OnClickListener requestButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+//            LayoutInflater inflater = getActivity().getLayoutInflater();
+//            View inflate = inflater.inflate(R.layout.add_new_course_form, null);
+//            final EditText courseName = (EditText) inflate.findViewById(R.id.coursename);
+//            final LobsterShadeSlider shadeSlider = (LobsterShadeSlider) inflate.findViewById(R.id.shadeslider);
+//            AlertDialog.Builder addnewcourse = new AlertDialog.Builder(getActivity())
+//                    .setTitle("Add new course")
+//                    .setView(inflate)
+//                    .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            // Get name from field
+//                            course.setName(courseName.getText().toString());
+//                            // Get color from slider
+//                            Integer intColor = shadeSlider.getColor();
+////                                        String hexColor = "#" + Integer.toHexString(intColor).substring(2);
+////                                        int color = Integer.parseInt(hexColor.replaceFirst("^#", ""), 16);
+//                            Log.d(TAG, intColor + "<-<-<-<-CHOOSED COLOR");
+//                            course.setClr(intColor);
+//                            long id = db.addCourse(course);
+//                            Log.d(TAG, id + "");
+//                            setCourseId(id);
+//                            TextView t = (TextView) testActivity.findViewById(R.id.textSelectedCourse);
+//                            t.setText("Course: "
+//                                    + course.getName());
+//                            t.setBackgroundColor(course.getClr());
+//                        }
+//
+//                    })
+//                    .setNegativeButton("Cancel",
+//                            new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int id) {
+//                                    dialog.cancel();
+//                                }
+//                            });
+//            addnewcourse.show();
 
               //  someEventListener.someEvent("Test text to Fragment1");
 

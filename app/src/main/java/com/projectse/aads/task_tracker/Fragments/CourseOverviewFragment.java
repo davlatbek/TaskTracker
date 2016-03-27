@@ -1,5 +1,7 @@
 package com.projectse.aads.task_tracker.Fragments;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -19,6 +21,20 @@ import com.projectse.aads.task_tracker.TaskAddActivity;
 public class CourseOverviewFragment extends Fragment {
     DatabaseHelper db = new DatabaseHelper(getActivity());
     private TasksListFragment tasksListFragment;
+    private long CourseId;
+
+    public void setCourseID(long courseId) {
+        this.CourseId = courseId;
+        // refresh fragment
+    }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
+    }
+
     private View.OnClickListener requestButtonListener
             = new View.OnClickListener() {
         @Override

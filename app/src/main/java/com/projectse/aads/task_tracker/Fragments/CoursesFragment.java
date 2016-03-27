@@ -32,6 +32,20 @@ import java.util.List;
  * Created by Andrey Zolin on 20.03.2016.
  */
 public class CoursesFragment extends Fragment {
+    public interface onCourseClickListener{
+        public void callCourseOverviewFragment(int course_id);
+    }
+
+    public interface onCreateCpourseListener {
+        public void callCourseCreateFragment();
+    }
+
+    private onCourseClickListener courseClickEventListener;
+    private onCreateCpourseListener courseCreateClickListener;
+
+    public void setSomeEventListener(onCourseClickListener someEventListener) {
+        this.courseClickEventListener = someEventListener;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,6 +56,13 @@ public class CoursesFragment extends Fragment {
         addRequestButton.setOnClickListener(requestButtonListener);
 
         DatabaseHelper db = new DatabaseHelper(getActivity());
+
+//        CourseModel course = new CourseModel();
+//        course.setName("54545");
+//        course.setClr(32);
+//        course.setId(3l);
+//        db.addCourse(course);
+
         List<CourseModel> course_list = new ArrayList<>();
         try {
              course_list = db.getCourseModelList();
@@ -55,7 +76,9 @@ public class CoursesFragment extends Fragment {
             View requestListItemView = inflater.inflate(R.layout.course_list_item, null);
             TableLayout requestItemsTable = (TableLayout) view.findViewById(R.id.request_items_table);
             TextView tv = (TextView)requestListItemView.findViewById(R.id.request_name);
+            TextView desc = (TextView)requestListItemView.findViewById(R.id.request_short_desc);
             tv.setText(c.getName());
+            desc.setText("www");
             requestListItemView.setOnClickListener(requestItemListener);
             requestItemsTable.addView(requestListItemView);
         }
@@ -66,6 +89,12 @@ public class CoursesFragment extends Fragment {
     private View.OnClickListener requestItemListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            int course_id = 0;
+            if(courseClickEventListener != null){
+                courseClickEventListener.callCourseOverviewFragment(course_id);
+            }
+
+          //  someEventListener
 
             // call course
           //  Toast.makeText(getActivity(), ((TextView) v.findViewById(R.id.request_name)).getText() + " item selected", Toast.LENGTH_SHORT).show();

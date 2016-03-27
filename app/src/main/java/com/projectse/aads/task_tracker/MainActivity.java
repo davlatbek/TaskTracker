@@ -29,7 +29,7 @@ import java.util.Calendar;
  */
 public class MainActivity
         extends AppCompatActivity
-        implements WeeklyViewFragment.onWeekViewEventListener
+        implements WeeklyViewFragment.onWeekViewEventListener, CoursesFragment.onCourseClickListener
 {
     private DrawerLayout menuDrawer;
     private android.support.v7.widget.Toolbar toolbar;
@@ -178,4 +178,8 @@ public class MainActivity
     }
 
 
+    @Override
+    public void callCourseOverviewFragment(int course_id) {
+        
+    }
 }

@@ -1,6 +1,7 @@
 package com.projectse.aads.task_tracker.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
+import com.projectse.aads.task_tracker.MainActivity;
+import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.PlanActivity;
 import com.projectse.aads.task_tracker.R;
@@ -86,9 +89,22 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         textSupertaskName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PlanActivity) context).callTaskOverviewActivity(supertask);
+                ((MainActivity) context).callTaskOverviewActivity(supertask);
             }
         });
+
+        setPriority(convertView.findViewById(R.id.priority), supertask.getPriority());
+
+        CourseModel course = supertask.getCourse();
+        if(course != null){
+            TextView course_label = (TextView)convertView.findViewById(R.id.lblCourse);
+            course_label.setText(course.getName());
+            course_label.setBackgroundColor(course.getClr());
+        }else{
+            TextView course_label = (TextView)convertView.findViewById(R.id.lblCourse);
+            course_label.setText("NaN");
+            course_label.setBackgroundColor(Color.DKGRAY);
+        }
 
         TextView textSubs = (TextView) convertView.findViewById(R.id.txtSubsCount);
         int children_count = getChildrenCount(groupPosition);
@@ -121,7 +137,7 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         textSubtaskName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PlanActivity) context).callTaskOverviewActivity(subtask);
+                ((MainActivity) context).callTaskOverviewActivity(subtask);
             }
         });
         textSubtaskName.setText(subtask.toString());
@@ -134,5 +150,20 @@ public class PlanAdapter extends BaseExpandableListAdapter {
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
+    }
+
+    void setPriority(View viewById, TaskModel.Priority priority){
+        switch (priority){
+            case HIGH:
+                viewById.setBackgroundResource(R.color.hignPriority);
+                break;
+            case MEDIUM:
+                viewById.setBackgroundResource(R.color.mediumPriority);
+                break;
+            case LOW:
+                viewById.setBackgroundResource(R.color.lowPriority);
+                break;
+        }
+
     }
 }

@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -146,7 +147,10 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
     private static void fillSubtasksList(){
         subtasks_list.clear();
         for(Long id : task.getSubtasks_ids()){
-            subtasks_list.add(db.getTask(id));
+            TaskModel subtask = db.getTask(id);
+            if(subtask == null)
+                return;
+            subtasks_list.add(subtask);
         }
     }
 
@@ -399,10 +403,17 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
         spinnerPriority.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                    task.setPriority(task.intToPriority(position));
-                } catch (Exception e) {
-                    e.printStackTrace();
+                Log.d("PRIORITY", "Priority: " + position);
+                switch (position) {
+                    case 0:
+                        task.setPriority(TaskModel.Priority.LOW);
+                        break;
+                    case 1:
+                        task.setPriority(TaskModel.Priority.MEDIUM);
+                        break;
+                    case 2:
+                        task.setPriority(TaskModel.Priority.HIGH);
+                        break;
                 }
             }
 

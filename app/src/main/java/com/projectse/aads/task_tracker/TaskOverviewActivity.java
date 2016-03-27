@@ -239,11 +239,11 @@ public class TaskOverviewActivity extends TaskActivity {
 
     @Override
     protected synchronized void onResume() {
+        db = DatabaseHelper.getsInstance(getApplicationContext());
         super.onResume();
         getViews();
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Long task_id = getIntent().getLongExtra("task_id", -1);
-        db = DatabaseHelper.getsInstance(getApplicationContext());
         task = db.getTask(task_id);
         Long course_id = db.getCourseIdByTaskId(task_id);
         checkCourse(course_id);

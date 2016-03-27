@@ -33,30 +33,6 @@ import java.util.List;
  */
 public class CoursesFragment extends Fragment {
 
-//    public interface onSomeEventListener {
-//        public void someEvent(String s);
-//    }
-
-//    onSomeEventListener someEventListener;
-
-//    @Override
-//    public void onAttach(Activity activity) {
-//        super.onAttach(activity);
-//        try {
-//            someEventListener = (onSomeEventListener) activity;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(activity.toString() + " must implement onSomeEventListener");
-//        }
-//    }
-
- //   protected ListOfCourses dialogFragmentBuilder;
-
-//    @Override
-//    public void onAttach(Activity activity) {
-//        super.onAttach(activity);
-//        DatabaseHelper db = new DatabaseHelper(activity);
-//    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle("Courses");
@@ -84,9 +60,6 @@ public class CoursesFragment extends Fragment {
             requestItemsTable.addView(requestListItemView);
         }
 
-
-     //   dialogFragmentBuilder = new ListOfCourses(MainActivity.class, new DatabaseHelper(getActivity()));
-
         return view;
     }
 
@@ -113,9 +86,10 @@ public class CoursesFragment extends Fragment {
 //                default:
 //                    break;
 //            }
+
             //fragment a
             //  EditApplication editRequestFragment = new EditApplication();
-            //  android.support.v4.app.FragmentTransaction ft = getFragmentManager().beginTransaction();
+            //  FragmentTransaction ft = getFragmentManager().beginTransaction();
             //  ft.replace(R.id.frame_container, editRequestFragment);
             //  ft.addToBackStack(null);
             //  ft.commit();

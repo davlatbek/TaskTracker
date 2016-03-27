@@ -84,8 +84,10 @@ public class CoursesFragment extends Fragment {
             TableLayout requestItemsTable = (TableLayout) view.findViewById(R.id.request_items_table);
             TextView tv = (TextView)requestListItemView.findViewById(R.id.request_name);
             TextView desc = (TextView)requestListItemView.findViewById(R.id.request_short_desc);
+            TextView id = (TextView)requestListItemView.findViewById(R.id.id_course);
             tv.setText(c.getName());
             desc.setText("www");
+            id.setText(c.getId().toString());
             requestListItemView.setOnClickListener(requestItemListener);
             requestItemsTable.addView(requestListItemView);
         }
@@ -104,8 +106,8 @@ public class CoursesFragment extends Fragment {
     private View.OnClickListener requestItemListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
-            long course_id = Integer.getInteger(((TextView) v.findViewById(R.id.id_course)).getText().toString());
+            long course_id = 3l;
+//            long course_id = Integer.getInteger(((TextView) v.findViewById(R.id.id_course)).getText().toString());
             if(courseClickEventListener != null){
                 courseClickEventListener.callCourseOverviewFragment(course_id);
             }
@@ -113,7 +115,7 @@ public class CoursesFragment extends Fragment {
           //  someEventListener
 
             // call course
-            Toast.makeText(getActivity(), ((TextView) v.findViewById(R.id.request_name)).getText() + " item selected", Toast.LENGTH_SHORT).show();
+          //  Toast.makeText(getActivity(), ((TextView) v.findViewById(R.id.request_name)).getText() + " item selected", Toast.LENGTH_SHORT).show();
         }
     };
 

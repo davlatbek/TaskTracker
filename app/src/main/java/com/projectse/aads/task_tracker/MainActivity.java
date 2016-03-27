@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Fragments.CourseOverviewFragment;
 import com.projectse.aads.task_tracker.Fragments.CoursesFragment;
 import com.projectse.aads.task_tracker.Fragments.PlanFragment;
 import com.projectse.aads.task_tracker.Fragments.ProgressFragment;
@@ -29,7 +30,7 @@ import java.util.Calendar;
  */
 public class MainActivity
         extends AppCompatActivity
-        implements WeeklyViewFragment.onWeekViewEventListener
+        implements WeeklyViewFragment.onWeekViewEventListener, CoursesFragment.onCourseClickListener
 {
     private DrawerLayout menuDrawer;
     private android.support.v7.widget.Toolbar toolbar;
@@ -178,4 +179,10 @@ public class MainActivity
     }
 
 
+    @Override
+    public void callCourseOverviewFragment(int course_id) {
+        CourseOverviewFragment fragment = new CourseOverviewFragment();
+        setCurrentFragment(fragment);
+        fragment.setCourseID(course_id);
+    }
 }

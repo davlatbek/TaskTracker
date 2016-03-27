@@ -119,43 +119,43 @@ public class CoursesFragment extends Fragment {
     private View.OnClickListener requestButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            final TaskActivity testActivity;
-
-            final CourseModel course = new CourseModel();
-            final DatabaseHelper db = new DatabaseHelper(getActivity());
-            final LayoutInflater inflater = getActivity().getLayoutInflater();
-            View inflate = inflater.inflate(R.layout.add_new_course_form, null);
-            final EditText courseName = (EditText) inflate.findViewById(R.id.coursename);
-            final LobsterShadeSlider shadeSlider = (LobsterShadeSlider) inflate.findViewById(R.id.shadeslider);
-            AlertDialog.Builder addnewcourse = new AlertDialog.Builder(getActivity())
-                    .setTitle("Add new course")
-                    .setView(inflate)
-                    .setPositiveButton("Create", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Get name from field
-                            course.setName(courseName.getText().toString());
-                            // Get color from slider
-                            Integer intColor = shadeSlider.getColor();
-//                                        String hexColor = "#" + Integer.toHexString(intColor).substring(2);
-//                                        int color = Integer.parseInt(hexColor.replaceFirst("^#", ""), 16);
-                            course.setClr(intColor);
-                            long id = db.addCourse(course);
-                            TextView t = (TextView) testActivity.findViewById(R.id.textSelectedCourse);
-                            t.setText("Course: "
-                                    + course.getName());
-                            t.setBackgroundColor(course.getClr());
-                        }
-
-                    })
-                    .setNegativeButton("Cancel",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
-            addnewcourse.show();
+//            final TaskActivity testActivity;
+//
+//            final CourseModel course = new CourseModel();
+//            final DatabaseHelper db = new DatabaseHelper(getActivity());
+//            final LayoutInflater inflater = getActivity().getLayoutInflater();
+//            View inflate = inflater.inflate(R.layout.add_new_course_form, null);
+//            final EditText courseName = (EditText) inflate.findViewById(R.id.coursename);
+//            final LobsterShadeSlider shadeSlider = (LobsterShadeSlider) inflate.findViewById(R.id.shadeslider);
+//            AlertDialog.Builder addnewcourse = new AlertDialog.Builder(getActivity())
+//                    .setTitle("Add new course")
+//                    .setView(inflate)
+//                    .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            // Get name from field
+//                            course.setName(courseName.getText().toString());
+//                            // Get color from slider
+//                            Integer intColor = shadeSlider.getColor();
+////                                        String hexColor = "#" + Integer.toHexString(intColor).substring(2);
+////                                        int color = Integer.parseInt(hexColor.replaceFirst("^#", ""), 16);
+//                            course.setClr(intColor);
+//                            long id = db.addCourse(course);
+//                            TextView t = (TextView) testActivity.findViewById(R.id.textSelectedCourse);
+//                            t.setText("Course: "
+//                                    + course.getName());
+//                            t.setBackgroundColor(course.getClr());
+//                        }
+//
+//                    })
+//                    .setNegativeButton("Cancel",
+//                            new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int id) {
+//                                    dialog.cancel();
+//                                }
+//                            });
+//            addnewcourse.show();
 
               //  someEventListener.someEvent("Test text to Fragment1");
 

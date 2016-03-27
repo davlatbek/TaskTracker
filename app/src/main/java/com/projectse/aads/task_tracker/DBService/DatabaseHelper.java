@@ -508,7 +508,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // RECEIVE LIST OF COURSES
 
-    public List<CourseModel> getCourseModelList() throws Exception {
+    public List<CourseModel> getCourseModelList() {
         List<CourseModel> courseArrayList = new ArrayList<CourseModel>();
         String selectQuery = "SELECT * FROM " + TABLE_COURSES;
         Log.d(TAG, selectQuery);
@@ -516,14 +516,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);
 
-        if (c.moveToFirst()) {
-            do {
-                CourseModel course = new CourseModel();
-                course.setId(c.getLong(c.getColumnIndex(COURSE_ID)));
-                course.setName(c.getString(c.getColumnIndex(COURSE_NAME)));
-                course.setClr(c.getInt(c.getColumnIndex(COURSE_COLOR)));
-                courseArrayList.add(course);
-            } while (c.moveToNext());
+        try{
+            if (c.moveToFirst()) {
+                do {
+                    CourseModel course = new CourseModel();
+                    course.setId(c.getLong(c.getColumnIndex(COURSE_ID)));
+                    course.setName(c.getString(c.getColumnIndex(COURSE_NAME)));
+                    course.setClr(c.getInt(c.getColumnIndex(COURSE_COLOR)));
+                    courseArrayList.add(course);
+                } while (c.moveToNext());
+            }
+        }finally {
+            c.close();
         }
         return courseArrayList;
     }

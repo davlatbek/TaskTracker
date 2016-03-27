@@ -33,6 +33,8 @@ public class PlugActivity extends Activity {
         CourseModel c1 = new CourseModel("Discrete Math");
         c1.setClr(R.color.coursecolor3);
         long c_id = db.addCourse(c1);
+
+        List<CourseModel> courses = db.getCourseModelList();
         for ( int i = 0; i < 20; i++){
             ArrayList<Long> subts = new ArrayList<>();
 

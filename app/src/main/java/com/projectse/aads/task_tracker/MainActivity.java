@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-
-
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,9 +19,6 @@ import com.projectse.aads.task_tracker.Fragments.PlanFragment;
 import com.projectse.aads.task_tracker.Fragments.ProgressFragment;
 import com.projectse.aads.task_tracker.Fragments.SettingsFragment;
 import com.projectse.aads.task_tracker.Fragments.TasksFragment;
-import com.projectse.aads.task_tracker.Fragments.TasksListFragment;
-import com.projectse.aads.task_tracker.Fragments.WeekDaysFragment;
-import com.projectse.aads.task_tracker.Fragments.WeekSliderFragment;
 import com.projectse.aads.task_tracker.Fragments.WeeklyViewFragment;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
@@ -32,7 +27,8 @@ import java.util.Calendar;
 /**
  * Created by Andrey Zolin on 20.03.2016.
  */
-public class MainActivity extends AppCompatActivity implements WeekSliderFragment.onWeekSliderEventListener, WeekDaysFragment.onSomeWeekDaysListener {
+public class MainActivity extends AppCompatActivity
+{
     private DrawerLayout menuDrawer;
     private android.support.v7.widget.Toolbar toolbar;
     private NavigationView nvDrawer;
@@ -59,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements WeekSliderFragmen
         setupDrawerContent(nvDrawer);
 
         db = DatabaseHelper.getsInstance(getApplicationContext());
+        PlugActivity.initDebugData(db);
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
@@ -112,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements WeekSliderFragmen
         }
 
         // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
 
         setTitle(item.getTitle());
@@ -144,30 +141,7 @@ public class MainActivity extends AppCompatActivity implements WeekSliderFragmen
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    /**************************************WEEK PLAN************************************************/
-    /**
-     *
-     * @param weekDay
-     */
-    @Override
-    public void setWeekDay(int weekDay) {
-        TasksListFragment frag = (TasksListFragment) getFragmentManager().findFragmentById(R.id.fragment_tasks_list);
-        if(weekDay >= Calendar.SUNDAY && weekDay <= Calendar.SATURDAY){
-            frag.setCurrentDayOfWeek(weekDay);
-        }
-    }
-
-    @Override
-    public void setWeek(Calendar date_src) {
-        Calendar date = (Calendar) date_src.clone();
-        TasksListFragment fragList = (TasksListFragment) getFragmentManager().findFragmentById(R.id.fragment_tasks_list);
-        WeekDaysFragment fragWD = (WeekDaysFragment) getFragmentManager().findFragmentById(R.id.fragment_week_days);
-        WeekSliderFragment fragSlider = (WeekSliderFragment) getFragmentManager().findFragmentById(R.id.fragment_week_slider);
-        fragSlider.updateLabel();
-
-        fragList.setWeekData(date);
-        setWeekDay(fragWD.getCurrentDay());
-    }
+    /**************************************TASK ACTIVITY************************************************/
 
     public void callAddTaskActivity() {
         Intent intent = new Intent(getApplicationContext(), TaskAddActivity.class);
@@ -179,4 +153,5 @@ public class MainActivity extends AppCompatActivity implements WeekSliderFragmen
         intent.putExtra("task_id", taskModel.getId());
         startActivityForResult(intent, 0);
     }
+
 }

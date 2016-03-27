@@ -22,7 +22,7 @@ public class TasksFragment extends Fragment {
 
         // mapping correction
         LinearLayout buttons_layout = (LinearLayout) view.findViewById(R.id.tasks_categories_buttons);
-        int width = getContext().getResources().getDisplayMetrics().widthPixels;
+        int width = getActivity().getResources().getDisplayMetrics().widthPixels;
         buttons_layout.setLayoutParams(new LinearLayout.LayoutParams(width,width));
 
         return view;

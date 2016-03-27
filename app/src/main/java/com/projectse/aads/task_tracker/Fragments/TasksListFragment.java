@@ -3,6 +3,7 @@ package com.projectse.aads.task_tracker.Fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,11 @@ import java.util.Map;
 public class TasksListFragment extends Fragment {
     DatabaseHelper db;
     PlanAdapter tasks_adapter;
+    private static View view;
+
+    public TasksListFragment(){
+        super();
+    }
 
     /**
      * Current day's task hierarchy
@@ -43,11 +49,26 @@ public class TasksListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tasks_list, container, false);
+        if (view != null) {
+            ViewGroup parent = (ViewGroup) view.getParent();
+            if (parent != null)
+                parent.removeView(view);
+        }
+        try {
+            view = inflater.inflate(R.layout.fragment_tasks_list, container, false);
+        } catch (InflateException e) {
+        /* map is already there, just return view as it is */
+        }
         ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.listView);
         tasks_adapter = new PlanAdapter(getActivity(),task_hierarchy);
         listView.setAdapter(tasks_adapter);
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ((PlanFragment) getParentFragment()).setDefault();
     }
 
     public void setWeekData(Calendar week_first_day){

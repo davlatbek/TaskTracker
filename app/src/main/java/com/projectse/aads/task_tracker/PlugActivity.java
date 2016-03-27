@@ -53,7 +53,8 @@ public class PlugActivity extends Activity {
             t.setId(db.addTask(t));
 
             try {
-                t.setCourse(db.getCourse(c_id));
+                db.addCourseToTask(t.getId());
+                db.updateCourseToTask(t.getId(),c_id);
             } catch (Exception e) {
                 e.printStackTrace();
             }

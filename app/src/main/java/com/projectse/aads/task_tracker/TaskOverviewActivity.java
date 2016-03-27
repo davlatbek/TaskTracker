@@ -40,9 +40,13 @@ public class TaskOverviewActivity extends TaskActivity {
     //Database instance
     DatabaseHelper db = null;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        db = DatabaseHelper.getsInstance(getApplicationContext());
+
         setContentView(activity_taskoverview);
         courseView = (TextView) findViewById(R.id.textSelectedCourse);
         spinnerPriority = (Spinner) findViewById(R.id.spinnerPriority);
@@ -50,6 +54,7 @@ public class TaskOverviewActivity extends TaskActivity {
         ArrayAdapter<String> priorityAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, paramPriorities);
         spinnerPriority.setAdapter(priorityAdapter);
+
 
         courseView.setText("Course is not selected");
 

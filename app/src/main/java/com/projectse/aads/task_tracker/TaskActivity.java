@@ -145,6 +145,8 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
     }
 
     private static void fillSubtasksList(){
+        if(db == null)
+            return;
         subtasks_list.clear();
         for(Long id : task.getSubtasks_ids()){
             TaskModel subtask = db.getTask(id);

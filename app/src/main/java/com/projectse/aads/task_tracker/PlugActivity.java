@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import junit.framework.Assert;
@@ -29,6 +30,9 @@ public class PlugActivity extends Activity {
 
     public static void initDebugData(DatabaseHelper db){
 
+        CourseModel c1 = new CourseModel("Discrete Math");
+        c1.setClr(R.color.coursecolor3);
+        long c_id = db.addCourse(c1);
         for ( int i = 0; i < 20; i++){
             ArrayList<Long> subts = new ArrayList<>();
 
@@ -47,6 +51,12 @@ public class PlugActivity extends Activity {
             TaskModel t = new TaskModel();
             t.setName("TestTaskMaster");
             t.setId(db.addTask(t));
+
+            try {
+                t.setCourse(db.getCourse(c_id));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             List<TaskModel> list = db.getTaskModelList();
             Assert.assertTrue(db.getTask(t.getId()).getSubtasks_ids().size() == 0);

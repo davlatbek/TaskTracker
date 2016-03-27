@@ -58,7 +58,7 @@ public class MainActivity
         setupDrawerContent(nvDrawer);
 
         db = DatabaseHelper.getsInstance(getApplicationContext());
-//        PlugActivity.initDebugData(db);
+        PlugActivity.initDebugData(db);
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {

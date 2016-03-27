@@ -1,32 +1,42 @@
 package com.projectse.aads.task_tracker;
 
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Fragments.CoursesFragment;
 import com.projectse.aads.task_tracker.Fragments.PlanFragment;
 import com.projectse.aads.task_tracker.Fragments.ProgressFragment;
 import com.projectse.aads.task_tracker.Fragments.SettingsFragment;
 import com.projectse.aads.task_tracker.Fragments.TasksFragment;
 import com.projectse.aads.task_tracker.Fragments.WeeklyViewFragment;
+import com.projectse.aads.task_tracker.Models.TaskModel;
+
+import java.util.Calendar;
 
 /**
  * Created by Andrey Zolin on 20.03.2016.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity
+        extends AppCompatActivity
+        implements WeeklyViewFragment.onWeekViewEventListener
+{
     private DrawerLayout menuDrawer;
     private android.support.v7.widget.Toolbar toolbar;
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
+
+    DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +55,8 @@ public class MainActivity extends AppCompatActivity {
         menuDrawer.setDrawerListener(drawerToggle);
         setupDrawerContent(nvDrawer);
 
-
+        db = DatabaseHelper.getsInstance(getApplicationContext());
+//        PlugActivity.initDebugData(db);
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
@@ -98,12 +109,16 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        setCurrentFragment(fragment);
 
         setTitle(item.getTitle());
         menuDrawer.closeDrawers();
+    }
+
+    public void setCurrentFragment(Fragment fragment){
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        fragmentManager.executePendingTransactions();
     }
 
     @Override
@@ -130,5 +145,36 @@ public class MainActivity extends AppCompatActivity {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
     }
+
+    /**************************************TASK ACTIVITY************************************************/
+
+    public void callAddTaskActivity() {
+        Intent intent = new Intent(getApplicationContext(), TaskAddActivity.class);
+        startActivity(intent);
+    }
+
+    public void callTaskOverviewActivity(TaskModel taskModel) {
+        Intent intent = new Intent(getApplicationContext(), TaskOverviewActivity.class);
+        intent.putExtra("task_id", taskModel.getId());
+        startActivityForResult(intent, 0);
+    }
+
+    /************************************WEEK VIEW FRAGMENT**********************************************/
+
+    @Override
+    public void callPlanFragment(Calendar first_day, int day_of_week) {
+        PlanFragment fragment = new PlanFragment();
+        setCurrentFragment(fragment);
+        int i = 5;
+        while (i-- > 0){
+            try{
+                fragment.setWeek(first_day);
+                fragment.setWeekDay(day_of_week);
+                break;
+            }catch (Exception e){
+            }
+        }
+    }
+
 
 }

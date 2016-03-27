@@ -480,6 +480,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
         tasks.setDeadline(cal);
+        try {
+            tasks.setPriority(tasks.intToPriority(c.getInt(c.getColumnIndex(TASKS_PRIORITY))));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            tasks.setCourse(getCourse(getCourseIdByTaskId(id)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         getSubtasks(tasks);
         return tasks;
@@ -819,6 +830,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+        try {
+            task.setCourse(getCourse(getCourseIdByTaskId(task.getId())));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         getSubtasks(task);

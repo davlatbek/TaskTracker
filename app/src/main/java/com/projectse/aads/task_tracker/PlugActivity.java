@@ -27,10 +27,9 @@ public class PlugActivity extends Activity {
         //initDebugData();
     }
 
-    public void initDebugData(){
-        DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
+    public static void initDebugData(DatabaseHelper db){
 
-        for ( int i = 0; i < 10; i++){
+        for ( int i = 0; i < 20; i++){
             ArrayList<Long> subts = new ArrayList<>();
 
             TaskModel t1 = new TaskModel();

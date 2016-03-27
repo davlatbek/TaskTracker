@@ -1,13 +1,9 @@
 package com.projectse.aads.task_tracker.Models;
 
-import android.support.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 
 /**
@@ -27,7 +23,17 @@ public class TaskModel {
     private Boolean isDone = Boolean.FALSE;
     private List<Long> subtasks_ids = new ArrayList<>();
     private Long parentTaskId = -1L;
+    private CourseModel course;
+
     private Priority priority = Priority.LOW;
+
+    public CourseModel getCourse() {
+        return course;
+    }
+
+    public void setCourse(CourseModel course) {
+        this.course = course;
+    }
 
     public enum Priority {
         HIGH,

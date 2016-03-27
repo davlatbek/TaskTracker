@@ -18,6 +18,8 @@
     <color name="light_green_200">#c5e1a5</color>
     <color name="light_green_100">#dcedc8</color>
 
+    <color name="black_transparent">#50000000</color>
+
     <color name="colorPrimary">#8ac24a</color>
     <color name="colorPrimaryDark">#dbecc7</color>
     <color name="colorAccent">#67c200</color>

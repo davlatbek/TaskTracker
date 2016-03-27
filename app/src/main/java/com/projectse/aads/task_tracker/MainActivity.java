@@ -27,7 +27,9 @@ import java.util.Calendar;
 /**
  * Created by Andrey Zolin on 20.03.2016.
  */
-public class MainActivity extends AppCompatActivity
+public class MainActivity
+        extends AppCompatActivity
+        implements WeeklyViewFragment.onWeekViewEventListener
 {
     private DrawerLayout menuDrawer;
     private android.support.v7.widget.Toolbar toolbar;
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity
         setupDrawerContent(nvDrawer);
 
         db = DatabaseHelper.getsInstance(getApplicationContext());
-        PlugActivity.initDebugData(db);
+//        PlugActivity.initDebugData(db);
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
@@ -108,12 +110,16 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        setCurrentFragment(fragment);
 
         setTitle(item.getTitle());
         menuDrawer.closeDrawers();
+    }
+
+    public void setCurrentFragment(Fragment fragment){
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        fragmentManager.executePendingTransactions();
     }
 
     @Override
@@ -153,5 +159,23 @@ public class MainActivity extends AppCompatActivity
         intent.putExtra("task_id", taskModel.getId());
         startActivityForResult(intent, 0);
     }
+
+    /************************************WEEK VIEW FRAGMENT**********************************************/
+
+    @Override
+    public void callPlanFragment(Calendar first_day, int day_of_week) {
+        PlanFragment fragment = new PlanFragment();
+        setCurrentFragment(fragment);
+        int i = 5;
+        while (i-- > 0){
+            try{
+                fragment.setWeek(first_day);
+                fragment.setWeekDay(day_of_week);
+                break;
+            }catch (Exception e){
+            }
+        }
+    }
+
 
 }

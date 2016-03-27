@@ -6,10 +6,12 @@ import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +43,6 @@ public class DayPlanOverviewAdapter extends ArrayAdapter<TaskModel> {
             convertView = inflater.inflate(R.layout.list_item_small_task, null);
         }
 
-
         TextView textView = (TextView) convertView.findViewById(R.id.txtSuperTaskName);
         final TaskModel task = (TaskModel)getItem(position);
 
@@ -53,6 +54,18 @@ public class DayPlanOverviewAdapter extends ArrayAdapter<TaskModel> {
 
         if(task.isSupertask())
             setPriority(convertView.findViewById(R.id.priority), task.getPriority());
+
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(v.getParent() != null) {
+                    ViewParent parent = v.getParent().getParent();
+                    if (parent instanceof RelativeLayout && ((RelativeLayout) parent).hasOnClickListeners()) {
+                        ((RelativeLayout) parent).callOnClick();
+                    }
+                }
+            }
+        });
 
         return convertView;
     }

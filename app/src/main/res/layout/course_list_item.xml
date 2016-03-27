@@ -41,6 +41,13 @@ android:background="@android:color/transparent"
             android:layout_height="wrap_content"
             android:textSize="10dp" />
 
+        <TextView
+            android:id="@+id/id_course"
+            android:text="0"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"/>
+
     </LinearLayout>
 
 </LinearLayout>

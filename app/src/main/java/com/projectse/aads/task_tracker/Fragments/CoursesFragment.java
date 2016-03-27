@@ -40,7 +40,7 @@ import java.util.List;
 public class CoursesFragment extends Fragment {
 
     public interface onCourseClickListener{
-        public void callCourseOverviewFragment(int course_id);
+        public void callCourseOverviewFragment(long course_id);
     }
 
     public interface onCreateCpourseListener {
@@ -104,8 +104,8 @@ public class CoursesFragment extends Fragment {
     private View.OnClickListener requestItemListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //v.findViewById(R.id.)
-            int course_id = 3;
+
+            long course_id = Integer.getInteger(((TextView) v.findViewById(R.id.id_course)).getText().toString());
             if(courseClickEventListener != null){
                 courseClickEventListener.callCourseOverviewFragment(course_id);
             }
@@ -113,7 +113,7 @@ public class CoursesFragment extends Fragment {
           //  someEventListener
 
             // call course
-          //  Toast.makeText(getActivity(), ((TextView) v.findViewById(R.id.request_name)).getText() + " item selected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), ((TextView) v.findViewById(R.id.request_name)).getText() + " item selected", Toast.LENGTH_SHORT).show();
         }
     };
 

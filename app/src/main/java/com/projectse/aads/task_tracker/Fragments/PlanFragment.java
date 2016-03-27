@@ -61,6 +61,7 @@ public class PlanFragment extends Fragment
     @Override
     public void setWeekDay(int weekDay) {
         if(weekDay >= Calendar.SUNDAY && weekDay <= Calendar.SATURDAY){
+            weekDaysFragment.setCurrentDay(weekDay);
             tasksListFragment.setCurrentDayOfWeek(weekDay);
         }
     }

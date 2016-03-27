@@ -20,6 +20,10 @@ public class WeekSliderFragment extends Fragment {
         public void setWeek(Calendar date);
     }
 
+    public Calendar getWeekFirstDay() {
+        return (Calendar) week_first_day.clone();
+    }
+
     private Calendar week_first_day = Calendar.getInstance();
     private static View view;
     private onWeekSliderEventListener someEventListener;

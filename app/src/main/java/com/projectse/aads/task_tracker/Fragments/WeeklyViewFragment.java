@@ -1,5 +1,7 @@
 package com.projectse.aads.task_tracker.Fragments;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.projectse.aads.task_tracker.Adapters.DayPlanOverviewAdapter;
 import com.projectse.aads.task_tracker.Adapters.PlanAdapter;
@@ -27,13 +30,19 @@ import java.util.Map;
  * Created by Andrey Zolin on 20.03.2016.
  */
 public class WeeklyViewFragment extends Fragment implements WeekSliderFragment.onWeekSliderEventListener {
-    DatabaseHelper db;
+    public interface onWeekViewEventListener{
+        public void callPlanFragment(Calendar first_day, int day_of_week);
+    }
+
+    private DatabaseHelper db;
 
     List<DayPlanOverviewAdapter> adapters = new ArrayList<>();
     private static View view;
     private WeekSliderFragment sliderFragment;
 
     Map<Integer,List<TaskModel>> week_task_list = new HashMap<>();
+
+    private onWeekViewEventListener listener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,39 +78,75 @@ public class WeeklyViewFragment extends Fragment implements WeekSliderFragment.o
 
         for(int day = Calendar.SUNDAY; day <= Calendar.SATURDAY; day++){
             int id = -1;
+            int btn_id = -1;
             switch (day){
                 case Calendar.MONDAY:
                     id = R.id.monday_list;
+                    btn_id = R.id.btnMonday;
                     break;
                 case Calendar.TUESDAY:
                     id = R.id.tuesday_list;
+                    btn_id = R.id.btnTuesday;
                     break;
                 case Calendar.WEDNESDAY:
                     id = R.id.wednesday_list;
+                    btn_id = R.id.btnWednesday;
                     break;
                 case Calendar.THURSDAY:
                     id = R.id.thursday_list;
+                    btn_id = R.id.btnThursday;
                     break;
                 case Calendar.FRIDAY:
                     id = R.id.friday_list;
+                    btn_id = R.id.btnFriday;
                     break;
                 case Calendar.SATURDAY:
                     id = R.id.saturday_list;
+                    btn_id = R.id.btnSaturday;
                     break;
                 case Calendar.SUNDAY:
                     id = R.id.sunday_list;
+                    btn_id = R.id.btnSunday;
                     break;
             }
             ListView listView = (ListView) view.findViewById(id);
             DayPlanOverviewAdapter adapter = new DayPlanOverviewAdapter(getActivity(), id, week_task_list.get(day));
             adapters.add(adapter);
             listView.setAdapter(adapter);
+
+            RelativeLayout day_button = (RelativeLayout) view.findViewById(btn_id);
+            final int finalDay = day;
+
+            if ( day_button instanceof ViewGroup ) {
+                ViewGroup group = (ViewGroup)view;
+
+                for ( int idx = 0 ; idx < group.getChildCount() ; idx++ ) {
+                    View v = group.getChildAt(idx);
+                    v.setOnTouchListener(null);
+                    v.setOnClickListener(null);
+                }
+            }
+            day_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Calendar week_first_day = sliderFragment.getWeekFirstDay();
+                    if(listener != null){
+                        listener.callPlanFragment(week_first_day, finalDay);
+                    }
+                }
+            });
         }
-//        ListView listView = (ListView) view.findViewById(R.id.monday_list);
-//        new DayPlanOverviewAdapter(getActivity(), R.id.monday_list, week_task_list.get(Calendar.MONDAY));
-//        listView.setAdapter(mon_adapter);
+
 
         return view;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if(activity instanceof onWeekViewEventListener){
+            listener = (onWeekViewEventListener) activity;
+        }
     }
 
     @Override

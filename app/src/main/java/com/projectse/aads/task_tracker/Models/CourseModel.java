@@ -28,26 +28,12 @@ public class CourseModel {
         HIGH, LOW, MEDIUM
     }
 
-    public Priority fromIntToPriority(int priorityInt) throws Exception {
-        if (priorityInt == 1) return this.priority = Priority.LOW;
-        if (priorityInt == 2) return this.priority = Priority.MEDIUM;
-        if (priorityInt == 3) return this.priority = Priority.HIGH;
-        throw new Exception("Check Priority input value fromIntToPriority");
-    }
-    public int fromPriorityToInt(Priority priority)throws Exception{
-        if (priority.equals(Priority.LOW)) return 1;
-        if (priority.equals(Priority.MEDIUM)) return 2;
-        if (priority.equals(Priority.HIGH)) return 3;
-        throw new Exception("Check priority input value fromPriorityToInt");
-    }
 
     // by default priority has low level
-    private Priority priority = Priority.LOW;
     private List<TaskModel> tasksList = new ArrayList<TaskModel>();
 
-    public CourseModel(String name, Priority priority) {
+    public CourseModel(String name) {
         this.name = name;
-        this.priority = priority;
     }
 
     public CourseModel() {
@@ -98,13 +84,6 @@ public class CourseModel {
             abbreviation = abbreviation.substring(0, 3);
         }
     }
-    public Priority getPriority() {
-        return priority;
-    }
-
-    public void setPriority(Priority p) {
-        this.priority = p;
-    }
 
     public Long getId() {
         return id;
@@ -117,7 +96,7 @@ public class CourseModel {
 
     public String toStringWithPriority() {
         String sb = "";
-        sb = "Name:" + this.name + ", priority:" + this.priority;
+        sb = "Name:" + this.name;
         return sb;
     }
 

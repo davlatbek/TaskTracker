@@ -87,7 +87,7 @@ public class TasksListFragment extends Fragment {
         else throw new IllegalArgumentException();
     }
 
-    private void setTaskHierarchy(List<TaskModel> taskList){
+    public void setTaskHierarchy(List<TaskModel> taskList){
         task_hierarchy.clear();
         if(taskList == null)
             return;

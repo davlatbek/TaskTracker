@@ -10,11 +10,24 @@ import android.view.ViewGroup;
 
 import com.projectse.aads.task_tracker.R;
 
+import java.util.Calendar;
+
 /**
  * Created by Andrey Zolin on 20.03.2016.
  */
-public class WeeklyViewFragment extends Fragment {
+public class WeeklyViewFragment extends Fragment implements WeekSliderFragment.onWeekSliderEventListener {
     private static View view;
+    private WeekSliderFragment sliderFragment;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FragmentManager fm = getChildFragmentManager();
+        sliderFragment = new WeekSliderFragment();
+        sliderFragment.setSomeEventListener(this);
+        fm.beginTransaction().replace(R.id.fragment_week_slider, sliderFragment).commit();
+        fm.executePendingTransactions();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -26,9 +39,7 @@ public class WeeklyViewFragment extends Fragment {
         }
         try {
             view = inflater.inflate(R.layout.fragment_week_view, null);
-            FragmentManager fm = getFragmentManager();
-            Fragment slider = new WeekSliderFragment();
-            fm.beginTransaction().replace(R.id.fragment_week_slider, slider).commit();
+
         } catch (InflateException e) {
         /* map is already there, just return view as it is */
         }
@@ -36,16 +47,21 @@ public class WeeklyViewFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
+    public void setWeek(Calendar date) {
+        if(sliderFragment != null)
+            sliderFragment.updateLabel();
+    }
 
-        FragmentManager fm = getFragmentManager();
-
-        Fragment xmlFragment3 = fm.findFragmentById(R.id.fragment_week_slider);
-
-        if (xmlFragment3 != null) {
-            fm.beginTransaction().remove(xmlFragment3).commit();
+    /**
+     * Child fragments are creating async-ly.
+     * To manage async views creation call this method in onViewCreated() of child fragment.
+     */
+    public void setDefault(){
+        if(sliderFragment.getView() != null) {
+            Calendar week_first_day = Calendar.getInstance();
+            week_first_day.setFirstDayOfWeek(Calendar.MONDAY);
+            week_first_day.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+            setWeek(week_first_day);
         }
-
-        super.onDestroyView();
     }
 }

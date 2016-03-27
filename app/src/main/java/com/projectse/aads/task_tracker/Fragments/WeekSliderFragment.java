@@ -1,6 +1,5 @@
 package com.projectse.aads.task_tracker.Fragments;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.InflateException;
@@ -18,7 +17,7 @@ import java.util.Calendar;
 
 public class WeekSliderFragment extends Fragment {
     public interface onWeekSliderEventListener {
-        public void setWeekInPlanView(Calendar date);
+        public void setWeek(Calendar date);
     }
 
     private Calendar week_first_day = Calendar.getInstance();
@@ -53,13 +52,13 @@ public class WeekSliderFragment extends Fragment {
         buttonPrevWeek.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 week_first_day.add(Calendar.DAY_OF_MONTH, -7);
-                someEventListener.setWeekInPlanView(week_first_day);
+                someEventListener.setWeek(week_first_day);
             }
         });
         buttonNextWeek.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 week_first_day.add(Calendar.DAY_OF_MONTH, 7);
-                someEventListener.setWeekInPlanView(week_first_day);
+                someEventListener.setWeek(week_first_day);
             }
         });
 
@@ -69,7 +68,11 @@ public class WeekSliderFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ((PlanFragment) getParentFragment()).setDefault();
+        Fragment parent = getParentFragment();
+        if(parent instanceof PlanFragment)
+                ((PlanFragment) parent).setDefault();
+        if(parent instanceof WeeklyViewFragment)
+            ((WeeklyViewFragment) parent).setDefault();
     }
 
     public void updateLabel(){

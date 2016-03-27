@@ -27,20 +27,17 @@ public class PlanFragment extends Fragment
         super.onCreate(savedInstanceState);
         FragmentManager fm = getChildFragmentManager();
 
-        Fragment slider = new WeekSliderFragment();
-        ((WeekSliderFragment)slider).setSomeEventListener(this);
-        fm.beginTransaction().replace(R.id.fragment_week_slider, slider).commit();
+        sliderFragment = new WeekSliderFragment();
+        sliderFragment.setSomeEventListener(this);
+        fm.beginTransaction().replace(R.id.fragment_week_slider, sliderFragment).commit();
 
-        Fragment list = new TasksListFragment();
-        fm.beginTransaction().replace(R.id.fragment_tasks_list, list).commit();
+        tasksListFragment = new TasksListFragment();
+        fm.beginTransaction().replace(R.id.fragment_tasks_list, tasksListFragment).commit();
 
-        Fragment weekDays = new WeekDaysFragment();
-        ((WeekDaysFragment)weekDays).setSomeEventListener(this);
-        fm.beginTransaction().replace(R.id.fragment_week_days, weekDays).commit();
+        weekDaysFragment = new WeekDaysFragment();
+        weekDaysFragment.setSomeEventListener(this);
+        fm.beginTransaction().replace(R.id.fragment_week_days, weekDaysFragment).commit();
 
-        weekDaysFragment = (WeekDaysFragment) weekDays;
-        tasksListFragment = (TasksListFragment) list;
-        sliderFragment = (WeekSliderFragment) slider;
         fm.executePendingTransactions();
     }
 
@@ -69,12 +66,8 @@ public class PlanFragment extends Fragment
     }
 
     @Override
-    public void setWeekInPlanView(Calendar date_src) {
+    public void setWeek(Calendar date_src) {
         Calendar date = (Calendar) date_src.clone();
-        FragmentManager fm = getActivity().getFragmentManager();
-        TasksListFragment fragList = (TasksListFragment) fm.findFragmentById(R.id.fragment_tasks_list);
-        WeekDaysFragment fragWD = (WeekDaysFragment) fm.findFragmentById(R.id.fragment_week_days);
-        WeekSliderFragment fragSlider = (WeekSliderFragment) fm.findFragmentById(R.id.fragment_week_slider);
 
         if(sliderFragment != null)
             sliderFragment.updateLabel();
@@ -99,7 +92,7 @@ public class PlanFragment extends Fragment
             Calendar week_first_day = Calendar.getInstance();
             week_first_day.setFirstDayOfWeek(Calendar.MONDAY);
             week_first_day.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-            setWeekInPlanView(week_first_day);
+            setWeek(week_first_day);
         }
     }
 }

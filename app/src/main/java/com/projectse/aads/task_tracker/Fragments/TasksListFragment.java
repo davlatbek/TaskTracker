@@ -23,10 +23,14 @@ import java.util.Map;
 /**
  * Created by smith on 3/21/16.
  */
-public class TasksListFragment extends XMLFragment {
+public class TasksListFragment extends Fragment {
     DatabaseHelper db;
     PlanAdapter tasks_adapter;
     private static View view;
+
+    public TasksListFragment(){
+        super();
+    }
 
     /**
      * Current day's task hierarchy
@@ -59,6 +63,12 @@ public class TasksListFragment extends XMLFragment {
         tasks_adapter = new PlanAdapter(getActivity(),task_hierarchy);
         listView.setAdapter(tasks_adapter);
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ((PlanFragment) getParentFragment()).setDefault();
     }
 
     public void setWeekData(Calendar week_first_day){

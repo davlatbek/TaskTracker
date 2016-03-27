@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 
-public class WeekDaysFragment extends XMLFragment {
+public class WeekDaysFragment extends Fragment {
     public interface onSomeWeekDaysListener {
         public void setWeekDay(int weekDay);
     }
@@ -30,14 +30,8 @@ public class WeekDaysFragment extends XMLFragment {
 
     onSomeWeekDaysListener someEventListener;
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            someEventListener = (onSomeWeekDaysListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement onSomeEventListener");
-        }
+    public void setSomeEventListener(onSomeWeekDaysListener someEventListener) {
+        this.someEventListener = someEventListener;
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,6 +45,9 @@ public class WeekDaysFragment extends XMLFragment {
         final Button buttonFriday = (Button) v.findViewById(R.id.btnFriday);
         final Button buttonSaturday = (Button) v.findViewById(R.id.btnSaturday);
         final Button buttonSunday = (Button) v.findViewById(R.id.btnSunday);
+
+        if(someEventListener == null)
+            return v;
 
         buttonMonday.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -102,6 +99,7 @@ public class WeekDaysFragment extends XMLFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setCurrentDay(current_day);
+        ((PlanFragment) getParentFragment()).setDefault();
     }
 
     public int getCurrentDay() {

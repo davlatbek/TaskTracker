@@ -1,16 +1,14 @@
 package com.projectse.aads.task_tracker.Fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.projectse.aads.task_tracker.R;
-
-import java.util.List;
 
 /**
  * Created by Andrey Zolin on 20.03.2016.
@@ -28,6 +26,9 @@ public class WeeklyViewFragment extends Fragment {
         }
         try {
             view = inflater.inflate(R.layout.fragment_week_view, null);
+            FragmentManager fm = getFragmentManager();
+            Fragment slider = new WeekSliderFragment();
+            fm.beginTransaction().replace(R.id.fragment_week_slider, slider).commit();
         } catch (InflateException e) {
         /* map is already there, just return view as it is */
         }
@@ -39,7 +40,6 @@ public class WeeklyViewFragment extends Fragment {
 
         FragmentManager fm = getFragmentManager();
 
-        List<Fragment> list = fm.getFragments();
         Fragment xmlFragment3 = fm.findFragmentById(R.id.fragment_week_slider);
 
         if (xmlFragment3 != null) {

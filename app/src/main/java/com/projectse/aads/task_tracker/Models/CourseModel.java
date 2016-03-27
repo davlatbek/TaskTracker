@@ -77,7 +77,7 @@ public class CourseModel {
         String[] word = name.split("\\s+");
         abbreviation = "";
         String[] prepositions = {"in", "at", "of", "the", "for", "through",
-                "vs", "on", "from", "as", "an", "a"};
+                "vs", "on", "from", "as", "an", "a", "and"};
 
         if (word.length == 1) {
             abbreviation = name.substring(0, 1).toUpperCase() + name.substring(1);

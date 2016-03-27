@@ -86,4 +86,9 @@ public class WeekSliderFragment extends Fragment {
         week_last_day.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
         return sdf.format(week_first_day.getTime()) + " - " + sdf.format(week_last_day.getTime());
     }
+
+    public static String dayToHumanReadable(Calendar date){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MM yy");
+        return sdf.format(date.getTime());
+    }
 }

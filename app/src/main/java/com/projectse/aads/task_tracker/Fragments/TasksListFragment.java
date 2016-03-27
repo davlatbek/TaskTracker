@@ -68,7 +68,10 @@ public class TasksListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ((PlanFragment) getParentFragment()).setDefault();
+        if(getParentFragment() instanceof  PlanFragment)
+            ((PlanFragment) getParentFragment()).setDefault();
+        if(getParentFragment() instanceof  CourseOverviewFragment)
+            ((CourseOverviewFragment) getParentFragment()).setDefault();
     }
 
     public void setWeekData(Calendar week_first_day){

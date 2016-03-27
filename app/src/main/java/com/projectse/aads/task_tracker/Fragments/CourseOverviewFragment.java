@@ -63,7 +63,7 @@ public class CourseOverviewFragment extends Fragment {
         tasksListFragment = new TasksListFragment();
         FragmentManager fm = getChildFragmentManager();
         fm.beginTransaction().replace(R.id.task_list, tasksListFragment).commit();
-        tasksListFragment.setTaskHierarchy(db.getTaskModelList());
+
 
 //        for(int i = 0; i < 3; i++) {
 //            View requestListItemView = inflater.inflate(R.layout.course_overview_task_list, null);
@@ -74,5 +74,9 @@ public class CourseOverviewFragment extends Fragment {
 //            requestItemsTable.addView(requestListItemView);
 //        }
         return view;
+    }
+
+    public  void setDefault(){
+        tasksListFragment.setTaskHierarchy(db.getTaskModelList());
     }
 }

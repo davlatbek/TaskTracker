@@ -1,7 +1,7 @@
 package com.projectse.aads.task_tracker.Fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +22,7 @@ public class TasksFragment extends Fragment {
 
         // mapping correction
         LinearLayout buttons_layout = (LinearLayout) view.findViewById(R.id.tasks_categories_buttons);
-        int width = getContext().getResources().getDisplayMetrics().widthPixels;
+        int width = getActivity().getResources().getDisplayMetrics().widthPixels;
         buttons_layout.setLayoutParams(new LinearLayout.LayoutParams(width,width));
 
         return view;

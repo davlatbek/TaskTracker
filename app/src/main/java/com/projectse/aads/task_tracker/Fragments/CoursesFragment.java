@@ -109,7 +109,7 @@ public class CoursesFragment extends Fragment {
           //  someEventListener
 
             // call course
-            Toast.makeText(getActivity(), ((TextView) v.findViewById(R.id.request_name)).getText() + " item selected", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), ((TextView) v.findViewById(R.id.request_name)).getText() + " item selected", Toast.LENGTH_SHORT).show();
         }
     };
 

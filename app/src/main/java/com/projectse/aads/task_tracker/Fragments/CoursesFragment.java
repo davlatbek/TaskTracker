@@ -62,7 +62,7 @@ public class CoursesFragment extends Fragment {
         ImageButton addRequestButton = (ImageButton) view.findViewById(R.id.create_request_fab);
         addRequestButton.setOnClickListener(requestButtonListener);
 
-        DatabaseHelper db = new DatabaseHelper(getActivity());
+        DatabaseHelper db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
 
 //        CourseModel course = new CourseModel();
 //        course.setName("54545");
@@ -70,12 +70,7 @@ public class CoursesFragment extends Fragment {
 //        course.setId(3l);
 //        db.addCourse(course);
 
-        List<CourseModel> course_list = new ArrayList<>();
-        try {
-             course_list = db.getCourseModelList();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        List<CourseModel> course_list = db.getCourseModelList();
 
         for(CourseModel c : course_list) {
 
@@ -108,6 +103,7 @@ public class CoursesFragment extends Fragment {
         public void onClick(View v) {
             long course_id = 3l;
 //            long course_id = Integer.getInteger(((TextView) v.findViewById(R.id.id_course)).getText().toString());
+
             if(courseClickEventListener != null){
                 courseClickEventListener.callCourseOverviewFragment(course_id);
             }

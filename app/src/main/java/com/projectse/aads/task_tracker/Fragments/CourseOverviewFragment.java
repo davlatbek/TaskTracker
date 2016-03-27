@@ -19,7 +19,7 @@ import com.projectse.aads.task_tracker.TaskAddActivity;
  * Created by Andrey Zolin on 27.03.2016.
  */
 public class CourseOverviewFragment extends Fragment {
-    DatabaseHelper db = new DatabaseHelper(getActivity());
+    DatabaseHelper db;
     private TasksListFragment tasksListFragment;
     private long CourseId;
 

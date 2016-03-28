@@ -81,6 +81,10 @@ public class CoursesFragment extends Fragment {
             TextView desc = (TextView)requestListItemView.findViewById(R.id.request_short_desc);
             TextView id = (TextView)requestListItemView.findViewById(R.id.id_course);
             tv.setText(c.getName());
+            TextView abrev = (TextView)requestListItemView.findViewById(R.id.abrevLbl);
+            abrev.setText(c.getAbbreviation());
+            abrev.setBackgroundColor(c.getClr());
+
             desc.setText("www");
             id.setText(c.getId().toString());
             requestListItemView.setOnClickListener(requestItemListener);

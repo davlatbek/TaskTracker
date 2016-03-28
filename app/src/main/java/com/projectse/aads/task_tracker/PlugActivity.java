@@ -34,6 +34,10 @@ public class PlugActivity extends Activity {
         c1.setClr(R.color.coursecolor3);
         long c_id = db.addCourse(c1);
 
+        CourseModel c2 = new CourseModel("Software Architecture");
+        c2.setClr(R.color.coursecolor5);
+        long c2_id = db.addCourse(c2);
+
         List<CourseModel> courses = db.getCourseModelList();
         for ( int i = 0; i < 20; i++){
             ArrayList<Long> subts = new ArrayList<>();

@@ -14,6 +14,11 @@ public class CourseModel {
     private String name;
     private Long id;
     private int clr =0;
+
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+
     private String abbreviation;
 
     public int getClr() {

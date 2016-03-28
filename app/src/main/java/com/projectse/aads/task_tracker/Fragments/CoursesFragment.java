@@ -101,8 +101,9 @@ public class CoursesFragment extends Fragment {
     private View.OnClickListener requestItemListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            long course_id = 3l;
-//            long course_id = Integer.getInteger(((TextView) v.findViewById(R.id.id_course)).getText().toString());
+            TextView tv = (TextView) v.findViewById(R.id.id_course);
+            String st = tv.getText().toString();
+            long course_id = Long.valueOf(st);
 
             if(courseClickEventListener != null){
                 courseClickEventListener.callCourseOverviewFragment(course_id);

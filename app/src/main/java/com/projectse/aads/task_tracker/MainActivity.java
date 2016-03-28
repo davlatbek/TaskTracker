@@ -11,7 +11,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Fragments.CourseOverviewFragment;
@@ -21,6 +20,7 @@ import com.projectse.aads.task_tracker.Fragments.ProgressFragment;
 import com.projectse.aads.task_tracker.Fragments.SettingsFragment;
 import com.projectse.aads.task_tracker.Fragments.TasksFragment;
 import com.projectse.aads.task_tracker.Fragments.WeeklyViewFragment;
+import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.util.Calendar;
@@ -30,15 +30,14 @@ import java.util.Calendar;
  */
 public class MainActivity
         extends AppCompatActivity
-        implements WeeklyViewFragment.onWeekViewEventListener, CoursesFragment.onCourseClickListener
-{
+        implements WeeklyViewFragment.onWeekViewEventListener, CoursesFragment.onCourseClickListener,
+        AddTaskCaller {
+    DatabaseHelper db;
     private DrawerLayout menuDrawer;
     private android.support.v7.widget.Toolbar toolbar;
     private NavigationView nvDrawer;
+    // public DatabaseHelper db = new DatabaseHelper(this); // need for fragments
     private ActionBarDrawerToggle drawerToggle;
-   // public DatabaseHelper db = new DatabaseHelper(this); // need for fragments
-
-    DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +116,7 @@ public class MainActivity
         menuDrawer.closeDrawers();
     }
 
-    public void setCurrentFragment(Fragment fragment){
+    public void setCurrentFragment(Fragment fragment) {
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
         fragmentManager.executePendingTransactions();
@@ -148,7 +147,9 @@ public class MainActivity
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    /**************************************TASK ACTIVITY************************************************/
+    /**************************************
+     * TASK ACTIVITY
+     ************************************************/
 
     public void callAddTaskActivity() {
         Intent intent = new Intent(getApplicationContext(), TaskAddActivity.class);
@@ -161,19 +162,21 @@ public class MainActivity
         startActivityForResult(intent, 0);
     }
 
-    /************************************WEEK VIEW FRAGMENT**********************************************/
+    /************************************
+     * WEEK VIEW FRAGMENT
+     **********************************************/
 
     @Override
     public void callPlanFragment(Calendar first_day, int day_of_week) {
         PlanFragment fragment = new PlanFragment();
         setCurrentFragment(fragment);
         int i = 5;
-        while (i-- > 0){
-            try{
+        while (i-- > 0) {
+            try {
                 fragment.setWeek(first_day);
                 fragment.setWeekDay(day_of_week);
                 break;
-            }catch (Exception e){
+            } catch (Exception e) {
             }
         }
     }
@@ -182,7 +185,13 @@ public class MainActivity
     @Override
     public void callCourseOverviewFragment(long course_id) {
         CourseOverviewFragment fragment = new CourseOverviewFragment();
-        setCurrentFragment(fragment);
         fragment.setCourseID(course_id);
+        setCurrentFragment(fragment);
+    }
+
+    @Override
+    public void callAddTask(long defaultCourseId, Calendar defaultStartTime) {
+        Intent intent = new Intent(getApplicationContext(), TaskAddActivity.class);
+        startActivity(intent);
     }
 }

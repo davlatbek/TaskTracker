@@ -2,35 +2,22 @@ package com.projectse.aads.task_tracker.Fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DialogFragment;
-import android.app.ListFragment;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.app.Fragment;
-import android.util.Log;
+import android.content.DialogInterface;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
-import com.projectse.aads.task_tracker.Dialogs.ListOfCourses;
-import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.R;
-import com.projectse.aads.task_tracker.TaskActivity;
-import com.projectse.aads.task_tracker.TaskAddActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -38,14 +25,6 @@ import java.util.List;
  * Created by Andrey Zolin on 20.03.2016.
  */
 public class CoursesFragment extends Fragment {
-
-    public interface onCourseClickListener{
-        public void callCourseOverviewFragment(long course_id);
-    }
-
-    public interface onCreateCpourseListener {
-        public void callCourseCreateFragment();
-    }
 
     private onCourseClickListener courseClickEventListener;
     private onCreateCpourseListener courseCreateClickListener;
@@ -103,12 +82,11 @@ public class CoursesFragment extends Fragment {
             String st = tv.getText().toString();
             long course_id = Long.valueOf(st);
 
-            if(courseClickEventListener != null){
+            if (courseClickEventListener != null) {
                 courseClickEventListener.callCourseOverviewFragment(course_id);
             }
         }
     };
-
     private View.OnClickListener requestButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -143,4 +121,51 @@ public class CoursesFragment extends Fragment {
             addnewcourse.show();
         }
     };
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        getActivity().setTitle("Courses");
+        View view = inflater.inflate(R.layout.fragment_course_list, container, false);
+
+        ImageButton addRequestButton = (ImageButton) view.findViewById(R.id.create_request_fab);
+        addRequestButton.setOnClickListener(requestButtonListener);
+
+        DatabaseHelper db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
+
+        List<CourseModel> course_list = db.getCourseModelList();
+
+        for (CourseModel c : course_list) {
+
+            // get data from DB
+            View requestListItemView = inflater.inflate(R.layout.course_list_item, null);
+            TableLayout requestItemsTable = (TableLayout) view.findViewById(R.id.request_items_table);
+            TextView tv = (TextView) requestListItemView.findViewById(R.id.request_name);
+            TextView desc = (TextView) requestListItemView.findViewById(R.id.request_short_desc);
+            TextView id = (TextView) requestListItemView.findViewById(R.id.id_course);
+            tv.setText(c.getName());
+            TextView abrev = (TextView) requestListItemView.findViewById(R.id.abrevLbl);
+            abrev.setText(c.getAbbreviation());
+            abrev.setBackgroundResource(c.getClr());
+
+            desc.setText("www");
+            id.setText(c.getId().toString());
+            requestListItemView.setOnClickListener(requestItemListener);
+            requestItemsTable.addView(requestListItemView);
+        }
+
+        return view;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof onCourseClickListener) {
+            courseClickEventListener = (onCourseClickListener) activity;
+        }
+    }
+
+    public interface onCourseClickListener {
+        public void callCourseOverviewFragment(long course_id);
+    }
 }

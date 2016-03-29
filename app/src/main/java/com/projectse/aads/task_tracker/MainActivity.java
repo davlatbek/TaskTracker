@@ -13,13 +13,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Fragments.ActualTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.CourseOverviewFragment;
 import com.projectse.aads.task_tracker.Fragments.CoursesFragment;
 import com.projectse.aads.task_tracker.Fragments.PlanFragment;
 import com.projectse.aads.task_tracker.Fragments.ProgressFragment;
 import com.projectse.aads.task_tracker.Fragments.SettingsFragment;
-import com.projectse.aads.task_tracker.Fragments.TasksFragment;
+import com.projectse.aads.task_tracker.Fragments.TaskCategoriesFragment;
 import com.projectse.aads.task_tracker.Fragments.WeeklyViewFragment;
+import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
@@ -31,7 +33,7 @@ import java.util.Calendar;
 public class MainActivity
         extends AppCompatActivity
         implements WeeklyViewFragment.onWeekViewEventListener, CoursesFragment.onCourseClickListener,
-        AddTaskCaller {
+        AddTaskCaller, ActualTasksCaller {
     DatabaseHelper db;
     private DrawerLayout menuDrawer;
     private android.support.v7.widget.Toolbar toolbar;
@@ -83,7 +85,7 @@ public class MainActivity
 
         switch (item.getItemId()) {
             case R.id.nav_tasks_fragment:
-                fragmentClass = TasksFragment.class;
+                fragmentClass = TaskCategoriesFragment.class;
                 break;
             case R.id.nav_plan_fragment:
                 fragmentClass = PlanFragment.class;
@@ -101,7 +103,7 @@ public class MainActivity
                 fragmentClass = SettingsFragment.class;
                 break;
             default:
-                fragmentClass = TasksFragment.class;
+                fragmentClass = TaskCategoriesFragment.class;
         }
 
         try {
@@ -193,5 +195,11 @@ public class MainActivity
     public void callAddTask(long defaultCourseId, Calendar defaultStartTime) {
         Intent intent = new Intent(getApplicationContext(), TaskAddActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void callActualTasks() {
+        ActualTasksFragment fragment = new ActualTasksFragment();
+        setCurrentFragment(fragment);
     }
 }

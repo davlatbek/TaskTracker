@@ -989,7 +989,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return null;
     }
 
-    public List<TaskModel> getIsDoneTasks() {
+    public List<TaskModel> getDoneTasks() {
         List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
 
         String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE " + TASKS_IS_DONE + " == 1" + " ORDER BY " + TASKS_START_TIME;

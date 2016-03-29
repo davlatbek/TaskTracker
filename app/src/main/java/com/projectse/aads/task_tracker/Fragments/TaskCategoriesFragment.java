@@ -9,20 +9,25 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.R;
 
 /**
  * Created by Andrey Zolin on 20.03.2016.
  */
-public class TasksFragment extends Fragment {
+public class TaskCategoriesFragment extends Fragment {
     private AddTaskCaller addTaskCaller;
+    private ActualTasksCaller actualTasksCaller;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         if (activity instanceof AddTaskCaller) {
             addTaskCaller = (AddTaskCaller) activity;
+        }
+        if (activity instanceof AddTaskCaller) {
+            actualTasksCaller = (ActualTasksCaller) activity;
         }
     }
 
@@ -35,11 +40,20 @@ public class TasksFragment extends Fragment {
         LinearLayout buttons_layout = (LinearLayout) view.findViewById(R.id.tasks_categories_buttons);
         int width = getActivity().getResources().getDisplayMetrics().widthPixels;
         buttons_layout.setLayoutParams(new LinearLayout.LayoutParams(width, width));
+
         RelativeLayout addTaskButton = (RelativeLayout) view.findViewById(R.id.add_task_btn);
         addTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addTaskCaller.callAddTask(-1, null);
+            }
+        });
+
+        RelativeLayout actualTasksButton = (RelativeLayout) view.findViewById(R.id.actual_btn);
+        actualTasksButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                actualTasksCaller.callActualTasks();
             }
         });
 

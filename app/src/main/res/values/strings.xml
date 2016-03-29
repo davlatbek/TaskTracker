@@ -93,4 +93,6 @@
     <string name="saturday">Saturday</string>
     <string name="sunday">Sunday</string>
 
+    <string name="actuals_title">Actual Tasks</string>
+
 </resources>

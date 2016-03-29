@@ -72,6 +72,8 @@ public class TasksListFragment extends Fragment {
             ((PlanFragment) getParentFragment()).setDefault();
         if(getParentFragment() instanceof  CourseOverviewFragment)
             ((CourseOverviewFragment) getParentFragment()).setDefault();
+        if(getParentFragment() instanceof  ActualTasksFragment)
+            ((ActualTasksFragment) getParentFragment()).setDefault();
     }
 
     public void setWeekData(Calendar week_first_day){

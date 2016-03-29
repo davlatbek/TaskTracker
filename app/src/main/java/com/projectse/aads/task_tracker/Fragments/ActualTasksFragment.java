@@ -14,35 +14,15 @@ import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.ParentFragment;
 import com.projectse.aads.task_tracker.R;
 
-/**
- * Created by Andrey Zolin on 27.03.2016.
- */
-public class CourseOverviewFragment extends Fragment implements ParentFragment {
+import java.util.Calendar;
+
+public class ActualTasksFragment extends Fragment implements ParentFragment {
     DatabaseHelper db;
     private TasksListFragment tasksListFragment;
-    private long CourseId;
-    private AddTaskCaller addTaskCaller;
-
-
-    private View.OnClickListener requestButtonListener
-            = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            addTaskCaller.callAddTask(CourseId, null);
-        }
-    };
-
-    public void setCourseID(long courseId) {
-        this.CourseId = courseId;
-        // refresh fragment
-    }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (activity instanceof AddTaskCaller) {
-            addTaskCaller = (AddTaskCaller) activity;
-        }
     }
 
     @Override
@@ -53,25 +33,19 @@ public class CourseOverviewFragment extends Fragment implements ParentFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        try {
-            getActivity().setTitle(db.getCourse(CourseId).getName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        getActivity().setTitle(R.string.actuals_title);
         View view = inflater.inflate(R.layout.fragment_course_overview, container, false);
         ImageButton addRequestButton = (ImageButton) view.findViewById(R.id.create_request_fab);
+        addRequestButton.setVisibility(View.INVISIBLE);
 
-
-        addRequestButton.setOnClickListener(requestButtonListener);
         tasksListFragment = new TasksListFragment();
         FragmentManager fm = getChildFragmentManager();
         fm.beginTransaction().replace(R.id.task_list, tasksListFragment).commit();
         return view;
     }
 
-
     @Override
     public void onChildCreated() {
-        tasksListFragment.setTaskHierarchy(db.getListOfTasks(CourseId));
+        tasksListFragment.setTaskHierarchy(db.getActualTasks(Calendar.getInstance()));
     }
 }

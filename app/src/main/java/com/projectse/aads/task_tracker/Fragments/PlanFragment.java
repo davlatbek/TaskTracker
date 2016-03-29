@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.projectse.aads.task_tracker.Interfaces.ParentFragment;
 import com.projectse.aads.task_tracker.R;
 
 import java.util.Calendar;
@@ -15,7 +16,8 @@ import java.util.Calendar;
  * Created by Andrey Zolin on 20.03.2016.
  */
 public class PlanFragment extends Fragment
-        implements WeekSliderFragment.onWeekSliderEventListener, WeekDaysFragment.onSomeWeekDaysListener
+        implements WeekSliderFragment.onWeekSliderEventListener, WeekDaysFragment.onSomeWeekDaysListener,
+        ParentFragment
 {
     private static View view;
     private WeekDaysFragment weekDaysFragment;
@@ -83,7 +85,8 @@ public class PlanFragment extends Fragment
      * Child fragments are creating async-ly.
      * To manage async views creation call this method in onViewCreated() of child fragment.
      */
-    public void setDefault(){
+    @Override
+    public void onChildCreated(){
         if(
                    weekDaysFragment.getView() != null
                 && tasksListFragment.getView() != null

@@ -11,6 +11,7 @@ import android.widget.ExpandableListView;
 
 import com.projectse.aads.task_tracker.Adapters.PlanAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Interfaces.ParentFragment;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 
@@ -68,10 +69,8 @@ public class TasksListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(getParentFragment() instanceof  PlanFragment)
-            ((PlanFragment) getParentFragment()).setDefault();
-        if(getParentFragment() instanceof  CourseOverviewFragment)
-            ((CourseOverviewFragment) getParentFragment()).setDefault();
+        if(getParentFragment() instanceof ParentFragment)
+            ((ParentFragment) getParentFragment()).onChildCreated();
     }
 
     public void setWeekData(Calendar week_first_day){

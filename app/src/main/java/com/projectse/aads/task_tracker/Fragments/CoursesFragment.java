@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,7 +93,7 @@ public class CoursesFragment extends Fragment {
         @Override
         public void onClick(View v) {
             final CourseModel course = new CourseModel();
-            final DatabaseHelper db = new DatabaseHelper(getActivity());
+            final DatabaseHelper db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
             final LayoutInflater inflater = getActivity().getLayoutInflater();
             View inflate = inflater.inflate(R.layout.add_new_course_form, null);
             final EditText courseName = (EditText) inflate.findViewById(R.id.coursename);
@@ -121,6 +123,53 @@ public class CoursesFragment extends Fragment {
             addnewcourse.show();
         }
     };
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        getActivity().setTitle("Courses");
+        View view = inflater.inflate(R.layout.fragment_course_list, container, false);
+
+        ImageButton addRequestButton = (ImageButton) view.findViewById(R.id.create_request_fab);
+        addRequestButton.setOnClickListener(requestButtonListener);
+
+        DatabaseHelper db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
+
+        List<CourseModel> course_list = db.getCourseModelList();
+
+        for (CourseModel c : course_list) {
+
+            // get data from DB
+            View requestListItemView = inflater.inflate(R.layout.course_list_item, null);
+            TableLayout requestItemsTable = (TableLayout) view.findViewById(R.id.request_items_table);
+            TextView tv = (TextView) requestListItemView.findViewById(R.id.request_name);
+            TextView desc = (TextView) requestListItemView.findViewById(R.id.request_short_desc);
+            TextView id = (TextView) requestListItemView.findViewById(R.id.id_course);
+            tv.setText(c.getName());
+            TextView abrev = (TextView) requestListItemView.findViewById(R.id.abrevLbl);
+            abrev.setText(c.getAbbreviation());
+            try {
+            abrev.setBackgroundResource(c.getClr());
+
+            } catch (Resources.NotFoundException e) {
+                abrev.setBackgroundColor(Color.DKGRAY);
+            }
+
+            desc.setText("www");
+            id.setText(c.getId().toString());
+            requestListItemView.setOnClickListener(requestItemListener);
+            requestItemsTable.addView(requestListItemView);
+        }
+
+        return view;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof onCourseClickListener) {
+            courseClickEventListener = (onCourseClickListener) activity;
+        }
+    }
 
     public interface onCourseClickListener {
         public void callCourseOverviewFragment(long course_id);

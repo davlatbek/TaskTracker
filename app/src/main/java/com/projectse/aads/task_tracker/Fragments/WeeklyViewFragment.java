@@ -13,10 +13,12 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.projectse.aads.task_tracker.Adapters.DayPlanOverviewAdapter;
 import com.projectse.aads.task_tracker.Adapters.PlanAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Interfaces.ParentFragment;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 
@@ -29,7 +31,7 @@ import java.util.Map;
 /**
  * Created by Andrey Zolin on 20.03.2016.
  */
-public class WeeklyViewFragment extends Fragment implements WeekSliderFragment.onWeekSliderEventListener {
+public class WeeklyViewFragment extends Fragment implements WeekSliderFragment.onWeekSliderEventListener, ParentFragment {
     public interface onWeekViewEventListener{
         public void callPlanFragment(Calendar first_day, int day_of_week);
     }
@@ -121,7 +123,7 @@ public class WeeklyViewFragment extends Fragment implements WeekSliderFragment.o
                 @Override
                 public void onClick(View v) {
                     Calendar week_first_day = sliderFragment.getWeekFirstDay();
-                    if(listener != null){
+                    if (listener != null) {
                         listener.callPlanFragment(week_first_day, finalDay);
                     }
                 }
@@ -151,12 +153,16 @@ public class WeeklyViewFragment extends Fragment implements WeekSliderFragment.o
         Calendar date_cursor = (Calendar) week_first_date.clone();
 
         for(int i = 0; i < 7; i++){
-            Log.d("WeeklyViewFraagment",WeekSliderFragment.dayToHumanReadable(date_cursor));
+            Log.d("WeeklyViewFragment",WeekSliderFragment.dayToHumanReadable(date_cursor));
             List<TaskModel> tasks = db.getTasksForDay(date_cursor);
+            int tasks_counter = 0;
             for(TaskModel t : tasks){
-                if(t.isSupertask())
+                if(t.isSupertask()) {
                     (week_task_list.get(date_cursor.get(Calendar.DAY_OF_WEEK))).add(t);
+                    tasks_counter++;
+                }
             }
+            setTaskCounter(date_cursor, tasks_counter);
             date_cursor.add(Calendar.DAY_OF_MONTH, 1);
         }
         for(DayPlanOverviewAdapter ad : adapters){
@@ -164,11 +170,38 @@ public class WeeklyViewFragment extends Fragment implements WeekSliderFragment.o
         }
     }
 
+    private void setTaskCounter(Calendar date_cursor, int tasks_counter) {
+        int day_of_week = date_cursor.get(Calendar.DAY_OF_WEEK);
+        View view = null;
+        switch (day_of_week){
+            case Calendar.MONDAY:
+                view = getView().findViewById(R.id.txtMonTasksCount);break;
+            case Calendar.TUESDAY:
+                view = getView().findViewById(R.id.txtTueTasksCount);break;
+            case Calendar.WEDNESDAY:
+                view = getView().findViewById(R.id.txtWedTasksCount);break;
+            case Calendar.THURSDAY:
+                view = getView().findViewById(R.id.txtThuTasksCount);break;
+            case Calendar.FRIDAY:
+                view = getView().findViewById(R.id.txtFriTasksCount);break;
+            case Calendar.SATURDAY:
+                view = getView().findViewById(R.id.txtSatTasksCount);break;
+            case Calendar.SUNDAY:
+                view = getView().findViewById(R.id.txtSunTasksCount);break;
+        }
+        if(view == null){
+            return;
+        }
+        TextView textView = (TextView) view;
+        textView.setText(String.valueOf(tasks_counter));
+    }
+
     /**
      * Child fragments are creating async-ly.
      * To manage async views creation call this method in onViewCreated() of child fragment.
      */
-    public void setDefault(){
+    @Override
+    public void onChildCreated(){
         if(sliderFragment.getView() != null) {
             Calendar week_first_day = Calendar.getInstance();
             week_first_day.setFirstDayOfWeek(Calendar.MONDAY);

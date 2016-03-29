@@ -16,6 +16,8 @@ import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Fragments.ActualTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.CourseOverviewFragment;
 import com.projectse.aads.task_tracker.Fragments.CoursesFragment;
+import com.projectse.aads.task_tracker.Fragments.DoneTasksFragment;
+import com.projectse.aads.task_tracker.Fragments.OverdueTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.PlanFragment;
 import com.projectse.aads.task_tracker.Fragments.ProgressFragment;
 import com.projectse.aads.task_tracker.Fragments.SettingsFragment;
@@ -23,6 +25,8 @@ import com.projectse.aads.task_tracker.Fragments.TaskCategoriesFragment;
 import com.projectse.aads.task_tracker.Fragments.WeeklyViewFragment;
 import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
+import com.projectse.aads.task_tracker.Interfaces.DoneTasksCaller;
+import com.projectse.aads.task_tracker.Interfaces.OverdueTasksCaller;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.util.Calendar;
@@ -33,7 +37,7 @@ import java.util.Calendar;
 public class MainActivity
         extends AppCompatActivity
         implements WeeklyViewFragment.onWeekViewEventListener, CoursesFragment.onCourseClickListener,
-        AddTaskCaller, ActualTasksCaller {
+        AddTaskCaller, ActualTasksCaller, DoneTasksCaller, OverdueTasksCaller {
     DatabaseHelper db;
     private DrawerLayout menuDrawer;
     private android.support.v7.widget.Toolbar toolbar;
@@ -200,6 +204,18 @@ public class MainActivity
     @Override
     public void callActualTasks() {
         ActualTasksFragment fragment = new ActualTasksFragment();
+        setCurrentFragment(fragment);
+    }
+
+    @Override
+    public void callDoneTasks() {
+        DoneTasksFragment fragment = new DoneTasksFragment();
+        setCurrentFragment(fragment);
+    }
+
+    @Override
+    public void callOverdueTasks() {
+        OverdueTasksFragment fragment = new OverdueTasksFragment();
         setCurrentFragment(fragment);
     }
 }

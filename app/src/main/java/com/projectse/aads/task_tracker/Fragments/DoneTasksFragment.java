@@ -11,12 +11,11 @@ import android.widget.ImageButton;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
+import com.projectse.aads.task_tracker.Interfaces.DoneTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.ParentFragment;
 import com.projectse.aads.task_tracker.R;
 
-import java.util.Calendar;
-
-public class ActualTasksFragment extends Fragment implements ParentFragment {
+public class DoneTasksFragment extends Fragment implements ParentFragment {
     DatabaseHelper db;
     private TasksListFragment tasksListFragment;
 
@@ -33,7 +32,7 @@ public class ActualTasksFragment extends Fragment implements ParentFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getActivity().setTitle(R.string.actuals_title);
+        getActivity().setTitle(R.string.dones_title);
         View view = inflater.inflate(R.layout.fragment_course_overview, container, false);
         ImageButton addRequestButton = (ImageButton) view.findViewById(R.id.create_request_fab);
         addRequestButton.setVisibility(View.INVISIBLE);
@@ -46,6 +45,6 @@ public class ActualTasksFragment extends Fragment implements ParentFragment {
 
     @Override
     public void onChildCreated() {
-        tasksListFragment.setTaskHierarchy(db.getActualTasks(Calendar.getInstance()));
+        tasksListFragment.setTaskHierarchy(db.getDoneTasks());
     }
 }

@@ -11,6 +11,8 @@ import android.widget.RelativeLayout;
 
 import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
+import com.projectse.aads.task_tracker.Interfaces.DoneTasksCaller;
+import com.projectse.aads.task_tracker.Interfaces.OverdueTasksCaller;
 import com.projectse.aads.task_tracker.R;
 
 /**
@@ -19,6 +21,8 @@ import com.projectse.aads.task_tracker.R;
 public class TaskCategoriesFragment extends Fragment {
     private AddTaskCaller addTaskCaller;
     private ActualTasksCaller actualTasksCaller;
+    private DoneTasksCaller doneTasksCaller;
+    private OverdueTasksCaller overdueTasksCaller;
 
     @Override
     public void onAttach(Activity activity) {
@@ -26,8 +30,14 @@ public class TaskCategoriesFragment extends Fragment {
         if (activity instanceof AddTaskCaller) {
             addTaskCaller = (AddTaskCaller) activity;
         }
-        if (activity instanceof AddTaskCaller) {
+        if (activity instanceof ActualTasksCaller) {
             actualTasksCaller = (ActualTasksCaller) activity;
+        }
+        if (activity instanceof DoneTasksCaller) {
+            doneTasksCaller = (DoneTasksCaller) activity;
+        }
+        if(activity instanceof OverdueTasksCaller) {
+            overdueTasksCaller = (OverdueTasksCaller) activity;
         }
     }
 
@@ -57,6 +67,21 @@ public class TaskCategoriesFragment extends Fragment {
             }
         });
 
+        RelativeLayout doneTasksButton = (RelativeLayout) view.findViewById(R.id.done_btn);
+        doneTasksButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                doneTasksCaller.callDoneTasks();
+            }
+        });
+
+        RelativeLayout overdueTasksButton = (RelativeLayout) view.findViewById(R.id.over_due_btn);
+        overdueTasksButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                overdueTasksCaller.callOverdueTasks();
+            }
+        });
 
         return view;
     }

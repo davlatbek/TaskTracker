@@ -905,7 +905,94 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
 
         String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE " + TASKS_START_TIME +
-                " BETWEEN " + low_date.getTime().getTime() + " AND " + high_date.getTime().getTime();
+                " BETWEEN " + low_date.getTime().getTime() + " AND " + high_date.getTime().getTime() + " ORDER BY " + TASKS_START_TIME;
+        Log.d(TAG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null) {
+            // looping through all rows and adding to list
+            if (c.moveToFirst()) {
+                do {
+                    TaskModel task = new TaskModel();
+                    task = createTaskByCursor(c);
+
+                    // adding to Task list
+                    tasksArrayList.add(task);
+                } while (c.moveToNext());
+            }
+            return tasksArrayList;
+        } else
+            return null;
+    }
+
+
+
+    public List<TaskModel> getActualTasks(Calendar date) {
+        Calendar due_to_date = (Calendar) date.clone();
+        due_to_date.set(Calendar.HOUR_OF_DAY,0);
+        due_to_date.set(Calendar.MINUTE,0);
+        due_to_date.set(Calendar.SECOND,0);
+        List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
+
+        String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE " + TASKS_DEADLINE +
+                " > " + due_to_date.getTime().getTime() + " AND " + TASKS_IS_DONE + " == 0" + " ORDER BY " + TASKS_DEADLINE;
+        Log.d(TAG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null) {
+            // looping through all rows and adding to list
+            if (c.moveToFirst()) {
+                do {
+                    TaskModel task = new TaskModel();
+                    task = createTaskByCursor(c);
+
+                    // adding to Task list
+                    tasksArrayList.add(task);
+                } while (c.moveToNext());
+            }
+            return tasksArrayList;
+        } else
+            return null;
+    }
+
+    public List<TaskModel> getOverdueTasks(Calendar date) {
+        Calendar due_to_date = (Calendar) date.clone();
+        due_to_date.set(Calendar.HOUR_OF_DAY,23);
+        due_to_date.set(Calendar.MINUTE,59);
+        due_to_date.set(Calendar.SECOND,59);
+        List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
+
+        String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE " + TASKS_DEADLINE +
+                " < " + due_to_date.getTime().getTime() + " AND " + TASKS_IS_DONE + " == 0" + " ORDER BY " + TASKS_DEADLINE;
+        Log.d(TAG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null) {
+            // looping through all rows and adding to list
+            if (c.moveToFirst()) {
+                do {
+                    TaskModel task = new TaskModel();
+                    task = createTaskByCursor(c);
+
+                    // adding to Task list
+                    tasksArrayList.add(task);
+                } while (c.moveToNext());
+            }
+            return tasksArrayList;
+        } else
+            return null;
+    }
+
+    public List<TaskModel> getIsDoneTasks() {
+        List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
+
+        String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE " + TASKS_IS_DONE + " == 1" + " ORDER BY " + TASKS_START_TIME;
         Log.d(TAG, selectQuery);
 
         SQLiteDatabase db = this.getReadableDatabase();

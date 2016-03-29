@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Fragments.AddTaskFragment;
 import com.projectse.aads.task_tracker.Fragments.CoursesFragment;
 import com.projectse.aads.task_tracker.Fragments.PlanFragment;
 import com.projectse.aads.task_tracker.Fragments.ProgressFragment;
@@ -149,8 +150,8 @@ public class MainActivity
     /**************************************TASK ACTIVITY************************************************/
 
     public void callAddTaskActivity() {
-        Intent intent = new Intent(getApplicationContext(), TaskAddActivity.class);
-        startActivity(intent);
+        AddTaskFragment addTaskFragment = new AddTaskFragment();
+        setCurrentFragment(addTaskFragment);
     }
 
     public void callTaskOverviewActivity(TaskModel taskModel) {
@@ -175,6 +176,4 @@ public class MainActivity
             }
         }
     }
-
-
 }

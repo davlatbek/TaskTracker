@@ -249,9 +249,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             ContentValues values = new ContentValues();
             values.put(COURSE_NAME, course.getName());
-            values.put(COURSE_PRIORITY, course.fromPriorityToInt(course.getPriority()));
             values.put(COURSE_COLOR, course.getClr());
-            Log.d("TAG", "add prioritiy in int value in db " + String.valueOf(course.fromPriorityToInt(course.getPriority())));
             id = db.insertOrThrow(TABLE_COURSES, null, values);
             db.setTransactionSuccessful();
 
@@ -283,7 +281,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         course.setId(c.getLong(c.getColumnIndex(COURSE_ID)));
         course.setName(c.getString(c.getColumnIndex(COURSE_NAME)));
-        course.fromIntToPriority(c.getInt(c.getColumnIndex(COURSE_PRIORITY)));
         course.setClr(c.getInt(c.getColumnIndex(COURSE_COLOR)));
         Log.d("Tag", "try to convert int into priority --->>>>>" + c.getInt(c.getColumnIndex(COURSE_PRIORITY)));
         return course;
@@ -323,7 +320,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             ContentValues values = new ContentValues();
             values.put(COURSE_NAME, course.getName());
-            values.put(COURSE_PRIORITY, String.valueOf(course.fromPriorityToInt(course.getPriority())));
             values.put(COURSE_COLOR,course.getClr());
             id = db.update(TABLE_COURSES, values, COURSE_ID + " = ?",
                     new String[]{String.valueOf(course.getId())});
@@ -540,7 +536,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 CourseModel course = new CourseModel();
                 course.setId(c.getLong(c.getColumnIndex(COURSE_ID)));
                 course.setName(c.getString(c.getColumnIndex(COURSE_NAME)));
-                course.fromIntToPriority(c.getInt(c.getColumnIndex(COURSE_PRIORITY)));
                 course.setClr(c.getInt(c.getColumnIndex(COURSE_COLOR)));
                 courseArrayList.add(course);
             } while (c.moveToNext());

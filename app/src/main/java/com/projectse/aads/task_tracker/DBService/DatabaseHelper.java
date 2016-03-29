@@ -620,8 +620,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (c.moveToFirst()) {
                 do {
                     taskList.add(getTask(c.getLong(c.getColumnIndex(TASKS_KEY_ID))));
-                    Log.d(TAG, "add to list");
-
                 } while (c.moveToNext());
             }
         } catch (Exception e) {
@@ -631,8 +629,98 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         return taskList;
+    }
 
+    public List<TaskModel> getActualTasksForCourse(long coures_id, Calendar date) {
+        Calendar due_to_date = (Calendar) date.clone();
+        due_to_date.set(Calendar.HOUR_OF_DAY,0);
+        due_to_date.set(Calendar.MINUTE,0);
+        due_to_date.set(Calendar.SECOND,0);
+        List<TaskModel> taskList = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        String sq = "SELECT " + TASKS_KEY_ID + " FROM " + TABLE_COURSES + ", " + TABLE_TASKS + ", "
+                + TABLE_COURSES_TO_TASKS + " WHERE " + TABLE_TASKS + "." + TASKS_KEY_ID + " = " + TABLE_COURSES_TO_TASKS +
+                "." + COURSES_TO_TASKS_TASK_ID + " AND " + TABLE_COURSES + "." + COURSE_ID + " = " + TABLE_COURSES_TO_TASKS + "." + COURSES_TO_TASKS_CURSE_ID
+                + " AND " + COURSES_TO_TASKS_CURSE_ID + " = " + coures_id + " AND " + TASKS_DEADLINE +
+                " > " + due_to_date.getTime().getTime() + " AND " + TASKS_IS_DONE + " == 0"  + " ORDER BY " + TASKS_DEADLINE;
 
+        Log.d(TAG, sq);
+        Cursor c = db.rawQuery(sq, null);
+
+        db.beginTransaction();
+        try {
+            if (c.moveToFirst()) {
+                do {
+                    taskList.add(getTask(c.getLong(c.getColumnIndex(TASKS_KEY_ID))));
+                } while (c.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying select tasks by course_id");
+        } finally {
+            db.endTransaction();
+        }
+
+        return taskList;
+    }
+
+    public List<TaskModel> getOverdueTasksForCourse(long coures_id, Calendar date) {
+        Calendar due_to_date = (Calendar) date.clone();
+        due_to_date.set(Calendar.HOUR_OF_DAY,23);
+        due_to_date.set(Calendar.MINUTE,59);
+        due_to_date.set(Calendar.SECOND,59);
+        List<TaskModel> taskList = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        String sq = "SELECT " + TASKS_KEY_ID + " FROM " + TABLE_COURSES + ", " + TABLE_TASKS + ", "
+                + TABLE_COURSES_TO_TASKS + " WHERE " + TABLE_TASKS + "." + TASKS_KEY_ID + " = " + TABLE_COURSES_TO_TASKS +
+                "." + COURSES_TO_TASKS_TASK_ID + " AND " + TABLE_COURSES + "." + COURSE_ID + " = " + TABLE_COURSES_TO_TASKS + "." + COURSES_TO_TASKS_CURSE_ID
+                + " AND " + COURSES_TO_TASKS_CURSE_ID + " = " + coures_id + " AND " + TASKS_DEADLINE +
+                " < " + due_to_date.getTime().getTime() + " AND " + TASKS_IS_DONE + " == 0"  + " ORDER BY " + TASKS_DEADLINE;
+
+        Log.d(TAG, sq);
+        Cursor c = db.rawQuery(sq, null);
+
+        db.beginTransaction();
+        try {
+            if (c.moveToFirst()) {
+                do {
+                    taskList.add(getTask(c.getLong(c.getColumnIndex(TASKS_KEY_ID))));
+                } while (c.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying select tasks by course_id");
+        } finally {
+            db.endTransaction();
+        }
+
+        return taskList;
+    }
+
+    public List<TaskModel> getDoneTasksForCourse(long coures_id) {
+        List<TaskModel> taskList = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        String sq = "SELECT " + TASKS_KEY_ID + " FROM " + TABLE_COURSES + ", " + TABLE_TASKS + ", "
+                + TABLE_COURSES_TO_TASKS + " WHERE " + TABLE_TASKS + "." + TASKS_KEY_ID + " = " + TABLE_COURSES_TO_TASKS +
+                "." + COURSES_TO_TASKS_TASK_ID + " AND " + TABLE_COURSES + "." + COURSE_ID + " = " + TABLE_COURSES_TO_TASKS + "." + COURSES_TO_TASKS_CURSE_ID
+                + " AND " + COURSES_TO_TASKS_CURSE_ID + " = " + coures_id
+                + " AND " + TASKS_IS_DONE + " == 1"  + " ORDER BY " + TASKS_DEADLINE;
+
+        Log.d(TAG, sq);
+        Cursor c = db.rawQuery(sq, null);
+
+        db.beginTransaction();
+        try {
+            if (c.moveToFirst()) {
+                do {
+                    taskList.add(getTask(c.getLong(c.getColumnIndex(TASKS_KEY_ID))));
+                } while (c.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying select tasks by course_id");
+        } finally {
+            db.endTransaction();
+        }
+
+        return taskList;
     }
 
     // Get course id by task id

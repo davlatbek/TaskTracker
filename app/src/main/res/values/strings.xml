@@ -96,5 +96,8 @@
     <string name="actuals_title">Actual Tasks</string>
     <string name="dones_title">Done Tasks</string>
     <string name="overdues_title">Overdue Tasks</string>
+    <string name="done">done</string>
+    <string name="overdue">overdue</string>
+    <string name="actual">actual</string>
 
 </resources>

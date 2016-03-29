@@ -64,12 +64,6 @@ public class CoursesFragment extends Fragment {
 
         DatabaseHelper db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
 
-//        CourseModel course = new CourseModel();
-//        course.setName("54545");
-//        course.setClr(32);
-//        course.setId(3l);
-//        db.addCourse(course);
-
         List<CourseModel> course_list = db.getCourseModelList();
 
         for(CourseModel c : course_list) {
@@ -112,11 +106,6 @@ public class CoursesFragment extends Fragment {
             if(courseClickEventListener != null){
                 courseClickEventListener.callCourseOverviewFragment(course_id);
             }
-
-          //  someEventListener
-
-            // call course
-          //  Toast.makeText(getActivity(), ((TextView) v.findViewById(R.id.request_name)).getText() + " item selected", Toast.LENGTH_SHORT).show();
         }
     };
 

@@ -38,6 +38,14 @@ public class PlugActivity extends Activity {
         c2.setClr(R.color.coursecolor5);
         long c2_id = db.addCourse(c2);
 
+        CourseModel c3 = new CourseModel("Project in SE");
+        c3.setClr(R.color.coursecolor2);
+        long c3_id = db.addCourse(c3);
+
+        CourseModel c4 = new CourseModel("Modern programming paradigm");
+        c4.setClr(R.color.coursecolor6);
+        long c4_id = db.addCourse(c4);
+
         List<CourseModel> courses = db.getCourseModelList();
         for ( int i = 0; i < 20; i++){
             ArrayList<Long> subts = new ArrayList<>();

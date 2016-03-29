@@ -28,7 +28,6 @@ public class CourseOverviewFragment extends Fragment {
         // refresh fragment
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

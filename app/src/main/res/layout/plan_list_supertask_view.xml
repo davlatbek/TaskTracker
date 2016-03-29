@@ -8,7 +8,7 @@
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="90dp"
-        android:background="@color/colorToolbarBackground"
+        android:background="@color/light_green_300"
         android:baselineAligned="true"
         android:id="@+id/linearLayout3">
 
@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:id="@+id/txtSubsCount"
-                android:text="More than just text"
+                android:text=""
                 android:textColor="@android:color/black"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"/>

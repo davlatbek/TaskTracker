@@ -8,9 +8,7 @@
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="90dp"
-        android:background="@drawable/border"
-        android:baselineAligned="true"
-        android:backgroundTint="@color/colorToolbarBackground"
+        android:background="@color/light_green_400"
         android:id="@+id/linearLayout3"
         android:backgroundTintMode="screen">
 

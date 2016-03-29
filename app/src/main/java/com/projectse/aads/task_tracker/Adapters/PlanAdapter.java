@@ -98,8 +98,8 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         CourseModel course = supertask.getCourse();
         if(course != null){
             TextView course_label = (TextView)convertView.findViewById(R.id.lblCourse);
-            course_label.setText(course.getName());
-            course_label.setBackgroundColor(course.getClr());
+            course_label.setText(course.getAbbreviation());
+            course_label.setBackgroundResource(course.getClr());
         }else{
             TextView course_label = (TextView)convertView.findViewById(R.id.lblCourse);
             course_label.setText("NaN");

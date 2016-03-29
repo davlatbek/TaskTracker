@@ -1,8 +1,6 @@
 package com.projectse.aads.task_tracker.Fragments;
 
-import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.projectse.aads.task_tracker.Interfaces.ParentFragment;
 import com.projectse.aads.task_tracker.R;
 
 import java.util.ArrayList;
@@ -99,7 +98,9 @@ public class WeekDaysFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setCurrentDay(current_day);
-        ((PlanFragment) getParentFragment()).setDefault();
+        Fragment parent = getParentFragment();
+        if(parent instanceof ParentFragment)
+            ((ParentFragment) parent).onChildCreated();
     }
 
     public int getCurrentDay() {

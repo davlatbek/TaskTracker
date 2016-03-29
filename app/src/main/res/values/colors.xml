@@ -7,6 +7,8 @@
     <color name="mediumPriority">#ffc107</color>
     <color name="hignPriority">#f44336</color>
 
+    <color name="color_list_background">#AED581</color>
+
 
     <color name="light_green_900">#33691e</color>
     <color name="light_green_800">#558b2f</color>

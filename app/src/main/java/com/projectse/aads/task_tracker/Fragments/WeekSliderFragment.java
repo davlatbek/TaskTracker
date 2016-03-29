@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.projectse.aads.task_tracker.Interfaces.ParentFragment;
 import com.projectse.aads.task_tracker.R;
 
 import java.text.SimpleDateFormat;
@@ -73,10 +74,8 @@ public class WeekSliderFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Fragment parent = getParentFragment();
-        if(parent instanceof PlanFragment)
-                ((PlanFragment) parent).setDefault();
-        if(parent instanceof WeeklyViewFragment)
-            ((WeeklyViewFragment) parent).setDefault();
+        if(parent instanceof ParentFragment)
+                ((ParentFragment) parent).onChildCreated();
     }
 
     public void updateLabel(){
@@ -85,10 +84,14 @@ public class WeekSliderFragment extends Fragment {
     }
 
     private String weekToString(){
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MM yy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd");
         Calendar week_last_day = (Calendar) week_first_day.clone();
         week_last_day.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-        return sdf.format(week_first_day.getTime()) + " - " + sdf.format(week_last_day.getTime());
+        SimpleDateFormat sdl = new SimpleDateFormat("dd MMMM yyyy");
+        if(week_last_day.get(Calendar.MONTH) != week_first_day.get(Calendar.MONTH)){
+            sdf = sdl;
+        }
+        return sdf.format(week_first_day.getTime()) + " - " + sdl.format(week_last_day.getTime());
     }
 
     public static String dayToHumanReadable(Calendar date){

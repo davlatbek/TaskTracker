@@ -93,4 +93,8 @@
     <string name="saturday">Saturday</string>
     <string name="sunday">Sunday</string>
 
+    <string name="actuals_title">Actual Tasks</string>
+    <string name="dones_title">Done Tasks</string>
+    <string name="overdues_title">Overdue Tasks</string>
+
 </resources>

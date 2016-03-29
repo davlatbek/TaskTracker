@@ -1,12 +1,11 @@
 package com.projectse.aads.task_tracker;
 
-
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,12 +14,20 @@ import android.view.MenuItem;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Fragments.AddTaskFragment;
+import com.projectse.aads.task_tracker.Fragments.ActualTasksFragment;
+import com.projectse.aads.task_tracker.Fragments.CourseOverviewFragment;
 import com.projectse.aads.task_tracker.Fragments.CoursesFragment;
+import com.projectse.aads.task_tracker.Fragments.DoneTasksFragment;
+import com.projectse.aads.task_tracker.Fragments.OverdueTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.PlanFragment;
 import com.projectse.aads.task_tracker.Fragments.ProgressFragment;
 import com.projectse.aads.task_tracker.Fragments.SettingsFragment;
-import com.projectse.aads.task_tracker.Fragments.TasksFragment;
+import com.projectse.aads.task_tracker.Fragments.TaskCategoriesFragment;
 import com.projectse.aads.task_tracker.Fragments.WeeklyViewFragment;
+import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
+import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
+import com.projectse.aads.task_tracker.Interfaces.DoneTasksCaller;
+import com.projectse.aads.task_tracker.Interfaces.OverdueTasksCaller;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.util.Calendar;
@@ -30,14 +37,14 @@ import java.util.Calendar;
  */
 public class MainActivity
         extends AppCompatActivity
-        implements WeeklyViewFragment.onWeekViewEventListener
-{
+        implements WeeklyViewFragment.onWeekViewEventListener, CoursesFragment.onCourseClickListener,
+        AddTaskCaller, ActualTasksCaller, DoneTasksCaller, OverdueTasksCaller {
+    DatabaseHelper db;
     private DrawerLayout menuDrawer;
     private android.support.v7.widget.Toolbar toolbar;
     private NavigationView nvDrawer;
+    // public DatabaseHelper db = new DatabaseHelper(this); // need for fragments
     private ActionBarDrawerToggle drawerToggle;
-
-    DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +90,7 @@ public class MainActivity
 
         switch (item.getItemId()) {
             case R.id.nav_tasks_fragment:
-                fragmentClass = TasksFragment.class;
+                fragmentClass = TaskCategoriesFragment.class;
                 break;
             case R.id.nav_plan_fragment:
                 fragmentClass = PlanFragment.class;
@@ -101,7 +108,7 @@ public class MainActivity
                 fragmentClass = SettingsFragment.class;
                 break;
             default:
-                fragmentClass = TasksFragment.class;
+                fragmentClass = TaskCategoriesFragment.class;
         }
 
         try {
@@ -116,7 +123,7 @@ public class MainActivity
         menuDrawer.closeDrawers();
     }
 
-    public void setCurrentFragment(Fragment fragment){
+    public void setCurrentFragment(Fragment fragment) {
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
         fragmentManager.executePendingTransactions();
@@ -147,7 +154,9 @@ public class MainActivity
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    /**************************************TASK ACTIVITY************************************************/
+    /**************************************
+     * TASK ACTIVITY
+     ************************************************/
 
     public void callAddTaskActivity() {
         AddTaskFragment addTaskFragment = new AddTaskFragment();
@@ -160,20 +169,53 @@ public class MainActivity
         startActivityForResult(intent, 0);
     }
 
-    /************************************WEEK VIEW FRAGMENT**********************************************/
+    /************************************
+     * WEEK VIEW FRAGMENT
+     **********************************************/
 
     @Override
     public void callPlanFragment(Calendar first_day, int day_of_week) {
         PlanFragment fragment = new PlanFragment();
         setCurrentFragment(fragment);
         int i = 5;
-        while (i-- > 0){
-            try{
+        while (i-- > 0) {
+            try {
                 fragment.setWeek(first_day);
                 fragment.setWeekDay(day_of_week);
                 break;
-            }catch (Exception e){
+            } catch (Exception e) {
             }
         }
+    }
+
+    @Override
+    public void callCourseOverviewFragment(long course_id) {
+        CourseOverviewFragment fragment = new CourseOverviewFragment();
+        fragment.setCourseID(course_id);
+        setCurrentFragment(fragment);
+    }
+
+    @Override
+    public void callAddTask(long defaultCourseId, Calendar defaultStartTime) {
+        Intent intent = new Intent(getApplicationContext(), TaskAddActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void callActualTasks() {
+        ActualTasksFragment fragment = new ActualTasksFragment();
+        setCurrentFragment(fragment);
+    }
+
+    @Override
+    public void callDoneTasks() {
+        DoneTasksFragment fragment = new DoneTasksFragment();
+        setCurrentFragment(fragment);
+    }
+
+    @Override
+    public void callOverdueTasks() {
+        OverdueTasksFragment fragment = new OverdueTasksFragment();
+        setCurrentFragment(fragment);
     }
 }

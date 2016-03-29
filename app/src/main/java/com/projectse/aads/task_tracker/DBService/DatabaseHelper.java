@@ -41,7 +41,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
 //        context.deleteDatabase(DATABASE_NAME);
-
     }
 
     // Called when the database connection is being configured.
@@ -84,7 +83,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // All keys used in table COURSES
     private static final String COURSE_ID = "course_id";
     private static final String COURSE_NAME = "course_name";
-    private static final String COURSE_PRIORITY = "course_priority";
     private static final String COURSE_COLOR = "course_color";
 
     // All keys used in table SETTINGS
@@ -147,16 +145,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_COURSES = "CREATE TABLE "
             + TABLE_COURSES + "(" + COURSE_ID
             + " INTEGER PRIMARY KEY AUTOINCREMENT," + COURSE_NAME + " TEXT,"
-            + COURSE_COLOR + " INTEGER, "
-            + COURSE_PRIORITY + " INTEGER);";
+            + COURSE_COLOR + " INTEGER);";
 
     /**
      * INSERT DEFAULT COURSE
      */
 
     private static final String INSERT_DEFAULT_COURSE = "INSERT INTO "
-            + TABLE_COURSES + "(" + COURSE_NAME
-            + ", " + COURSE_PRIORITY + ") " + "VALUES('Non Academical', 34523, 1);";
+            + TABLE_COURSES + "(" + COURSE_NAME + ") " + "VALUES('Non Academical', 1);";
 
     /**
      * CREATE TABLE TABLE_COURSES_TO_TASKS
@@ -274,15 +270,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Cursor c = db.rawQuery(selectQuery, null);
 
-        if (c != null)
-            c.moveToFirst();
+        if (!c.moveToFirst())
+            return null;
 
         CourseModel course = new CourseModel();
 
         course.setId(c.getLong(c.getColumnIndex(COURSE_ID)));
         course.setName(c.getString(c.getColumnIndex(COURSE_NAME)));
         course.setClr(c.getInt(c.getColumnIndex(COURSE_COLOR)));
-        Log.d("Tag", "try to convert int into priority --->>>>>" + c.getInt(c.getColumnIndex(COURSE_PRIORITY)));
         return course;
     }
 
@@ -523,7 +518,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // RECEIVE LIST OF COURSES
 
-    public List<CourseModel> getCourseModelList() throws Exception {
+    public List<CourseModel> getCourseModelList() {
         List<CourseModel> courseArrayList = new ArrayList<CourseModel>();
         String selectQuery = "SELECT * FROM " + TABLE_COURSES;
         Log.d(TAG, selectQuery);
@@ -531,14 +526,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);
 
-        if (c.moveToFirst()) {
-            do {
-                CourseModel course = new CourseModel();
-                course.setId(c.getLong(c.getColumnIndex(COURSE_ID)));
-                course.setName(c.getString(c.getColumnIndex(COURSE_NAME)));
-                course.setClr(c.getInt(c.getColumnIndex(COURSE_COLOR)));
-                courseArrayList.add(course);
-            } while (c.moveToNext());
+        try{
+            if (c.moveToFirst()) {
+                do {
+                    CourseModel course = new CourseModel();
+                    course.setId(c.getLong(c.getColumnIndex(COURSE_ID)));
+                    course.setName(c.getString(c.getColumnIndex(COURSE_NAME)));
+                    course.setClr(c.getInt(c.getColumnIndex(COURSE_COLOR)));
+                    courseArrayList.add(course);
+                } while (c.moveToNext());
+            }
+        }finally {
+            c.close();
+
         }
         return courseArrayList;
     }
@@ -936,7 +936,94 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
 
         String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE " + TASKS_START_TIME +
-                " BETWEEN " + low_date.getTime().getTime() + " AND " + high_date.getTime().getTime();
+                " BETWEEN " + low_date.getTime().getTime() + " AND " + high_date.getTime().getTime() + " ORDER BY " + TASKS_START_TIME;
+        Log.d(TAG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null) {
+            // looping through all rows and adding to list
+            if (c.moveToFirst()) {
+                do {
+                    TaskModel task = new TaskModel();
+                    task = createTaskByCursor(c);
+
+                    // adding to Task list
+                    tasksArrayList.add(task);
+                } while (c.moveToNext());
+            }
+            return tasksArrayList;
+        } else
+            return null;
+    }
+
+
+
+    public List<TaskModel> getActualTasks(Calendar date) {
+        Calendar due_to_date = (Calendar) date.clone();
+        due_to_date.set(Calendar.HOUR_OF_DAY,0);
+        due_to_date.set(Calendar.MINUTE,0);
+        due_to_date.set(Calendar.SECOND,0);
+        List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
+
+        String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE " + TASKS_DEADLINE +
+                " > " + due_to_date.getTime().getTime() + " AND " + TASKS_IS_DONE + " == 0" + " ORDER BY " + TASKS_DEADLINE;
+        Log.d(TAG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null) {
+            // looping through all rows and adding to list
+            if (c.moveToFirst()) {
+                do {
+                    TaskModel task = new TaskModel();
+                    task = createTaskByCursor(c);
+
+                    // adding to Task list
+                    tasksArrayList.add(task);
+                } while (c.moveToNext());
+            }
+            return tasksArrayList;
+        } else
+            return null;
+    }
+
+    public List<TaskModel> getOverdueTasks(Calendar date) {
+        Calendar due_to_date = (Calendar) date.clone();
+        due_to_date.set(Calendar.HOUR_OF_DAY,23);
+        due_to_date.set(Calendar.MINUTE,59);
+        due_to_date.set(Calendar.SECOND,59);
+        List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
+
+        String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE " + TASKS_DEADLINE +
+                " < " + due_to_date.getTime().getTime() + " AND " + TASKS_IS_DONE + " == 0" + " ORDER BY " + TASKS_DEADLINE;
+        Log.d(TAG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null) {
+            // looping through all rows and adding to list
+            if (c.moveToFirst()) {
+                do {
+                    TaskModel task = new TaskModel();
+                    task = createTaskByCursor(c);
+
+                    // adding to Task list
+                    tasksArrayList.add(task);
+                } while (c.moveToNext());
+            }
+            return tasksArrayList;
+        } else
+            return null;
+    }
+
+    public List<TaskModel> getDoneTasks() {
+        List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
+
+        String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE " + TASKS_IS_DONE + " == 1" + " ORDER BY " + TASKS_START_TIME;
         Log.d(TAG, selectQuery);
 
         SQLiteDatabase db = this.getReadableDatabase();

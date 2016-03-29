@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import com.projectse.aads.task_tracker.Adapters.DayPlanOverviewAdapter;
 import com.projectse.aads.task_tracker.Adapters.PlanAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Interfaces.ParentFragment;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 
@@ -29,7 +30,7 @@ import java.util.Map;
 /**
  * Created by Andrey Zolin on 20.03.2016.
  */
-public class WeeklyViewFragment extends Fragment implements WeekSliderFragment.onWeekSliderEventListener {
+public class WeeklyViewFragment extends Fragment implements WeekSliderFragment.onWeekSliderEventListener, ParentFragment {
     public interface onWeekViewEventListener{
         public void callPlanFragment(Calendar first_day, int day_of_week);
     }
@@ -168,7 +169,8 @@ public class WeeklyViewFragment extends Fragment implements WeekSliderFragment.o
      * Child fragments are creating async-ly.
      * To manage async views creation call this method in onViewCreated() of child fragment.
      */
-    public void setDefault(){
+    @Override
+    public void onChildCreated(){
         if(sliderFragment.getView() != null) {
             Calendar week_first_day = Calendar.getInstance();
             week_first_day.setFirstDayOfWeek(Calendar.MONDAY);

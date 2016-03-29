@@ -11,12 +11,13 @@ import android.widget.ImageButton;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
+import com.projectse.aads.task_tracker.Interfaces.ParentFragment;
 import com.projectse.aads.task_tracker.R;
 
 /**
  * Created by Andrey Zolin on 27.03.2016.
  */
-public class CourseOverviewFragment extends Fragment {
+public class CourseOverviewFragment extends Fragment implements ParentFragment {
     DatabaseHelper db;
     private TasksListFragment tasksListFragment;
     private long CourseId;
@@ -69,7 +70,8 @@ public class CourseOverviewFragment extends Fragment {
     }
 
 
-    public void setDefault() {
+    @Override
+    public void onChildCreated() {
         tasksListFragment.setTaskHierarchy(db.getListOfTasks(CourseId));
     }
 }

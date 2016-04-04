@@ -19,10 +19,22 @@ import java.util.Calendar;
 public class ActualTasksFragment extends Fragment implements ParentFragment {
     DatabaseHelper db;
     private TasksListFragment tasksListFragment;
+    private AddTaskCaller addTaskCaller;
+
+    private View.OnClickListener requestButtonListener
+            = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            addTaskCaller.callAddTask(-1L, null);
+        }
+    };
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        if (activity instanceof AddTaskCaller) {
+            addTaskCaller = (AddTaskCaller) activity;
+        }
     }
 
     @Override
@@ -36,7 +48,7 @@ public class ActualTasksFragment extends Fragment implements ParentFragment {
         getActivity().setTitle(R.string.actuals_title);
         View view = inflater.inflate(R.layout.fragment_task_category_overview, container, false);
         ImageButton addRequestButton = (ImageButton) view.findViewById(R.id.create_task_btn);
-//        addRequestButton.setVisibility(View.INVISIBLE);
+        addRequestButton.setOnClickListener(requestButtonListener);
 
         tasksListFragment = new TasksListFragment();
         FragmentManager fm = getChildFragmentManager();

@@ -36,8 +36,8 @@ public class OverdueTasksFragment extends Fragment implements ParentFragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(R.string.overdues_title);
-        View view = inflater.inflate(R.layout.fragment_course_overview, container, false);
-        ImageButton addRequestButton = (ImageButton) view.findViewById(R.id.create_request_fab);
+        View view = inflater.inflate(R.layout.fragment_task_category_overview, container, false);
+        ImageButton addRequestButton = (ImageButton) view.findViewById(R.id.create_task_btn);
         addRequestButton.setVisibility(View.INVISIBLE);
 
         tasksListFragment = new TasksListFragment();

@@ -34,9 +34,9 @@ public class ActualTasksFragment extends Fragment implements ParentFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(R.string.actuals_title);
-        View view = inflater.inflate(R.layout.fragment_course_overview, container, false);
-        ImageButton addRequestButton = (ImageButton) view.findViewById(R.id.create_request_fab);
-        addRequestButton.setVisibility(View.INVISIBLE);
+        View view = inflater.inflate(R.layout.fragment_task_category_overview, container, false);
+        ImageButton addRequestButton = (ImageButton) view.findViewById(R.id.create_task_btn);
+//        addRequestButton.setVisibility(View.INVISIBLE);
 
         tasksListFragment = new TasksListFragment();
         FragmentManager fm = getChildFragmentManager();

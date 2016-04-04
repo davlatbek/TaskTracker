@@ -176,7 +176,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "FOREIGN KEY(" + SUBTASKS_SLAVE_ID + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + ")"
             + ");";*/
 
-    private static final String CREATE_TABLE_SETTINGS = "CREATE TABLE" +
+    private static final String CREATE_TABLE_SETTINGS = "CREATE TABLE " +
             TABLE_SETTINGS + " (" +
             SETTINGS_ALWAYS_NOTIFY_START_TIME + " TEXT," +
             SETTINGS_ALWAYS_NOTIFY_DEADLINE  + " TEXT," +

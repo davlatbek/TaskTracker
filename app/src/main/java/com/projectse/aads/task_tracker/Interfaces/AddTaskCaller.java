@@ -7,4 +7,5 @@ import java.util.Calendar;
  */
 public interface AddTaskCaller {
     public void callAddTask(long defaultCourseId, Calendar defaultStartTime);
+    public void callAddTask();
 }

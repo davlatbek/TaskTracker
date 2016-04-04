@@ -12,7 +12,7 @@
     android:background="#dcedc8">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
@@ -26,12 +26,12 @@
         <Button
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/button"
+            android:id="@+id/btnPriorityColor"
             android:foreground="#4daf51"
             android:layout_gravity="right" />
 
         <Spinner
-            android:layout_width="97dp"
+            android:layout_width="106dp"
             android:layout_height="33dp"
             android:id="@+id/spinnerPriority"
             android:spinnerMode="dropdown"
@@ -98,7 +98,7 @@
         <ImageButton
             android:layout_width="45dp"
             android:layout_height="wrap_content"
-            android:id="@+id/imageButton"
+            android:id="@+id/buttonCourseSelect"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:layout_alignParentBottom="true"
@@ -108,15 +108,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="DM"
-            android:id="@+id/textView4"
+            android:id="@+id/textViewCourseLabel"
             android:layout_alignBottom="@+id/textSelectedCourse"
             android:layout_toEndOf="@+id/textSelectedCourse"
             android:background="#97dec9"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
             android:paddingTop="2dp"
-            android:paddingBottom="2dp" />
+            android:paddingBottom="2dp"
+            android:text="DM" />
 
     </RelativeLayout>
 
@@ -125,7 +125,7 @@
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="10"
-        android:id="@+id/editText"
+        android:id="@+id/editTextCourseName"
         android:hint="The name of a course..."
         android:layout_alignTop="@+id/textSelectedCourse"
         android:layout_alignParentStart="false" />
@@ -163,7 +163,6 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:id="@+id/btnDateStartTime"
-                android:onClick="showDatePickerDialog"
                 android:clickable="false"
                 android:background="@drawable/ic_event_note_24dp" />
 
@@ -185,7 +184,6 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:id="@+id/btnDateDeadline"
-                android:onClick="showDatePickerDialog"
                 android:background="@drawable/ic_event_note_24dp" />
 
         </LinearLayout>

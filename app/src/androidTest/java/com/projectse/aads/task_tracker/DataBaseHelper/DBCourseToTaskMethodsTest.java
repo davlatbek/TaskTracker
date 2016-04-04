@@ -28,7 +28,6 @@ public class DBCourseToTaskMethodsTest extends TestInit {
         CourseModel course = new CourseModel();
         course.setId(1L);
         course.setName("Other");
-        course.setPriority(CourseModel.Priority.HIGH);
         db.addCourse(course);
 
         db.addCourseToTask(db.addTask(task)); // get task id after inserting in table task and put this id in table course to task with default course id = 1
@@ -57,7 +56,6 @@ public class DBCourseToTaskMethodsTest extends TestInit {
 
         CourseModel course = new CourseModel();
         course.setName("test3");
-        course.setPriority(CourseModel.Priority.HIGH);
         db.addCourse(course);
 
         Assert.assertTrue("List of courses should be not empty", db.getCourseModelList().size() > 0);
@@ -67,7 +65,6 @@ public class DBCourseToTaskMethodsTest extends TestInit {
     public void testAddCourse() throws Exception {
         CourseModel course = new CourseModel();
         course.setName("test3");
-        course.setPriority(CourseModel.Priority.HIGH);
         long id = -100;
         id = db.addCourse(course);
 
@@ -77,7 +74,6 @@ public class DBCourseToTaskMethodsTest extends TestInit {
     public void testDeleteCourse() throws Exception {
         CourseModel course = new CourseModel();
         course.setName("test3");
-        course.setPriority(CourseModel.Priority.HIGH);
         long id = db.addCourse(course);
 
         Assert.assertTrue("If we delete course method will return true", db.deleteCourse(id));
@@ -86,7 +82,6 @@ public class DBCourseToTaskMethodsTest extends TestInit {
     public void testUpDateCourse() throws Exception {
         CourseModel course = new CourseModel();
         course.setName("test3");
-        course.setPriority(CourseModel.Priority.HIGH);
         long id = db.addCourse(course);
         course.setId(id);
         // change name and update
@@ -104,7 +99,6 @@ public class DBCourseToTaskMethodsTest extends TestInit {
     public void testUpdateCourseToTask() throws Exception {
         CourseModel course_1 = new CourseModel();
         course_1.setName("Course-1");
-        course_1.setPriority(CourseModel.Priority.HIGH);
         long course_id_1 = db.addCourse(course_1);
 
         TaskModel task = new TaskModel();
@@ -118,7 +112,6 @@ public class DBCourseToTaskMethodsTest extends TestInit {
     public void testSelectListOfTasks1() throws Exception {
         CourseModel course_one = new CourseModel();
         course_one.setName("Course-1");
-        course_one.setPriority(CourseModel.Priority.HIGH);
         long course_id_one = db.addCourse(course_one);
 
         TaskModel task_one = new TaskModel();
@@ -136,7 +129,6 @@ public class DBCourseToTaskMethodsTest extends TestInit {
 
         CourseModel course_two = new CourseModel();
         course_two.setName("Course-2");
-        course_two.setPriority(CourseModel.Priority.HIGH);
         long course_id_two = db.addCourse(course_two);
 
         TaskModel task_two = new TaskModel();

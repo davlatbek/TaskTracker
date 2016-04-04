@@ -202,6 +202,12 @@ public class MainActivity
     }
 
     @Override
+    public void callAddTask() {
+        AddTaskFragment addTaskFragment = new AddTaskFragment();
+        setCurrentFragment(addTaskFragment);
+    }
+
+    @Override
     public void callActualTasks() {
         ActualTasksFragment fragment = new ActualTasksFragment();
         setCurrentFragment(fragment);

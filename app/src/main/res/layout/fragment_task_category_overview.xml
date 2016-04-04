@@ -29,19 +29,4 @@
             android:stretchColumns="1"></TableLayout>
     </ScrollView>
 
-    <ImageButton
-        android:id="@+id/create_task_btn"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_gravity="right"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginLeft="640dp"
-        android:background="@drawable/oval"
-        android:src="@android:drawable/ic_input_add"
-        android:tint="@android:color/white" />
-
 </RelativeLayout>

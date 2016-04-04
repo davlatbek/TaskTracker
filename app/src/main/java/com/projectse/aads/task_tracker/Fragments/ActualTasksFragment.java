@@ -47,8 +47,6 @@ public class ActualTasksFragment extends Fragment implements ParentFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(R.string.actuals_title);
         View view = inflater.inflate(R.layout.fragment_task_category_overview, container, false);
-        ImageButton addRequestButton = (ImageButton) view.findViewById(R.id.create_task_btn);
-        addRequestButton.setOnClickListener(requestButtonListener);
 
         tasksListFragment = new TasksListFragment();
         FragmentManager fm = getChildFragmentManager();
@@ -59,5 +57,7 @@ public class ActualTasksFragment extends Fragment implements ParentFragment {
     @Override
     public void onChildCreated() {
         tasksListFragment.setTaskHierarchy(db.getActualTasks(Calendar.getInstance()));
+        ImageButton addRequestButton = (ImageButton) getView().findViewById(R.id.create_task_btn);
+        addRequestButton.setOnClickListener(requestButtonListener);
     }
 }

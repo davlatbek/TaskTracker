@@ -59,10 +59,7 @@ public class CourseOverviewFragment extends Fragment implements ParentFragment {
             e.printStackTrace();
         }
         View view = inflater.inflate(R.layout.fragment_course_overview, container, false);
-        ImageButton addRequestButton = (ImageButton) view.findViewById(R.id.create_request_fab);
 
-
-        addRequestButton.setOnClickListener(requestButtonListener);
         tasksListFragment = new TasksListFragment();
         FragmentManager fm = getChildFragmentManager();
         fm.beginTransaction().replace(R.id.task_list, tasksListFragment).commit();
@@ -73,5 +70,7 @@ public class CourseOverviewFragment extends Fragment implements ParentFragment {
     @Override
     public void onChildCreated() {
         tasksListFragment.setTaskHierarchy(db.getListOfTasks(CourseId));
+        ImageButton addRequestButton = (ImageButton) getView().findViewById(R.id.create_task_btn);
+        addRequestButton.setOnClickListener(requestButtonListener);
     }
 }

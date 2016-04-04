@@ -42,7 +42,6 @@ public class MainActivity
     private DrawerLayout menuDrawer;
     private android.support.v7.widget.Toolbar toolbar;
     private NavigationView nvDrawer;
-    // public DatabaseHelper db = new DatabaseHelper(this); // need for fragments
     private ActionBarDrawerToggle drawerToggle;
 
     @Override

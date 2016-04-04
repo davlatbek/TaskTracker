@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Fragments.ActualTasksFragment;
@@ -52,6 +53,7 @@ public class MainActivity
         //Set a toolbar to replace the Actionbar
         toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Set drawer menu
         menuDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -60,6 +62,26 @@ public class MainActivity
 
         menuDrawer.setDrawerListener(drawerToggle);
         setupDrawerContent(nvDrawer);
+
+        final View.OnClickListener originalToolbarListener = drawerToggle.getToolbarNavigationClickListener();
+
+        getFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                if (getFragmentManager().getBackStackEntryCount() > 0) {
+                    drawerToggle.setDrawerIndicatorEnabled(false);
+                    drawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            getFragmentManager().popBackStack();
+                        }
+                    });
+                } else {
+                    drawerToggle.setDrawerIndicatorEnabled(true);
+                    drawerToggle.setToolbarNavigationClickListener(originalToolbarListener);
+                }
+            }
+        });
 
         db = DatabaseHelper.getsInstance(getApplicationContext());
 //        PlugActivity.initDebugData(db);

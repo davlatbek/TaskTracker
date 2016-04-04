@@ -40,7 +40,9 @@ public class PlanFragment extends Fragment
             = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            addTaskCaller.callAddTask(-1L, null);
+            Calendar date = (Calendar) sliderFragment.getWeekFirstDay().clone();
+            date.set(Calendar.DAY_OF_WEEK,weekDaysFragment.getCurrentDay());
+            addTaskCaller.callAddTask(-1L, date);
         }
     };
 

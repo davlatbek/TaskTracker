@@ -46,5 +46,7 @@ public class DoneTasksFragment extends Fragment implements ParentFragment {
     @Override
     public void onChildCreated() {
         tasksListFragment.setTaskHierarchy(db.getDoneTasks());
+        ImageButton addRequestButton = (ImageButton) getView().findViewById(R.id.create_task_btn);
+        addRequestButton.setVisibility(View.INVISIBLE);
     }
 }

@@ -127,6 +127,21 @@ public class MainActivity
         fragmentManager.executePendingTransactions();
     }
 
+    public void setCurrentFragmentAddBackStack(Fragment fragment) {
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
+        fragmentManager.executePendingTransactions();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() > 0 ){
+            getFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (drawerToggle.onOptionsItemSelected(item)) {
@@ -174,7 +189,7 @@ public class MainActivity
     @Override
     public void callPlanFragment(Calendar first_day, int day_of_week) {
         PlanFragment fragment = new PlanFragment();
-        setCurrentFragment(fragment);
+        setCurrentFragmentAddBackStack(fragment);
         int i = 5;
         while (i-- > 0) {
             try {
@@ -191,7 +206,7 @@ public class MainActivity
     public void callCourseOverviewFragment(long course_id) {
         CourseOverviewFragment fragment = new CourseOverviewFragment();
         fragment.setCourseID(course_id);
-        setCurrentFragment(fragment);
+        setCurrentFragmentAddBackStack(fragment);
     }
 
     @Override
@@ -203,18 +218,18 @@ public class MainActivity
     @Override
     public void callActualTasks() {
         ActualTasksFragment fragment = new ActualTasksFragment();
-        setCurrentFragment(fragment);
+        setCurrentFragmentAddBackStack(fragment);
     }
 
     @Override
     public void callDoneTasks() {
         DoneTasksFragment fragment = new DoneTasksFragment();
-        setCurrentFragment(fragment);
+        setCurrentFragmentAddBackStack(fragment);
     }
 
     @Override
     public void callOverdueTasks() {
         OverdueTasksFragment fragment = new OverdueTasksFragment();
-        setCurrentFragment(fragment);
+        setCurrentFragmentAddBackStack(fragment);
     }
 }

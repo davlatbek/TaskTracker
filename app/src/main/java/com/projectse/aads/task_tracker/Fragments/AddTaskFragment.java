@@ -12,6 +12,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,9 +25,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ScrollView;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.Adapters.SubtasksAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
@@ -52,13 +51,20 @@ public class AddTaskFragment extends TaskFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle("Add Task");
         View view = inflater.inflate(R.layout.shared_content_task_new, container, false);
-        getViews(view);
         //setupUI(view.findViewById(R.id.parentId));
         //parent_id = getArguments().getLong("parent_id", -1L);
+        getViews(view);
         task = new TaskModel();
         course = new CourseModel();
         setPrioritySpinner(view);
+        setHasOptionsMenu(true);
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        //super.onCreateOptionsMenu(menu, inflater);
+        getActivity().getMenuInflater().inflate(R.menu.menu_plan_overviewmenu_plan_addtask.xml, menu);
     }
 
     @Override
@@ -85,7 +91,12 @@ public class AddTaskFragment extends TaskFragment {
             case android.R.id.home:
                 //finish();
                 return true;
+            /*case android.R.id.action_addtask:
+                addAndSaveToDb(getView());
+                return true;*/
         }
+        if (item.getTitle().equals("add"))
+            addAndSaveToDb(getView());
         return super.onOptionsItemSelected(item);
     }
 

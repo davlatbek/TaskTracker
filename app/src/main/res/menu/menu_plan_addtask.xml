@@ -6,6 +6,6 @@
         android:id="@+id/action_addtask"
         android:orderInCategory="100"
         android:icon="@drawable/ic_save_24dp"
-        android:title="add"
+        android:title="addtask"
         app:showAsAction="always" />
 </menu>

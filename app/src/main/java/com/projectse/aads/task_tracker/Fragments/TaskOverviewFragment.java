@@ -13,6 +13,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,10 +33,14 @@ import android.widget.Toast;
 import com.projectse.aads.task_tracker.Adapters.SubtasksAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Dialogs.ListOfCourses;
+import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
+import com.projectse.aads.task_tracker.Interfaces.EditTaskCaller;
+import com.projectse.aads.task_tracker.Interfaces.TaskOverviewCaller;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.NotifyService.AlertReceiver;
 import com.projectse.aads.task_tracker.R;
+import com.projectse.aads.task_tracker.TaskEditActivity;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -47,6 +53,7 @@ import java.util.TimeZone;
  */
 public class TaskOverviewFragment extends TaskFragment {
     private Long parent_id = -1L;
+    EditTaskCaller editTaskCaller;
 
     @Nullable
     @Override
@@ -62,7 +69,41 @@ public class TaskOverviewFragment extends TaskFragment {
         } catch (Exception e) {
             e.printStackTrace();
         }*/
+        setHasOptionsMenu(true);
         return view;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof EditTaskCaller) {
+            editTaskCaller = (EditTaskCaller) activity;
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().getMenuInflater().inflate(R.menu.menu_plan_overview, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                //finish();
+                return true;
+            /*case android.R.id.action_edittask:
+                return true;*/
+        }
+        if (item.getTitle().equals("edittask")) {
+            Intent intent = new Intent(getActivity(), TaskEditActivity.class);
+            intent.putExtra("task_id", task.getId());
+            editTaskCaller.callEditTask();
+        }
+        else if (item.getTitle().equals("deletetask"))
+            createDeleteDialog();
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -76,18 +117,7 @@ public class TaskOverviewFragment extends TaskFragment {
         clearSubtasks.setVisibility(View.INVISIBLE);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                //finish();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    /*private void createDeleteDialog() {
+    private void createDeleteDialog() {
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity().getApplicationContext());
         alertDialog.setMessage("Are you sure you want to delete this task?");
 
@@ -103,14 +133,14 @@ public class TaskOverviewFragment extends TaskFragment {
                     alertDialog1.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Long task_id = getIntent().getLongExtra("task_id", -1);
+                            /*Long task_id = getIntent().getLongExtra("task_id", -1);
                             for (Long sub_id : task.getSubtasks_ids())
                                 db.deleteTask(sub_id);
                             db.deleteTask(task_id);
                             Intent intent = new Intent();
                             intent.putExtra("deleted_task_id", task_id);
-                            //setResult(RESULT_OK, intent);
-                            //finish();
+                            setResult(RESULT_OK, intent);
+                            finish();*/
                         }
                     });
 
@@ -123,12 +153,12 @@ public class TaskOverviewFragment extends TaskFragment {
 
                     alertDialog1.create().show();
                 } else {
-                    Long task_id = getIntent().getLongExtra("task_id", -1);
+                    /*Long task_id = getIntent().getLongExtra("task_id", -1);
                     db.deleteTask(task_id);
                     Intent intent = new Intent();
                     intent.putExtra("deleted_task_id", task_id);
-                    //setResult(RESULT_OK, intent);
-                    //finish();
+                    setResult(RESULT_OK, intent);
+                    finish();*/
                 }
             }
         });
@@ -141,7 +171,7 @@ public class TaskOverviewFragment extends TaskFragment {
         });
 
         alertDialog.create().show();
-    }*/
+    }
 
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);

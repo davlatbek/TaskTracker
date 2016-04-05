@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -50,10 +51,7 @@ import java.util.TimeZone;
  * Created by Davlatbek Isroilov on 4/3/2016.
  * Innopolis University
  */
-public class TaskFragment extends Fragment {
-
-    DatabaseHelper databaseHelper;
-
+public abstract class TaskFragment extends Fragment implements AddSubtaskDialog.NoticeDialogListener {
     // Views
     protected Button priorityColor;
     protected Spinner spinnerPriority;
@@ -70,7 +68,7 @@ public class TaskFragment extends Fragment {
 
     protected Button buttonDateDeadline, buttonDateStartTime, addSubtasks, clearSubtasks;
 
-    protected static DatabaseHelper db = null;
+    protected static DatabaseHelper db;
     protected ListView subtasksListView = null;
     protected static List<TaskModel> subtasks_list = new ArrayList<>();
     protected static SubtasksAdapter<TaskModel> subtasks_adapter = null;
@@ -80,8 +78,8 @@ public class TaskFragment extends Fragment {
     protected ListOfCourses dialogFragmentBuilder;
 
     // Current task
-    public static TaskModel task = null;
-    public static CourseModel course = null;
+    protected static TaskModel task = null;
+    protected static CourseModel course = null;
 
     @Nullable
     @Override
@@ -134,7 +132,7 @@ public class TaskFragment extends Fragment {
         subtasksListView = (ListView) view.findViewById(R.id.listViewSubtasks);
 
         courseView = (TextView) view.findViewById(R.id.coursename);
-        //dialogFragmentBuilder = new ListOfCourses(getActivity().getApplicationContext(), databaseHelper);
+        //dialogFragmentBuilder = new ListOfCourses(getActivity(), db);
     }
 
     protected void fillData(long course_id) throws Exception {
@@ -142,13 +140,13 @@ public class TaskFragment extends Fragment {
             spinnerPriority.setSelection(task.priorityToInt(task.getPriority()));
             switch (task.getPriority()){
                 case LOW:
-                    priorityColor.setBackgroundColor(Color.GREEN);
+                    priorityColor.setBackgroundColor(getResources().getColor(R.color.lowPriority));
                     break;
                 case MEDIUM:
-                    priorityColor.setBackgroundColor(Color.YELLOW);
+                    priorityColor.setBackgroundColor(getResources().getColor(R.color.mediumPriority));
                     break;
                 case HIGH:
-                    priorityColor.setBackgroundColor(Color.RED);
+                    priorityColor.setBackgroundColor(getResources().getColor(R.color.hignPriority));
                     break;
             }
         } catch (Exception e) {
@@ -160,6 +158,7 @@ public class TaskFragment extends Fragment {
         if (task.getDescription() != null) descView.setText(task.getDescription());
         textViewCourseLabel.setText(db.getCourse(course_id).getAbbreviation());
         textViewCourseLabel.setBackgroundColor(db.getCourse(course_id).getClr());
+        editTextCourseName.setText(db.getCourse(course_id).getName());
         if (task.getStartTime() != null) {
             setDateTime(startTimeDateView, task.getStartTime().getTimeInMillis());
         }
@@ -328,6 +327,11 @@ public class TaskFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDialogDismiss(DialogFragment dialog, TaskModel item) {
+
+    }
+
     public static class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
@@ -377,11 +381,70 @@ public class TaskFragment extends Fragment {
         AddSubtaskDialog newFragment = new AddSubtaskDialog();
         newFragment.parent = getActivity();
         newFragment.show(getFragmentManager(), "sas");
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                subtasks_adapter.notifyDataSetChanged();
-//            }
-//        });
+    }
+
+    public void addSubtask(TaskModel subtask){
+        SubtasksAdapter<TaskModel> adapter = (SubtasksAdapter<TaskModel>) subtasksListView.getAdapter();
+        if( task == null || adapter == null)
+            return;
+        task.addSubtask(subtask);
+        db.updateTask(task);
+    }
+
+    public synchronized void deleteSubtask(final Long subtask_id) {
+        task.deleteSubtask(subtask_id);
+        db.updateTask(task);
+        onResume();
+    }
+
+    public synchronized void OnClearSubtasks(View v) {
+        task.clearSubtasks();
+        db.updateTask(task);
+        onResume();
+    }
+
+    private static void fillSubtasksList(){
+        if(db == null)
+            return;
+        subtasks_list.clear();
+        for(Long id : task.getSubtasks_ids()){
+            TaskModel subtask = db.getTask(id);
+            if(subtask == null)
+                return;
+            subtasks_list.add(subtask);
+        }
+    }
+
+    private boolean isEmptyListSet = false;
+    public void fillSubtasks(){
+        fillSubtasksList();
+        subtasks_adapter = new SubtasksAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1, subtasks_list);
+
+        subtasksListView = (ListView) getView().findViewById(R.id.listViewSubtasks);
+        subtasksListView.setAdapter(subtasks_adapter);
+
+        if(!isEmptyListSet){
+            TextView emptyList = new TextView(getActivity());
+            emptyList.setText("The list of subtasks is empty");
+            subtasksListView.setEmptyView(emptyList);
+            ((ViewGroup) subtasksListView.getParent()).addView(emptyList);
+            emptyList.setTextSize(25);
+            emptyList.setGravity(Gravity.CENTER);
+            emptyList.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT));
+            isEmptyListSet = true;
+        }
+
+        subtasksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, final View view,
+                                    int position, long id) {
+                final TaskModel item = (TaskModel) parent.getItemAtPosition(position);
+                //callTaskOverviewActivity(item);
+            }
+
+        });
     }
 }

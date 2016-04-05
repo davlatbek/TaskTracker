@@ -8,6 +8,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -49,7 +51,35 @@ public class EditTaskFragment extends TaskFragment {
         } catch (Exception e) {
             e.printStackTrace();
         }*/
+        setHasOptionsMenu(true);
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().getMenuInflater().inflate(R.menu.menu_plan_edittask, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                DatabaseHelper db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
+                db.updateTask(task);
+                Intent intent = new Intent();
+                intent.putExtra("task_id", task.getId());
+                //setResult(RESULT_OK, intent);
+                //finish();
+                return true;
+        }
+        if (item.getTitle().equals("savetask")) {
+            // write changes to base
+            db.updateTask(task);
+            long courseID = db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
+            Log.d("UPDATE COURSE", courseID + "");
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /*@Override
@@ -93,21 +123,6 @@ public class EditTaskFragment extends TaskFragment {
         //setResult(RESULT_OK);
         super.onDestroy();
         //finish();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                DatabaseHelper db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
-                db.updateTask(task);
-                Intent intent = new Intent();
-                intent.putExtra("task_id", task.getId());
-                //setResult(RESULT_OK, intent);
-                //finish();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     public void checkCourse(long course_id) {

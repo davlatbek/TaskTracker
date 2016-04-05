@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.projectse.aads.task_tracker.PlanActivity">
     <item
-        android:id="@+id/action_addtask"
-        android:orderInCategory="100"
-        android:icon="@drawable/ic_save_24dp"
-        android:title="add"
-        app:showAsAction="always" />
+    android:id="@+id/action_savetask"
+    android:orderInCategory="100"
+    android:icon="@drawable/ic_save_24dp"
+    android:title="savetask"
+    app:showAsAction="always" />
 </menu>

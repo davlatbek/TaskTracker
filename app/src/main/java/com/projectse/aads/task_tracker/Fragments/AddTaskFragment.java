@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -29,6 +30,10 @@ import android.widget.ScrollView;
 import com.projectse.aads.task_tracker.Adapters.SubtasksAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Dialogs.ListOfCourses;
+import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
+import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
+import com.projectse.aads.task_tracker.Interfaces.DoneTasksCaller;
+import com.projectse.aads.task_tracker.Interfaces.OverdueTasksCaller;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.NotifyService.AlertReceiver;
@@ -45,6 +50,7 @@ import java.util.TimeZone;
  */
 public class AddTaskFragment extends TaskFragment {
     private Long parent_id = -1L;
+    ActualTasksCaller actualTasksCaller;
 
     @Nullable
     @Override
@@ -62,9 +68,16 @@ public class AddTaskFragment extends TaskFragment {
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof ActualTasksCaller) {
+            actualTasksCaller = (ActualTasksCaller) activity;
+        }
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        //super.onCreateOptionsMenu(menu, inflater);
-        getActivity().getMenuInflater().inflate(R.menu.menu_plan_overviewmenu_plan_addtask.xml, menu);
+        getActivity().getMenuInflater().inflate(R.menu.menu_plan_addtask, menu);
     }
 
     @Override
@@ -72,6 +85,7 @@ public class AddTaskFragment extends TaskFragment {
         super.getViews(view);
         textViewCourseLabel.setVisibility(View.INVISIBLE);
         switchDone.setVisibility(View.INVISIBLE);
+        editTextCourseName.setFocusable(false);
         if (getActivity().getIntent().getBooleanExtra("hide_subtasks", false)) {
             ScrollView sub_l = (ScrollView) view.findViewById(R.id.subtasksScrollView);
             sub_l.setVisibility(View.INVISIBLE);
@@ -91,18 +105,16 @@ public class AddTaskFragment extends TaskFragment {
             case android.R.id.home:
                 //finish();
                 return true;
-            /*case android.R.id.action_addtask:
-                addAndSaveToDb(getView());
-                return true;*/
         }
-        if (item.getTitle().equals("add"))
+        if (item.getTitle().equals("addtask")) {
             addAndSaveToDb(getView());
+        }
         return super.onOptionsItemSelected(item);
     }
 
     /**
      * On-click button function for saving created task to database
-     * and then going back to PlanActivity
+     * and then going to actual tasks
      *
      * @param v
      */
@@ -115,9 +127,7 @@ public class AddTaskFragment extends TaskFragment {
                 db.updateCourseToTask(task_id, course_id);
                 Log.d("course id", course_id + "");
             }
-
-            Intent intent = new Intent();
-            intent.putExtra("task_id", (Long) task_id);
+            actualTasksCaller.callActualTasks();
         }
     }
 
@@ -129,7 +139,11 @@ public class AddTaskFragment extends TaskFragment {
     public long addTaskToDatabase() {
         Calendar deadLineCal, startTimeCal;
         deadLineCal = getCalendarFromTxtEditViews(deadlineDateView);
-
+        try {
+            task.setPriority(task.intToPriority(spinnerPriority.getSelectedItemPosition()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (startTimeDateView.getText().toString().equals(""))
             startTimeCal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         else
@@ -197,15 +211,15 @@ public class AddTaskFragment extends TaskFragment {
     public void setPrioritySpinner(View view) {
         super.setPrioritySpinner(view);
         try {
-            switch (spinnerPriority.getSelectedItemPosition()){
+            switch (spinnerPriority.getSelectedItemPosition()) {
                 case 0:
-                    priorityColor.setBackgroundColor(Color.GREEN);
+                    priorityColor.setBackgroundColor(getResources().getColor(R.color.lowPriority));
                     break;
                 case 1:
-                    priorityColor.setBackgroundColor(Color.YELLOW);
+                    priorityColor.setBackgroundColor(getResources().getColor(R.color.mediumPriority));
                     break;
                 case 2:
-                    priorityColor.setBackgroundColor(Color.RED);
+                    priorityColor.setBackgroundColor(getResources().getColor(R.color.hignPriority));
                     break;
             }
         } catch (Exception e) {

@@ -34,6 +34,9 @@ import com.projectse.aads.task_tracker.Adapters.SubtasksAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Dialogs.AddSubtaskDialog;
 import com.projectse.aads.task_tracker.Dialogs.ListOfCourses;
+import com.projectse.aads.task_tracker.Fragments.EditOverviewTask;
+import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
+import com.projectse.aads.task_tracker.Interfaces.TaskOverviewCaller;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
@@ -49,6 +52,8 @@ import java.util.TimeZone;
  * Created by smith on 2/23/16.
  */
 public abstract class TaskActivity extends AppCompatActivity implements AddSubtaskDialog.NoticeDialogListener {
+
+    TaskOverviewCaller taskOverviewCaller;
 
     // Views
     protected EditText nameView;
@@ -371,9 +376,10 @@ public abstract class TaskActivity extends AppCompatActivity implements AddSubta
 
 
     public void callTaskOverviewActivity(TaskModel taskModel){
-        Intent intent = new Intent (getApplicationContext(), TaskOverviewActivity.class);
+        /*Intent intent = new Intent (getApplicationContext(), TaskOverviewActivity.class);
         intent.putExtra("task_id", taskModel.getId());
-        startActivityForResult(intent, RequestCode.REQ_CODE_VIEWTASK);
+        startActivityForResult(intent, RequestCode.REQ_CODE_VIEWTASK);*/
+        taskOverviewCaller.callTaskOverview(taskModel);
 
     }
 

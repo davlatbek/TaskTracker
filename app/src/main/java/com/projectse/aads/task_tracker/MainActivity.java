@@ -1,5 +1,6 @@
 package com.projectse.aads.task_tracker;
 
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
@@ -13,21 +14,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Dialogs.AddSubtaskDialog;
 import com.projectse.aads.task_tracker.Fragments.AddTaskFragment;
 import com.projectse.aads.task_tracker.Fragments.ActualTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.CourseOverviewFragment;
 import com.projectse.aads.task_tracker.Fragments.CoursesFragment;
 import com.projectse.aads.task_tracker.Fragments.DoneTasksFragment;
+import com.projectse.aads.task_tracker.Fragments.EditOverviewTask;
+import com.projectse.aads.task_tracker.Fragments.EditTaskFragment;
 import com.projectse.aads.task_tracker.Fragments.OverdueTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.PlanFragment;
 import com.projectse.aads.task_tracker.Fragments.ProgressFragment;
 import com.projectse.aads.task_tracker.Fragments.SettingsFragment;
 import com.projectse.aads.task_tracker.Fragments.TaskCategoriesFragment;
+import com.projectse.aads.task_tracker.Fragments.TaskOverviewFragment;
 import com.projectse.aads.task_tracker.Fragments.WeeklyViewFragment;
 import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.DoneTasksCaller;
+import com.projectse.aads.task_tracker.Interfaces.EditTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.OverdueTasksCaller;
+import com.projectse.aads.task_tracker.Interfaces.TaskOverviewCaller;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.util.Calendar;
@@ -38,7 +45,8 @@ import java.util.Calendar;
 public class MainActivity
         extends AppCompatActivity
         implements WeeklyViewFragment.onWeekViewEventListener, CoursesFragment.onCourseClickListener,
-        AddTaskCaller, ActualTasksCaller, DoneTasksCaller, OverdueTasksCaller {
+        AddTaskCaller, ActualTasksCaller, DoneTasksCaller, OverdueTasksCaller, EditTaskCaller, TaskOverviewCaller
+    {
     DatabaseHelper db;
     private DrawerLayout menuDrawer;
     private android.support.v7.widget.Toolbar toolbar;
@@ -164,9 +172,10 @@ public class MainActivity
     }
 
     public void callTaskOverviewActivity(TaskModel taskModel) {
-        Intent intent = new Intent(getApplicationContext(), TaskOverviewActivity.class);
+        /*Intent intent = new Intent(getApplicationContext(), TaskOverviewActivity.class);
         intent.putExtra("task_id", taskModel.getId());
-        startActivityForResult(intent, 0);
+        startActivityForResult(intent, 0);*/
+        callTaskOverview(taskModel);
     }
 
     /************************************
@@ -208,6 +217,21 @@ public class MainActivity
     }
 
     @Override
+    public void callEditTask() {
+        EditTaskFragment editTaskFragment = new EditTaskFragment();
+        setCurrentFragment(editTaskFragment);
+    }
+
+    @Override
+    public void callTaskOverview(TaskModel taskModel) {
+        EditOverviewTask taskOverviewFragment = new EditOverviewTask();
+        Bundle bundle = new Bundle();
+        bundle.putLong("task_id", taskModel.getId());
+        taskOverviewFragment.setArguments(bundle);
+        setCurrentFragment(taskOverviewFragment);
+    }
+
+    @Override
     public void callActualTasks() {
         ActualTasksFragment fragment = new ActualTasksFragment();
         setCurrentFragment(fragment);
@@ -224,4 +248,5 @@ public class MainActivity
         OverdueTasksFragment fragment = new OverdueTasksFragment();
         setCurrentFragment(fragment);
     }
+
 }

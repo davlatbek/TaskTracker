@@ -115,8 +115,7 @@
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
             android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:text="DM" />
+            android:paddingBottom="2dp" />
 
     </RelativeLayout>
 

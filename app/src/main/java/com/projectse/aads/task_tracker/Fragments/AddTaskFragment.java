@@ -121,12 +121,12 @@ public class AddTaskFragment extends TaskFragment {
     public void addAndSaveToDb(View v) {
         if (validateTaskFields(v)) {
             long task_id = addTaskToDatabase();
-            long course_id = dialogFragmentBuilder.getCourseId();
+            /*long course_id = dialogFragmentBuilder.getCourseId();
             if (course_id != 0) {
                 db.addCourseToTask(task_id);
                 db.updateCourseToTask(task_id, course_id);
                 Log.d("course id", course_id + "");
-            }
+            }*/
             actualTasksCaller.callActualTasks();
         }
     }
@@ -159,6 +159,7 @@ public class AddTaskFragment extends TaskFragment {
         if (!(parent_id < 0))
             task.setParentTaskId(parent_id);
         setAlarmNotif();
+        db = DatabaseHelper.getsInstance(getActivity());
         return db.addTask(task);
 
     }

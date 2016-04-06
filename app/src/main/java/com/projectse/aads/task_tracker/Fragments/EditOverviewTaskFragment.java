@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
+import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
@@ -43,7 +44,7 @@ import java.util.TimeZone;
  * Created by Davlatbek Isroilov on 4/4/2016.
  * Innopolis University
  */
-public class EditOverviewTask extends TaskFragment{
+public class EditOverviewTaskFragment extends TaskFragment{
     private Long parent_id = -1L;
     private ActualTasksCaller actualTasksCaller;
     private Menu menu;
@@ -82,7 +83,7 @@ public class EditOverviewTask extends TaskFragment{
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (actualTasksCaller instanceof ActualTasksCaller){
+        if (activity instanceof ActualTasksCaller) {
             actualTasksCaller = (ActualTasksCaller) activity;
         }
     }
@@ -107,14 +108,21 @@ public class EditOverviewTask extends TaskFragment{
             menu.findItem(R.id.action_edittask).setEnabled(false).getIcon().setAlpha(70);
         }
         else if (item.getTitle().equals("deletetask")) {
-            //createDeleteDialog();
-            actualTasksCaller.callActualTasks();
+            createDeleteDialog();
+            //actualTasksCaller.callActualTasks();
         }
         else if (item.getTitle().equals("savetask")) {
+            db.updateTask(task);
             switchToOverviewMode();
             menu.findItem(R.id.action_savetask).setEnabled(false).getIcon().setAlpha(70);
             menu.findItem(R.id.action_deletetask).setEnabled(true).getIcon().setAlpha(255);
             menu.findItem(R.id.action_edittask).setEnabled(true).getIcon().setAlpha(255);
+            try {
+                fillData(course.getId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            //long courseID = db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
         }
         return super.onOptionsItemSelected(item);
     }
@@ -132,9 +140,15 @@ public class EditOverviewTask extends TaskFragment{
     }
 
     private void setDefaultOverviewView() {
-        spinnerPriority.setEnabled(false);
+        switchDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                task.setIsDone(isChecked);
+            }
+        });
         switchDone.setEnabled(true);
         switchDone.setAlpha(1f);
+        spinnerPriority.setEnabled(false);
         buttonCourseSelect.setEnabled(false);
         buttonCourseSelect.setAlpha(.4f);
         buttonDateStartTime.setEnabled(false);
@@ -150,12 +164,10 @@ public class EditOverviewTask extends TaskFragment{
         descView.setFocusable(false);
         editTextCourseName.setFocusable(false);
         durationView.setFocusable(false);*/
-        //nameView.setEnabled(false);
-        nameView.setActivated(false);
     }
 
     private void createDeleteDialog() {
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity().getApplicationContext());
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
         alertDialog.setMessage("Are you sure you want to delete this task?");
 
         alertDialog.setCancelable(false);
@@ -164,20 +176,16 @@ public class EditOverviewTask extends TaskFragment{
             public void onClick(DialogInterface dialog, int which) {
                 if (task.getSubtasks_ids().size() > 0) {
                     AlertDialog.Builder alertDialog1 = new AlertDialog.Builder(alertDialog.getContext());
-                    alertDialog1.setMessage("Task contains subtasks.\n They also will be deleted. Are you sure?");
+                    alertDialog1.setMessage("This task contains subtasks!\n They will be deleted too. Are you sure?");
 
                     alertDialog1.setCancelable(false);
                     alertDialog1.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            /*Long task_id = getIntent().getLongExtra("task_id", -1);
+                            actualTasksCaller.callActualTasks();
                             for (Long sub_id : task.getSubtasks_ids())
                                 db.deleteTask(sub_id);
-                            db.deleteTask(task_id);
-                            Intent intent = new Intent();
-                            intent.putExtra("deleted_task_id", task_id);
-                            setResult(RESULT_OK, intent);
-                            finish();*/
+                            db.deleteTask(task.getId());
                         }
                     });
 
@@ -190,12 +198,8 @@ public class EditOverviewTask extends TaskFragment{
 
                     alertDialog1.create().show();
                 } else {
-                    /*Long task_id = getIntent().getLongExtra("task_id", -1);
-                    db.deleteTask(task_id);
-                    Intent intent = new Intent();
-                    intent.putExtra("deleted_task_id", task_id);
-                    setResult(RESULT_OK, intent);
-                    finish();*/
+                    actualTasksCaller.callActualTasks();
+                    db.deleteTask(task.getId());
                 }
             }
         });
@@ -240,7 +244,6 @@ public class EditOverviewTask extends TaskFragment{
         switchDone.setEnabled(false);
         switchDone.setAlpha(.4f);
         spinnerPriority.setEnabled(true);
-        spinnerPriority.setAlpha(1f);
         buttonCourseSelect.setEnabled(true);
         buttonCourseSelect.setAlpha(1f);
         buttonDateStartTime.setEnabled(true);
@@ -254,9 +257,7 @@ public class EditOverviewTask extends TaskFragment{
 
         /*nameView.setFocusable(true);
         descView.setFocusable(true);
-        editTextCourseName.setFocusable(true);
         durationView.setFocusable(true);*/
-        nameView.setEnabled(true);
     }
 
     /****************
@@ -267,28 +268,6 @@ public class EditOverviewTask extends TaskFragment{
         getActivity().setTitle("Task Overview");
         setDefaultOverviewView();
     }
-
-    /*@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                DatabaseHelper db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
-                db.updateTask(task);
-                Intent intent = new Intent();
-                intent.putExtra("task_id", task.getId());
-                //setResult(RESULT_OK, intent);
-                //finish();
-                return true;
-        }
-        if (item.getTitle().equals("savetask")) {
-            // write changes to base
-            db.updateTask(task);
-            long courseID = db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
-            Log.d("UPDATE COURSE", courseID + "");
-        }
-        return super.onOptionsItemSelected(item);
-    }*/
 
     /*@Override
     public void onResume() {
@@ -321,15 +300,17 @@ public class EditOverviewTask extends TaskFragment{
         super.onPause();
     }*/
 
-    /*@Override
+    @Override
     public void onDestroy() {
-        // write changes to base
+        /*// write changes to base
         DatabaseHelper db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
         db.updateTask(task);
         long courseID = db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
-        Log.d("UPDATE COURSE", courseID + "");
+        Log.d("UPDATE COURSE", courseID + "");*/
+        DatabaseHelper db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
+        db.updateTask(task);
         super.onDestroy();
-    }*/
+    }
 
     public void checkCourse(long course_id) {
         try {
@@ -340,6 +321,27 @@ public class EditOverviewTask extends TaskFragment{
     }
 
     private void setListeners() {
+        spinnerPriority.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("PRIORITY", "Priority: " + position);
+                switch (position) {
+                    case 0:
+                        task.setPriority(TaskModel.Priority.LOW);
+                        break;
+                    case 1:
+                        task.setPriority(TaskModel.Priority.MEDIUM);
+                        break;
+                    case 2:
+                        task.setPriority(TaskModel.Priority.HIGH);
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
         nameView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -418,19 +420,8 @@ public class EditOverviewTask extends TaskFragment{
                 if ((s.toString()).matches("\\d+")) {
                     task.setDuration(Long.parseLong(s.toString()));
                 } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Duration is number only", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(), "Duration is numbers only", Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
-        spinnerPriority.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
     }

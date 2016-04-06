@@ -18,8 +18,10 @@ import android.widget.TextView;
 import com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.CourseModel;
+import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -107,7 +109,14 @@ public class CoursesFragment extends Fragment {
                 abrev.setBackgroundColor(Color.DKGRAY);
             }
 
-            desc.setText("www");
+            List<TaskModel> overdue_tasks = db.getOverdueTasksForCourse(c.getId(), Calendar.getInstance());
+            List<TaskModel> actual_tasks = db.getActualTasksForCourse(c.getId(), Calendar.getInstance());
+            List<TaskModel> done_tasks = db.getDoneTasksForCourse(c.getId());
+
+            desc.setText(done_tasks.size() + " " + getResources().getString(R.string.done) + " | "
+                        +actual_tasks.size() + " " + getResources().getString(R.string.actual) + " | "
+                        +overdue_tasks.size() + " " + getResources().getString(R.string.overdue)
+            );
             id.setText(c.getId().toString());
             requestListItemView.setOnClickListener(requestItemListener);
             requestItemsTable.addView(requestListItemView);

@@ -1,7 +1,6 @@
 package com.projectse.aads.task_tracker.Fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -10,14 +9,13 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.projectse.aads.task_tracker.Adapters.DayPlanOverviewAdapter;
-import com.projectse.aads.task_tracker.Adapters.PlanAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.ParentFragment;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
@@ -44,7 +42,16 @@ public class WeeklyViewFragment extends Fragment implements WeekSliderFragment.o
 
     Map<Integer,List<TaskModel>> week_task_list = new HashMap<>();
 
-    private onWeekViewEventListener listener;
+    private onWeekViewEventListener planViewCaller;
+    private AddTaskCaller addTaskCaller;
+
+    private View.OnClickListener requestButtonListener
+            = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            addTaskCaller.callAddTask(-1L, sliderFragment.getWeekFirstDay());
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -123,13 +130,15 @@ public class WeeklyViewFragment extends Fragment implements WeekSliderFragment.o
                 @Override
                 public void onClick(View v) {
                     Calendar week_first_day = sliderFragment.getWeekFirstDay();
-                    if (listener != null) {
-                        listener.callPlanFragment(week_first_day, finalDay);
+                    if (planViewCaller != null) {
+                        planViewCaller.callPlanFragment(week_first_day, finalDay);
                     }
                 }
             });
         }
 
+        RelativeLayout addRequestButton = (RelativeLayout) view.findViewById(R.id.add_task_btn);
+        addRequestButton.setOnClickListener(requestButtonListener);
 
         return view;
     }
@@ -138,7 +147,10 @@ public class WeeklyViewFragment extends Fragment implements WeekSliderFragment.o
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         if(activity instanceof onWeekViewEventListener){
-            listener = (onWeekViewEventListener) activity;
+            planViewCaller = (onWeekViewEventListener) activity;
+        }
+        if (activity instanceof AddTaskCaller) {
+            addTaskCaller = (AddTaskCaller) activity;
         }
     }
 

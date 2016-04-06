@@ -120,9 +120,20 @@ public class PlugActivity extends Activity {
         t_D_UX_0.setIsDone(true);
         t_D_UX_0.setId(db.addTask(t_D_UX_0));
 
+        TaskModel t_A_UX_0 = new TaskModel();
+        t_A_UX_0.setName("Create Use Cases");
+        st = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        dd = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        t_A_UX_0.setStartTime(st);
+        t_A_UX_0.setDeadline(dd);
+        t_A_UX_0.setPriority(TaskModel.Priority.MEDIUM);
+        t_A_UX_0.setId(db.addTask(t_A_UX_0));
+
         try {
             db.addCourseToTask(t_D_UX_0.getId());
             db.updateCourseToTask(t_D_UX_0.getId(), cUXUI.getId());
+            db.addCourseToTask(t_A_UX_0.getId());
+            db.updateCourseToTask(t_A_UX_0.getId(), cUXUI.getId());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -160,6 +171,42 @@ public class PlugActivity extends Activity {
         t_A_OOP_1.setDeadline(dd);
         t_A_OOP_1.setId(db.addTask(t_A_OOP_1));
 
+        TaskModel t_A_OOP_2 = new TaskModel();
+        t_A_OOP_2.setName("Read Chapter #6");
+        st = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        dd = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        t_A_OOP_2.setStartTime(st);
+        t_A_OOP_2.setDeadline(dd);
+        t_A_OOP_2.setPriority(TaskModel.Priority.LOW);
+        t_A_OOP_2.setId(db.addTask(t_A_OOP_2));
+
+        TaskModel t_A_OOP_3 = new TaskModel();
+        t_A_OOP_3.setName("Prepare for a meeting with Mayer");
+        st = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        dd = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        t_A_OOP_3.setStartTime(st);
+        t_A_OOP_3.setDeadline(dd);
+        t_A_OOP_3.setPriority(TaskModel.Priority.HIGH);
+        t_A_OOP_3.setId(db.addTask(t_A_OOP_3));
+
+        TaskModel t_A_OOP_4 = new TaskModel();
+        t_A_OOP_4.setName("Repeat Inheritance");
+        st = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        dd = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        t_A_OOP_4.setStartTime(st);
+        t_A_OOP_4.setDeadline(dd);
+        t_A_OOP_4.setPriority(TaskModel.Priority.LOW);
+        t_A_OOP_4.setId(db.addTask(t_A_OOP_4));
+
+        TaskModel t_A_OOP_5 = new TaskModel();
+        t_A_OOP_5.setName("Repeat Incapsulation");
+        st = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        dd = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        t_A_OOP_5.setStartTime(st);
+        t_A_OOP_5.setDeadline(dd);
+        t_A_OOP_5.setPriority(TaskModel.Priority.LOW);
+        t_A_OOP_5.setId(db.addTask(t_A_OOP_5));
+
         try {
             db.addCourseToTask(t_D_OOP_0.getId());
             db.updateCourseToTask(t_D_OOP_0.getId(), cOOP.getId());
@@ -167,6 +214,14 @@ public class PlugActivity extends Activity {
             db.updateCourseToTask(t_A_OOP_0.getId(), cOOP.getId());
             db.addCourseToTask(t_A_OOP_1.getId());
             db.updateCourseToTask(t_A_OOP_1.getId(), cOOP.getId());
+            db.addCourseToTask(t_A_OOP_2.getId());
+            db.updateCourseToTask(t_A_OOP_2.getId(), cOOP.getId());
+            db.addCourseToTask(t_A_OOP_3.getId());
+            db.updateCourseToTask(t_A_OOP_3.getId(), cOOP.getId());
+            db.addCourseToTask(t_A_OOP_4.getId());
+            db.updateCourseToTask(t_A_OOP_4.getId(), cOOP.getId());
+            db.addCourseToTask(t_A_OOP_5.getId());
+            db.updateCourseToTask(t_A_OOP_5.getId(), cOOP.getId());
         } catch (Exception e) {
             e.printStackTrace();
         }

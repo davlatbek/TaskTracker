@@ -1,12 +1,15 @@
 package com.projectse.aads.task_tracker.Fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
+import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.ParentFragment;
 import com.projectse.aads.task_tracker.R;
 
@@ -23,6 +26,25 @@ public class PlanFragment extends Fragment
     private WeekDaysFragment weekDaysFragment;
     private TasksListFragment tasksListFragment;
     private WeekSliderFragment sliderFragment;
+    private AddTaskCaller addTaskCaller;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof AddTaskCaller) {
+            addTaskCaller = (AddTaskCaller) activity;
+        }
+    }
+
+    private View.OnClickListener requestButtonListener
+            = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Calendar date = (Calendar) sliderFragment.getWeekFirstDay().clone();
+            date.set(Calendar.DAY_OF_WEEK,weekDaysFragment.getCurrentDay());
+            addTaskCaller.callAddTask(-1L, date);
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,6 +119,8 @@ public class PlanFragment extends Fragment
             week_first_day.setFirstDayOfWeek(Calendar.MONDAY);
             week_first_day.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
             setWeek(week_first_day);
+            ImageButton addRequestButton = (ImageButton) getView().findViewById(R.id.create_task_btn);
+            addRequestButton.setOnClickListener(requestButtonListener);
         }
     }
 }

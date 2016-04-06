@@ -327,11 +327,6 @@ public abstract class TaskFragment extends Fragment implements AddSubtaskDialog.
         }
     }
 
-    @Override
-    public void onDialogDismiss(DialogFragment dialog, TaskModel item) {
-
-    }
-
     public static class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
@@ -377,10 +372,23 @@ public abstract class TaskFragment extends Fragment implements AddSubtaskDialog.
         }
     }
 
+    /****************
+     *SUBTASKS PART*
+     ****************/
+
     public void callAddSubtaskDialog(View view){
         AddSubtaskDialog newFragment = new AddSubtaskDialog();
         newFragment.parent = getActivity();
         newFragment.show(getFragmentManager(), "sas");
+    }
+
+    @Override
+    public void onDialogDismiss(DialogFragment dialog, TaskModel item) {
+        //super.onDismiss(dialog);
+        /*task = db.getTask(getIntent().getLongExtra("task_id",-1L));
+        addSubtask(item);
+        onResume();*/
+        //subtasks_adapter.notifyDataSetChanged();
     }
 
     public void addSubtask(TaskModel subtask){
@@ -416,6 +424,7 @@ public abstract class TaskFragment extends Fragment implements AddSubtaskDialog.
     }
 
     private boolean isEmptyListSet = false;
+
     public void fillSubtasks(){
         fillSubtasksList();
         subtasks_adapter = new SubtasksAdapter<>(getActivity(),

@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
@@ -77,7 +78,6 @@ public class EditOverviewTaskFragment extends TaskFragment{
         Long task_id = getArguments().getLong("task_id");
         task = db.getTask(task_id);
         Long course_id = db.getCourseIdByTaskId(task_id);
-        checkCourse(course_id);
     }*/
 
     @Override
@@ -309,15 +309,8 @@ public class EditOverviewTaskFragment extends TaskFragment{
         Log.d("UPDATE COURSE", courseID + "");*/
         DatabaseHelper db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
         db.updateTask(task);
+        //long courseID = db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
         super.onDestroy();
-    }
-
-    public void checkCourse(long course_id) {
-        try {
-            course = db.getCourse(course_id);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void setListeners() {
@@ -328,12 +321,18 @@ public class EditOverviewTaskFragment extends TaskFragment{
                 switch (position) {
                     case 0:
                         task.setPriority(TaskModel.Priority.LOW);
+                        //priorityColor.setBackgroundColor(getResources().getColor(R.color.lowPriority));
+                        priorityColor.setForeground(new ColorDrawable(getResources().getColor(R.color.lowPriority)));
                         break;
                     case 1:
                         task.setPriority(TaskModel.Priority.MEDIUM);
+                        //priorityColor.setBackgroundColor(getResources().getColor(R.color.mediumPriority));
+                        priorityColor.setForeground(new ColorDrawable(getResources().getColor(R.color.mediumPriority)));
                         break;
                     case 2:
                         task.setPriority(TaskModel.Priority.HIGH);
+                        priorityColor.setBackgroundColor(getResources().getColor(R.color.hignPriority));
+                        priorityColor.setForeground(new ColorDrawable(getResources().getColor(R.color.hignPriority)));
                         break;
                 }
             }

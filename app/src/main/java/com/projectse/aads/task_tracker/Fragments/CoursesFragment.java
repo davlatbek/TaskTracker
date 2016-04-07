@@ -1,22 +1,19 @@
 package com.projectse.aads.task_tracker.Fragments;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
-import com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Dialogs.CourseDialog;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
@@ -46,35 +43,8 @@ public class CoursesFragment extends Fragment {
     private View.OnClickListener requestButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            final CourseModel course = new CourseModel();
-            final DatabaseHelper db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
-            final LayoutInflater inflater = getActivity().getLayoutInflater();
-            View inflate = inflater.inflate(R.layout.add_new_course_form, null);
-            final EditText courseName = (EditText) inflate.findViewById(R.id.coursename);
-            final LobsterShadeSlider shadeSlider = (LobsterShadeSlider) inflate.findViewById(R.id.shadeslider);
-            AlertDialog.Builder addnewcourse = new AlertDialog.Builder(getActivity())
-                    .setTitle("Add new course")
-                    .setView(inflate)
-                    .setPositiveButton("Create", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Get name from field
-                            course.setName(courseName.getText().toString());
-                            // Get color from slider
-                            Integer intColor = shadeSlider.getColor();
-                            course.setClr(intColor);
-                            long id = db.addCourse(course);
-                        }
-
-                    })
-                    .setNegativeButton("Cancel",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
-            addnewcourse.show();
+                CourseDialog newFragment = new CourseDialog("Add new course");
+                newFragment.show(getFragmentManager(), "ecd");
         }
     };
 
@@ -85,6 +55,7 @@ public class CoursesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_course_list, container, false);
 
         ImageButton addRequestButton = (ImageButton) view.findViewById(R.id.create_request_fab);
+      //  addRequestButton.setOnClickListener();
         addRequestButton.setOnClickListener(requestButtonListener);
 
         DatabaseHelper db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
@@ -107,6 +78,30 @@ public class CoursesFragment extends Fragment {
 
             } catch (Resources.NotFoundException e) {
                 abrev.setBackgroundColor(Color.DKGRAY);
+            }
+
+//            int parsedColor = Color.parseColor(String.valueOf(c.getClr()));
+//            abrev.setBackgroundColor(parsedColor);
+
+            switch ((-1)*c.getClr()) {
+                case 7617718: // int parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor1)));
+                    abrev.setBackgroundResource(R.color.coursecolor1);
+                    break;
+                case 16728876: //parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor2)));
+                    abrev.setBackgroundResource(R.color.coursecolor2);
+                    break;
+                case 5317: // parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor3)));
+                    abrev.setBackgroundResource(R.color.coursecolor3);
+                    break;
+                case 2937298: // parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor4)));
+                    abrev.setBackgroundResource(R.color.coursecolor4);
+                    break;
+                case 10011977: // parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor5)));
+                    abrev.setBackgroundResource(R.color.coursecolor5);
+                    break;
+                case 12627531:  //parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor6)));
+                    abrev.setBackgroundResource(R.color.coursecolor6);
+                    break;
             }
 
             List<TaskModel> overdue_tasks = db.getOverdueTasksForCourse(c.getId(), Calendar.getInstance());

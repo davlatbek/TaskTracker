@@ -84,7 +84,7 @@ public class MainActivity
         });
 
         db = DatabaseHelper.getsInstance(getApplicationContext());
-//        PlugActivity.initDebugData(db);
+    //    PlugActivity.initDebugData(db);
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {

@@ -5,10 +5,9 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
-import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,7 +22,6 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -32,13 +30,13 @@ import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.Adapters.SubtasksAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
-import com.projectse.aads.task_tracker.Dialogs.AddSubtaskDialog;
 import com.projectse.aads.task_tracker.Dialogs.ListOfCourses;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
-import com.projectse.aads.task_tracker.TaskEditActivity;
+import com.projectse.aads.task_tracker.RequestCode;
 
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,7 +49,7 @@ import java.util.TimeZone;
  * Created by Davlatbek Isroilov on 4/3/2016.
  * Innopolis University
  */
-public abstract class TaskFragment extends Fragment implements AddSubtaskDialog.NoticeDialogListener {
+public abstract class TaskFragment extends Fragment {
     // Views
     protected Button priorityColor;
     protected Spinner spinnerPriority;
@@ -70,8 +68,9 @@ public abstract class TaskFragment extends Fragment implements AddSubtaskDialog.
 
     protected static DatabaseHelper db;
     protected ListView subtasksListView = null;
-    protected static List<TaskModel> subtasks_list = new ArrayList<>();
-    protected static SubtasksAdapter<TaskModel> subtasks_adapter = null;
+    //protected static SubtasksAdapter<TaskModel> subtasks_adapter = null;
+    //Temporary
+    protected static ArrayAdapter<TaskModel> subtasks_adapter = null;
 
     private static java.text.DateFormat dateFormat = new SimpleDateFormat("dd-MM-yy");
 
@@ -80,6 +79,9 @@ public abstract class TaskFragment extends Fragment implements AddSubtaskDialog.
     // Current task
     protected static TaskModel task = null;
     protected static CourseModel course = null;
+
+    protected List<TaskModel> listAllSubtasks= new ArrayList<>();
+    protected List<TaskModel> listNewSubtasks = new ArrayList<>();
 
     @Nullable
     @Override
@@ -130,6 +132,9 @@ public abstract class TaskFragment extends Fragment implements AddSubtaskDialog.
         });
         clearSubtasks = (Button) view.findViewById(R.id.btnClearSubtasks);
         subtasksListView = (ListView) view.findViewById(R.id.listViewSubtasks);
+        subtasks_adapter = new ArrayAdapter<TaskModel>(getActivity(),
+                android.R.layout.simple_list_item_1, listAllSubtasks);
+        subtasksListView.setAdapter(subtasks_adapter);
 
         courseView = (TextView) view.findViewById(R.id.coursename);
         //dialogFragmentBuilder = new ListOfCourses(getActivity(), db);
@@ -167,7 +172,7 @@ public abstract class TaskFragment extends Fragment implements AddSubtaskDialog.
         }
         if (task.getDuration() != null)
             durationView.setText(task.getDuration().toString());
-        //fillSubtasks();
+        fillSubtasks();
     }
 
     /**
@@ -377,18 +382,23 @@ public abstract class TaskFragment extends Fragment implements AddSubtaskDialog.
      ****************/
 
     public void callAddSubtaskDialog(View view){
-        AddSubtaskDialog newFragment = new AddSubtaskDialog();
-        newFragment.parent = getActivity();
-        newFragment.show(getFragmentManager(), "sas");
+        AddSubtaskDialogFragment dialogFragment = new AddSubtaskDialogFragment();
+        dialogFragment.setTargetFragment(this, RequestCode.REQ_CODE_ADDTASK);
+        dialogFragment.show(getFragmentManager(), "sas");
     }
 
     @Override
-    public void onDialogDismiss(DialogFragment dialog, TaskModel item) {
-        //super.onDismiss(dialog);
-        /*task = db.getTask(getIntent().getLongExtra("task_id",-1L));
-        addSubtask(item);
-        onResume();*/
-        //subtasks_adapter.notifyDataSetChanged();
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RequestCode.REQ_CODE_ADDTASK){
+            String subtaskDetailsString = data.getStringExtra("subtask_details");
+            TaskModel taskModel = new TaskModel();
+            taskModel.setName(subtaskDetailsString);
+            taskModel.setDeadline(Calendar.getInstance());
+            listNewSubtasks.add(taskModel);
+            listAllSubtasks.add(taskModel);
+            subtasks_adapter.notifyDataSetChanged();
+        }
     }
 
     public void addSubtask(TaskModel subtask){
@@ -411,29 +421,35 @@ public abstract class TaskFragment extends Fragment implements AddSubtaskDialog.
         onResume();
     }
 
-    private static void fillSubtasksList(){
+    private  void fillSubtasksList() {
         if(db == null)
             return;
-        subtasks_list.clear();
+        listAllSubtasks.clear();
         for(Long id : task.getSubtasks_ids()){
             TaskModel subtask = db.getTask(id);
             if(subtask == null)
                 return;
-            subtasks_list.add(subtask);
+            listAllSubtasks.add(subtask);
         }
     }
 
     private boolean isEmptyListSet = false;
 
-    public void fillSubtasks(){
-        fillSubtasksList();
-        subtasks_adapter = new SubtasksAdapter<>(getActivity(),
-                android.R.layout.simple_list_item_1, subtasks_list);
+    public void fillSubtasks() {
+        //First, get all subtasks for current task
+        List<Long> subtasks_ids = task.getSubtasks_ids();
+        for(Long id : subtasks_ids) {
+            db = DatabaseHelper.getsInstance(getActivity());
+            TaskModel subtask = db.getTask(id);
+            if(subtask == null)
+                return;
+            listAllSubtasks.add(subtask);
+            subtasks_adapter.notifyDataSetChanged();
+        }
 
-        subtasksListView = (ListView) getView().findViewById(R.id.listViewSubtasks);
-        subtasksListView.setAdapter(subtasks_adapter);
+        //Second, get and add new subtasks to the AllSubtasksList to show
 
-        if(!isEmptyListSet){
+        /*if(!isEmptyListSet){
             TextView emptyList = new TextView(getActivity());
             emptyList.setText("The list of subtasks is empty");
             subtasksListView.setEmptyView(emptyList);
@@ -443,17 +459,15 @@ public abstract class TaskFragment extends Fragment implements AddSubtaskDialog.
             emptyList.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.MATCH_PARENT));
             isEmptyListSet = true;
-        }
+        }*/
 
-        subtasksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
+        /*subtasksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
                 final TaskModel item = (TaskModel) parent.getItemAtPosition(position);
                 //callTaskOverviewActivity(item);
             }
-
-        });
+        });*/
     }
 }

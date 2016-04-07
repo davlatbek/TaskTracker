@@ -1,23 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<AbsoluteLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#dcedc8">
+
+    <Switch
+        android:layout_width="95dp"
+        android:layout_height="wrap_content"
+        android:text="Done"
+        android:id="@+id/switchDoneSubtask"
+        android:layout_marginEnd="51dp"
+        android:splitTrack="false"
+        android:textSize="17sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_x="189dp"
+        android:layout_y="11dp" />
+
+    <Button
+        android:layout_width="151dp"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:id="@+id/buttonSaveSubtask"
+        android:layout_alignWithParentIfMissing="false"
+        android:background="#69a039"
+        android:layout_below="@+id/switchDoneSubtask"
+        android:layout_alignEnd="@+id/switchDoneSubtask"
+        android:layout_x="142dp"
+        android:layout_y="83dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="49dp"
+        android:inputType="text"
+        android:ems="10"
+        android:id="@+id/editTextSubtaskDetails"
+        android:hint="Subtask details ..."
+        android:layout_toStartOf="@+id/switchDoneSubtask"
+        android:layout_below="@+id/textViewSubtaskLabel"
+        android:layout_x="0dp"
+        android:layout_y="38dp" />
+
+    <Button
+        android:layout_width="138dp"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:id="@+id/buttonCancelSubtask"
+        android:background="#aed582"
+        android:layout_alignTop="@+id/editTextSubtaskDetails"
+        android:layout_alignStart="@+id/editTextSubtaskDetails"
+        android:layout_x="4dp"
+        android:layout_y="83dp" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:text="Subtask"
-        android:layout_marginStart="39dp"
-        android:layout_centerVertical="true"
-        android:layout_alignParentStart="true" />
+        android:id="@+id/textViewSubtaskLabel"
+        android:textSize="18sp"
+        android:background="#568c30"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/buttonCancelSubtask"
+        android:layout_x="4dp"
+        android:layout_y="-2dp" />
+
+</AbsoluteLayout>
+
+
+
+
+<!--<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="Subtask"
+        android:textAppearance="?android:attr/textAppearanceLarge">
+    </TextView>
 
     <Switch
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Done"
-        android:id="@+id/switchDoneSubtask"
-        android:layout_marginEnd="28dp"
-        android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true"
-        android:splitTrack="false" />
+        android:text="New Switch"
+        android:id="@+id/switch1" />
 
-</RelativeLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:weightSum="1">
+        <Button
+            android:id="@+id/btnYes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:layout_weight="0.65"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp">
+        </Button>
+
+        <Button
+            android:id="@+id/btnNo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_alignTop="@+id/btnYes"
+            android:layout_toEndOf="@+id/btnYes">
+        </Button>
+    </RelativeLayout>
+
+</LinearLayout>-->

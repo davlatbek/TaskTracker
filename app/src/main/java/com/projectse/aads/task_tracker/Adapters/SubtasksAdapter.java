@@ -47,10 +47,10 @@ public class SubtasksAdapter<T extends Object> extends ArrayAdapter<T> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.subtasks_list_item, null);
-        }
+//        if (convertView == null) {
+//        }
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        convertView = inflater.inflate(R.layout.subtasks_list_item, null);
 
         TextView textChild = (TextView) convertView.findViewById(R.id.txtSubtaskName);
         final TaskModel task = (TaskModel)getItem(position);
@@ -60,11 +60,11 @@ public class SubtasksAdapter<T extends Object> extends ArrayAdapter<T> {
         Button button = (Button)convertView.findViewById(R.id.btnDeleteSubtask);
 
         button.setOnClickListener(new View.OnClickListener() {
-            long id = task.getId();
             @Override
             public void onClick(View view) {
                 Toast.makeText(getContext(), "button is pressed", Toast.LENGTH_SHORT).show();
-                ((TaskActivity)getContext()).deleteSubtask(id);
+                //TODO delete task from data container
+//                ((TaskActivity)getContext()).deleteSubtask(id);
             }
         });
         if(getContext().getClass() == TaskOverviewActivity.class)

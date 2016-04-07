@@ -1,12 +1,9 @@
 package com.projectse.aads.task_tracker.Fragments;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,22 +19,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
-import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 import com.projectse.aads.task_tracker.TaskEditActivity;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -58,7 +53,13 @@ public class EditOverviewTaskFragment extends TaskFragment{
         View view = inflater.inflate(R.layout.shared_content_task_new, container, false);
         //setupUI(view.findViewById(R.id.parentId));
         getViews(view);
+        setHasOptionsMenu(true);
+        return view;
+    }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         Long task_id = getArguments().getLong("task_id");
         task = db.getTask(task_id);
         Long course_id = db.getCourseIdByTaskId(task_id);
@@ -68,11 +69,8 @@ public class EditOverviewTaskFragment extends TaskFragment{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        setHasOptionsMenu(true);
-        return view;
     }
-
-    /*@Override
+/*@Override
     public void onStart() {
         super.onStart();
         Long task_id = getArguments().getLong("task_id");
@@ -112,13 +110,19 @@ public class EditOverviewTaskFragment extends TaskFragment{
             //actualTasksCaller.callActualTasks();
         }
         else if (item.getTitle().equals("savetask")) {
+            for (TaskModel taskModel : super.listNewSubtasks){
+                long sid = db.addTask(taskModel);
+                taskModel.setId(sid);
+                task.addSubtask(taskModel);
+            }
             db.updateTask(task);
+            subtasks_adapter.notifyDataSetChanged();
             switchToOverviewMode();
             menu.findItem(R.id.action_savetask).setEnabled(false).getIcon().setAlpha(70);
             menu.findItem(R.id.action_deletetask).setEnabled(true).getIcon().setAlpha(255);
             menu.findItem(R.id.action_edittask).setEnabled(true).getIcon().setAlpha(255);
             try {
-                fillData(course.getId());
+                fillData(task.getCourse().getId());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -198,8 +202,8 @@ public class EditOverviewTaskFragment extends TaskFragment{
 
                     alertDialog1.create().show();
                 } else {
-                    actualTasksCaller.callActualTasks();
                     db.deleteTask(task.getId());
+                    actualTasksCaller.callActualTasks();
                 }
             }
         });

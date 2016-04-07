@@ -2,16 +2,12 @@ package com.projectse.aads.task_tracker.Fragments;
 
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.Fragment;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,20 +16,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.ScrollView;
 
-import com.projectse.aads.task_tracker.Adapters.SubtasksAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
-import com.projectse.aads.task_tracker.Dialogs.ListOfCourses;
 import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
-import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
-import com.projectse.aads.task_tracker.Interfaces.DoneTasksCaller;
-import com.projectse.aads.task_tracker.Interfaces.OverdueTasksCaller;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.NotifyService.AlertReceiver;
@@ -58,7 +45,6 @@ public class AddTaskFragment extends TaskFragment {
         getActivity().setTitle("Add Task");
         View view = inflater.inflate(R.layout.shared_content_task_new, container, false);
         //setupUI(view.findViewById(R.id.parentId));
-        //parent_id = getArguments().getLong("parent_id", -1L);
         getViews(view);
         task = new TaskModel();
         course = new CourseModel();
@@ -103,11 +89,14 @@ public class AddTaskFragment extends TaskFragment {
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
-                //finish();
                 return true;
         }
         if (item.getTitle().equals("addtask")) {
             addAndSaveToDb(getView());
+            for (TaskModel taskModel : super.listAllSubtasks){
+                task.addSubtask(taskModel);
+                db.updateTask(task);
+            }
         }
         return super.onOptionsItemSelected(item);
     }

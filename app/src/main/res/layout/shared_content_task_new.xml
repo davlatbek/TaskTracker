@@ -278,7 +278,6 @@
                     android:background="@android:drawable/ic_input_add"
                     android:layout_marginLeft="158dp"
                     android:backgroundTint="#5bb55f"
-                    android:onClick="callAddSubtaskDialog"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true" />
 

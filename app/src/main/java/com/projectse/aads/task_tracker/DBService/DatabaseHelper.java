@@ -752,8 +752,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long settingid = 1;
         SQLiteDatabase db = this.getReadableDatabase();
         SettingsModel settings = new SettingsModel();
+        settings.setSettingsName("app_settings");
 
-        String selectQuery = "SELECT * FROM " + TABLE_SETTINGS + " WHERE " + SETTINGS_NAME + " = app_settings";
+        String selectQuery = "SELECT * FROM " + TABLE_SETTINGS; // + " WHERE " + SETTINGS_NAME + " = " + settings.getSettingsName()
         Log.d(TAG, selectQuery);
 
         try (Cursor c = db.rawQuery(selectQuery, null)) {
@@ -779,7 +780,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // add Settings to db
-    public long setSettings(SettingsModel settingsModel) {
+    public long updateSettings(SettingsModel settingsModel) {
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 123123;
         db.beginTransaction();

@@ -30,24 +30,33 @@ public class SettingsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle("Settings");
-        db = new DatabaseHelper(getActivity());
-        settingsModel = db.getAllSettings();
+        db = new DatabaseHelper(getActivity().getApplicationContext());
+//        settingsModel = db.getAllSettings();
+
         View view = inflater.inflate(R.layout.fargment_settings, container, false);
         // InputFields
         beforeStartDate = (EditText) view.findViewById(R.id.startTime);
         beforeDueDate = (EditText) view.findViewById(R.id.dueTime);
         notSpecefiedStartDate = (EditText) view.findViewById(R.id.notSpecefiedStartDate);
+
         // Switches
         startDateSwitch = (Switch) view.findViewById(R.id.startDateSwitch);
         dueDateSwitch = (Switch) view.findViewById(R.id.dueDateSwitch);
+
+        setSettings();
+        beforeStartDate.setSelection(beforeStartDate.getText().length());
+        beforeDueDate.setSelection(beforeDueDate.getText().length());
+        notSpecefiedStartDate.setSelection(notSpecefiedStartDate.getText().length());
         startDateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     // do something when check is selected
                     settingsModel.setAlwaysNotifyStartTime(true);
+                    db.updateSettings(settingsModel);
                 } else {
                     settingsModel.setAlwaysNotifyStartTime(false);
+                    db.updateSettings(settingsModel);
                 }
             }
         });
@@ -57,13 +66,14 @@ public class SettingsFragment extends Fragment {
                 if (isChecked) {
                     // do something when check is selected
                     settingsModel.setAlwaysNotifyDeadLine(true);
+                    db.updateSettings(settingsModel);
                 } else {
                     //do something when unchecked
                     settingsModel.setAlwaysNotifyDeadLine(false);
+                    db.updateSettings(settingsModel);
                 }
             }
         });
-        setSettings();
         return view;
     }
 
@@ -85,7 +95,7 @@ public class SettingsFragment extends Fragment {
         settingsModel.setNotifyDeadLineBefore(Integer.valueOf(beforeStartDate.getText().toString()));
         settingsModel.setNotifyDeadLineBefore(Integer.valueOf(beforeDueDate.getText().toString()));
         settingsModel.setNotifyDeadLineBefore(Integer.valueOf(notSpecefiedStartDate.getText().toString()));
-        id = db.setSettings(settingsModel);
+        id = db.updateSettings(settingsModel);
         Log.i("WRITE TO DB SETTINGS", "write to db "+id);
     }
 }

@@ -9,6 +9,7 @@ package com.projectse.aads.task_tracker.Models;
  * Contain data of Setting entity
  */
 public class SettingsModel {
+    private String SettingsName;
     // allow notify
     private Boolean AlwaysNotifyStartTime;
     private Boolean AlwaysNotifyDeadLine;
@@ -25,7 +26,6 @@ public class SettingsModel {
         this.NotifyDeadLineBefore = 1;
         this.INSSSD = 5;
     }
-
 
 
     public Integer getINSSSD() {
@@ -66,5 +66,13 @@ public class SettingsModel {
 
     public void setNotifyDeadLineBefore(Integer notifyDeadLineBefore) {
         NotifyDeadLineBefore = notifyDeadLineBefore;
+    }
+
+    public String getSettingsName() {
+        return SettingsName;
+    }
+
+    public void setSettingsName(String settingsName) {
+        SettingsName = settingsName;
     }
 }

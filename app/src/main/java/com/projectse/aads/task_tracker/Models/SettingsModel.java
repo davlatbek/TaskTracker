@@ -15,64 +15,56 @@ public class SettingsModel {
     // the time between notification and StartTime/DeadLine
     private Integer NotifyStartTimeBefore;
     private Integer NotifyDeadLineBefore;
-    // number of notifications
-    private Integer NotifyStartTimeXTimes;
-    private Integer NotifyDeadLineXTimes;
+    private Integer INSSSD;
+
 
     public SettingsModel() {
-        AlwaysNotifyStartTime = true;
-        AlwaysNotifyDeadLine = true;
-        NotifyStartTimeBefore = 0;
-        NotifyDeadLineBefore = 0;
-        NotifyStartTimeXTimes = 1;
-        NotifyDeadLineXTimes = 1;
+        this.AlwaysNotifyStartTime = true;
+        this.AlwaysNotifyDeadLine = false;
+        this.NotifyStartTimeBefore = 1;
+        this.NotifyDeadLineBefore = 1;
+        this.INSSSD = 5;
+    }
+
+
+
+    public Integer getINSSSD() {
+        return INSSSD;
+    }
+
+    public void setINSSSD(Integer INSSSD) {
+        this.INSSSD = INSSSD;
     }
 
     public Boolean getAlwaysNotifyStartTime() {
         return AlwaysNotifyStartTime;
     }
 
-    public Boolean getAlwaysNotifyDeadLine() {
-        return AlwaysNotifyDeadLine;
-    }
-
-    public Integer getNotifyStartTimeBefore() {
-        return NotifyStartTimeBefore;
-    }
-
-    public Integer getNotifyDeadLineBefore() {
-        return NotifyDeadLineBefore;
-    }
-
-    public Integer getNotifyStartTimeXTimes() {
-        return NotifyStartTimeXTimes;
-    }
-
-    public Integer getNotifyDeadLineXTimes() {
-        return NotifyDeadLineXTimes;
-    }
-
     public void setAlwaysNotifyStartTime(Boolean alwaysNotifyStartTime) {
         AlwaysNotifyStartTime = alwaysNotifyStartTime;
+    }
+
+    public Boolean getAlwaysNotifyDeadLine() {
+        return AlwaysNotifyDeadLine;
     }
 
     public void setAlwaysNotifyDeadLine(Boolean alwaysNotifyDeadLine) {
         AlwaysNotifyDeadLine = alwaysNotifyDeadLine;
     }
 
+    public Integer getNotifyStartTimeBefore() {
+        return NotifyStartTimeBefore;
+    }
+
     public void setNotifyStartTimeBefore(Integer notifyStartTimeBefore) {
         NotifyStartTimeBefore = notifyStartTimeBefore;
     }
 
+    public Integer getNotifyDeadLineBefore() {
+        return NotifyDeadLineBefore;
+    }
+
     public void setNotifyDeadLineBefore(Integer notifyDeadLineBefore) {
         NotifyDeadLineBefore = notifyDeadLineBefore;
-    }
-
-    public void setNotifyStartTimeXTimes(Integer notifyStartTimeXTimes) {
-        NotifyStartTimeXTimes = notifyStartTimeXTimes;
-    }
-
-    public void setNotifyDeadLineXTimes(Integer notifyDeadLineXTimes) {
-        NotifyDeadLineXTimes = notifyDeadLineXTimes;
     }
 }

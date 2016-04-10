@@ -16,6 +16,7 @@ import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Fragments.AddTaskFragment;
 import com.projectse.aads.task_tracker.Fragments.ActualTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.CourseOverviewFragment;
+import com.projectse.aads.task_tracker.Fragments.CourseProgressFragment;
 import com.projectse.aads.task_tracker.Fragments.CoursesFragment;
 import com.projectse.aads.task_tracker.Fragments.DoneTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.EditOverviewTaskFragment;
@@ -107,7 +108,8 @@ public class MainActivity
                 fragmentClass = CoursesFragment.class;
                 break;
             case R.id.nav_progress_fragment:
-                fragmentClass = ProgressFragment.class;
+                /*fragmentClass = ProgressFragment.class;*/
+                fragmentClass = CourseProgressFragment.class;
                 break;
             case R.id.nav_settings_fragment:
                 fragmentClass = SettingsFragment.class;

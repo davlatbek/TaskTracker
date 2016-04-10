@@ -107,7 +107,6 @@ public class EditOverviewTaskFragment extends TaskFragment{
         }
         else if (item.getTitle().equals("deletetask")) {
             createDeleteDialog();
-            //actualTasksCaller.callActualTasks();
         }
         else if (item.getTitle().equals("savetask")) {
             for (TaskModel taskModel : super.listNewSubtasks){
@@ -115,7 +114,11 @@ public class EditOverviewTaskFragment extends TaskFragment{
                 taskModel.setId(sid);
                 task.addSubtask(taskModel);
             }
+            super.listNewSubtasks.clear();
             db.updateTask(task);
+
+            super.listAllSubtasks.clear();
+            super.fillSubtasks();
             subtasks_adapter.notifyDataSetChanged();
             switchToOverviewMode();
             menu.findItem(R.id.action_savetask).setEnabled(false).getIcon().setAlpha(70);
@@ -163,10 +166,10 @@ public class EditOverviewTaskFragment extends TaskFragment{
         addSubtasks.setAlpha(.4f);
         /*clearSubtasks.setEnabled(false);
         clearSubtasks.setAlpha(.4f);*/
+        editTextCourseName.setFocusable(false);
 
         /*nameView.setFocusable(false);
         descView.setFocusable(false);
-        editTextCourseName.setFocusable(false);
         durationView.setFocusable(false);*/
     }
 
@@ -186,10 +189,11 @@ public class EditOverviewTaskFragment extends TaskFragment{
                     alertDialog1.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            actualTasksCaller.callActualTasks();
                             for (Long sub_id : task.getSubtasks_ids())
                                 db.deleteTask(sub_id);
                             db.deleteTask(task.getId());
+                            actualTasksCaller.callActualTasks();
+
                         }
                     });
 
@@ -225,19 +229,21 @@ public class EditOverviewTaskFragment extends TaskFragment{
 
     public void setupUI(View view) {
         //Set up touch listener for non-text box views to hide keyboard.
-        if (!(view instanceof EditText)) {
-            view.setOnTouchListener(new View.OnTouchListener() {
-                public boolean onTouch(View v, MotionEvent event) {
-                    hideSoftKeyboard(getActivity());
-                    return false;
+        if (view != null){
+            if (!(view instanceof EditText)) {
+                view.setOnTouchListener(new View.OnTouchListener() {
+                    public boolean onTouch(View v, MotionEvent event) {
+                        hideSoftKeyboard(getActivity());
+                        return false;
+                    }
+                });
+            }
+            //If a layout container, iterate over children and seed recursion.
+            if (view instanceof ViewGroup) {
+                for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                    View innerView = ((ViewGroup) view).getChildAt(i);
+                    setupUI(innerView);
                 }
-            });
-        }
-        //If a layout container, iterate over children and seed recursion.
-        if (view instanceof ViewGroup) {
-            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-                View innerView = ((ViewGroup) view).getChildAt(i);
-                setupUI(innerView);
             }
         }
     }
@@ -429,10 +435,10 @@ public class EditOverviewTaskFragment extends TaskFragment{
         });
     }
 
-    // flag for recursion exit. Use in correctTime only.
+    // flag for recursion exit
     private boolean flag = false;
 
-    // return false, if all was correct
+    // return false, if everything is correct
     public boolean correctTime() {
 
         Calendar dCal = getCalendarFromTxtEditViews(deadlineDateView);

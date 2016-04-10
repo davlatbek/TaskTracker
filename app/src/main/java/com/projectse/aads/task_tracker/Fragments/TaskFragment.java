@@ -31,10 +31,12 @@ import android.widget.Toast;
 import com.projectse.aads.task_tracker.Adapters.SubtasksAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Dialogs.ListOfCourses;
+import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 import com.projectse.aads.task_tracker.RequestCode;
+import com.projectse.aads.task_tracker.TaskActivity;
 
 import java.lang.reflect.Array;
 import java.text.ParseException;
@@ -444,8 +446,8 @@ public abstract class TaskFragment extends Fragment {
             if(subtask == null)
                 return;
             listAllSubtasks.add(subtask);
-            subtasks_adapter.notifyDataSetChanged();
         }
+        subtasks_adapter.notifyDataSetChanged();
 
         //Second, get and add new subtasks to the AllSubtasksList to show
 

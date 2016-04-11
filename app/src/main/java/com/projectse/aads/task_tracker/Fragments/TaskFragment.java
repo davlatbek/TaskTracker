@@ -6,11 +6,8 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.BoolRes;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Gravity;
@@ -32,14 +29,11 @@ import android.widget.Toast;
 import com.projectse.aads.task_tracker.Adapters.SubtasksAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Dialogs.ListOfCourses;
-import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 import com.projectse.aads.task_tracker.RequestCode;
-import com.projectse.aads.task_tracker.TaskActivity;
 
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -184,8 +178,8 @@ public abstract class TaskFragment extends Fragment {
      * @param newTaskName
      * @return
      */
-    public boolean isNoSimilarTasks(String newTaskName, CourseModel course) {
-        List<TaskModel> list = db.getListOfTasks(course.getId());
+    public boolean isNoSimilarTasks(String newTaskName, long course_id) {
+        List<TaskModel> list = db.getListOfTasks(course_id);
         for (TaskModel task : list) {
             if (task.getName().equals(newTaskName))
                 return false;
@@ -199,7 +193,7 @@ public abstract class TaskFragment extends Fragment {
      * @return True - if all required fileds are filled
      */
     public boolean validateTaskFields(View view) {
-        Toast toast = new Toast(getActivity().getApplicationContext());
+        Toast toast = new Toast(getActivity());
         toast.setGravity(Gravity.TOP | Gravity.LEFT, 0, 0);
 
         Calendar dCal = getCalendarFromTxtEditViews(deadlineDateView);
@@ -208,25 +202,24 @@ public abstract class TaskFragment extends Fragment {
         EditText editName = (EditText) view.findViewById(R.id.txtName);
 
         if (editName.getText().toString().trim().equals("")) {
-            toast.makeText(getActivity().getApplicationContext(), "Enter the task name!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Enter the task name!", Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        //  !NEED a getCourseIdByCourseName(String courseName) METHOD HERE
-        /*if (!isNoSimilarTasks(editName.getText().toString(), getCourseIdByCourseName(editTextCourseName.getText().toString()))) {
-            toast.makeText(getActivity().getApplicationContext(), "Task with this name already exists!",
+        if (!isNoSimilarTasks(editName.getText().toString(), db.getCourseIdByTaskId(task.getId()))) {
+            Toast.makeText(getActivity(), "Task with this name already exists!",
                     Toast.LENGTH_SHORT).show();
             return false;
-        }*/
+        }
 
         if (deadlineDateView != null) {
             if (deadlineDateView.getText().toString().equals("")) {
-                toast.makeText(getActivity().getApplicationContext(), "Enter the deadline!",
+                Toast.makeText(getActivity(), "Enter the deadline!",
                         Toast.LENGTH_SHORT).show();
                 return false;
             }
             if (stCal != null && stCal.after(dCal)) {
-                toast.makeText(getActivity().getApplicationContext(), "Start date must be before deadline!",
+                Toast.makeText(getActivity(), "Start date must be before deadline!",
                         Toast.LENGTH_SHORT).show();
                 return false;
             }
@@ -236,7 +229,7 @@ public abstract class TaskFragment extends Fragment {
         if (stCal != null && !durationView.getText().toString().equals("") &&
                 dCal.getTime().getTime() - stCal.getTime().getTime()
                         < Long.parseLong(durationView.getText().toString()) * 60 * 60 * 1000) {
-            toast.makeText(getActivity().getApplicationContext(),
+            Toast.makeText(getActivity(),
                     "Duration can't be more than time between deadline and start time!",
                     Toast.LENGTH_SHORT).show();
             return false;
@@ -246,7 +239,7 @@ public abstract class TaskFragment extends Fragment {
         if (stCal == null && !durationView.getText().toString().equals("") &&
                 dCal.getTime().getTime() - Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault()).getTime().getTime()
                         < Long.parseLong(durationView.getText().toString()) * 60 * 60 * 1000) {
-            toast.makeText(getActivity().getApplicationContext(),
+            Toast.makeText(getActivity().getApplicationContext(),
                     "Duration can't be more than time between deadline and current time!",
                     Toast.LENGTH_SHORT).show();
             return false;

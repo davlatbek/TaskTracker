@@ -142,8 +142,9 @@ public class AddTaskFragment extends TaskFragment {
         task.setDescription(descView.getText().toString());
         task.setStartTime(startTimeCal);
         task.setDeadline(deadLineCal);
-        if (!durationView.getText().toString().equals(""))
+        if (!durationView.getText().toString().equals("") || !durationView.getText().toString().equals("0"))
             task.setDuration(Long.parseLong(durationView.getText().toString()));
+        else task.setDuration(1L);
 
         if (!(parent_id < 0))
             task.setParentTaskId(parent_id);

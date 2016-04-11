@@ -55,7 +55,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COURSE_COLOR = "course_color";
     // All keys used in table SETTINGS
 
-    private static final String SETTINGS_NAME = "setting_name";
+    private static final String SETTINGS_ID = "setting_id";
     private static final String SETTINGS_ALWAYS_NOTIFY_START_TIME = "setting_always_notify_start_time";
     private static final String SETTINGS_ALWAYS_NOTIFY_DEADLINE = "setting_always_notify_deadline";
     private static final String SETTINGS_NOTIFY_START_TIME_BEFORE = "setting_notify_start_time_before";
@@ -105,12 +105,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
 
     private static final String CREATE_TABLE_SETTINGS = "CREATE TABLE "
-            + TABLE_SETTINGS + " (" + SETTINGS_NAME + " TEXT DEFAULT 'app_settings', " + SETTINGS_ALWAYS_NOTIFY_START_TIME + " TEXT DEFAULT 'true', "
-            + SETTINGS_ALWAYS_NOTIFY_DEADLINE + " TEXT DEFAULT 'true', " + SETTINGS_NOTIFY_START_TIME_BEFORE
-            + " INTEGER DEFAULT 1, " + SETTINGS_NOTIFY_DEADLINE_BEFORE + " INTEGER DEFAULT 1, "
-            + SETTINGS_NOTIFY_INSSSD + " INTEGER DEFAULT 2);";
+            + TABLE_SETTINGS + " (" + SETTINGS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + SETTINGS_ALWAYS_NOTIFY_START_TIME + " TEXT, "
+            + SETTINGS_ALWAYS_NOTIFY_DEADLINE + " TEXT, " + SETTINGS_NOTIFY_START_TIME_BEFORE
+            + " INTEGER, " + SETTINGS_NOTIFY_DEADLINE_BEFORE + " INTEGER, "
+            + SETTINGS_NOTIFY_INSSSD + " INTEGER);";
 
-    private static final String INSERT_SETTING_ROW = "INSERT INTO `settings` DEFAULT VALUES;";
+//    private static final String INSERT_SETTING_ROW = "INSERT INTO `settings` DEFAULT VALUES;";
     /**
      * CREATE TABLE TABLE_COURSES_TO_TASKS
      */
@@ -176,7 +176,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_COURSES); // create course table
         db.execSQL(CREATE_TABLE_COURSES_TO_TASK); // create course to task table
         db.execSQL(CREATE_TABLE_SETTINGS); // create table settings
-        db.execSQL(INSERT_SETTING_ROW);
     }
 
     /**
@@ -748,13 +747,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // SETTING METHODS
 
     // return object of class SettingModel with all settings
-    public SettingsModel getAllSettings() {
-        long settingid = 1;
+    public SettingsModel getSettings(long settingId) {
         SQLiteDatabase db = this.getReadableDatabase();
         SettingsModel settings = new SettingsModel();
-        settings.setSettingsName("app_settings");
 
-        String selectQuery = "SELECT * FROM " + TABLE_SETTINGS; // + " WHERE " + SETTINGS_NAME + " = " + settings.getSettingsName()
+        String selectQuery = "SELECT * FROM " + TABLE_SETTINGS + " WHERE " + SETTINGS_ID + " = 1";// + settingId;
         Log.d(TAG, selectQuery);
 
         try (Cursor c = db.rawQuery(selectQuery, null)) {
@@ -762,16 +759,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             try {
                 if (c.moveToFirst()) {
                     settings.setAlwaysNotifyDeadLine(Boolean.getBoolean(c.getString(c.getColumnIndex(SETTINGS_ALWAYS_NOTIFY_START_TIME))));
-                    settings.setAlwaysNotifyDeadLine(Boolean.getBoolean(c.getString(c.getColumnIndex(SETTINGS_ALWAYS_NOTIFY_DEADLINE))));
-                    settings.setNotifyDeadLineBefore(Integer.valueOf(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_DEADLINE_BEFORE))));
-                    settings.setNotifyStartTimeBefore(Integer.valueOf(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_START_TIME_BEFORE))));
+                    Log.d(TAG, c.getString(c.getColumnIndex(SETTINGS_ALWAYS_NOTIFY_START_TIME)));
+                    settings.setAlwaysNotifyStartTime(Boolean.getBoolean(c.getString(c.getColumnIndex(SETTINGS_ALWAYS_NOTIFY_DEADLINE))));
+                    Log.d(TAG, c.getString(c.getColumnIndex(SETTINGS_ALWAYS_NOTIFY_DEADLINE)));
+                    settings.setNotifyDeadLineBefore(c.getInt(c.getColumnIndex(SETTINGS_NOTIFY_DEADLINE_BEFORE)));
+                    Log.d(TAG, c.getString(c.getColumnIndex(SETTINGS_NOTIFY_DEADLINE_BEFORE)));
+                    settings.setNotifyStartTimeBefore(c.getInt(c.getColumnIndex(SETTINGS_NOTIFY_START_TIME_BEFORE)));
+                    Log.d(TAG, c.getString(c.getColumnIndex(SETTINGS_NOTIFY_START_TIME_BEFORE)));
                     settings.setINSSSD(c.getInt(c.getColumnIndex(SETTINGS_NOTIFY_INSSSD)));
-                    settings.setSettingsName(c.getString(c.getColumnIndex(SETTINGS_NAME)));
+                    Log.d(TAG, c.getString(c.getColumnIndex(SETTINGS_NOTIFY_INSSSD)));
+                    settings.setSettingsId(c.getLong(c.getColumnIndex(SETTINGS_ID)));
+                    Log.d(TAG, c.getString(c.getColumnIndex(SETTINGS_ID)));
                 }
             } catch (Exception e) {
                 Log.d(TAG, "Error while trying to get settings from database");
             } finally {
-                Log.d(TAG, "GET SETTINGS GOOD");
                 db.endTransaction();
             }
         }
@@ -779,29 +781,55 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return settings;
     }
 
-    // add Settings to db
-    public long updateSettings(SettingsModel settingsModel) {
+    public long addSettings(SettingsModel settingsModel) {
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = 123123;
+        long id = 0;
         db.beginTransaction();
         try {
             ContentValues values = new ContentValues();
+//            values.put(SETTINGS_ID, settingsModel.getSettingsId());
             values.put(SETTINGS_ALWAYS_NOTIFY_START_TIME, settingsModel.getAlwaysNotifyStartTime().toString());
             values.put(SETTINGS_ALWAYS_NOTIFY_DEADLINE, settingsModel.getAlwaysNotifyDeadLine().toString());
             values.put(SETTINGS_NOTIFY_START_TIME_BEFORE, settingsModel.getNotifyStartTimeBefore());
             values.put(SETTINGS_NOTIFY_DEADLINE_BEFORE, settingsModel.getNotifyDeadLineBefore());
             values.put(SETTINGS_NOTIFY_INSSSD, settingsModel.getINSSSD());
-            id = db.update(TABLE_SETTINGS, values, SETTINGS_NAME + " = ?",
-                    new String[]{String.valueOf(settingsModel.getSettingsName())});
+            id = db.insertOrThrow(TABLE_SETTINGS, null, values);
+            Log.i("TAG", "Settings id: "+id);
+            db.setTransactionSuccessful();
+
+        } catch (Exception e) {
+            Log.d(TAG, "Error while trying to add settings to database");
+        } finally {
+            db.endTransaction();
+        }
+        return id;
+    }
+
+    // update Settings to db
+    public void updateSettings(SettingsModel settingsModel) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(SETTINGS_ALWAYS_NOTIFY_START_TIME, settingsModel.getAlwaysNotifyStartTime().toString());
+            Log.d(TAG, settingsModel.getAlwaysNotifyStartTime().toString());
+            values.put(SETTINGS_ALWAYS_NOTIFY_DEADLINE, settingsModel.getAlwaysNotifyDeadLine().toString());
+            Log.d(TAG, settingsModel.getAlwaysNotifyDeadLine().toString());
+            values.put(SETTINGS_NOTIFY_START_TIME_BEFORE, settingsModel.getNotifyStartTimeBefore());
+            Log.d(TAG, settingsModel.getNotifyStartTimeBefore().toString());
+            values.put(SETTINGS_NOTIFY_DEADLINE_BEFORE, settingsModel.getNotifyDeadLineBefore());
+            Log.d(TAG, settingsModel.getNotifyDeadLineBefore().toString());
+            values.put(SETTINGS_NOTIFY_INSSSD, settingsModel.getINSSSD());
+            Log.d(TAG, settingsModel.getINSSSD().toString());
+            db.update(TABLE_SETTINGS, values, SETTINGS_ID + " = ?",
+                    new String[]{String.valueOf(settingsModel.getSettingsId())});
+            Log.d(TAG, settingsModel.getSettingsId().toString());
             db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.d(TAG, "Error in Settings table" + e.getStackTrace());
         } finally {
-            Log.d(TAG, "GOOOD UPDATE");
             db.endTransaction();
         }
-        Log.d("ADD SETTINGS IN TO DB", String.valueOf(id));
-        return id;
     }
 
 

@@ -1,7 +1,6 @@
 package com.projectse.aads.task_tracker.Fragments;
 
 import android.app.Fragment;
-import android.media.audiofx.BassBoost;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,7 +30,6 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle("Settings");
         db = new DatabaseHelper(getActivity().getApplicationContext());
-//        settingsModel = db.getAllSettings();
 
         View view = inflater.inflate(R.layout.fargment_settings, container, false);
         // InputFields
@@ -51,12 +49,10 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    // do something when check is selected
                     settingsModel.setAlwaysNotifyStartTime(true);
-                    db.updateSettings(settingsModel);
+                    storeSettings();
                 } else {
                     settingsModel.setAlwaysNotifyStartTime(false);
-                    db.updateSettings(settingsModel);
                 }
             }
         });
@@ -64,13 +60,9 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    // do something when check is selected
                     settingsModel.setAlwaysNotifyDeadLine(true);
-                    db.updateSettings(settingsModel);
                 } else {
-                    //do something when unchecked
                     settingsModel.setAlwaysNotifyDeadLine(false);
-                    db.updateSettings(settingsModel);
                 }
             }
         });
@@ -78,24 +70,41 @@ public class SettingsFragment extends Fragment {
     }
 
     protected void setSettings() {
-        //set switches
-        settingsModel = db.getAllSettings();
-        startDateSwitch.setChecked(settingsModel.getAlwaysNotifyStartTime());
-        dueDateSwitch.setChecked(settingsModel.getAlwaysNotifyDeadLine());
-        // set text fields
-        beforeStartDate.setText(settingsModel.getNotifyStartTimeBefore()+"");
-        beforeDueDate.setText(settingsModel.getNotifyDeadLineBefore()+"");
-        notSpecefiedStartDate.setText(settingsModel.getINSSSD()+"");
+        try {
+            if (db.getSettings(1L).getSettingsId() != null) {
+                settingsModel = db.getSettings(1L);
+                startDateSwitch.setChecked(settingsModel.getAlwaysNotifyStartTime());
+                dueDateSwitch.setChecked(settingsModel.getAlwaysNotifyDeadLine());
+                // set text fields
+                beforeStartDate.setText(settingsModel.getNotifyStartTimeBefore()+"");
+                beforeDueDate.setText(settingsModel.getNotifyDeadLineBefore()+"");
+                notSpecefiedStartDate.setText(settingsModel.getINSSSD()+"");
+            } else {
+                settingsModel = new SettingsModel();
+                db.addSettings(settingsModel);
+                Log.i("ADD ROW", "SETTINGS");
+                setSettings();
+            }
+        } catch (Exception e)  {
+            e.getStackTrace().toString();
+        }
+    }
+
+    protected void storeSettings(){
+        SettingsModel settingsModel2 = new SettingsModel();
+        settingsModel2.setAlwaysNotifyDeadLine(true);
+        settingsModel2.setAlwaysNotifyStartTime(true);
+        settingsModel2.setINSSSD(3);
+        settingsModel2.setNotifyDeadLineBefore(4);
+        settingsModel2.setNotifyStartTimeBefore(4);
+        settingsModel2.setSettingsId(1L);
+        db.updateSettings(settingsModel2);
+        Log.i("WRITE TO DB SETTINGS", "write to db ");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        long id = 0;
-        settingsModel.setNotifyDeadLineBefore(Integer.valueOf(beforeStartDate.getText().toString()));
-        settingsModel.setNotifyDeadLineBefore(Integer.valueOf(beforeDueDate.getText().toString()));
-        settingsModel.setNotifyDeadLineBefore(Integer.valueOf(notSpecefiedStartDate.getText().toString()));
-        id = db.updateSettings(settingsModel);
-        Log.i("WRITE TO DB SETTINGS", "write to db "+id);
+        storeSettings();
     }
 }

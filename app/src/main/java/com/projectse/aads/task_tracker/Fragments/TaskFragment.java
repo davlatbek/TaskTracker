@@ -206,11 +206,12 @@ public abstract class TaskFragment extends Fragment {
             return false;
         }
 
-        if (!isNoSimilarTasks(editName.getText().toString(), db.getCourseIdByTaskId(task.getId()))) {
+        //course id by course name method needed
+        /*if (!isNoSimilarTasks(editName.getText().toString(), db.getCourseIdByTaskId(task.getId()))) {
             Toast.makeText(getActivity(), "Task with this name already exists!",
                     Toast.LENGTH_SHORT).show();
             return false;
-        }
+        }*/
 
         if (deadlineDateView != null) {
             if (deadlineDateView.getText().toString().equals("")) {

@@ -312,13 +312,12 @@ public class EditOverviewTaskFragment extends TaskFragment{
 
     @Override
     public void onDestroy() {
-        /*// write changes to base
-        DatabaseHelper db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
+        // write changes to base
+        /*DatabaseHelper db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
         db.updateTask(task);
         long courseID = db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
-        Log.d("UPDATE COURSE", courseID + "");*/
-        DatabaseHelper db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
-        db.updateTask(task);
+        Log.d("UPDATE COURSE", courseID + "");
+        db.updateTask(task);*/
         //long courseID = db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
         super.onDestroy();
     }

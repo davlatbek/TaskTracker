@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.BoolRes;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Gravity;
@@ -89,7 +90,7 @@ public abstract class TaskFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.shared_content_task_new, container, false);
-        db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
+        db = DatabaseHelper.getsInstance(getActivity());
         TimeZone timeZone = TimeZone.getTimeZone("UTC");
         dateFormat.setTimeZone(timeZone);
         return view;
@@ -257,7 +258,7 @@ public abstract class TaskFragment extends Fragment {
         Spinner spinnerPriority = (Spinner) view.findViewById(R.id.spinnerPriority);
         final String[] priorities = new String[]{"Low", "Medium", "High"};
         ArrayAdapter<String> adapterPrioritySpinner =
-                new ArrayAdapter<String>(getActivity().getApplicationContext(),
+                new ArrayAdapter<String>(getActivity(),
                         android.R.layout.simple_spinner_dropdown_item, priorities);
         spinnerPriority.setAdapter(adapterPrioritySpinner);
 
@@ -404,6 +405,16 @@ public abstract class TaskFragment extends Fragment {
             listAllSubtasks.add(taskModel);
             subtasks_adapter.notifyDataSetChanged();
         }
+        else if (requestCode == RequestCode.REQ_CODE_VIEWTASK) {
+            Long subtaskId = data.getLongExtra("subtask_id", -1);
+            String subtaskName= data.getStringExtra("subtask_name");
+            Boolean subtaskIsDone = data.getBooleanExtra("subtask_isdone", true);
+            TaskModel taskModel = db.getTask(subtaskId);
+            taskModel.setName(subtaskName);
+            taskModel.setIsDone(subtaskIsDone);
+            db.updateTask(taskModel);
+            fillSubtasks();
+        }
     }
 
     public void addSubtask(TaskModel subtask){
@@ -426,22 +437,11 @@ public abstract class TaskFragment extends Fragment {
         onResume();
     }
 
-    private  void fillSubtasksList() {
-        if(db == null)
-            return;
-        listAllSubtasks.clear();
-        for(Long id : task.getSubtasks_ids()){
-            TaskModel subtask = db.getTask(id);
-            if(subtask == null)
-                return;
-            listAllSubtasks.add(subtask);
-        }
-    }
-
     private boolean isEmptyListSet = false;
 
     public void fillSubtasks() {
         //First, get all subtasks for current task
+        listAllSubtasks.clear();
         List<Long> subtasks_ids = task.getSubtasks_ids();
         for(Long id : subtasks_ids) {
             db = DatabaseHelper.getsInstance(getActivity());
@@ -452,27 +452,19 @@ public abstract class TaskFragment extends Fragment {
         }
         subtasks_adapter.notifyDataSetChanged();
 
-        //Second, get and add new subtasks to the AllSubtasksList to show
-
-        /*if(!isEmptyListSet){
-            TextView emptyList = new TextView(getActivity());
-            emptyList.setText("The list of subtasks is empty");
-            subtasksListView.setEmptyView(emptyList);
-            ((ViewGroup) subtasksListView.getParent()).addView(emptyList);
-            emptyList.setTextSize(25);
-            emptyList.setGravity(Gravity.CENTER);
-            emptyList.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT));
-            isEmptyListSet = true;
-        }*/
-
-        /*subtasksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        subtasksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
-                final TaskModel item = (TaskModel) parent.getItemAtPosition(position);
-                //callTaskOverviewActivity(item);
+                final TaskModel task = (TaskModel) parent.getItemAtPosition(position);
+                Bundle args = new Bundle();
+                args.putLong("subtask_id", task.getId());
+
+                AddSubtaskDialogFragment dialogFragment = new AddSubtaskDialogFragment();
+                dialogFragment.setArguments(args);
+                dialogFragment.setTargetFragment(TaskFragment.this, RequestCode.REQ_CODE_VIEWTASK);
+                dialogFragment.show(getFragmentManager(), "sas");
             }
-        });*/
+        });
     }
 }

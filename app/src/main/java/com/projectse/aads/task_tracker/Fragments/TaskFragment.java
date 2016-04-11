@@ -269,15 +269,18 @@ public abstract class TaskFragment extends Fragment {
                 switch (position) {
                     case 0:
                         task.setPriority(TaskModel.Priority.LOW);
-                        priorityColor.setForeground(new ColorDrawable(0x4daf51));
+                        //priorityColor.setForeground(new ColorDrawable(0x4daf51));
+                        priorityColor.setBackgroundColor(getResources().getColor(R.color.lowPriority));
                         break;
                     case 1:
                         task.setPriority(TaskModel.Priority.MEDIUM);
-                        priorityColor.setForeground(new ColorDrawable(Color.YELLOW));
+                        //priorityColor.setForeground(new ColorDrawable(Color.YELLOW));
+                        priorityColor.setBackgroundColor(getResources().getColor(R.color.mediumPriority));
                         break;
                     case 2:
                         task.setPriority(TaskModel.Priority.HIGH);
-                        priorityColor.setForeground(new ColorDrawable(Color.RED));
+                        //priorityColor.setForeground(new ColorDrawable(Color.RED));
+                        priorityColor.setBackgroundColor(getResources().getColor(R.color.hignPriority));
                         break;
                 }
             }

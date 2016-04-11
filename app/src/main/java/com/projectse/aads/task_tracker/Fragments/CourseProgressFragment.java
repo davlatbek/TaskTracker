@@ -81,7 +81,7 @@ public class CourseProgressFragment extends Fragment implements WeekSliderFragme
     public void switchChart(long course_id) {
         List<CourseModel> courses = db.getCourseModelList();
         int coursesNumber = courses.size();
-        chart.setData(createBarChartByCourse(courses.get(i).getId()));
+        chart.setData(createBarChartByCourse(courses.get(0).getId()));
     }
 
     public BarData createBarChartByCourse(long courseId) {

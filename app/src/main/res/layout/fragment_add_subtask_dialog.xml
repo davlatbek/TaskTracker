@@ -27,7 +27,7 @@
         android:background="#69a039"
         android:layout_below="@+id/switchDoneSubtask"
         android:layout_alignEnd="@+id/switchDoneSubtask"
-        android:layout_x="142dp"
+        android:layout_x="139dp"
         android:layout_y="83dp" />
 
     <EditText
@@ -50,7 +50,7 @@
         android:background="#aed582"
         android:layout_alignTop="@+id/editTextSubtaskDetails"
         android:layout_alignStart="@+id/editTextSubtaskDetails"
-        android:layout_x="4dp"
+        android:layout_x="0dp"
         android:layout_y="83dp" />
 
     <TextView
@@ -63,7 +63,7 @@
         android:background="#568c30"
         android:layout_alignParentTop="true"
         android:layout_toStartOf="@+id/buttonCancelSubtask"
-        android:layout_x="4dp"
+        android:layout_x="0dp"
         android:layout_y="-2dp" />
 
 </AbsoluteLayout>

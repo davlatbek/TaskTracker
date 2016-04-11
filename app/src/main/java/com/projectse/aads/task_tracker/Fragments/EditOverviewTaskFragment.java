@@ -41,7 +41,6 @@ import java.util.TimeZone;
  * Innopolis University
  */
 public class EditOverviewTaskFragment extends TaskFragment{
-    private Long parent_id = -1L;
     private ActualTasksCaller actualTasksCaller;
     private Menu menu;
 
@@ -70,7 +69,8 @@ public class EditOverviewTaskFragment extends TaskFragment{
             e.printStackTrace();
         }
     }
-/*@Override
+
+    /*@Override
     public void onStart() {
         super.onStart();
         Long task_id = getArguments().getLong("task_id");
@@ -118,7 +118,6 @@ public class EditOverviewTaskFragment extends TaskFragment{
             db.updateTask(task);
 
             super.listAllSubtasks.clear();
-            super.fillSubtasks();
             subtasks_adapter.notifyDataSetChanged();
             switchToOverviewMode();
             menu.findItem(R.id.action_savetask).setEnabled(false).getIcon().setAlpha(70);
@@ -250,6 +249,7 @@ public class EditOverviewTaskFragment extends TaskFragment{
 
     public void switchToEditMode(){
         getActivity().setTitle("Edit Task");
+        super.listNewSubtasks = new ArrayList<>();
         setListeners();
         switchDone.setEnabled(false);
         switchDone.setAlpha(.4f);
@@ -331,18 +331,18 @@ public class EditOverviewTaskFragment extends TaskFragment{
                 switch (position) {
                     case 0:
                         task.setPriority(TaskModel.Priority.LOW);
-                        //priorityColor.setBackgroundColor(getResources().getColor(R.color.lowPriority));
-                        priorityColor.setForeground(new ColorDrawable(getResources().getColor(R.color.lowPriority)));
+                        priorityColor.setBackgroundColor(getResources().getColor(R.color.lowPriority));
+                        //priorityColor.setForeground(new ColorDrawable(getResources().getColor(R.color.lowPriority)));
                         break;
                     case 1:
                         task.setPriority(TaskModel.Priority.MEDIUM);
-                        //priorityColor.setBackgroundColor(getResources().getColor(R.color.mediumPriority));
-                        priorityColor.setForeground(new ColorDrawable(getResources().getColor(R.color.mediumPriority)));
+                        priorityColor.setBackgroundColor(getResources().getColor(R.color.mediumPriority));
+                        //priorityColor.setForeground(new ColorDrawable(getResources().getColor(R.color.mediumPriority)));
                         break;
                     case 2:
                         task.setPriority(TaskModel.Priority.HIGH);
                         priorityColor.setBackgroundColor(getResources().getColor(R.color.hignPriority));
-                        priorityColor.setForeground(new ColorDrawable(getResources().getColor(R.color.hignPriority)));
+                        //priorityColor.setForeground(new ColorDrawable(getResources().getColor(R.color.hignPriority)));
                         break;
                 }
             }

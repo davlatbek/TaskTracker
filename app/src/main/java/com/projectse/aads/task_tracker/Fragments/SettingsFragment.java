@@ -2,7 +2,6 @@ package com.projectse.aads.task_tracker.Fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +29,6 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle("Settings");
         db = new DatabaseHelper(getActivity().getApplicationContext());
-//        db.addSettings(settingsModel);
         checkSettings();
         View view = inflater.inflate(R.layout.fargment_settings, container, false);
         // InputFields
@@ -44,9 +42,7 @@ public class SettingsFragment extends Fragment {
 
         settingsModel = db.getSettings();
         startDateSwitch.setChecked(settingsModel.getAlwaysNotifyStartTime());
-        Log.i("ASDFASDFASDFASDF", settingsModel.getAlwaysNotifyStartTime().toString());
         dueDateSwitch.setChecked(settingsModel.getAlwaysNotifyDeadLine());
-        Log.i("ASDFASDFASDFASDF", settingsModel.getAlwaysNotifyDeadLine().toString());
 
         // set text fields
         beforeStartDate.setText(settingsModel.getNotifyStartTimeBefore() + "");
@@ -56,7 +52,6 @@ public class SettingsFragment extends Fragment {
         beforeStartDate.setSelection(beforeStartDate.getText().length());
         beforeDueDate.setSelection(beforeDueDate.getText().length());
         notSpecefiedStartDate.setSelection(notSpecefiedStartDate.getText().length());
-
 
         startDateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -91,7 +86,6 @@ public class SettingsFragment extends Fragment {
         } else {
             settingsModel = new SettingsModel();
             db.addSettings(settingsModel);
-            Log.i("ADD ROW", "SETTINGS");
         }
     }
 
@@ -100,18 +94,11 @@ public class SettingsFragment extends Fragment {
         settingsModel.setNotifyDeadLineBefore(Integer.valueOf(beforeDueDate.getText().toString()));
         settingsModel.setINSSSD(Integer.valueOf(notSpecefiedStartDate.getText().toString()));
         db.updateSettings(settingsModel);
-        Log.i("Store SETTINGS", "write to db");
     }
 
     @Override
     public void onPause() {
         super.onPause();
         storeSettings();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-//        setSettings();
     }
 }

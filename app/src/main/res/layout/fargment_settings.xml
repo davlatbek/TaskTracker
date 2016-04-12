@@ -65,14 +65,14 @@
             android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:inputType="phone"
-            android:ems="10"
             android:id="@+id/startTime"
             android:hint="X"
             android:layout_marginLeft="10dp"
             android:layout_weight="0.00"
-            android:numeric="integer"
             android:maxLength="1"
-            android:textColor="@color/abc_primary_text_material_light" />
+            android:textColor="@color/abc_primary_text_material_light"
+            android:digits="0123456789"
+            android:lines="1" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -150,7 +150,9 @@
             android:layout_marginLeft="10dp"
             android:layout_weight="0.00"
             android:maxLength="1"
-            android:textColor="@color/abc_primary_text_material_light" />
+            android:textColor="@color/abc_primary_text_material_light"
+            android:digits="0123456789"
+            android:lines="1" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -186,7 +188,9 @@
         android:layout_alignBaseline="@+id/textView6"
         android:layout_alignBottom="@+id/textView6"
         android:layout_toEndOf="@+id/textView6"
-        android:textColor="@color/abc_primary_text_material_light" />
+        android:textColor="@color/abc_primary_text_material_light"
+        android:digits="0123456789"
+        android:lines="1" />
 
     <TextView
         android:layout_width="wrap_content"

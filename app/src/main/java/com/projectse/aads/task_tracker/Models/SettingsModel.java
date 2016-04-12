@@ -25,6 +25,7 @@ public class SettingsModel {
         this.NotifyStartTimeBefore = 1;
         this.NotifyDeadLineBefore = 1;
         this.INSSSD = 2;
+        this.SettingsId = 1L;
     }
 
 
@@ -74,5 +75,12 @@ public class SettingsModel {
 
     public void setSettingsId(Long settingsId) {
         SettingsId = settingsId;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getAlwaysNotifyDeadLine()).append(getAlwaysNotifyStartTime()).append(getINSSSD()).append(getSettingsId());
+        return String.valueOf(sb);
     }
 }

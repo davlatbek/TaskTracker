@@ -24,49 +24,19 @@ import java.util.TimeZone;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    // Create new instance of our database
-    // In any activity just pass the context and use the singleton method
-    // DatabaseHelper helper = DatabaseHelper.getInstance(this);
-    private static DatabaseHelper sInstance;
-
-    // Using just only one instance to connect
-    public static synchronized DatabaseHelper getsInstance(Context context) {
-        if (sInstance == null) {
-            sInstance = new DatabaseHelper(context.getApplicationContext());
-        }
-        return sInstance;
-    }
-
-    // Constructor
-    public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        context.deleteDatabase(DATABASE_NAME);
-    }
-
-    // Called when the database connection is being configured.
-    // Configure database settings for things like foreign key support
-
-    @Override
-    public void onConfigure(SQLiteDatabase db) {
-        super.onConfigure(db);
-        db.setForeignKeyConstraintsEnabled(true);
-    }
-
-    // Database Name
-    public static String DATABASE_NAME = "task_tracker_database";
-
     // Current version of database
     private static final int DATABASE_VERSION = 1;
-
     // Name of tables
     private static final String TABLE_TASKS = "tasks";
     private static final String TABLE_SUBTASKS = "tasks_to_subtasks";
+
+    // Called when the database connection is being configured.
+    // Configure database settings for things like foreign key support
     private static final String TABLE_COURSES = "courses";
     private static final String TABLE_SETTINGS = "settings";
     private static final String TABLE_PLANS = "plans";
     private static final String TABLE_PLANS_TO_TASKS = "plans_to_tasks";
     private static final String TABLE_COURSES_TO_TASKS = "courses_to_tasks";
-
     // All Keys used in table TASKS
     private static final String TASKS_KEY_ID = "task_id";
     private static final String TASKS_NAME = "task_name";
@@ -79,38 +49,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TASKS_PARENT_TASK = "task_parent_task";
     private static final String TASKS_PRIORITY = "task_priority";
     private static final String TASKS_IS_DONE = "task_is_done";
-
     // All keys used in table COURSES
     private static final String COURSE_ID = "course_id";
     private static final String COURSE_NAME = "course_name";
     private static final String COURSE_COLOR = "course_color";
-
     // All keys used in table SETTINGS
+
+    private static final String SETTINGS_ID = "setting_id";
     private static final String SETTINGS_ALWAYS_NOTIFY_START_TIME = "setting_always_notify_start_time";
     private static final String SETTINGS_ALWAYS_NOTIFY_DEADLINE = "setting_always_notify_deadline";
     private static final String SETTINGS_NOTIFY_START_TIME_BEFORE = "setting_notify_start_time_before";
     private static final String SETTINGS_NOTIFY_DEADLINE_BEFORE = "setting_notify_deadline_before";
-    private static final String SETTINGS_NOTIFY_START_TIME_X_TIMES = "setting_notify_start_time_x_times";
-    private static final String SETTINGS_NOTIFY_DEADLINE_X_TIMES = "setting_notify_deadline_x_times";
-
+    private static final String SETTINGS_NOTIFY_INSSSD = "setting_notify_insssd";
     // All keys used in table PLANS
     private static final String PLANS_ID = "plan_id";
     private static final String PLANS_TYPE = "plan_type";
     private static final String PLANS_DAY = "plan_day";
-
     // All keys used in table PLANS_TO_TASKS
     private static final String PLANS_TO_TASKS_PLAN_ID = "plan_to_task_plan_id";
     private static final String PLANS_TO_TASKS_TASK_ID = "plan_to_task_task_id";
-
     // All keys used in table COURSES_TO_TASKS
     private static final String COURSES_TO_TASKS_CURSE_ID = "courses_to_tasks_curse_id";
     private static final String COURSES_TO_TASKS_TASK_ID = "courses_to_tasks_task_id";
-
-
-    public static String TAG = "tag";
-
-
-    // Tasks Table Create Query
     /**
      * CREATE TABLE tasks (task_id INTEGER PRIMARY KEY AUTOINCREMENT, task_name TEXT,
      * task_description TEXT, task_deadline INTEGER)
@@ -130,13 +90,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + TASKS_PRIORITY + " INTEGER, "
             + "FOREIGN KEY(" + TASKS_PARENT_TASK + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + ")"
             + ");";
-
-//    public DatabaseHelper(Context context) {
-//        super(context,DATABASE_NAME,null,DATABASE_VERSION);
-//    }
-
-
-    // Course Table Create Query
     /**
      * CREATE TABLE courses (course_id INTEGER PRIMARY KEY AUTOINCREMENT, course_name TEXT,
      * course_color INTEGER, course_priority INTEGER)
@@ -146,14 +99,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + TABLE_COURSES + "(" + COURSE_ID
             + " INTEGER PRIMARY KEY AUTOINCREMENT," + COURSE_NAME + " TEXT,"
             + COURSE_COLOR + " INTEGER);";
-
     /**
-     * INSERT DEFAULT COURSE
+     * CREATE TABLE SETTINGS
+     * DEFAULT 'true',
      */
 
-    private static final String INSERT_DEFAULT_COURSE = "INSERT INTO "
-            + TABLE_COURSES + "(" + COURSE_NAME + ") " + "VALUES('Non Academical', 1);";
+    private static final String CREATE_TABLE_SETTINGS = "CREATE TABLE "
+            + TABLE_SETTINGS + " (" + SETTINGS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + SETTINGS_ALWAYS_NOTIFY_START_TIME + " TEXT, "
+            + SETTINGS_ALWAYS_NOTIFY_DEADLINE + " TEXT, " + SETTINGS_NOTIFY_START_TIME_BEFORE
+            + " INTEGER, " + SETTINGS_NOTIFY_DEADLINE_BEFORE + " INTEGER, "
+            + SETTINGS_NOTIFY_INSSSD + " INTEGER);";
 
+//    private static final String INSERT_SETTING_ROW = "INSERT INTO `settings` DEFAULT VALUES;";
     /**
      * CREATE TABLE TABLE_COURSES_TO_TASKS
      */
@@ -164,11 +121,46 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "PRIMARY KEY (" + COURSES_TO_TASKS_TASK_ID + ", " + COURSES_TO_TASKS_CURSE_ID + "), "
             + "FOREIGN KEY(" + COURSES_TO_TASKS_TASK_ID + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + ") ON UPDATE CASCADE,"
             + "FOREIGN KEY(" + COURSES_TO_TASKS_CURSE_ID + ") REFERENCES " + TABLE_COURSES + "(" + COURSE_ID + ") ON UPDATE CASCADE);";
+    // Database Name
+    public static String DATABASE_NAME = "task_tracker_database";
+    public static String TAG = "tag";
+
+
+    // Tasks Table Create Query
+    // Create new instance of our database
+    // In any activity just pass the context and use the singleton method
+    // DatabaseHelper helper = DatabaseHelper.getInstance(this);
+    private static DatabaseHelper sInstance;
+
+//    public DatabaseHelper(Context context) {
+//        super(context,DATABASE_NAME,null,DATABASE_VERSION);
+//    }
+
+
+    // Course Table Create Query
+    // Constructor
+    public DatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+//        context.deleteDatabase(DATABASE_NAME);
+    }
+
+    // Using just only one instance to connect
+    public static synchronized DatabaseHelper getsInstance(Context context) {
+        if (sInstance == null) {
+            sInstance = new DatabaseHelper(context.getApplicationContext());
+        }
+        return sInstance;
+    }
+
+    @Override
+    public void onConfigure(SQLiteDatabase db) {
+        super.onConfigure(db);
+        db.setForeignKeyConstraintsEnabled(true);
+    }
 
     /**
      * CREATE TABLE SUBTASKS
      */
-
 
     /**
      * This method is called by system if the database is accessed but not yet
@@ -183,12 +175,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_TASKS); // create tasks table
         db.execSQL(CREATE_TABLE_COURSES); // create course table
         db.execSQL(CREATE_TABLE_COURSES_TO_TASK); // create course to task table
-//        String selectQuery = "SELECT * FROM " + TABLE_COURSES + " WHERE "
-//                + COURSE_ID + " = 1";
-//        Cursor c = db.rawQuery(selectQuery, null);
-//        if (!c.moveToFirst()) {
-//            db.execSQL(INSERT_DEFAULT_COURSE);
-//        }
+        db.execSQL(CREATE_TABLE_SETTINGS); // create table settings
     }
 
     /**
@@ -304,7 +291,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             ContentValues values = new ContentValues();
             values.put(COURSE_NAME, course.getName());
-            values.put(COURSE_COLOR,course.getClr());
+            values.put(COURSE_COLOR, course.getClr());
             id = db.update(TABLE_COURSES, values, COURSE_ID + " = ?",
                     new String[]{String.valueOf(course.getId())});
             db.setTransactionSuccessful();
@@ -515,7 +502,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);
 
-        try{
+        try {
             if (c.moveToFirst()) {
                 do {
                     CourseModel course = new CourseModel();
@@ -525,7 +512,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     courseArrayList.add(course);
                 } while (c.moveToNext());
             }
-        }finally {
+        } finally {
             c.close();
         }
         return courseArrayList;
@@ -633,16 +620,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public List<TaskModel> getActualTasksForCourse(long coures_id, Calendar date) {
         Calendar due_to_date = (Calendar) date.clone();
-        due_to_date.set(Calendar.HOUR_OF_DAY,0);
-        due_to_date.set(Calendar.MINUTE,0);
-        due_to_date.set(Calendar.SECOND,0);
+        due_to_date.set(Calendar.HOUR_OF_DAY, 0);
+        due_to_date.set(Calendar.MINUTE, 0);
+        due_to_date.set(Calendar.SECOND, 0);
         List<TaskModel> taskList = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
         String sq = "SELECT " + TASKS_KEY_ID + " FROM " + TABLE_COURSES + ", " + TABLE_TASKS + ", "
                 + TABLE_COURSES_TO_TASKS + " WHERE " + TABLE_TASKS + "." + TASKS_KEY_ID + " = " + TABLE_COURSES_TO_TASKS +
                 "." + COURSES_TO_TASKS_TASK_ID + " AND " + TABLE_COURSES + "." + COURSE_ID + " = " + TABLE_COURSES_TO_TASKS + "." + COURSES_TO_TASKS_CURSE_ID
                 + " AND " + COURSES_TO_TASKS_CURSE_ID + " = " + coures_id + " AND " + TASKS_DEADLINE +
-                " > " + due_to_date.getTime().getTime() + " AND " + TASKS_IS_DONE + " == 0"  + " ORDER BY " + TASKS_DEADLINE;
+                " > " + due_to_date.getTime().getTime() + " AND " + TASKS_IS_DONE + " == 0" + " ORDER BY " + TASKS_DEADLINE;
 
         Log.d(TAG, sq);
         Cursor c = db.rawQuery(sq, null);
@@ -665,16 +652,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public List<TaskModel> getOverdueTasksForCourse(long coures_id, Calendar date) {
         Calendar due_to_date = (Calendar) date.clone();
-        due_to_date.set(Calendar.HOUR_OF_DAY,23);
-        due_to_date.set(Calendar.MINUTE,59);
-        due_to_date.set(Calendar.SECOND,59);
+        due_to_date.set(Calendar.HOUR_OF_DAY, 23);
+        due_to_date.set(Calendar.MINUTE, 59);
+        due_to_date.set(Calendar.SECOND, 59);
         List<TaskModel> taskList = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
         String sq = "SELECT " + TASKS_KEY_ID + " FROM " + TABLE_COURSES + ", " + TABLE_TASKS + ", "
                 + TABLE_COURSES_TO_TASKS + " WHERE " + TABLE_TASKS + "." + TASKS_KEY_ID + " = " + TABLE_COURSES_TO_TASKS +
                 "." + COURSES_TO_TASKS_TASK_ID + " AND " + TABLE_COURSES + "." + COURSE_ID + " = " + TABLE_COURSES_TO_TASKS + "." + COURSES_TO_TASKS_CURSE_ID
                 + " AND " + COURSES_TO_TASKS_CURSE_ID + " = " + coures_id + " AND " + TASKS_DEADLINE +
-                " < " + due_to_date.getTime().getTime() + " AND " + TASKS_IS_DONE + " == 0"  + " ORDER BY " + TASKS_DEADLINE;
+                " < " + due_to_date.getTime().getTime() + " AND " + TASKS_IS_DONE + " == 0" + " ORDER BY " + TASKS_DEADLINE;
 
         Log.d(TAG, sq);
         Cursor c = db.rawQuery(sq, null);
@@ -702,7 +689,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + TABLE_COURSES_TO_TASKS + " WHERE " + TABLE_TASKS + "." + TASKS_KEY_ID + " = " + TABLE_COURSES_TO_TASKS +
                 "." + COURSES_TO_TASKS_TASK_ID + " AND " + TABLE_COURSES + "." + COURSE_ID + " = " + TABLE_COURSES_TO_TASKS + "." + COURSES_TO_TASKS_CURSE_ID
                 + " AND " + COURSES_TO_TASKS_CURSE_ID + " = " + coures_id
-                + " AND " + TASKS_IS_DONE + " == 1"  + " ORDER BY " + TASKS_DEADLINE;
+                + " AND " + TASKS_IS_DONE + " == 1" + " ORDER BY " + TASKS_DEADLINE;
 
         Log.d(TAG, sq);
         Cursor c = db.rawQuery(sq, null);
@@ -760,59 +747,70 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // SETTING METHODS
 
     // return object of class SettingModel with all settings
-    public SettingsModel getAllSettings() {
+    public SettingsModel getSettings() {
         SQLiteDatabase db = this.getReadableDatabase();
-        SettingsModel settings = new SettingsModel();
 
-
-        String selectQuery = "SELECT * FROM" + TABLE_SETTINGS;
-        Log.d(TAG, selectQuery);
+        String selectQuery = "SELECT * FROM " + TABLE_SETTINGS + " WHERE " + SETTINGS_ID + " = 1";
 
         Cursor c = db.rawQuery(selectQuery, null);
-        try {
-            if (c.moveToFirst()) {
-                settings.setAlwaysNotifyDeadLine(Boolean.getBoolean(c.getString(c.getColumnIndex(SETTINGS_ALWAYS_NOTIFY_START_TIME))));
-                settings.setAlwaysNotifyDeadLine(Boolean.getBoolean(c.getString(c.getColumnIndex(SETTINGS_ALWAYS_NOTIFY_DEADLINE))));
-                settings.setNotifyStartTimeXTimes(Integer.getInteger(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_START_TIME_X_TIMES))));
-                settings.setNotifyDeadLineXTimes(Integer.getInteger(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_DEADLINE_X_TIMES))));
-                settings.setNotifyDeadLineBefore(Integer.getInteger(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_DEADLINE_BEFORE))));
-                settings.setNotifyStartTimeBefore(Integer.getInteger(c.getString(c.getColumnIndex(SETTINGS_NOTIFY_START_TIME_BEFORE))));
 
-            }
-        } catch (Exception e) {
-            Log.d(TAG, "Error while trying to get settings from database");
-        } finally {
-            if (c != null && !c.isClosed()) {
-                c.close();
-            }
-        }
-
+        if (!c.moveToFirst())
+            return null;
+        SettingsModel settings = new SettingsModel();
+        settings.setAlwaysNotifyDeadLine(Boolean.valueOf(c.getString(c.getColumnIndex(SETTINGS_ALWAYS_NOTIFY_DEADLINE))));
+        settings.setAlwaysNotifyStartTime(Boolean.valueOf(c.getString(c.getColumnIndex(SETTINGS_ALWAYS_NOTIFY_START_TIME))));
+        settings.setNotifyDeadLineBefore(c.getInt(c.getColumnIndex(SETTINGS_NOTIFY_DEADLINE_BEFORE)));
+        settings.setNotifyStartTimeBefore(c.getInt(c.getColumnIndex(SETTINGS_NOTIFY_START_TIME_BEFORE)));
+        settings.setINSSSD(c.getInt(c.getColumnIndex(SETTINGS_NOTIFY_INSSSD)));
+        settings.setSettingsId(c.getLong(c.getColumnIndex(SETTINGS_ID)));
         return settings;
     }
 
-    // return string value of particular setting from DB
-    public String getSetting(String settingName) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String result = "";
-
-        String selectQuery = "SELECT " + settingName + "FROM " + TABLE_SETTINGS;
-        Log.d(TAG, selectQuery);
-
-        Cursor c = db.rawQuery(selectQuery, null);
+    // add settings to database
+    public long addSettings(SettingsModel settingsModel) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long id = 0;
+        db.beginTransaction();
         try {
-            if (c.moveToFirst()) {
-                result = c.getString(c.getColumnIndex(settingName));
-            }
+            ContentValues values = new ContentValues();
+            values.put(SETTINGS_ALWAYS_NOTIFY_START_TIME, settingsModel.getAlwaysNotifyStartTime().toString());
+            values.put(SETTINGS_ALWAYS_NOTIFY_DEADLINE, settingsModel.getAlwaysNotifyDeadLine().toString());
+            values.put(SETTINGS_NOTIFY_START_TIME_BEFORE, settingsModel.getNotifyStartTimeBefore());
+            values.put(SETTINGS_NOTIFY_DEADLINE_BEFORE, settingsModel.getNotifyDeadLineBefore());
+            values.put(SETTINGS_NOTIFY_INSSSD, settingsModel.getINSSSD());
+            id = db.insertOrThrow(TABLE_SETTINGS, null, values);
+            db.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.d(TAG, "Error while trying to get settings from database");
+            Log.d(TAG, "Error while trying to add settings to database");
         } finally {
-            if (c != null && !c.isClosed()) {
-                c.close();
-            }
+            db.endTransaction();
+            db.close();
         }
-
-        return result;
+        return id;
     }
+
+    // update Settings to db
+    public void updateSettings(SettingsModel settingsModel) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(SETTINGS_ALWAYS_NOTIFY_START_TIME, settingsModel.getAlwaysNotifyStartTime().toString());
+            values.put(SETTINGS_ALWAYS_NOTIFY_DEADLINE, settingsModel.getAlwaysNotifyDeadLine().toString());
+            values.put(SETTINGS_NOTIFY_START_TIME_BEFORE, settingsModel.getNotifyStartTimeBefore());
+            values.put(SETTINGS_NOTIFY_DEADLINE_BEFORE, settingsModel.getNotifyDeadLineBefore());
+            values.put(SETTINGS_NOTIFY_INSSSD, settingsModel.getINSSSD());
+            db.update(TABLE_SETTINGS, values, SETTINGS_ID + " = ?",
+                    new String[]{String.valueOf(1)});
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.d(TAG, "Error in Settings table");
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+    }
+
 
     /**
      * Set isDone true for task with id.
@@ -1016,12 +1014,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-
     public List<TaskModel> getActualTasks(Calendar date) {
         Calendar due_to_date = (Calendar) date.clone();
-        due_to_date.set(Calendar.HOUR_OF_DAY,0);
-        due_to_date.set(Calendar.MINUTE,0);
-        due_to_date.set(Calendar.SECOND,0);
+        due_to_date.set(Calendar.HOUR_OF_DAY, 0);
+        due_to_date.set(Calendar.MINUTE, 0);
+        due_to_date.set(Calendar.SECOND, 0);
         List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
 
         String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE " + TASKS_DEADLINE +
@@ -1049,9 +1046,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public List<TaskModel> getOverdueTasks(Calendar date) {
         Calendar due_to_date = (Calendar) date.clone();
-        due_to_date.set(Calendar.HOUR_OF_DAY,23);
-        due_to_date.set(Calendar.MINUTE,59);
-        due_to_date.set(Calendar.SECOND,59);
+        due_to_date.set(Calendar.HOUR_OF_DAY, 23);
+        due_to_date.set(Calendar.MINUTE, 59);
+        due_to_date.set(Calendar.SECOND, 59);
         List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
 
         String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE " + TASKS_DEADLINE +

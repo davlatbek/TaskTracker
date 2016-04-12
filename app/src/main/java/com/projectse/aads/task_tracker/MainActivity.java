@@ -84,7 +84,7 @@ public class MainActivity
         });
 
         db = DatabaseHelper.getsInstance(getApplicationContext());
-    //    PlugActivity.initDebugData(db);
+        //    PlugActivity.initDebugData(db);
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
@@ -157,7 +157,7 @@ public class MainActivity
 
     @Override
     public void onBackPressed() {
-        if (getFragmentManager().getBackStackEntryCount() > 0 ){
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
             getFragmentManager().popBackStack();
         } else {
             super.onBackPressed();

@@ -1,7 +1,5 @@
 package com.projectse.aads.task_tracker.Models;
 
-import android.graphics.Color;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,27 +11,8 @@ public class CourseModel {
 
     private String name;
     private Long id;
-    private int clr =0;
-
-    public String getAbbreviation() {
-        return abbreviation;
-    }
-
+    private int clr = 0;
     private String abbreviation;
-
-    public int getClr() {
-        return clr;
-    }
-
-    public void setClr(int clr) {
-        this.clr = clr;
-    }
-
-    public enum Priority{
-        HIGH, LOW, MEDIUM
-    }
-
-
     // by default priority has low level
     private List<TaskModel> tasksList = new ArrayList<TaskModel>();
 
@@ -45,7 +24,19 @@ public class CourseModel {
 
     }
 
-    public void addTaskToCourse(TaskModel task){
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+
+    public int getClr() {
+        return clr;
+    }
+
+    public void setClr(int clr) {
+        this.clr = clr;
+    }
+
+    public void addTaskToCourse(TaskModel task) {
         this.tasksList.add(task);
     }
 
@@ -94,7 +85,6 @@ public class CourseModel {
         return id;
     }
 
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -107,5 +97,9 @@ public class CourseModel {
 
     public String toString() {
         return this.name;
+    }
+
+    public enum Priority {
+        HIGH, LOW, MEDIUM
     }
 }

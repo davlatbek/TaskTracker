@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/linearLayout4"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:gravity="left|center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Notify about start date"
+            android:id="@+id/notifStartDate"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/abc_primary_text_material_light" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="right">
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/startDateSwitch"
+                android:checked="true"
+                android:singleLine="false"
+                android:splitTrack="false"
+                android:layout_marginRight="20dp"
+                android:textOff="OFF"
+                android:textOn="ON"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/linearLayout5"
+        android:layout_below="@+id/linearLayout4"
+        android:layout_alignParentStart="false"
+        android:gravity="center_vertical"
+        android:weightSum="1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Before"
+            android:id="@+id/Before"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/abc_primary_text_material_light" />
+
+        <EditText
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:id="@+id/startTime"
+            android:hint="X"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="0.00"
+            android:maxLength="1"
+            android:textColor="@color/abc_primary_text_material_light"
+            android:digits="0123456789"
+            android:lines="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="day"
+            android:id="@+id/day"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/abc_primary_text_material_light" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_below="@+id/linearLayout5"
+        android:layout_alignParentStart="true"
+        android:gravity="left|center"
+        android:id="@+id/linearLayout7"
+        android:baselineAligned="false">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Notify about due date"
+            android:id="@+id/notiDueDate"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/abc_primary_text_material_light" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="right">
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/dueDateSwitch"
+                android:checked="true"
+                android:layout_marginRight="20dp"
+                android:textOff="OFF"
+                android:textOn="ON"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/linearLayout6"
+        android:gravity="center_vertical"
+        android:weightSum="1"
+        android:layout_below="@+id/linearLayout7"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Before"
+            android:id="@+id/textView4"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/abc_primary_text_material_light" />
+
+        <EditText
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:ems="10"
+            android:id="@+id/dueTime"
+            android:hint="X"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="0.00"
+            android:maxLength="1"
+            android:textColor="@color/abc_primary_text_material_light"
+            android:digits="0123456789"
+            android:lines="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="day"
+            android:id="@+id/textView5"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/abc_primary_text_material_light" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="If not specefied set start date"
+        android:id="@+id/textView6"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="20dp"
+        android:textColor="@color/abc_primary_text_material_light" />
+
+    <EditText
+        android:layout_width="20dp"
+        android:layout_height="wrap_content"
+        android:inputType="phone"
+        android:ems="10"
+        android:id="@+id/notSpecefiedStartDate"
+        android:hint="X"
+        android:layout_marginLeft="10dp"
+        android:layout_weight="0.00"
+        android:maxLength="1"
+        android:layout_alignBaseline="@+id/textView6"
+        android:layout_alignBottom="@+id/textView6"
+        android:layout_toEndOf="@+id/textView6"
+        android:textColor="@color/abc_primary_text_material_light"
+        android:digits="0123456789"
+        android:lines="1" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="days"
+        android:id="@+id/textView7"
+        android:layout_marginStart="14dp"
+        android:layout_alignBottom="@+id/textView6"
+        android:layout_toEndOf="@+id/notSpecefiedStartDate"
+        android:textColor="@color/abc_primary_text_material_light" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="before due date."
+        android:id="@+id/textView8"
+        android:layout_below="@+id/notSpecefiedStartDate"
+        android:layout_alignStart="@+id/textView6"
+        android:textColor="@color/abc_primary_text_material_light" />
+
+</RelativeLayout>

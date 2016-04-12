@@ -99,5 +99,6 @@
     <string name="done">done</string>
     <string name="overdue">overdue</string>
     <string name="actual">actual</string>
+    <string name="notify_about_start_date">Notify about start date</string>
 
 </resources>

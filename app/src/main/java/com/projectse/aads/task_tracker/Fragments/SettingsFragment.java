@@ -81,12 +81,20 @@ public class SettingsFragment extends Fragment {
     }
 
     protected void checkSettings() {
-        if (db.getSettings().getSettingsId() != null) {
-            settingsModel = db.getSettings();
-        } else {
+        try {
+            if (db.getSettings().getSettingsId() != null) {
+                settingsModel = db.getSettings();
+            }
+        } catch (Exception e) {
             settingsModel = new SettingsModel();
             db.addSettings(settingsModel);
         }
+//        if (db.getSettings().getSettingsId() != null) {
+//            settingsModel = db.getSettings();
+//        } else {
+//            settingsModel = new SettingsModel();
+//            db.addSettings(settingsModel);
+//        }
     }
 
     protected void storeSettings() {

@@ -31,6 +31,7 @@ import com.projectse.aads.task_tracker.Interfaces.OverdueTasksCaller;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Created by Andrey Zolin on 20.03.2016.
@@ -84,7 +85,10 @@ public class MainActivity
         });
 
         db = DatabaseHelper.getsInstance(getApplicationContext());
-        //    PlugActivity.initDebugData(db);
+        // Set default locale prog-ly to English (Customer req)
+        Locale.setDefault(new Locale("en"));
+
+        PlugActivity.initDebugData(db);
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {

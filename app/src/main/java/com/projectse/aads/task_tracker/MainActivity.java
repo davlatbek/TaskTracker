@@ -88,7 +88,7 @@ public class MainActivity
         // Set default locale prog-ly to English (Customer req)
         Locale.setDefault(new Locale("en"));
 
-//        PlugActivity.initDebugData(db);
+        PlugActivity.initDebugData(db);
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
@@ -199,6 +199,11 @@ public class MainActivity
 
     public void callAddTaskActivity() {
         Intent intent = new Intent(getApplicationContext(), TaskAddActivity.class);
+        startActivity(intent);
+    }
+
+    public void callPieChartActivity() {
+        Intent intent = new Intent(getApplicationContext(), PieChartActivity.class);
         startActivity(intent);
     }
 

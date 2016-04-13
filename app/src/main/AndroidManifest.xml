@@ -45,6 +45,9 @@
         <activity
             android:name=".TaskAddActivity"
             android:label="Adding new task"></activity>
+        <activity
+            android:name=".PieChartActivity"
+            android:label="Pie Chart Demo"></activity>
 
         <activity
             android:name=".TaskOverviewActivity"

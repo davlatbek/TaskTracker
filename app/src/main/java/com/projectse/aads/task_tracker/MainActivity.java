@@ -88,7 +88,7 @@ public class MainActivity
         // Set default locale prog-ly to English (Customer req)
         Locale.setDefault(new Locale("en"));
 
-//        PlugActivity.initDebugData(db);
+        PlugActivity.initDebugData(db);
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {

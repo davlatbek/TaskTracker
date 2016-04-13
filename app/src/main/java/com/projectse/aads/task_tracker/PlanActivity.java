@@ -219,7 +219,7 @@ public class PlanActivity extends AppCompatActivity {
 //            taskList = db.getTaskModelList();
 
         ExpandableListView expListview = (ExpandableListView) findViewById(R.id.expListView);
-        expListview.setIndicatorBounds(expListview.getWidth() - 40, expListview.getWidth());
+//        expListview.setIndicatorBounds(expListview.getWidth() - 40, expListview.getWidth());
 
         Map<TaskModel, List<TaskModel>> task_hierarchy = new HashMap<>();
         for (TaskModel task : taskList)

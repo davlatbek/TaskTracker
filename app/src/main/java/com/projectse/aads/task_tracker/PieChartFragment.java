@@ -1,16 +1,21 @@
 package com.projectse.aads.task_tracker;
 
+import android.app.Fragment;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -31,7 +36,7 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 
-public class PieChartActivity extends FragmentActivity implements OnSeekBarChangeListener , OnChartValueSelectedListener {
+public class PieChartFragment extends Fragment implements OnSeekBarChangeListener , OnChartValueSelectedListener {
     protected String[] mParties = new String[] {
             "Party A", "Party B", "Party C", "Party D", "Party E", "Party F", "Party G", "Party H",
             "Party I", "Party J", "Party K", "Party L", "Party M", "Party N", "Party O", "Party P",
@@ -39,31 +44,41 @@ public class PieChartActivity extends FragmentActivity implements OnSeekBarChang
             "Party Y", "Party Z"
     };
 
+    private static View view;
     private PieChart mChart;
     private SeekBar mSeekBarX, mSeekBarY;
     private TextView tvX, tvY;
     
 //    private Typeface tf;
 
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_piechart);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (view != null) {
+            ViewGroup parent = (ViewGroup) view.getParent();
+            if (parent != null)
+                parent.removeView(view);
+        }
+        view = inflater.inflate(R.layout.activity_piechart, null);
+        return view;
+    }
 
-        tvX = (TextView) findViewById(R.id.tvXMax);
-        tvY = (TextView) findViewById(R.id.tvYMax);
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        tvX = (TextView) getView().findViewById(R.id.tvXMax);
+        tvY = (TextView) getView().findViewById(R.id.tvYMax);
 
-        mSeekBarX = (SeekBar) findViewById(R.id.seekBar1);
-        mSeekBarY = (SeekBar) findViewById(R.id.seekBar2);
+        mSeekBarX = (SeekBar) getView().findViewById(R.id.seekBar1);
+        mSeekBarY = (SeekBar) getView().findViewById(R.id.seekBar2);
 
         mSeekBarY.setProgress(10);
 
         mSeekBarX.setOnSeekBarChangeListener(this);
         mSeekBarY.setOnSeekBarChangeListener(this);
 
-        mChart = (PieChart) findViewById(R.id.chart1);
+        mChart = (PieChart) getView().findViewById(R.id.chart1);
         mChart.setUsePercentValues(true);
         mChart.setDescription("");
         mChart.setExtraOffsets(5, 10, 5, 5);
@@ -109,11 +124,11 @@ public class PieChartActivity extends FragmentActivity implements OnSeekBarChang
         l.setYOffset(0f);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.pie, menu);
-        return true;
-    }
+    //    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getActivity().getMenuInflater().inflate(R.menu.pie, menu);
+//        return true;
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

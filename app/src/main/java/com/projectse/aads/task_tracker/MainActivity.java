@@ -203,7 +203,7 @@ public class MainActivity
     }
 
     public void callPieChartActivity() {
-        Intent intent = new Intent(getApplicationContext(), PieChartActivity.class);
+        Intent intent = new Intent(getApplicationContext(), PieChartFragment.class);
         startActivity(intent);
     }
 

@@ -34,8 +34,6 @@ public class DoneTasksFragment extends Fragment implements ParentFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle(R.string.dones_title);
         View view = inflater.inflate(R.layout.fragment_task_category_overview, container, false);
-        ImageButton addRequestButton = (ImageButton) view.findViewById(R.id.create_task_btn);
-        addRequestButton.setVisibility(View.INVISIBLE);
 
         tasksListFragment = new TasksListFragment();
         FragmentManager fm = getChildFragmentManager();

@@ -66,13 +66,11 @@ public class CourseProgressFragment extends Fragment implements WeekSliderFragme
         buttonPreviousChart.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-            //someEventListener.setWeek(week_first_day);
             }
         });
         buttonNextChart.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                //someEventListener.setWeek(week_first_day);
             }
         });
 

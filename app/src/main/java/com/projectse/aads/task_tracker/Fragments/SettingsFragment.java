@@ -1,10 +1,14 @@
 package com.projectse.aads.task_tracker.Fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -25,12 +29,18 @@ public class SettingsFragment extends Fragment {
     EditText beforeDueDate;
     EditText notSpecefiedStartDate;
 
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle("Settings");
         db = new DatabaseHelper(getActivity().getApplicationContext());
         checkSettings();
         View view = inflater.inflate(R.layout.fargment_settings, container, false);
+        setupUI(view);
         // InputFields
         beforeStartDate = (EditText) view.findViewById(R.id.startTime);
         beforeDueDate = (EditText) view.findViewById(R.id.dueTime);
@@ -50,8 +60,11 @@ public class SettingsFragment extends Fragment {
         notSpecefiedStartDate.setText(settingsModel.getINSSSD() + "");
 
         beforeStartDate.setSelection(beforeStartDate.getText().length());
+        beforeStartDate.setSelectAllOnFocus(true);
         beforeDueDate.setSelection(beforeDueDate.getText().length());
+        beforeDueDate.setSelectAllOnFocus(true);
         notSpecefiedStartDate.setSelection(notSpecefiedStartDate.getText().length());
+        notSpecefiedStartDate.setSelectAllOnFocus(true);
 
         startDateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -77,7 +90,42 @@ public class SettingsFragment extends Fragment {
                 }
             }
         });
+
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+    }
+
+    public void setupUI(View view) {
+
+        //Set up touch listener for non-text box views to hide keyboard.
+        if (!(view instanceof EditText)) {
+
+            view.setOnTouchListener(new View.OnTouchListener() {
+
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard(getActivity());
+                    return false;
+                }
+
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+
+                View innerView = ((ViewGroup) view).getChildAt(i);
+
+                setupUI(innerView);
+            }
+        }
     }
 
     protected void checkSettings() {
@@ -89,12 +137,6 @@ public class SettingsFragment extends Fragment {
             settingsModel = new SettingsModel();
             db.addSettings(settingsModel);
         }
-//        if (db.getSettings().getSettingsId() != null) {
-//            settingsModel = db.getSettings();
-//        } else {
-//            settingsModel = new SettingsModel();
-//            db.addSettings(settingsModel);
-//        }
     }
 
     protected void storeSettings() {

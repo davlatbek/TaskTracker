@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
@@ -23,7 +22,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
@@ -32,7 +30,6 @@ import com.projectse.aads.task_tracker.TaskEditActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -50,7 +47,7 @@ public class EditOverviewTaskFragment extends TaskFragment{
         super.onCreateView(inflater, container, savedInstanceState);
         getActivity().setTitle("Task Overview");
         View view = inflater.inflate(R.layout.shared_content_task_new, container, false);
-        //setupUI(view.findViewById(R.id.parentId));
+        setupUI(view);
         getViews(view);
         setHasOptionsMenu(true);
         return view;
@@ -192,7 +189,6 @@ public class EditOverviewTaskFragment extends TaskFragment{
                                 db.deleteTask(sub_id);
                             db.deleteTask(task.getId());
                             actualTasksCaller.callActualTasks();
-
                         }
                     });
 

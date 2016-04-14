@@ -43,8 +43,8 @@ public class CoursesFragment extends Fragment {
     private View.OnClickListener requestButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-                CourseDialog newFragment = new CourseDialog("Add new course");
-                newFragment.show(getFragmentManager(), "ecd");
+            CourseDialog newFragment = new CourseDialog("Add new course");
+            newFragment.show(getFragmentManager(), "ecd");
         }
     };
 
@@ -55,7 +55,7 @@ public class CoursesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_course_list, container, false);
 
         ImageButton addRequestButton = (ImageButton) view.findViewById(R.id.create_request_fab);
-      //  addRequestButton.setOnClickListener();
+        //  addRequestButton.setOnClickListener();
         addRequestButton.setOnClickListener(requestButtonListener);
 
         DatabaseHelper db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
@@ -80,26 +80,23 @@ public class CoursesFragment extends Fragment {
                 abrev.setBackgroundColor(Color.DKGRAY);
             }
 
-//            int parsedColor = Color.parseColor(String.valueOf(c.getClr()));
-//            abrev.setBackgroundColor(parsedColor);
-
-            switch ((-1)*c.getClr()) {
-                case 7617718: // int parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor1)));
+            switch ((-1) * c.getClr()) {
+                case 7617718:
                     abrev.setBackgroundResource(R.color.coursecolor1);
                     break;
-                case 16728876: //parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor2)));
+                case 16728876:
                     abrev.setBackgroundResource(R.color.coursecolor2);
                     break;
-                case 5317: // parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor3)));
+                case 5317:
                     abrev.setBackgroundResource(R.color.coursecolor3);
                     break;
-                case 2937298: // parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor4)));
+                case 2937298:
                     abrev.setBackgroundResource(R.color.coursecolor4);
                     break;
-                case 10011977: // parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor5)));
+                case 10011977:
                     abrev.setBackgroundResource(R.color.coursecolor5);
                     break;
-                case 12627531:  //parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor6)));
+                case 12627531:
                     abrev.setBackgroundResource(R.color.coursecolor6);
                     break;
             }
@@ -109,8 +106,8 @@ public class CoursesFragment extends Fragment {
             List<TaskModel> done_tasks = db.getDoneTasksForCourse(c.getId());
 
             desc.setText(done_tasks.size() + " " + getResources().getString(R.string.done) + " | "
-                        +actual_tasks.size() + " " + getResources().getString(R.string.actual) + " | "
-                        +overdue_tasks.size() + " " + getResources().getString(R.string.overdue)
+                    + actual_tasks.size() + " " + getResources().getString(R.string.actual) + " | "
+                    + overdue_tasks.size() + " " + getResources().getString(R.string.overdue)
             );
             id.setText(c.getId().toString());
             requestListItemView.setOnClickListener(requestItemListener);

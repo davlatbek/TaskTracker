@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
-import com.projectse.aads.task_tracker.PlanActivity;
 import com.projectse.aads.task_tracker.R;
 
 import java.util.HashMap;
@@ -22,9 +21,9 @@ import java.util.Map;
 public class PlanAdapter extends BaseExpandableListAdapter {
 
     private Context context;
-    private Map<TaskModel,List<TaskModel>> task_hierarchy = new HashMap<>();
+    private Map<TaskModel, List<TaskModel>> task_hierarchy = new HashMap<>();
 
-    public PlanAdapter(Context context, Map<TaskModel,List<TaskModel>> groups){
+    public PlanAdapter(Context context, Map<TaskModel, List<TaskModel>> groups) {
         this.context = context;
         task_hierarchy = groups;
     }
@@ -42,8 +41,8 @@ public class PlanAdapter extends BaseExpandableListAdapter {
     @Override
     public Object getGroup(int groupPosition) {
         int i = 0;
-        for(TaskModel supT : task_hierarchy.keySet()){
-            if(i++ == groupPosition)
+        for (TaskModel supT : task_hierarchy.keySet()) {
+            if (i++ == groupPosition)
                 return supT;
         }
         return null;
@@ -51,7 +50,7 @@ public class PlanAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        TaskModel sup = (TaskModel)getGroup(groupPosition);
+        TaskModel sup = (TaskModel) getGroup(groupPosition);
         return task_hierarchy.get(sup).get(childPosition);
     }
 
@@ -79,11 +78,10 @@ public class PlanAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.supertask_listitem_view, null);
         }
 
-        if (isExpanded){
+        if (isExpanded) {
+        } else {
         }
-        else{
-        }
-        final TaskModel supertask = (TaskModel)getGroup(groupPosition);
+        final TaskModel supertask = (TaskModel) getGroup(groupPosition);
 
         TextView textSupertaskName = (TextView) convertView.findViewById(R.id.txtSuperTaskName);
         textSupertaskName.setOnClickListener(new View.OnClickListener() {
@@ -96,27 +94,46 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         setPriority(convertView.findViewById(R.id.priority), supertask.getPriority());
 
         CourseModel course = supertask.getCourse();
-        if(course != null){
-            TextView course_label = (TextView)convertView.findViewById(R.id.lblCourse);
+        if (course != null) {
+            TextView course_label = (TextView) convertView.findViewById(R.id.lblCourse);
             course_label.setText(course.getAbbreviation());
-            course_label.setBackgroundResource(course.getClr());
-        }else{
-            TextView course_label = (TextView)convertView.findViewById(R.id.lblCourse);
+            switch ((-1) * course.getClr()) {
+                case 7617718:
+                    course_label.setBackgroundResource(R.color.coursecolor1);
+                    break;
+                case 16728876:
+                    course_label.setBackgroundResource(R.color.coursecolor2);
+                    break;
+                case 5317:
+                    course_label.setBackgroundResource(R.color.coursecolor3);
+                    break;
+                case 2937298:
+                    course_label.setBackgroundResource(R.color.coursecolor4);
+                    break;
+                case 10011977:
+                    course_label.setBackgroundResource(R.color.coursecolor5);
+                    break;
+                case 12627531:
+                    course_label.setBackgroundResource(R.color.coursecolor6);
+                    break;
+            }
+        } else {
+            TextView course_label = (TextView) convertView.findViewById(R.id.lblCourse);
             course_label.setText("NaN");
             course_label.setBackgroundColor(Color.DKGRAY);
         }
 
         TextView textSubs = (TextView) convertView.findViewById(R.id.txtSubsCount);
         int children_count = getChildrenCount(groupPosition);
-        if(children_count > 0){
+        if (children_count > 0) {
             textSupertaskName.setText(supertask.toString() + " (" + children_count + " subtasks)");
             textSubs.setText(children_count + " subtasks");
             //TODO hide indicator
-        }else{
+        } else {
             textSupertaskName.setText(supertask.toString());
         }
 
-        if( supertask.getIsDone() )
+        if (supertask.getIsDone())
             textSupertaskName.setPaintFlags(textSupertaskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
         return convertView;
@@ -141,7 +158,7 @@ public class PlanAdapter extends BaseExpandableListAdapter {
             }
         });
         textSubtaskName.setText(subtask.toString());
-        if( subtask.getIsDone() )
+        if (subtask.getIsDone())
             textSubtaskName.setPaintFlags(textSubtaskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
         return convertView;
@@ -152,8 +169,8 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    void setPriority(View viewById, TaskModel.Priority priority){
-        switch (priority){
+    void setPriority(View viewById, TaskModel.Priority priority) {
+        switch (priority) {
             case HIGH:
                 viewById.setBackgroundResource(R.color.hignPriority);
                 break;

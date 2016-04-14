@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.projectse.aads.task_tracker.MainActivity;
@@ -78,13 +80,18 @@ public class PlanAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.supertask_listitem_view, null);
         }
 
-        if (isExpanded) {
-        } else {
+        ImageView indicator = (ImageView) convertView.findViewById(R.id.group_indicator);
+        if (isExpanded){
+            indicator.setImageResource(R.drawable.up_arrow);
         }
-        final TaskModel supertask = (TaskModel) getGroup(groupPosition);
+        else{
+            indicator.setImageResource(R.drawable.down_arrow);
+        }
+        final TaskModel supertask = (TaskModel)getGroup(groupPosition);
 
         TextView textSupertaskName = (TextView) convertView.findViewById(R.id.txtSuperTaskName);
-        textSupertaskName.setOnClickListener(new View.OnClickListener() {
+        LinearLayout super_task_block = (LinearLayout) convertView.findViewById(R.id.supertask_info);
+        super_task_block.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ((MainActivity) context).callTaskOverviewActivity(supertask);
@@ -128,9 +135,10 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         if (children_count > 0) {
             textSupertaskName.setText(supertask.toString() + " (" + children_count + " subtasks)");
             textSubs.setText(children_count + " subtasks");
-            //TODO hide indicator
-        } else {
+            indicator.setVisibility(View.VISIBLE);
+        }else{
             textSupertaskName.setText(supertask.toString());
+            indicator.setVisibility(View.INVISIBLE);
         }
 
         if (supertask.getIsDone())

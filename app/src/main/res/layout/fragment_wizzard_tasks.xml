@@ -37,25 +37,6 @@
         android:id="@+id/task_list"
         android:layout_weight="1" />
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true">
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/back"
-            android:id="@+id/btnPrev"
-            android:layout_weight="1" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/next"
-            android:id="@+id/btnNext"
-            android:layout_weight="1" />
-    </LinearLayout>
+    <include layout="@layout/fragment_wizzard_step_navi"/>
 </LinearLayout>

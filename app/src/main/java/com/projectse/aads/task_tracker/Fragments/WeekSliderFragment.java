@@ -28,6 +28,8 @@ public class WeekSliderFragment extends Fragment {
     private Calendar week_first_day = Calendar.getInstance();
     private static View view;
     private onWeekSliderEventListener someEventListener;
+    private ImageButton buttonNextWeek;
+    private ImageButton buttonPrevWeek;
 
     public WeekSliderFragment(){
         super();
@@ -52,8 +54,8 @@ public class WeekSliderFragment extends Fragment {
         /* map is already there, just return view as it is */
         }
 
-        ImageButton buttonNextWeek = (ImageButton) view.findViewById(R.id.btnNextWeek);
-        ImageButton buttonPrevWeek = (ImageButton) view.findViewById(R.id.btnPrevWeek);
+        buttonNextWeek = (ImageButton) view.findViewById(R.id.btnNextWeek);
+        buttonPrevWeek = (ImageButton) view.findViewById(R.id.btnPrevWeek);
         buttonPrevWeek.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 week_first_day.add(Calendar.DAY_OF_MONTH, -7);
@@ -68,6 +70,11 @@ public class WeekSliderFragment extends Fragment {
         });
 
         return view;
+    }
+
+    public void setUnchangeble(){
+        buttonNextWeek.setVisibility(View.INVISIBLE);
+        buttonPrevWeek.setVisibility(View.INVISIBLE);
     }
 
     @Override

@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Interfaces.WizzardManager;
 import com.projectse.aads.task_tracker.WizzardFragments.IntroFragment;
+import com.projectse.aads.task_tracker.WizzardFragments.PreviewFragment;
 import com.projectse.aads.task_tracker.WizzardFragments.TasksFragment;
 import com.projectse.aads.task_tracker.WizzardFragments.WeekFragment;
 
@@ -68,6 +69,11 @@ public class WizzardActivity extends AppCompatActivity implements WizzardManager
     @Override
     public void callManualAllocateFragment() {
         throw new InternalError("Implement this");
+    }
+
+    @Override
+    public void callPreviewFragment() {
+        setCurrentFragment(new PreviewFragment());
     }
 
     @Override

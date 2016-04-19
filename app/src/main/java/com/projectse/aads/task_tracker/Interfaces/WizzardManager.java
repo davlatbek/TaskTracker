@@ -12,4 +12,5 @@ public interface WizzardManager {
     public void callTasksFragment();
     public void callAllocateFragment();
     public void callManualAllocateFragment();
+    public void callPreviewFragment();
 }

@@ -1,17 +1,20 @@
 package com.projectse.aads.task_tracker.WizzardFragments;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 
 import com.projectse.aads.task_tracker.Adapters.DayPlanOverviewAdapter;
 import com.projectse.aads.task_tracker.Adapters.TaskListCheckableAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Interfaces.WizzardManager;
 import com.projectse.aads.task_tracker.Models.CheckableTaskModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
@@ -45,6 +48,7 @@ public class TasksFragment extends Fragment {
             adapter.notifyDataSetChanged();
         }
     };
+    private WizzardManager wizzardManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,6 +65,14 @@ public class TasksFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if(activity instanceof WizzardManager){
+            wizzardManager = (WizzardManager) activity;
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,6 +82,21 @@ public class TasksFragment extends Fragment {
         listView.setAdapter(adapter);
         selectAll = (CheckBox) view.findViewById(R.id.btnSelectAll);
         selectAll.setOnClickListener(selectAllListener);
+
+        Button prev = (Button) view.findViewById(R.id.btnPrev);
+        prev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                wizzardManager.callWeekFragment();
+            }
+        });
+        Button next = (Button) view.findViewById(R.id.btnNext);
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                wizzardManager.callPreviewFragment();
+            }
+        });
 
         return view;
     }

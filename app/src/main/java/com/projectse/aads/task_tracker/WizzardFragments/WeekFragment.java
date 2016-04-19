@@ -18,6 +18,7 @@ import com.projectse.aads.task_tracker.Fragments.WeekSliderFragment;
 import com.projectse.aads.task_tracker.Interfaces.ParentFragment;
 import com.projectse.aads.task_tracker.Interfaces.WizzardManager;
 import com.projectse.aads.task_tracker.R;
+import com.projectse.aads.task_tracker.WizzardActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,6 +45,7 @@ public class WeekFragment extends Fragment implements WeekSliderFragment.onWeekS
     private WeekSliderFragment sliderFragment;
 
     private WizzardManager wizzardManager;
+    private WizzardActivity wizzardActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,6 +124,11 @@ public class WeekFragment extends Fragment implements WeekSliderFragment.onWeekS
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                wizzardActivity.setWeek(sliderFragment.getWeekFirstDay());
+                for(WeekDayFragment df: daysFrgments){
+                    WizzardActivity.Load load = wizzardActivity.loadByDay.get(df.getDayOfWeek());
+                    load.setScore(df.getScore());
+                }
                 wizzardManager.callTasksFragment();
             }
         });
@@ -141,6 +148,9 @@ public class WeekFragment extends Fragment implements WeekSliderFragment.onWeekS
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        if(activity instanceof WizzardActivity){
+            wizzardActivity = (WizzardActivity) activity;
+        }
         if(activity instanceof WizzardManager){
             wizzardManager = (WizzardManager) activity;
         }

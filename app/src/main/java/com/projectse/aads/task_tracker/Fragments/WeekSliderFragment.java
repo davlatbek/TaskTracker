@@ -26,11 +26,11 @@ public class WeekSliderFragment extends Fragment {
     }
 
     private Calendar week_first_day = Calendar.getInstance();
+
     private static View view;
     private onWeekSliderEventListener someEventListener;
     private ImageButton buttonNextWeek;
     private ImageButton buttonPrevWeek;
-
     public WeekSliderFragment(){
         super();
         week_first_day.setFirstDayOfWeek(Calendar.MONDAY);
@@ -70,6 +70,11 @@ public class WeekSliderFragment extends Fragment {
         });
 
         return view;
+    }
+
+    public void setWeek(Calendar week_first_day) {
+        this.week_first_day = week_first_day;
+        updateLabel();
     }
 
     public void setUnchangeble(){

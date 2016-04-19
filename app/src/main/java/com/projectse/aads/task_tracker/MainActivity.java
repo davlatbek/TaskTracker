@@ -90,6 +90,7 @@ public class MainActivity
         db = DatabaseHelper.getsInstance(getApplicationContext());
         // Set default locale prog-ly to English (Customer req)
         Locale.setDefault(new Locale("en"));
+        setCurrentFragment(new TaskCategoriesFragment());
 
 //        PlugActivity.initDebugData(db);
     }

@@ -61,6 +61,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SETTINGS_NOTIFY_START_TIME_BEFORE = "setting_notify_start_time_before";
     private static final String SETTINGS_NOTIFY_DEADLINE_BEFORE = "setting_notify_deadline_before";
     private static final String SETTINGS_NOTIFY_INSSSD = "setting_notify_insssd";
+    private static final String SETTINGS_NOTIFY_INSTD = "setting_notify_instd";
     // All keys used in table PLANS
     private static final String PLANS_ID = "plan_id";
     private static final String PLANS_TYPE = "plan_type";
@@ -108,7 +109,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + TABLE_SETTINGS + " (" + SETTINGS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + SETTINGS_ALWAYS_NOTIFY_START_TIME + " TEXT, "
             + SETTINGS_ALWAYS_NOTIFY_DEADLINE + " TEXT, " + SETTINGS_NOTIFY_START_TIME_BEFORE
             + " INTEGER, " + SETTINGS_NOTIFY_DEADLINE_BEFORE + " INTEGER, "
-            + SETTINGS_NOTIFY_INSSSD + " INTEGER);";
+            + SETTINGS_NOTIFY_INSSSD + " INTEGER, " + SETTINGS_NOTIFY_INSTD + " INTEGER);";
 
 //    private static final String INSERT_SETTING_ROW = "INSERT INTO `settings` DEFAULT VALUES;";
     /**
@@ -744,9 +745,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    // SETTING METHODS
+    // METHODS FOR SETTINGS TABLE
 
-    // return object of class SettingModel with all settings
+    /**
+     * Return object of class SettingModel with all settings
+     * @return settings object
+     */
     public SettingsModel getSettings() {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -762,11 +766,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         settings.setNotifyDeadLineBefore(c.getInt(c.getColumnIndex(SETTINGS_NOTIFY_DEADLINE_BEFORE)));
         settings.setNotifyStartTimeBefore(c.getInt(c.getColumnIndex(SETTINGS_NOTIFY_START_TIME_BEFORE)));
         settings.setINSSSD(c.getInt(c.getColumnIndex(SETTINGS_NOTIFY_INSSSD)));
+        settings.setINSTD(c.getInt(c.getColumnIndex(SETTINGS_NOTIFY_INSTD)));
         settings.setSettingsId(c.getLong(c.getColumnIndex(SETTINGS_ID)));
         return settings;
     }
 
-    // add settings to database
+    /**
+     * Add all settings to DB
+     * @param settingsModel
+     * @return count of affected rows
+     */
     public long addSettings(SettingsModel settingsModel) {
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
@@ -778,6 +787,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(SETTINGS_NOTIFY_START_TIME_BEFORE, settingsModel.getNotifyStartTimeBefore());
             values.put(SETTINGS_NOTIFY_DEADLINE_BEFORE, settingsModel.getNotifyDeadLineBefore());
             values.put(SETTINGS_NOTIFY_INSSSD, settingsModel.getINSSSD());
+            values.put(SETTINGS_NOTIFY_INSTD, settingsModel.getINSTD());
             id = db.insertOrThrow(TABLE_SETTINGS, null, values);
             db.setTransactionSuccessful();
         } catch (Exception e) {
@@ -789,7 +799,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    // update Settings to db
+    /**
+     * Update settings
+     * @param settingsModel
+     */
     public void updateSettings(SettingsModel settingsModel) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
@@ -800,6 +813,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(SETTINGS_NOTIFY_START_TIME_BEFORE, settingsModel.getNotifyStartTimeBefore());
             values.put(SETTINGS_NOTIFY_DEADLINE_BEFORE, settingsModel.getNotifyDeadLineBefore());
             values.put(SETTINGS_NOTIFY_INSSSD, settingsModel.getINSSSD());
+            values.put(SETTINGS_NOTIFY_INSTD, settingsModel.getINSTD());
             db.update(TABLE_SETTINGS, values, SETTINGS_ID + " = ?",
                     new String[]{String.valueOf(1)});
             db.setTransactionSuccessful();

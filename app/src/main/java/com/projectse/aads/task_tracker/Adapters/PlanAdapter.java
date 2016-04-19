@@ -123,6 +123,12 @@ public class PlanAdapter extends BaseExpandableListAdapter {
                 case 12627531:
                     course_label.setBackgroundResource(R.color.coursecolor6);
                     break;
+                default:
+                    try {
+                        course_label.setBackgroundResource(course.getClr());
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
             }
         } else {
             TextView course_label = (TextView) convertView.findViewById(R.id.lblCourse);

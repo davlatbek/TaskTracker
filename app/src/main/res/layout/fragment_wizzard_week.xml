@@ -15,8 +15,9 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/tasks_categories_buttons">
+        android:layout_height="0dp"
+        android:id="@+id/tasks_categories_buttons"
+        android:layout_weight="1">
 
         <LinearLayout
             android:orientation="horizontal"
@@ -24,11 +25,18 @@
             android:layout_height="0dp"
             android:layout_weight="1">
 
-            <include layout="@layout/fragmant_wizzard_week_day"
-                android:id="@+id/monday"/>
-
-            <include layout="@layout/fragmant_wizzard_week_day"
-                android:id="@+id/tuesday"/>
+            <FrameLayout
+                android:id="@+id/monday"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                android:layout_height="match_parent"></FrameLayout>
+            <FrameLayout
+                android:id="@+id/tuesday"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                android:layout_height="match_parent"></FrameLayout>
 
         </LinearLayout>
         <LinearLayout
@@ -37,11 +45,19 @@
             android:layout_height="0dp"
             android:layout_weight="1">
 
-            <include layout="@layout/fragmant_wizzard_week_day"
-                android:id="@+id/wednesday"/>
+            <FrameLayout
+                android:id="@+id/wednesday"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                android:layout_height="match_parent"></FrameLayout>
 
-            <include layout="@layout/fragmant_wizzard_week_day"
-                android:id="@+id/thursday"/>
+            <FrameLayout
+                android:id="@+id/thursday"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                android:layout_height="match_parent"></FrameLayout>
 
         </LinearLayout>
         <LinearLayout
@@ -49,11 +65,19 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
-            <include layout="@layout/fragmant_wizzard_week_day"
-                android:id="@+id/friday"/>
+            <FrameLayout
+                android:id="@+id/friday"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                android:layout_height="match_parent"></FrameLayout>
 
-            <include layout="@layout/fragmant_wizzard_week_day"
-                android:id="@+id/saturday"/>
+            <FrameLayout
+                android:id="@+id/saturday"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                android:layout_height="match_parent"></FrameLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -62,8 +86,12 @@
             android:layout_height="0dp"
             android:visibility="visible"
             android:layout_weight="1">
-            <include layout="@layout/fragmant_wizzard_week_day"
-                android:id="@+id/sunday"/>
+            <FrameLayout
+                android:id="@+id/sunday"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                android:layout_height="match_parent"></FrameLayout>
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -86,7 +114,8 @@
                             android:text="@string/total"
                             android:id="@+id/textView11"
                             android:layout_weight="1"
-                            android:padding="10dp" />
+                            android:paddingTop="10dp"
+                            android:paddingLeft="5dp" />
 
                         <TextView
                             android:layout_width="match_parent"
@@ -96,8 +125,8 @@
                             android:id="@+id/txtTotal"
                             android:layout_weight="3"
                             android:textAlignment="gravity"
-                            android:textSize="64dp"
-                            android:gravity="center_vertical|center_horizontal" />
+                            android:gravity="center_vertical|center_horizontal"
+                            android:textSize="48dp" />
                     </LinearLayout>
 
             </RelativeLayout>

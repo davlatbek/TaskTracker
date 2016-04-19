@@ -3,35 +3,35 @@ package com.projectse.aads.task_tracker.WizzardFragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.projectse.aads.task_tracker.Adapters.DayPlanOverviewAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Fragments.WeekSliderFragment;
-import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.ParentFragment;
 import com.projectse.aads.task_tracker.Interfaces.WizzardManager;
-import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class WeekFragment extends Fragment implements WeekSliderFragment.onWeekSliderEventListener, ParentFragment {
+public class WeekFragment extends Fragment implements WeekSliderFragment.onWeekSliderEventListener,WeekDayFragment.onWeekDayEventListener, ParentFragment {
     private HashMap<Integer, Integer> scores = new HashMap<>(7);
+    private List<WeekDayFragment> daysFrgments = new ArrayList<>();
+
+    @Override
+    public void scoreUpdated() {
+        updateTotal();
+    }
 
     public interface onWeekViewEventListener{
         public void callPlanFragment(Calendar first_day, int day_of_week);
@@ -73,79 +73,40 @@ public class WeekFragment extends Fragment implements WeekSliderFragment.onWeekS
         } catch (InflateException e) {
         /* map is already there, just return view as it is */
         }
+        FragmentManager fm = getChildFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
 
-        for(int day = Calendar.SUNDAY; day <= Calendar.SATURDAY; day++){
+        for(int day = Calendar.SUNDAY; day <= Calendar.SATURDAY; day++) {
             int id = -1;
-            String day_name = "";
-            switch (day){
+            switch (day) {
                 case Calendar.MONDAY:
                     id = R.id.monday;
-                    day_name = getResources().getString(R.string.monday);
                     break;
                 case Calendar.TUESDAY:
                     id = R.id.tuesday;
-                    day_name = getResources().getString(R.string.tuesday);
                     break;
                 case Calendar.WEDNESDAY:
                     id = R.id.wednesday;
-                    day_name = getResources().getString(R.string.wednesday);
                     break;
                 case Calendar.THURSDAY:
                     id = R.id.thursday;
-                    day_name = getResources().getString(R.string.thursday);
                     break;
                 case Calendar.FRIDAY:
                     id = R.id.friday;
-                    day_name = getResources().getString(R.string.friday);
                     break;
                 case Calendar.SATURDAY:
                     id = R.id.saturday;
-                    day_name = getResources().getString(R.string.saturday);
                     break;
                 case Calendar.SUNDAY:
                     id = R.id.sunday;
-                    day_name = getResources().getString(R.string.sunday);
                     break;
             }
-            final int ID = id;
-            View group = view.findViewById(id);
-            TextView dayName = (TextView) group.findViewById(R.id.txtDay);
-            TextView dayScore = (TextView) group.findViewById(R.id.txtScore);
-            ImageButton dayUp = (ImageButton) group.findViewById(R.id.btnUp);
-            ImageButton dayDown = (ImageButton) group.findViewById(R.id.btnDown);
-
-            final int day1 = day;
-            dayName.setText(day_name);
-            Integer sc = 8;
-            scores.put(day1,sc);
-            dayScore.setText(String.valueOf(sc));
-
-            dayUp.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    View group = view.findViewById(ID);
-                    TextView dayScore = (TextView) group.findViewById(R.id.txtScore);
-                    int old = scores.get(day1);
-                    scores.put(day1,++old);
-                    dayScore.setText(scores.get(day1));
-
-                }
-            });
-            dayDown.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    View group = view.findViewById(ID);
-                    TextView dayScore = (TextView) group.findViewById(R.id.txtScore);
-                    int old = scores.get(day1);
-                    scores.put(day1,--old);
-                    dayScore.setText(scores.get(day1));
-                }
-            });
+            WeekDayFragment df = new WeekDayFragment(day);
+            daysFrgments.add(df);
+            ft.replace(id, df);
         }
-
-        updateTotal(view);
+        ft.commit();
+        fm.executePendingTransactions();
 
         Button prev = (Button) view.findViewById(R.id.btnPrev);
         prev.setOnClickListener(new View.OnClickListener() {
@@ -165,40 +126,13 @@ public class WeekFragment extends Fragment implements WeekSliderFragment.onWeekS
         return view;
     }
 
-    private void updateTotal(View v) {
+    private void updateTotal() {
         Integer total = 0;
-        if(v == null)
-            v = getView();
-        for(Integer d : scores.keySet()) {
-            int id = 0;
-            switch (d){
-                case Calendar.MONDAY:
-                    id = R.id.monday;
-                    break;
-                case Calendar.TUESDAY:
-                    id = R.id.tuesday;
-                    break;
-                case Calendar.WEDNESDAY:
-                    id = R.id.wednesday;
-                    break;
-                case Calendar.THURSDAY:
-                    id = R.id.thursday;
-                    break;
-                case Calendar.FRIDAY:
-                    id = R.id.friday;
-                    break;
-                case Calendar.SATURDAY:
-                    id = R.id.saturday;break;
-                case Calendar.SUNDAY:
-                    id = R.id.sunday;
-                    break;
-            }
-            View group = v.findViewById(id);
-            TextView dayScore = (TextView) group.findViewById(R.id.txtScore);
-            total += Integer.parseInt(String.valueOf(dayScore.getText()));
-        }
-//        TextView textTotal = (TextView) v.findViewById(R.id.txtTotal);
-//        textTotal.setText(total);
+        for(WeekDayFragment df : daysFrgments)
+            total += df.getScore();
+
+        TextView textTotal = (TextView) getView().findViewById(R.id.txtTotal);
+        textTotal.setText(String.valueOf(total));
     }
 
     @Override
@@ -228,5 +162,7 @@ public class WeekFragment extends Fragment implements WeekSliderFragment.onWeekS
             week_first_day.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
             setWeek(week_first_day);
         }
+        if(daysFrgments.size() == 7)
+            updateTotal();
     }
 }

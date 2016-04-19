@@ -23,7 +23,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/monday"
-                    android:id="@+id/textView11"
+                    android:id="@+id/txtDay"
                     android:layout_weight="1"
                     android:padding="10dp" />
 
@@ -32,7 +32,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="0"
-                    android:id="@+id/textView12"
+                    android:id="@+id/txtScore"
                     android:layout_weight="3"
                     android:textAlignment="gravity"
                     android:textSize="64dp"
@@ -46,18 +46,18 @@
                 android:layout_weight="8">
 
                 <ImageButton
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:id="@+id/monUp"
+                    android:id="@+id/btnUp"
                     android:src="@drawable/up_arrow"
                     android:backgroundTint="@color/light_green_400" />
 
                 <ImageButton
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:id="@+id/monDown"
+                    android:id="@+id/btnDown"
                     android:src="@drawable/down_arrow"
                     android:backgroundTint="@color/light_green_400" />
             </LinearLayout>

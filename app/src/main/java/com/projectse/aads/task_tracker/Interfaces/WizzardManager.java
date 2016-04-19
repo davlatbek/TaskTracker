@@ -7,6 +7,7 @@ import com.projectse.aads.task_tracker.WizzardFragments.IntroFragment;
  */
 public interface WizzardManager {
     public void closeWizzard();
+    public void callIntroFragment();
     public void callWeekFragment();
     public void callTasksFragment();
     public void callAllocateFragment();

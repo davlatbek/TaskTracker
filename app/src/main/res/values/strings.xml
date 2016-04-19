@@ -81,6 +81,8 @@
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
     <string name="total">Total</string>
+    <string name="back">Back</string>
+    <string name="next">Next</string>
 
     <!--Animate hamburger icon-->
     <string name="drawer_open">Open navigation drawer</string>
@@ -88,7 +90,7 @@
 
     <!-- Week Days-->
     <string name="monday">Monday</string>
-    <string name="tuesday">Thuesday</string>
+    <string name="tuesday">Tuesday</string>
     <string name="wednesday">Wednesday</string>
     <string name="thursday">Thursday</string>
     <string name="friday">Friday</string>

@@ -80,6 +80,7 @@
     <string name="confirm">Confirm</string>
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
+    <string name="total">Total</string>
 
     <!--Animate hamburger icon-->
     <string name="drawer_open">Open navigation drawer</string>

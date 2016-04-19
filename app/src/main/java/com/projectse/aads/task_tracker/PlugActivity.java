@@ -226,6 +226,44 @@ public class PlugActivity extends Activity {
             e.printStackTrace();
         }
 
+        ArrayList<Long> subts = new ArrayList<>();
+
+        TaskModel t1 = new TaskModel();
+        t1.setName("TestTask1");
+        t1.setId(db.addTask(t1));
+        t1.setStartTime(Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault()));
+        t1.setDeadline(Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault()));
+        subts.add(t1.getId());
+
+        TaskModel t2 = new TaskModel();
+        t2.setName("TestTask2");
+        t2.setId(db.addTask(t2));
+        subts.add(t2.getId());
+
+        TaskModel t = new TaskModel();
+        t.setName("TestTaskMaster");
+        t.setId(db.addTask(t));
+
+        try {
+            db.addCourseToTask(t.getId());
+            db.updateCourseToTask(t.getId(), cMPP.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        List<TaskModel> list = db.getTaskModelList();
+        Assert.assertTrue(db.getTask(t.getId()).getSubtasks_ids().size() == 0);
+
+        for(Long id : subts ){
+            TaskModel t_buf = db.getTask(id);
+            t.addSubtask(t_buf);
+        }
+        t.setSubtasks_ids(subts);
+        try {
+            db.updateTask(t);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
 //        for ( int i = 0; i < 20; i++){

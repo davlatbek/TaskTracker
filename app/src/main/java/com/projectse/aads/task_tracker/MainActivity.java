@@ -28,6 +28,7 @@ import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.DoneTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.OverdueTasksCaller;
+import com.projectse.aads.task_tracker.Interfaces.WizzardCaller;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.util.Calendar;
@@ -39,7 +40,9 @@ import java.util.Locale;
 public class MainActivity
         extends AppCompatActivity
         implements WeeklyViewFragment.onWeekViewEventListener, CoursesFragment.onCourseClickListener,
-        AddTaskCaller, ActualTasksCaller, DoneTasksCaller, OverdueTasksCaller {
+        AddTaskCaller, ActualTasksCaller, DoneTasksCaller, OverdueTasksCaller,
+        WizzardCaller
+{
     DatabaseHelper db;
     private DrawerLayout menuDrawer;
     private android.support.v7.widget.Toolbar toolbar;
@@ -87,6 +90,7 @@ public class MainActivity
         db = DatabaseHelper.getsInstance(getApplicationContext());
         // Set default locale prog-ly to English (Customer req)
         Locale.setDefault(new Locale("en"));
+        setCurrentFragment(new TaskCategoriesFragment());
 
 //        PlugActivity.initDebugData(db);
     }
@@ -131,6 +135,9 @@ public class MainActivity
             case R.id.nav_settings_fragment:
                 fragmentClass = SettingsFragment.class;
                 break;
+            case R.id.nav_wizzard_fragment:
+                callWizzard();
+                return;
             default:
                 fragmentClass = TaskCategoriesFragment.class;
         }
@@ -257,5 +264,22 @@ public class MainActivity
     public void callOverdueTasks() {
         OverdueTasksFragment fragment = new OverdueTasksFragment();
         setCurrentFragmentAddBackStack(fragment);
+    }
+
+    @Override
+    public void callWizzard() {
+        Intent intent = new Intent(getApplicationContext(), WizzardActivity.class);
+        startActivityForResult(intent, RequestCode.REQ_CODE_WIZZARD);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case RequestCode.REQ_CODE_WIZZARD:
+                    // do something
+                    break;
+            }
+        }
     }
 }

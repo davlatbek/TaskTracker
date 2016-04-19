@@ -104,6 +104,7 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         if (course != null) {
             TextView course_label = (TextView) convertView.findViewById(R.id.lblCourse);
             course_label.setText(course.getAbbreviation());
+            //TODO BLYUA, eto zhest'!!! REMOVE THIS hardcode part. [smith]
             switch ((-1) * course.getClr()) {
                 case 7617718:
                     course_label.setBackgroundResource(R.color.coursecolor1);
@@ -123,6 +124,12 @@ public class PlanAdapter extends BaseExpandableListAdapter {
                 case 12627531:
                     course_label.setBackgroundResource(R.color.coursecolor6);
                     break;
+                default:
+                    try {
+                        course_label.setBackgroundResource(course.getClr());
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
             }
         } else {
             TextView course_label = (TextView) convertView.findViewById(R.id.lblCourse);

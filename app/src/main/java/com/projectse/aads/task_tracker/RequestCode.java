@@ -7,4 +7,5 @@ public class RequestCode {
     public static final int REQ_CODE_ADDTASK = 1;
     public static final int REQ_CODE_EDITTASK = 2;
     public static final int REQ_CODE_VIEWTASK = 3;
+    public static final int REQ_CODE_WIZZARD = 4;
 }

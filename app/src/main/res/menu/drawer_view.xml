@@ -24,6 +24,10 @@
             android:id="@+id/nav_progress_fragment"
             android:icon="@drawable/ic_insert_chart_24dp"
             android:title="Progress" />
+        <item
+            android:id="@+id/nav_wizzard_fragment"
+            android:icon="@drawable/auto_fix"
+            android:title="@string/wizzard_title" />
 
     </group>
 

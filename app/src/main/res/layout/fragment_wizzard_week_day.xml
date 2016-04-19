@@ -25,7 +25,8 @@
                     android:text="@string/monday"
                     android:id="@+id/txtDay"
                     android:layout_weight="1"
-                    android:padding="10dp" />
+                    android:paddingTop="10dp"
+                    android:paddingLeft="5dp" />
 
                 <TextView
                     android:layout_width="match_parent"

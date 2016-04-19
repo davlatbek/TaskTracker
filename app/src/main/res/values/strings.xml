@@ -107,5 +107,6 @@
     <string name="creating_plan_title">Creating plan</string>
     <string name="wizzard_title">Wizzard</string>
     <string name="intro_text">Hello, here you can create a week plan by easy way</string>
+    <string name="week_tooltip">Please, specify a week and how much time do you have per day</string>
 
 </resources>

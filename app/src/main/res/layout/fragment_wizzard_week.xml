@@ -5,6 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/colorContentBackground"
     android:orientation="vertical">
+
+    <include
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/fragment_wizzard_toopltip" />
+
     <FrameLayout
         android:id="@+id/fragment_week_slider"
         android:layout_width="match_parent"

@@ -108,6 +108,9 @@ public class WeekFragment extends Fragment implements WeekSliderFragment.onWeekS
         ft.commit();
         fm.executePendingTransactions();
 
+        TextView tooltip = (TextView) view.findViewById(R.id.txtTooltip);
+        tooltip.setText(getResources().getString(R.string.week_tooltip));
+
         Button prev = (Button) view.findViewById(R.id.btnPrev);
         prev.setOnClickListener(new View.OnClickListener() {
             @Override

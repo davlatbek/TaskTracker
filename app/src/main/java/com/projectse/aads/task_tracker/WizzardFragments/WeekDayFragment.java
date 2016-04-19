@@ -21,7 +21,7 @@ import java.util.Calendar;
 public class WeekDayFragment extends Fragment{
 
     private int day_of_week;
-    private int score;
+    private int score = 0;
     private TextView scoreLabel;
     private TextView nameLabel;
     private onWeekDayEventListener weed_day_listener;
@@ -33,7 +33,8 @@ public class WeekDayFragment extends Fragment{
     public WeekDayFragment(int day_of_week){
         super();
         this.day_of_week = day_of_week;
-        score = 8;
+        if(!(day_of_week == Calendar.SATURDAY || day_of_week == Calendar.SUNDAY))
+            score = 8;
     }
 
     @Nullable
@@ -43,20 +44,39 @@ public class WeekDayFragment extends Fragment{
         nameLabel = (TextView) view.findViewById(R.id.txtDay);
         nameLabel.setText(getDayNameByCalendarInt(day_of_week));
         scoreLabel = (TextView) view.findViewById(R.id.txtScore);
-        ((ImageButton )view.findViewById(R.id.btnUp)).setOnClickListener(new View.OnClickListener() {
+        ImageButton btnUp = (ImageButton )view.findViewById(R.id.btnUp);
+        btnUp.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                score = 8;
+                updateScore();
+                return true;
+            }
+        });
+        btnUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 incScore();
                 updateScore();
             }
         });
-        ((ImageButton )view.findViewById(R.id.btnDown)).setOnClickListener(new View.OnClickListener() {
+        ImageButton btnDown = (ImageButton )view.findViewById(R.id.btnDown);
+        btnDown.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                score = 0;
+                updateScore();
+                return true;
+            }
+        });
+        btnDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 decScore();
                 updateScore();
             }
         });
+
         updateScore();
 
         return view;

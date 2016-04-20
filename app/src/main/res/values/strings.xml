@@ -115,5 +115,6 @@
     <string name="import_title">Import</string>
     <string name="intro_text">Hello, here you can create a week plan by easy way</string>
     <string name="week_tooltip">Please, specify a week and how much time do you have per day</string>
+    <string name="import_tooltip">Select items by one from each list to connect courses and push confirm</string>
 
 </resources>

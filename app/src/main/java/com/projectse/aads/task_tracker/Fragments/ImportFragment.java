@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.Adapters.CoursesAdapter;
@@ -132,6 +133,9 @@ public class ImportFragment extends Fragment {
 
         exists_adapter = new CoursesAdapter(getActivity(), R.id.listExists, exists);
         listEx.setAdapter(exists_adapter);
+
+        TextView tooltip = (TextView) view.findViewById(R.id.txtTooltip);
+        tooltip.setText(getString(R.string.import_tooltip));
 
         View confirm = view.findViewById(R.id.btnConfirm);
         confirm.setOnClickListener(confirm_listener);

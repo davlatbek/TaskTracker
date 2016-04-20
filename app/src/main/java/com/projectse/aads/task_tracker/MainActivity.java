@@ -315,8 +315,6 @@ public class MainActivity
         intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("text/*.ics");
         startActivityForResult(intent, RequestCode.REQ_CODE_OPENFILE);
-        ImportFragment fr = new ImportFragment();
-        setCurrentFragmentAddBackStack(fr);
     }
 
     private List<String> readFile(String path) throws IOException {
@@ -417,7 +415,7 @@ public class MainActivity
         if (map == null)
             return;
         ImportFragment fr = new ImportFragment();
-        setCurrentFragmentAddBackStack(fr);
+        setCurrentFragment(fr);
         fr.setData(map);
         menuDrawer.closeDrawers();
     }

@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Fragments.ActualTasksFragment;
@@ -31,14 +32,30 @@ import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.DoneTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.OverdueTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.WizzardCaller;
+import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
+import net.fortuna.ical4j.data.CalendarBuilder;
+import net.fortuna.ical4j.data.ParserException;
+import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.ComponentList;
+import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.PropertyList;
+import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.property.Categories;
 
 /**
  * Created by Andrey Zolin on 20.03.2016.
@@ -289,8 +306,9 @@ public class MainActivity
         startActivityForResult(intent, RequestCode.REQ_CODE_OPENFILE);
     }
 
-    public void syncronizeICal(Uri currFileURI){
-        File file = new File(currFileURI.getPath());
+    private List<String> readFile(String path) throws IOException {
+        File file = new File(path);
+        List<String> textt = new ArrayList<>();
         if(file.exists()){
             StringBuilder text = new StringBuilder();
 
@@ -299,19 +317,81 @@ public class MainActivity
                 String line;
 
                 while ((line = br.readLine()) != null) {
+                    textt.add(line);
                     text.append(line);
                     text.append('\n');
                 }
                 br.close();
             }
             catch (IOException e) {
-                e.printStackTrace();
-                //You'll need to add proper error handling here
+                throw e;
             }
             Log.d("FILEOPENED",text.toString());
-
+            return textt;
         }else
-            throw new InternalError("Implement this");
+            throw new IOException("File is not exist.");
+    }
+
+    private void parse(List<String> text){
+
+    }
+
+    private Map<String,List<TaskModel>> parse(String path) throws IOException, ParserException {
+        FileInputStream fin = new FileInputStream(path);
+        CalendarBuilder builder = new CalendarBuilder();
+        net.fortuna.ical4j.model.Calendar calendar = builder.build(fin);
+
+        ComponentList listEvent = calendar.getComponents(Component.VEVENT);
+        Map<String,List<TaskModel>> map = new HashMap<>();
+        map.put("UNSET",new ArrayList<TaskModel>());
+
+        for (Object elem : listEvent) {
+            VEvent event = (VEvent) elem;
+            String cousre_name = null;
+
+            String title = event.getSummary().getValue();
+            String description = event.getDescription().getValue();
+
+            PropertyList categories = event.getProperties(Property.CATEGORIES);
+            for(Property c : categories){
+                if(c instanceof Categories){
+                    cousre_name = c.getValue();
+                    if(!map.containsKey(cousre_name)) {
+                        map.put(cousre_name,new ArrayList<TaskModel>());
+                    }
+                }
+            }
+
+
+            TaskModel task = new TaskModel();
+            task.setName(title);
+            task.setDescription(description);
+            Calendar deadline = Calendar.getInstance(event.getEndDate().getTimeZone());
+            deadline.setTime(event.getEndDate().getDate());
+            task.setDeadline( deadline );
+            if(cousre_name != null)
+                (map.get(cousre_name)).add(task);
+            else
+                (map.get("UNSET")).add(task);
+            Log.d("OPENED",title + " : " + description);
+        }
+        return map;
+    }
+
+    public void syncronizeICal(Uri currFileURI){
+        Map<String,List<TaskModel>> map = null;
+        try {
+//            List<String> text = readFile(currFileURI.getPath());
+            map = parse(currFileURI.getPath());
+        } catch (IOException e) {
+            Toast.makeText(this,"Cannot read from file: "+e.getMessage(),Toast.LENGTH_LONG);
+            e.printStackTrace();
+        } catch (ParserException e) {
+            Toast.makeText(this,"Cannot parse iCal: "+e.getMessage(),Toast.LENGTH_LONG);
+            e.printStackTrace();
+        }
+        if (map == null)
+            return;
     }
 
     @Override

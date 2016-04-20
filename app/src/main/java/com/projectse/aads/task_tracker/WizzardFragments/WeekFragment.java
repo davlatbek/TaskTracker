@@ -136,13 +136,14 @@ public class WeekFragment extends Fragment implements WeekSliderFragment.onWeekS
         return view;
     }
 
-    private void updateTotal() {
+    private Integer updateTotal() {
         Integer total = 0;
         for(WeekDayFragment df : daysFrgments)
             total += df.getScore();
 
         TextView textTotal = (TextView) getView().findViewById(R.id.txtTotal);
         textTotal.setText(String.valueOf(total));
+        return total;
     }
 
     @Override

@@ -36,6 +36,23 @@ public class WizzardActivity extends AppCompatActivity implements WizzardManager
 
     private Calendar first_day_of_week = Calendar.getInstance();
 
+    public void calculateDefaultDuration() {
+        double total = 0;
+        int count = 0;
+        for(Integer day : loadByDay.keySet()){
+            Load load = loadByDay.get(day);
+            total += load.getScore();
+            for(TaskModel task : load.tasks){
+                if( !(task.getDuration() > 0) ){
+                    count++;
+                }else{
+                    total -= task.getDuration();
+                }
+            }
+        }
+        standard_duration = total/count;
+    }
+
     public class Load{
         private List<TaskModel> tasks = new ArrayList<>();
         private double score;

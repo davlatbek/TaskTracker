@@ -21,6 +21,7 @@ import com.projectse.aads.task_tracker.Fragments.ActualTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.CourseOverviewFragment;
 import com.projectse.aads.task_tracker.Fragments.CoursesFragment;
 import com.projectse.aads.task_tracker.Fragments.DoneTasksFragment;
+import com.projectse.aads.task_tracker.Fragments.ImportFragment;
 import com.projectse.aads.task_tracker.Fragments.OverdueTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.PlanFragment;
 import com.projectse.aads.task_tracker.Fragments.ProgressFragment;
@@ -32,13 +33,11 @@ import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.DoneTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.OverdueTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.WizzardCaller;
-import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,8 +53,10 @@ import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
+import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.Categories;
+import net.fortuna.ical4j.model.property.DtEnd;
 
 /**
  * Created by Andrey Zolin on 20.03.2016.
@@ -63,7 +64,7 @@ import net.fortuna.ical4j.model.property.Categories;
 public class MainActivity
         extends AppCompatActivity
         implements WeeklyViewFragment.onWeekViewEventListener, CoursesFragment.onCourseClickListener,
-        AddTaskCaller, ActualTasksCaller, DoneTasksCaller, OverdueTasksCaller,
+        AddTaskCaller, ActualTasksCaller, DoneTasksCaller, OverdueTasksCaller, ImportFragment.TaskCategoriesCaller,
         WizzardCaller
 {
     DatabaseHelper db;
@@ -226,6 +227,12 @@ public class MainActivity
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
+    @Override
+    public void callTasksCategory(){
+        TaskCategoriesFragment fr = new TaskCategoriesFragment();
+        setCurrentFragment(fr);
+    }
+
     /**************************************
      * TASK ACTIVITY
      ************************************************/
@@ -292,6 +299,10 @@ public class MainActivity
         setCurrentFragmentAddBackStack(fragment);
     }
 
+    public void callImportFragment(){
+
+    }
+
     @Override
     public void callWizzard() {
         Intent intent = new Intent(getApplicationContext(), WizzardActivity.class);
@@ -304,6 +315,8 @@ public class MainActivity
         intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("text/*.ics");
         startActivityForResult(intent, RequestCode.REQ_CODE_OPENFILE);
+        ImportFragment fr = new ImportFragment();
+        setCurrentFragmentAddBackStack(fr);
     }
 
     private List<String> readFile(String path) throws IOException {
@@ -343,7 +356,6 @@ public class MainActivity
 
         ComponentList listEvent = calendar.getComponents(Component.VEVENT);
         Map<String,List<TaskModel>> map = new HashMap<>();
-        map.put("UNSET",new ArrayList<TaskModel>());
 
         for (Object elem : listEvent) {
             VEvent event = (VEvent) elem;
@@ -366,19 +378,31 @@ public class MainActivity
             TaskModel task = new TaskModel();
             task.setName(title);
             task.setDescription(description);
-            Calendar deadline = Calendar.getInstance(event.getEndDate().getTimeZone());
-            deadline.setTime(event.getEndDate().getDate());
-            task.setDeadline( deadline );
+            DtEnd date = event.getEndDate();
+            if(date != null){
+                TimeZone zone = date.getTimeZone();
+                Calendar deadline;
+                if(zone != null)
+                    deadline = Calendar.getInstance(zone);
+                else
+                    deadline = Calendar.getInstance();
+                deadline.setTime(date.getDate());
+                task.setDeadline( deadline );
+            }
             if(cousre_name != null)
                 (map.get(cousre_name)).add(task);
-            else
+            else {
+                if(!map.containsKey("UNSET")) {
+                    map.put("UNSET", new ArrayList<TaskModel>());
+                }
                 (map.get("UNSET")).add(task);
+            }
             Log.d("OPENED",title + " : " + description);
         }
         return map;
     }
 
-    public void syncronizeICal(Uri currFileURI){
+    public void ICalToData(Uri currFileURI){
         Map<String,List<TaskModel>> map = null;
         try {
 //            List<String> text = readFile(currFileURI.getPath());
@@ -392,6 +416,10 @@ public class MainActivity
         }
         if (map == null)
             return;
+        ImportFragment fr = new ImportFragment();
+        setCurrentFragmentAddBackStack(fr);
+        fr.setData(map);
+        menuDrawer.closeDrawers();
     }
 
     @Override
@@ -404,7 +432,7 @@ public class MainActivity
                 case RequestCode.REQ_CODE_OPENFILE:
                     Uri currFileURI = data.getData();
                     Log.d("FILE",currFileURI.getPath());
-                    syncronizeICal(currFileURI);
+                    ICalToData(currFileURI);
                     break;
             }
         }

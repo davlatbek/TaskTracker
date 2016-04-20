@@ -28,7 +28,8 @@ android:background="@color/light_green_400"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="10dp"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:layout_weight="1">
 
         <LinearLayout
             android:orientation="vertical"
@@ -49,6 +50,7 @@ android:background="@color/light_green_400"
                 android:text="Request short description"
                 android:layout_height="wrap_content"
                 android:textSize="10dp" />
+
         </LinearLayout>
 
         <TextView
@@ -57,8 +59,14 @@ android:background="@color/light_green_400"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="invisible"/>
-
     </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/group_indicator"
+        android:src="@drawable/down_arrow"
+        android:layout_gravity="center" />
 
 </LinearLayout>
 </TableRow>

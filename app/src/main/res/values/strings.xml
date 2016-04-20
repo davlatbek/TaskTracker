@@ -88,6 +88,12 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
+    <!--Allocation names-->
+    <string name="allocate_start">Allocate tasks to the beginning of the week.</string>
+    <string name="allocate_end">Allocate tasks to the end of the week.</string>
+    <string name="allocate_evenly">Allocate tasks evenly during the week.</string>
+    <string name="allocate_manually">Allocate tasks manually.</string>
+
     <!-- Week Days-->
     <string name="monday">Monday</string>
     <string name="tuesday">Tuesday</string>

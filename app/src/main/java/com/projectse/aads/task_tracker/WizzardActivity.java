@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Interfaces.WizzardManager;
 import com.projectse.aads.task_tracker.Models.TaskModel;
+import com.projectse.aads.task_tracker.WizzardFragments.AllocateFragment;
 import com.projectse.aads.task_tracker.WizzardFragments.IntroFragment;
 import com.projectse.aads.task_tracker.WizzardFragments.PreviewFragment;
 import com.projectse.aads.task_tracker.WizzardFragments.TasksFragment;
@@ -63,6 +64,18 @@ public class WizzardActivity extends AppCompatActivity implements WizzardManager
 
         public void setTasks(List<TaskModel> tasks) {
             this.tasks = tasks;
+        }
+
+        public boolean addTask(TaskModel task){
+            if(
+                    ( (getLeftScore() > task.getDuration()) && (task.getDuration() > 0))
+                    ||
+                            ( (getLeftScore() > standard_duration) && (task.getDuration() == 0))
+                    ) {
+                this.tasks.add(task);
+                return true;
+            }else
+                return false;
         }
 
         public double getScore() {
@@ -137,7 +150,7 @@ public class WizzardActivity extends AppCompatActivity implements WizzardManager
 
     @Override
     public void callAllocateFragment() {
-        throw new InternalError("Implement this");
+        setCurrentFragment(new AllocateFragment());
     }
 
     @Override
@@ -147,7 +160,9 @@ public class WizzardActivity extends AppCompatActivity implements WizzardManager
 
     @Override
     public void callPreviewFragment() {
-        setCurrentFragment(new PreviewFragment());
+        PreviewFragment frag =  new PreviewFragment();
+        setCurrentFragment(frag);
+        frag.setWeek(first_day_of_week);
     }
 
     @Override
@@ -158,5 +173,61 @@ public class WizzardActivity extends AppCompatActivity implements WizzardManager
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void allocateToStart(){
+        //TODO allocate
+        boolean notAddedTasksFinded = false;
+        for(TaskModel task : selected_tasks){
+            boolean added = false;
+            for(int day = Calendar.MONDAY; day <= Calendar.SATURDAY; day++){
+                Load load = loadByDay.get(day);
+                if(load.addTask(task)){
+                    added = true;
+                    break;
+                }
+            }
+            if(!added) {
+                Load sunday = loadByDay.get(Calendar.SUNDAY);
+                added = sunday.addTask(task);
+            }
+            if(!added)
+                notAddedTasksFinded = true;
+        }
+        //TODO react, if notAddedTasksFinded = true
+        callPreviewFragment();
+    }
+
+    public void allocateEvenly(){
+        //TODO allocate
+        callPreviewFragment();
+    }
+
+    public void allocateToEnd(){
+        //TODO allocate
+        boolean notAddedTasksFinded = false;
+        for(TaskModel task : selected_tasks){
+            boolean added = false;
+            Load sunday = loadByDay.get(Calendar.SUNDAY);
+            added = sunday.addTask(task);
+
+            if(!added) {
+                for(int day = Calendar.SATURDAY; day >= Calendar.MONDAY; day--){
+                    Load load = loadByDay.get(day);
+                    if(load.addTask(task)){
+                        added = true;
+                        break;
+                    }
+                }
+            }
+            if(!added)
+                notAddedTasksFinded = true;
+        }
+        //TODO react, if notAddedTasksFinded = true
+        callPreviewFragment();
+    }
+
+    public void allocateManually(){
+        callManualAllocateFragment();
     }
 }

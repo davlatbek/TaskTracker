@@ -20,6 +20,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.CourseModel;
+import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 
 import java.util.ArrayList;
@@ -53,7 +54,6 @@ public class CourseProgressFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         db = DatabaseHelper.getsInstance(getActivity());
         courseModels = db.getCourseModelList();
-
         barChart = (BarChart) view.findViewById(R.id.barChartForCourse);
         barChart.setData(createBarChartForAllCourses(courseModels));
         barChart.animateXY(2000, 2000);
@@ -89,7 +89,11 @@ public class CourseProgressFragment extends Fragment {
                 barChart.setVisibility(View.INVISIBLE);
                 pieChart.setVisibility(View.VISIBLE);
                 pieChart.setDescriptionTextSize(40f);
-                pieChart.setData(createPieChartByCourse(1));
+                try {
+                    pieChart.setData(createPieChartByCourse(1));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 pieChart.animateXY(2000, 2000);
                 pieChart.invalidate();
                 try {
@@ -110,7 +114,8 @@ public class CourseProgressFragment extends Fragment {
                 if (courseNumb == -1) {
                     courseLabel.setText("All Courses");
                     barChart.setData(createBarChartForAllCourses(courseModels));
-                    barChart.animateXY(1000, 1000);
+                    barChart.animateXY(500, 500);
+                    pieChart.setDescription("Done/All");
                     barChart.invalidate();
                     try {
                         setCourseStatistics(-1);
@@ -136,80 +141,88 @@ public class CourseProgressFragment extends Fragment {
     }
 
     public void switchChart(long course_id) throws Exception {
-        if (course_id == -1){
-            barChart.setData(createBarChartForAllCourses(courseModels));
-            barChart.setDescription("Progress chart");
-            barChart.animateXY(1000, 1000);
-            barChart.invalidate();
-            setCourseStatistics(-1);
-        }
-        else {
-            courseLabel.setText(db.getCourse(course_id).getName());
-            barChart.setData(createBarChartByCourse(course_id));
-            barChart.animateXY(1000, 1000);
-            barChart.invalidate();
-            setCourseStatistics(course_id);
-        }
+        courseLabel.setText(db.getCourse(course_id).getName());
+        barChart.setVisibility(View.INVISIBLE);
+        pieChart.setVisibility(View.VISIBLE);
+        pieChart.setDescription("Pie Chart");
+        pieChart.setDescriptionTextSize(40f);
+        pieChart.setData(createPieChartByCourse(course_id));
+        pieChart.animateXY(2000, 2000);
+        pieChart.invalidate();
+        setCourseStatistics(course_id);
     }
 
-    public BarData createBarChartByCourse(long courseId) {
-        ArrayList<BarEntry> entries = new ArrayList<>();
-        entries.add(new BarEntry(1, 0));
-        entries.add(new BarEntry(0, 1));
-        entries.add(new BarEntry(1, 2));
-        entries.add(new BarEntry(4, 3));
-        BarDataSet barDataSet = new BarDataSet(entries, "# of tasks in a course");
-        barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
-        barDataSet.setStackLabels(new String[]{"1", "2", "3", "4"});
-
-        ArrayList<String> labels = new ArrayList<String>();
-        labels.add("aa");
-        labels.add("bb");
-        labels.add("cc");
-        labels.add("dd");
-
-        return new BarData(labels, barDataSet);
-    }
-
-    public PieData createPieChartByCourse(long courseId) {
+    public PieData createPieChartByCourse(long courseId) throws Exception {
+        int actualNumber = 0, finishedNumber = 0, overDueNumber = 0;
+        List<TaskModel> taskModels = db.getActualTasks(Calendar.getInstance());
+        for (TaskModel task : taskModels){
+           if (task.getCourse().getId() == courseId)
+               actualNumber++;
+        }
+        taskModels = db.getDoneTasks();
+        for (TaskModel task : taskModels){
+            if (task.getCourse().getId() == courseId)
+                finishedNumber++;
+        }
+        taskModels = db.getOverdueTasks(Calendar.getInstance());
+        for (TaskModel task : taskModels){
+            if (task.getCourse().getId() == courseId)
+                overDueNumber++;
+        }
         ArrayList<Entry> entries = new ArrayList<>();
-        entries.add(new BarEntry(1, 0));
-        entries.add(new BarEntry(0, 1));
-        entries.add(new BarEntry(1, 2));
-        entries.add(new BarEntry(4, 3));
+        entries.add(new Entry(actualNumber, 0));
+        entries.add(new Entry(finishedNumber, 1));
+        entries.add(new Entry(overDueNumber, 2));
+
         PieDataSet pieDataSet = new PieDataSet(entries, "# of tasks in a course");
         pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
-        //pieDataSet.setStackLabels(new String[]{"1", "2", "3", "4"});
 
         ArrayList<String> labels = new ArrayList<String>();
-        labels.add("aa");
-        labels.add("bb");
-        labels.add("cc");
-        labels.add("dd");
+        labels.add("Actual");
+        labels.add("Finished");
+        labels.add("Overdue");
 
         return new PieData(labels, pieDataSet);
     }
 
     public BarData createBarChartForAllCourses(List<CourseModel> coursesList) {
+        List<TaskModel> doneTasks = db.getDoneTasks();
+        List<TaskModel> allTasks = db.getTaskModelList();
+        int finishedNumber = 0, allNumber = 0, courseNumber = 1;
+
         ArrayList<BarEntry> entries = new ArrayList<>();
-        entries.add(new BarEntry(6, 0));
-        entries.add(new BarEntry(12, 1));
-        entries.add(new BarEntry(9, 2));
-        entries.add(new BarEntry(4, 3));
+        for (CourseModel courseModel : courseModels){
+            finishedNumber = 0;
+            allNumber = 0;
+            for (TaskModel task : doneTasks){
+                if (task.getCourse().getId() == courseModel.getId())
+                    finishedNumber++;
+            }
+            for (TaskModel task : allTasks){
+                if (task.getCourse().getId() == courseModel.getId())
+                    allNumber++;
+            }
+            entries.add(new BarEntry(((float)finishedNumber/(float)allNumber), courseNumber));
+            courseNumber++;
+        }
         BarDataSet barDataSet = new BarDataSet(entries, "# of tasks in a course");
         barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
-        barDataSet.setStackLabels(new String[]{"OSN", "DM", "UX", "MPP"});
 
+        String[] courseLabels = new String[courseModels.size()];
+        int i = 0;
         ArrayList<String> labels = new ArrayList<String>();
-        labels.add("OSN");
-        labels.add("DM");
-        labels.add("UX");
-        labels.add("MPP");
+        for (CourseModel courseModel : coursesList){
+            labels.add(courseModel.getName());
+            courseLabels[i] = courseModel.getAbbreviation();
+            i++;
+        }
+        barDataSet.setStackLabels(courseLabels);
 
         return new BarData(labels, barDataSet);
     }
 
     public void setCourseStatistics(long course_id) throws Exception {
+        int totalNumber = 0, actualNumber = 0, finishedNumber = 0, overDueNumber = 0;
         if (course_id < 0){
             totalTasks.setText("Total tasks: " + String.valueOf(db.getTaskModelList().size()));
             finished.setText("Finished: " + String.valueOf(db.getDoneTasks().size()));
@@ -218,13 +231,31 @@ public class CourseProgressFragment extends Fragment {
             postponed.setText("Postponed: " + "0");
             deleted.setText("Deleted: " + "0");
         } else {
-            CourseModel courseModel = db.getCourse(course_id);
-            totalTasks.setText("-1");
-            finished.setText("-1");
-            actual.setText("-1");
-            overdue.setText("-1");
-            postponed.setText("-1");
-            deleted.setText("-1");
+            List<TaskModel> taskModels = db.getTaskModelList();
+            for (TaskModel task : taskModels){
+                if (task.getCourse().getId() == course_id)
+                    totalNumber++;
+            }
+            for (TaskModel task : taskModels){
+                if (task.getCourse().getId() == course_id)
+                    actualNumber++;
+            }
+            taskModels = db.getDoneTasks();
+            for (TaskModel task : taskModels){
+                if (task.getCourse().getId() == course_id)
+                    finishedNumber++;
+            }
+            taskModels = db.getOverdueTasks(Calendar.getInstance());
+            for (TaskModel task : taskModels){
+                if (task.getCourse().getId() == course_id)
+                    overDueNumber++;
+            }
+            totalTasks.setText("Total tasks: " + totalNumber);
+            finished.setText("Finished: " + finishedNumber);
+            actual.setText("Actual: " + actualNumber);
+            overdue.setText("Overdue: " + overDueNumber);
+            postponed.setText("Postponed: " + 0);
+            deleted.setText("Deleted: " + 0);
         }
     }
 }

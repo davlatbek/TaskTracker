@@ -4,12 +4,14 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -31,6 +33,10 @@ import com.projectse.aads.task_tracker.Interfaces.OverdueTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.WizzardCaller;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -135,6 +141,9 @@ public class MainActivity
             case R.id.nav_settings_fragment:
                 fragmentClass = SettingsFragment.class;
                 break;
+            case R.id.nav_import_fragment:
+                callOpenFileForImport();
+                return;
             case R.id.nav_wizzard_fragment:
                 callWizzard();
                 return;
@@ -272,12 +281,50 @@ public class MainActivity
         startActivityForResult(intent, RequestCode.REQ_CODE_WIZZARD);
     }
 
+    Intent intent;
+
+    public void callOpenFileForImport() {
+        intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("text/*.ics");
+        startActivityForResult(intent, RequestCode.REQ_CODE_OPENFILE);
+    }
+
+    public void syncronizeICal(Uri currFileURI){
+        File file = new File(currFileURI.getPath());
+        if(file.exists()){
+            StringBuilder text = new StringBuilder();
+
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                String line;
+
+                while ((line = br.readLine()) != null) {
+                    text.append(line);
+                    text.append('\n');
+                }
+                br.close();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+                //You'll need to add proper error handling here
+            }
+            Log.d("FILEOPENED",text.toString());
+
+        }else
+            throw new InternalError("Implement this");
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case RequestCode.REQ_CODE_WIZZARD:
                     // do something
+                    break;
+                case RequestCode.REQ_CODE_OPENFILE:
+                    Uri currFileURI = data.getData();
+                    Log.d("FILE",currFileURI.getPath());
+                    syncronizeICal(currFileURI);
                     break;
             }
         }

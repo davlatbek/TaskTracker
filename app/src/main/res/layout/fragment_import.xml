@@ -20,14 +20,16 @@
             android:layout_height="wrap_content"
             android:id="@+id/listCandidates"
             android:layout_weight="1"
-            android:background="@color/light_green_400" />
+            android:background="@color/light_green_400"
+            android:layout_margin="1dp" />
 
         <ListView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/listExists"
             android:layout_weight="1"
-            android:background="@color/light_green_500" />
+            android:background="@color/light_green_500"
+            android:layout_margin="1dp" />
     </LinearLayout>
 
     <TextView

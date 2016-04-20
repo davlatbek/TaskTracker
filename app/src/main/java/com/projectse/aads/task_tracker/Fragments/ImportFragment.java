@@ -33,6 +33,7 @@ import java.util.Map;
  * Created by smith on 4/20/16.
  */
 public class ImportFragment extends Fragment {
+    private final String crete_new_lbl = "CREATE NEW";
     private AddTaskCaller addTaskCaller;
     private ActualTasksCaller actualTasksCaller;
     private DoneTasksCaller doneTasksCaller;
@@ -53,6 +54,19 @@ public class ImportFragment extends Fragment {
         @Override
         public void onClick(View v) {
             if(candidates_adapter.checkedCount() == 1 && exists_adapter.checkedCount()== 1){
+                CheckableCourseModel cand = findChecked(candidates);
+                CheckableCourseModel course = findChecked(exists);
+                if(course.getCourseName() == crete_new_lbl){
+                    createNewCourse(cand);
+                }else{
+                    CourseModel c = course.getCourse();
+                    for(TaskModel task : cand.getTasks()){
+                        task.setId(db.addTask(task));
+                        db.addCourseToTask(task.getId());
+                        db.updateCourseToTask(task.getId(), c.getId());
+                    }
+                }
+
                 deleteChecked(candidates);
                 candidates_adapter.notifyDataSetChanged();
                 deleteChecked(exists);
@@ -65,9 +79,28 @@ public class ImportFragment extends Fragment {
         }
     };
 
+    private void createNewCourse(CheckableCourseModel cand) {
+        CourseModel course = new CourseModel(cand.getCourseName());
+        course.setClr(R.color.coursecolor1);
+        course.setId(db.addCourse(course));
+
+        for(TaskModel task : cand.getTasks()){
+            task.setId(db.addTask(task));
+            db.addCourseToTask(task.getId());
+            db.updateCourseToTask(task.getId(), course.getId());
+        }
+    }
+
+    private CheckableCourseModel findChecked(List<CheckableCourseModel> list) {
+        for(CheckableCourseModel c : list)
+            if(c.getChecked())
+                return c;
+        return null;
+    }
+
     private void deleteChecked(List<CheckableCourseModel> src){
         for(int i=0; i< src.size();i++){
-            if(src.get(i).getChecked() && src.get(i).getCourseName() != "CREATE NEW")
+            if(src.get(i).getChecked() && src.get(i).getCourseName() != crete_new_lbl)
                 src.remove(i);
         }
     }
@@ -122,7 +155,7 @@ public class ImportFragment extends Fragment {
             candidates.get(0).setChecked(true);
         candidates_adapter.notifyDataSetChanged();
         exists.clear();
-        exists.add(new CheckableCourseModel("CREATE NEW"));
+        exists.add(new CheckableCourseModel(crete_new_lbl));
         exists.get(0).setChecked(true);
         for(CourseModel course: db.getCourseModelList()){
             CheckableCourseModel c = new CheckableCourseModel(course);

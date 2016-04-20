@@ -11,22 +11,19 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 
-import com.projectse.aads.task_tracker.Adapters.DayPlanOverviewAdapter;
 import com.projectse.aads.task_tracker.Adapters.TaskListCheckableAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
-import com.projectse.aads.task_tracker.Interfaces.WizzardManager;
 import com.projectse.aads.task_tracker.Models.CheckableTaskModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 /**
  * Created by smith on 4/19/16.
  */
-public class TasksFragment extends Fragment {
+public class TasksFragment extends WizzardFragment {
 
     private List<CheckableTaskModel> tasks_list = new ArrayList<>();
     private DatabaseHelper db;
@@ -36,19 +33,12 @@ public class TasksFragment extends Fragment {
     private View.OnClickListener selectAllListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
-            boolean check;
-            if (selectAll.isChecked())
-                check = true;
-            else
-                check = false;
             for (CheckableTaskModel t : tasks_list){
-                t.setChecked( check );
+                t.setChecked( selectAll.isChecked() );
             }
             adapter.notifyDataSetChanged();
         }
     };
-    private WizzardManager wizzardManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,14 +52,6 @@ public class TasksFragment extends Fragment {
                 CheckableTaskModel tt = new CheckableTaskModel( t );
                 tasks_list.add( tt );
             }
-        }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if(activity instanceof WizzardManager){
-            wizzardManager = (WizzardManager) activity;
         }
     }
 
@@ -94,7 +76,14 @@ public class TasksFragment extends Fragment {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wizzardManager.callPreviewFragment();
+                wizzardActivity.selected_tasks.clear();
+                for(CheckableTaskModel t : tasks_list){
+                    if(t.getChecked() == true) {
+                        wizzardActivity.selected_tasks.add(t.getTask());
+                    }
+                    wizzardActivity.calculateDefaultDuration();
+                }
+                wizzardManager.callAllocateFragment();
             }
         });
 

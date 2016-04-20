@@ -28,7 +28,7 @@ public class WizzardActivity extends AppCompatActivity implements WizzardManager
     private android.support.v7.widget.Toolbar toolbar;
     private double standard_duration = 0;
     public Map<Integer,Load> loadByDay = new HashMap<>();
-    private List<TaskModel> selected_tasks = new ArrayList<>();
+    public List<TaskModel> selected_tasks = new ArrayList<>();
 
     public void setWeek(Calendar first_day_of_week) {
         this.first_day_of_week = first_day_of_week;
@@ -42,12 +42,12 @@ public class WizzardActivity extends AppCompatActivity implements WizzardManager
         for(Integer day : loadByDay.keySet()){
             Load load = loadByDay.get(day);
             total += load.getScore();
-            for(TaskModel task : load.tasks){
-                if( !(task.getDuration() > 0) ){
-                    count++;
-                }else{
-                    total -= task.getDuration();
-                }
+        }
+        for(TaskModel task : selected_tasks){
+            if( !(task.getDuration() > 0) ){
+                count++;
+            }else{
+                total -= task.getDuration();
             }
         }
         standard_duration = total/count;

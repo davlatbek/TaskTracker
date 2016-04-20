@@ -25,27 +25,17 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-public class WeekFragment extends Fragment implements WeekSliderFragment.onWeekSliderEventListener,WeekDayFragment.onWeekDayEventListener, ParentFragment {
+public class WeekFragment extends WizzardFragment implements WeekSliderFragment.onWeekSliderEventListener,WeekDayFragment.onWeekDayEventListener, ParentFragment {
     private HashMap<Integer, Integer> scores = new HashMap<>(7);
     private List<WeekDayFragment> daysFrgments = new ArrayList<>();
-
-    @Override
-    public void scoreUpdated() {
-        updateTotal();
-    }
-
-    public interface onWeekViewEventListener{
-        public void callPlanFragment(Calendar first_day, int day_of_week);
-    }
 
     private DatabaseHelper db;
 
     List<DayPlanOverviewAdapter> adapters = new ArrayList<>();
+
     private static View view;
     private WeekSliderFragment sliderFragment;
 
-    private WizzardManager wizzardManager;
-    private WizzardActivity wizzardActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -146,16 +136,7 @@ public class WeekFragment extends Fragment implements WeekSliderFragment.onWeekS
         return total;
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if(activity instanceof WizzardActivity){
-            wizzardActivity = (WizzardActivity) activity;
-        }
-        if(activity instanceof WizzardManager){
-            wizzardManager = (WizzardManager) activity;
-        }
-    }
+
 
     @Override
     public void setWeek(Calendar week_first_date) {
@@ -178,5 +159,10 @@ public class WeekFragment extends Fragment implements WeekSliderFragment.onWeekS
         }
         if(daysFrgments.size() == 7)
             updateTotal();
+    }
+
+    @Override
+    public void scoreUpdated() {
+        updateTotal();
     }
 }

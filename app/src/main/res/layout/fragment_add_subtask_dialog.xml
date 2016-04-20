@@ -19,7 +19,7 @@
         android:layout_y="11dp" />
 
     <Button
-        android:layout_width="154dp"
+        android:layout_width="156dp"
         android:layout_height="wrap_content"
         android:text="Save"
         android:id="@+id/buttonSaveSubtask"

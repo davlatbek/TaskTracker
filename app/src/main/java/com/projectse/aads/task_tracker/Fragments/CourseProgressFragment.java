@@ -1,24 +1,25 @@
 package com.projectse.aads.task_tracker.Fragments;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.github.mikephil.charting.*;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.Chart;
+import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.CourseModel;
-import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 
 import java.util.ArrayList;
@@ -29,8 +30,9 @@ import java.util.List;
  * Created by Davlatbek Isroilov on 4/7/2016.
  * Innopolis University
  */
-public class CourseProgressFragment extends Fragment implements WeekSliderFragment.onWeekSliderEventListener {
-    BarChart chart;
+public class CourseProgressFragment extends Fragment {
+    BarChart barChart;
+    PieChart pieChart;
     private WeekSliderFragment sliderFragment;
     private WeeklyViewFragment.onWeekViewEventListener listener;
     private ImageButton buttonPreviousChart, buttonNextChart;
@@ -43,27 +45,26 @@ public class CourseProgressFragment extends Fragment implements WeekSliderFragme
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle("Course Progress");
         View view = inflater.inflate(R.layout.fragment_courseprogress, container, false);
-
-        db = DatabaseHelper.getsInstance(getActivity());
-        List<CourseModel> courses = db.getCourseModelList();
-        int coursesNumber = courses.size();
-
-        chart = (BarChart) view.findViewById(R.id.barChartForCourse);
-        chart.setData(createBarChartForAllCourses(courses));
-        chart.setDescription("Progress chart");
-        chart.animateXY(2000, 2000);
-        chart.invalidate();
-        setHasOptionsMenu(true);
-
-        /*FragmentManager fm = getChildFragmentManager();
-        sliderFragment = new WeekSliderFragment();
-        sliderFragment.setSomeEventListener(this);
-        fm.beginTransaction().replace(R.id.fragment_week_slider, sliderFragment).commit();
-        fm.executePendingTransactions();*/
-
-        getViews(view);
-
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        db = DatabaseHelper.getsInstance(getActivity());
+        courseModels = db.getCourseModelList();
+
+        barChart = (BarChart) view.findViewById(R.id.barChartForCourse);
+        barChart.setData(createBarChartForAllCourses(courseModels));
+        barChart.animateXY(2000, 2000);
+        barChart.invalidate();
+        getViews(view);
+        try {
+            setCourseStatistics(-1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        setHasOptionsMenu(true);
     }
 
     public void getViews(View view) {
@@ -79,45 +80,75 @@ public class CourseProgressFragment extends Fragment implements WeekSliderFragme
 
         buttonPreviousChart = (ImageButton) view.findViewById(R.id.btnPrevWeek);
         buttonNextChart = (ImageButton) view.findViewById(R.id.btnNextWeek);
+        pieChart = (PieChart) view.findViewById(R.id.pieChartForCourse);
+        barChart.setVisibility(View.VISIBLE);
+        pieChart.setVisibility(View.INVISIBLE);
+
         buttonPreviousChart.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
+                barChart.setVisibility(View.INVISIBLE);
+                pieChart.setVisibility(View.VISIBLE);
+                pieChart.setDescriptionTextSize(40f);
+                pieChart.setData(createPieChartByCourse(1));
+                pieChart.animateXY(2000, 2000);
+                pieChart.invalidate();
+                try {
+                    setCourseStatistics(0);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
         buttonNextChart.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                barChart.setVisibility(View.VISIBLE);
+                pieChart.setVisibility(View.INVISIBLE);
                 courseNumb++;
                 if (courseNumb > courseList.size() - 1){
                     courseNumb = -1;
                 }
-                try {
-                    switchChart(courseList.get(courseNumb));
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (courseNumb == -1) {
+                    courseLabel.setText("All Courses");
+                    barChart.setData(createBarChartForAllCourses(courseModels));
+                    barChart.animateXY(1000, 1000);
+                    barChart.invalidate();
+                    try {
+                        setCourseStatistics(-1);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        switchChart(courseList.get(courseNumb));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
 
         totalTasks = (TextView) view.findViewById(R.id.total);
         finished = (TextView) view.findViewById(R.id.finished);
-        actual = (TextView) view.findViewById(R.id.total);
-        overdue = (TextView) view.findViewById(R.id.finished);
-        postponed = (TextView) view.findViewById(R.id.total);
-        deleted = (TextView) view.findViewById(R.id.finished);
+        actual = (TextView) view.findViewById(R.id.actual);
+        overdue = (TextView) view.findViewById(R.id.overdue);
+        postponed = (TextView) view.findViewById(R.id.postponed);
+        deleted = (TextView) view.findViewById(R.id.deleted);
     }
 
     public void switchChart(long course_id) throws Exception {
-        if (course_id < 0){
-            chart.setData(createBarChartForAllCourses(courseModels));
-            chart.setDescription("Progress chart");
-            chart.animateXY(1000, 1000);
-            chart.invalidate();
+        if (course_id == -1){
+            barChart.setData(createBarChartForAllCourses(courseModels));
+            barChart.setDescription("Progress chart");
+            barChart.animateXY(1000, 1000);
+            barChart.invalidate();
+            setCourseStatistics(-1);
         }
         else {
             courseLabel.setText(db.getCourse(course_id).getName());
-            chart.setData(createBarChartByCourse(course_id));
-            chart.animateXY(1000, 1000);
-            chart.invalidate();
+            barChart.setData(createBarChartByCourse(course_id));
+            barChart.animateXY(1000, 1000);
+            barChart.invalidate();
+            setCourseStatistics(course_id);
         }
     }
 
@@ -140,8 +171,26 @@ public class CourseProgressFragment extends Fragment implements WeekSliderFragme
         return new BarData(labels, barDataSet);
     }
 
-    public BarData createBarChartForAllCourses(List<CourseModel> coursesList) {
+    public PieData createPieChartByCourse(long courseId) {
+        ArrayList<Entry> entries = new ArrayList<>();
+        entries.add(new BarEntry(1, 0));
+        entries.add(new BarEntry(0, 1));
+        entries.add(new BarEntry(1, 2));
+        entries.add(new BarEntry(4, 3));
+        PieDataSet pieDataSet = new PieDataSet(entries, "# of tasks in a course");
+        pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+        //pieDataSet.setStackLabels(new String[]{"1", "2", "3", "4"});
 
+        ArrayList<String> labels = new ArrayList<String>();
+        labels.add("aa");
+        labels.add("bb");
+        labels.add("cc");
+        labels.add("dd");
+
+        return new PieData(labels, pieDataSet);
+    }
+
+    public BarData createBarChartForAllCourses(List<CourseModel> coursesList) {
         ArrayList<BarEntry> entries = new ArrayList<>();
         entries.add(new BarEntry(6, 0));
         entries.add(new BarEntry(12, 1));
@@ -161,12 +210,21 @@ public class CourseProgressFragment extends Fragment implements WeekSliderFragme
     }
 
     public void setCourseStatistics(long course_id) throws Exception {
-        CourseModel courseModel = db.getCourse(course_id);
-
-    }
-
-    @Override
-    public void setWeek(Calendar date) {
-
+        if (course_id < 0){
+            totalTasks.setText("Total tasks: " + String.valueOf(db.getTaskModelList().size()));
+            finished.setText("Finished: " + String.valueOf(db.getDoneTasks().size()));
+            actual.setText("Actual: " + String.valueOf(db.getActualTasks(Calendar.getInstance()).size()));
+            overdue.setText("Overdue: " + String.valueOf(db.getOverdueTasks(Calendar.getInstance()).size()));
+            postponed.setText("Postponed: " + "0");
+            deleted.setText("Deleted: " + "0");
+        } else {
+            CourseModel courseModel = db.getCourse(course_id);
+            totalTasks.setText("-1");
+            finished.setText("-1");
+            actual.setText("-1");
+            overdue.setText("-1");
+            postponed.setText("-1");
+            deleted.setText("-1");
+        }
     }
 }

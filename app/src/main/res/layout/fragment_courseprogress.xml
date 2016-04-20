@@ -12,14 +12,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <!--<FrameLayout-->
-                <!--android:id="@+id/fragment_week_slider"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--tools:layout="@layout/fragment_week_slider">-->
-            <!--</FrameLayout>-->
+            android:orientation="vertical"
+            android:weightSum="1">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -39,7 +33,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Medium Text"
                     android:id="@+id/week_label"
                     android:layout_weight="1"
                     android:gravity="center_vertical|center_horizontal" />
@@ -52,12 +45,24 @@
                     android:backgroundTint="@color/light_green_400" />
             </LinearLayout>
 
-            <com.github.mikephil.charting.charts.BarChart
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="480dp"
-                android:id="@+id/barChartForCourse">
+                android:layout_height="match_parent">
 
-            </com.github.mikephil.charting.charts.BarChart>
+                <com.github.mikephil.charting.charts.BarChart
+                    android:layout_width="match_parent"
+                    android:layout_height="480dp"
+                    android:id="@+id/barChartForCourse">
+
+                </com.github.mikephil.charting.charts.BarChart>
+
+                <com.github.mikephil.charting.charts.PieChart
+                    android:layout_width="match_parent"
+                    android:layout_height="480dp"
+                    android:id="@+id/pieChartForCourse">
+
+                </com.github.mikephil.charting.charts.PieChart>
+            </FrameLayout>
 
             <TextView
                 android:layout_width="wrap_content"

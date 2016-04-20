@@ -188,7 +188,7 @@ public class CourseProgressFragment extends Fragment {
     public BarData createBarChartForAllCourses(List<CourseModel> coursesList) {
         List<TaskModel> doneTasks = db.getDoneTasks();
         List<TaskModel> allTasks = db.getTaskModelList();
-        int finishedNumber = 0, allNumber = 0, courseNumber = 1;
+        int finishedNumber = 0, allNumber = 0, courseNumber = 0;
 
         ArrayList<BarEntry> entries = new ArrayList<>();
         for (CourseModel courseModel : courseModels){

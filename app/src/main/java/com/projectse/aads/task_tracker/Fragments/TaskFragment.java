@@ -134,7 +134,8 @@ public abstract class TaskFragment extends Fragment {
         subtasksListView.setAdapter(subtasks_adapter);
 
         courseView = (TextView) view.findViewById(R.id.coursename);
-        //dialogFragmentBuilder = new ListOfCourses(getActivity(), db);
+        db = DatabaseHelper.getsInstance(getActivity());
+        dialogFragmentBuilder = new ListOfCourses(getActivity(), db);
     }
 
     protected void fillData(long course_id) throws Exception {

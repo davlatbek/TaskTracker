@@ -22,35 +22,7 @@
             android:configChanges="orientation"
             android:screenOrientation="portrait">
         </activity>
-        <activity
-            android:name=".PlanActivity"
-            android:label="Task Tracker"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity
-            android:name=".DailyPlanActivity"
-            android:label="Task Tracker"></activity>
-        <activity
-            android:name=".PlugActivity"
-            android:label="Plug !for debug only!">
-        </activity>
 
-        <activity
-            android:name=".TaskEditActivity"
-            android:label="Editing Task"
-            android:parentActivityName=".TaskOverviewActivity">
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".TaskOverviewActivity" />
-        </activity>
-
-        <activity
-            android:name=".TaskAddActivity"
-            android:label="Adding new task"></activity>
-
-        <activity
-            android:name=".TaskOverviewActivity"
-            android:label="Task Overview"></activity>
 
         <service
             android:name=".NotifyService.AlertReceiver"

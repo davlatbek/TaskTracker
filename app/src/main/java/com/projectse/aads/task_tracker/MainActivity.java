@@ -29,7 +29,6 @@ import com.projectse.aads.task_tracker.Fragments.EditOverviewTaskFragment;
 import com.projectse.aads.task_tracker.Fragments.EditTaskFragment;
 import com.projectse.aads.task_tracker.Fragments.OverdueTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.PlanFragment;
-import com.projectse.aads.task_tracker.Fragments.ProgressFragment;
 import com.projectse.aads.task_tracker.Fragments.SettingsFragment;
 import com.projectse.aads.task_tracker.Fragments.TaskCategoriesFragment;
 import com.projectse.aads.task_tracker.Fragments.WeeklyViewFragment;
@@ -129,7 +128,7 @@ public class MainActivity
         MainActivity.settings = db.getSettings();
 
         if(DEBUG)
-            PlugActivity.initDebugData(db);
+            PlugDebug.initDebugData(db);
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
@@ -295,8 +294,8 @@ public class MainActivity
 
     @Override
     public void callAddTask(long defaultCourseId, Calendar defaultStartTime) {
-        Intent intent = new Intent(getApplicationContext(), TaskAddActivity.class);
-        startActivity(intent);
+        AddTaskFragment addTaskFragment = new AddTaskFragment();
+        setCurrentFragment(addTaskFragment);
     }
 
     @Override

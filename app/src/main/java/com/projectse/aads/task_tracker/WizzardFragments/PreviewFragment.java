@@ -112,6 +112,7 @@ public class PreviewFragment extends WeeklyViewFragment {
             List<TaskModel> list =  week_task_list.get(day);
             list.clear();
             list.addAll((wizzardActivity.loadByDay.get(day)).getTasks());
+            setTaskCounter(day,list.size());
         }
         for(DayPlanOverviewAdapter adapter : adapters)
             adapter.notifyDataSetChanged();

@@ -13,8 +13,6 @@ import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
-import com.projectse.aads.task_tracker.TaskActivity;
-import com.projectse.aads.task_tracker.TaskOverviewActivity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -67,7 +65,7 @@ public class SubtasksAdapter<T extends Object> extends ArrayAdapter<T> {
 //                ((TaskActivity)getContext()).deleteSubtask(id);
             }
         });
-        if(getContext().getClass() == TaskOverviewActivity.class)
+//        if(getContext().getClass() == TaskOverviewActivity.class)
             button.setVisibility(View.INVISIBLE);
         return convertView;
     }

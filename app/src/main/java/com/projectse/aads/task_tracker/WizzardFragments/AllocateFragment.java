@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.projectse.aads.task_tracker.Adapters.TaskListCheckableAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
@@ -91,6 +92,9 @@ public class AllocateFragment extends WizzardFragment {
                 wizzardActivity.allocateManually();
             }
         });
+
+        TextView tooltip = (TextView) view.findViewById(R.id.txtTooltip);
+        tooltip.setText(getString(R.string.allocate_tooltip));
 
         Button prev = (Button) view.findViewById(R.id.btnPrev);
         prev.setOnClickListener(new View.OnClickListener() {

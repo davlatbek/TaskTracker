@@ -110,12 +110,12 @@ public class AddTaskFragment extends TaskFragment {
     public void addAndSaveToDb(View v) {
         if (validateTaskFields(v)) {
             long task_id = addTaskToDatabase();
-            /*long course_id = dialogFragmentBuilder.getCourseId();
+            long course_id = dialogFragmentBuilder.getCourseId();
             if (course_id != 0) {
                 db.addCourseToTask(task_id);
                 db.updateCourseToTask(task_id, course_id);
                 Log.d("course id", course_id + "");
-            }*/
+            }
             actualTasksCaller.callActualTasks();
         }
     }
@@ -142,7 +142,7 @@ public class AddTaskFragment extends TaskFragment {
         task.setDescription(descView.getText().toString());
         task.setStartTime(startTimeCal);
         task.setDeadline(deadLineCal);
-        if (!durationView.getText().toString().equals("") || !durationView.getText().toString().equals("0"))
+        if (!durationView.getText().toString().equals("")/* || !durationView.getText().toString().equals("0")*/)
             task.setDuration(Long.parseLong(durationView.getText().toString()));
         else task.setDuration(1L);
 

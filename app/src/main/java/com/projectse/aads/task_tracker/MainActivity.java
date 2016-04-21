@@ -72,6 +72,7 @@ public class MainActivity
     private android.support.v7.widget.Toolbar toolbar;
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
+    public static Boolean DEBUG = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,7 +117,8 @@ public class MainActivity
         Locale.setDefault(new Locale("en"));
         setCurrentFragment(new TaskCategoriesFragment());
 
-//        PlugActivity.initDebugData(db);
+        if(DEBUG)
+            PlugActivity.initDebugData(db);
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {

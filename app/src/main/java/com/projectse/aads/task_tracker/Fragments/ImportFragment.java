@@ -75,8 +75,10 @@ public class ImportFragment extends Fragment {
             }else{
                 Toast.makeText(getActivity(),"Check from both sides",Toast.LENGTH_SHORT);
             }
-            if(candidates.size() == 0)
+            if(candidates.size() <= 0)
                 categoriesCaller.callTasksCategory();
+            else
+                candidates.get(0).setChecked(true);
         }
     };
 

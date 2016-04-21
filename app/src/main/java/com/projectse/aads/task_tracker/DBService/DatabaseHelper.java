@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.SettingsModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
@@ -141,7 +142,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Constructor
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-//        context.deleteDatabase(DATABASE_NAME);
+        if(MainActivity.DEBUG)
+            context.deleteDatabase(DATABASE_NAME);
     }
 
     // Using just only one instance to connect

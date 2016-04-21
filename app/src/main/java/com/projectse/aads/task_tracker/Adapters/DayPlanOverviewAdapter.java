@@ -13,19 +13,10 @@ import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.projectse.aads.task_tracker.MainActivity;
-import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
-import com.projectse.aads.task_tracker.TaskActivity;
-import com.projectse.aads.task_tracker.TaskOverviewActivity;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Class is used in WeekViewFragment for showing supertasks for each day

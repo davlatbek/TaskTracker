@@ -265,7 +265,7 @@ public class PlanActivity extends AppCompatActivity {
     }
 
     public void callTaskOverviewActivity(TaskModel taskModel) {
-        Intent intent = new Intent(getApplicationContext(), TaskOverviewActivity.class);
+//        Intent intent = new Intent(getApplicationContext(), TaskOverviewActivity.class);
         intent.putExtra("task_id", taskModel.getId());
         startActivityForResult(intent, 0);
         tasks_adapter.notifyDataSetChanged();

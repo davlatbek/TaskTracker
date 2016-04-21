@@ -27,10 +27,7 @@
             android:label="Task Tracker"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".DailyPlanActivity"
-            android:label="Task Tracker"></activity>
-        <activity
-            android:name=".PlugActivity"
+            android:name=".PlugDebug"
             android:label="Plug !for debug only!">
         </activity>
 

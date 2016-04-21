@@ -29,7 +29,6 @@ import com.projectse.aads.task_tracker.Fragments.EditOverviewTaskFragment;
 import com.projectse.aads.task_tracker.Fragments.EditTaskFragment;
 import com.projectse.aads.task_tracker.Fragments.OverdueTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.PlanFragment;
-import com.projectse.aads.task_tracker.Fragments.ProgressFragment;
 import com.projectse.aads.task_tracker.Fragments.SettingsFragment;
 import com.projectse.aads.task_tracker.Fragments.TaskCategoriesFragment;
 import com.projectse.aads.task_tracker.Fragments.WeeklyViewFragment;
@@ -125,7 +124,7 @@ public class MainActivity
         setCurrentFragment(new TaskCategoriesFragment());
 
         if(DEBUG)
-            PlugActivity.initDebugData(db);
+            PlugDebug.initDebugData(db);
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {

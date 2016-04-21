@@ -40,7 +40,6 @@ import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.NotifyService.AlertReceiver;
 import com.projectse.aads.task_tracker.R;
-import com.projectse.aads.task_tracker.TaskEditActivity;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -97,8 +96,9 @@ public class TaskOverviewFragment extends TaskFragment {
                 return true;*/
         }
         if (item.getTitle().equals("edittask")) {
-            Intent intent = new Intent(getActivity(), TaskEditActivity.class);
-            intent.putExtra("task_id", task.getId());
+            //TODO solve it
+//            Intent intent = new Intent(getActivity(), TaskEditActivity.class);
+//            intent.putExtra("task_id", task.getId());
             editTaskCaller.callEditTask();
         }
         else if (item.getTitle().equals("deletetask"))
@@ -114,7 +114,6 @@ public class TaskOverviewFragment extends TaskFragment {
         buttonDateStartTime.setVisibility(View.INVISIBLE);
         buttonDateDeadline.setVisibility(View.INVISIBLE);
         addSubtasks.setVisibility(View.INVISIBLE);
-        clearSubtasks.setVisibility(View.INVISIBLE);
     }
 
     private void createDeleteDialog() {

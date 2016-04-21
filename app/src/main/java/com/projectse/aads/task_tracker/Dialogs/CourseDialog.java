@@ -1,25 +1,18 @@
 package com.projectse.aads.task_tracker.Dialogs;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider;
 import com.projectse.aads.task_tracker.R;
-import com.projectse.aads.task_tracker.RequestCode;
-import com.projectse.aads.task_tracker.TaskActivity;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.CourseModel;
-import com.projectse.aads.task_tracker.TaskAddActivity;
 
 /**
  * Created by Anastasia A. Puzankova on 05-Apr-16.

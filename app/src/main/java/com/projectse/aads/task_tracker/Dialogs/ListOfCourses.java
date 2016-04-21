@@ -12,14 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.R;
-import com.projectse.aads.task_tracker.TaskActivity;
 
 import java.util.List;
 

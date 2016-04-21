@@ -290,8 +290,8 @@ public class MainActivity
 
     @Override
     public void callAddTask(long defaultCourseId, Calendar defaultStartTime) {
-        Intent intent = new Intent(getApplicationContext(), TaskAddActivity.class);
-        startActivity(intent);
+        AddTaskFragment addTaskFragment = new AddTaskFragment();
+        setCurrentFragment(addTaskFragment);
     }
 
     @Override

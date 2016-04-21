@@ -22,15 +22,7 @@
             android:configChanges="orientation"
             android:screenOrientation="portrait">
         </activity>
-        <activity
-            android:name=".PlanActivity"
-            android:label="Task Tracker"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
 
-
-        <activity
-            android:name=".TaskAddActivity"
-            android:label="Adding new task"></activity>
 
         <service
             android:name=".NotifyService.AlertReceiver"

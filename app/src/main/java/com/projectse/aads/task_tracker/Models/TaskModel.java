@@ -1,5 +1,7 @@
 package com.projectse.aads.task_tracker.Models;
 
+import com.projectse.aads.task_tracker.MainActivity;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -24,6 +26,7 @@ public class TaskModel {
     private List<Long> subtasks_ids = new ArrayList<>();
     private Long parentTaskId = -1L;
     private CourseModel course;
+    private boolean isStartTimeSet = false;
 
     private Priority priority = Priority.LOW;
 
@@ -158,6 +161,7 @@ public class TaskModel {
 
     public void setStartTime(Calendar startTime) {
         this.startTime = startTime;
+        isStartTimeSet = true;
     }
 
     public Calendar getDeadline() {
@@ -166,6 +170,13 @@ public class TaskModel {
 
     public void setDeadline(Calendar deadline) {
         this.deadline = deadline;
+        if(!isStartTimeSet) {
+            startTime = (Calendar) deadline.clone();
+            Integer diff = 1;
+            if(MainActivity.settings != null)
+                diff = MainActivity.settings.getINSSSD();
+            startTime.add(Calendar.DAY_OF_WEEK, -1 * diff);
+        }
     }
 
     public Boolean getIsNotifyStartTime() {

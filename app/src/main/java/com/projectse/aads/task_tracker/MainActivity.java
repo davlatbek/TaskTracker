@@ -40,6 +40,7 @@ import com.projectse.aads.task_tracker.Interfaces.EditTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.OverdueTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.WizzardCaller;
 import com.projectse.aads.task_tracker.Interfaces.TaskOverviewCaller;
+import com.projectse.aads.task_tracker.Models.SettingsModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.io.BufferedReader;
@@ -79,6 +80,8 @@ public class MainActivity
     private android.support.v7.widget.Toolbar toolbar;
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
+    public static SettingsModel settings = null;
+
     public static Boolean DEBUG = false;
 
     @Override
@@ -123,6 +126,7 @@ public class MainActivity
         // Set default locale prog-ly to English (Customer req)
         Locale.setDefault(new Locale("en"));
         setCurrentFragment(new TaskCategoriesFragment());
+        MainActivity.settings = db.getSettings();
 
         if(DEBUG)
             PlugActivity.initDebugData(db);

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -113,6 +114,7 @@ public class WizzardActivity extends AppCompatActivity implements WizzardManager
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setCurrentFragment(new IntroFragment());
+        Locale.setDefault(new Locale("en"));
 
         for(int day = Calendar.SUNDAY; day <= Calendar.SATURDAY; day++){
             loadByDay.put(day,new Load());

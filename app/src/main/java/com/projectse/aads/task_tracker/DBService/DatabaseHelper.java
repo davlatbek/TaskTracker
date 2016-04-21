@@ -769,8 +769,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Cursor c = db.rawQuery(selectQuery, null);
 
-        if (!c.moveToFirst())
-            return null;
+        if (!c.moveToFirst()) {
+            c.close();
+            SettingsModel settingsModel = new SettingsModel();
+            addSettings(settingsModel);
+            return getSettings();
+        }
         SettingsModel settings = new SettingsModel();
         settings.setAlwaysNotifyDeadLine(Boolean.valueOf(c.getString(c.getColumnIndex(SETTINGS_ALWAYS_NOTIFY_DEADLINE))));
         settings.setAlwaysNotifyStartTime(Boolean.valueOf(c.getString(c.getColumnIndex(SETTINGS_ALWAYS_NOTIFY_START_TIME))));
@@ -1178,6 +1182,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param t
      */
     private void updateSubtasks(TaskModel t) {
+        if(t == null)
+            return;
         // UPDATE PARENT_ID = NULL
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();

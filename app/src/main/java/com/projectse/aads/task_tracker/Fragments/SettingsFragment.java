@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Switch;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.SettingsModel;
 import com.projectse.aads.task_tracker.R;
 
@@ -150,6 +151,7 @@ public class SettingsFragment extends Fragment {
         settingsModel.setINSSSD(Integer.valueOf(notSpecefiedStartDate.getText().toString()));
         settingsModel.setINSTD(Integer.valueOf(notSpecDurationTaskEdit.getText().toString()));
         db.updateSettings(settingsModel);
+        MainActivity.settings = db.getSettings();
     }
 
     @Override

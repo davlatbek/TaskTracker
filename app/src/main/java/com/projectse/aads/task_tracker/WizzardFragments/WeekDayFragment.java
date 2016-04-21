@@ -20,6 +20,10 @@ import java.util.Calendar;
  */
 public class WeekDayFragment extends Fragment{
 
+    public int getDayOfWeek() {
+        return day_of_week;
+    }
+
     private int day_of_week;
     private int score = 0;
     private TextView scoreLabel;

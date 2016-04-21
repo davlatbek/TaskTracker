@@ -21,12 +21,12 @@ public class SettingsModel {
 
 
     public SettingsModel() {
-        this.AlwaysNotifyStartTime = false;
-        this.AlwaysNotifyDeadLine = false;
+        this.AlwaysNotifyStartTime = true;
+        this.AlwaysNotifyDeadLine = true;
         this.NotifyStartTimeBefore = 1;
         this.NotifyDeadLineBefore = 1;
         this.INSSSD = 2;
-        this.INSTD = 4;
+        this.INSTD = 2;
         this.SettingsId = 1L;
     }
 

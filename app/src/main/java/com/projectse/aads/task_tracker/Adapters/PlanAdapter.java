@@ -169,7 +169,7 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         textSubtaskName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity) context).callTaskOverviewActivity(subtask);
+                ((MainActivity) context).callTaskOverview(subtask);
             }
         });
         textSubtaskName.setText(subtask.toString());

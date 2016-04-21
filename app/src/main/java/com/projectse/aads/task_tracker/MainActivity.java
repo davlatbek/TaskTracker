@@ -297,7 +297,7 @@ public class MainActivity
     @Override
     public void callAddTask() {
         AddTaskFragment addTaskFragment = new AddTaskFragment();
-        setCurrentFragment(addTaskFragment);
+        setCurrentFragmentAddBackStack(addTaskFragment);
     }
 
     @Override
@@ -312,7 +312,7 @@ public class MainActivity
         Bundle bundle = new Bundle();
         bundle.putLong("task_id", taskModel.getId());
         taskOverviewFragment.setArguments(bundle);
-        setCurrentFragment(taskOverviewFragment);
+        setCurrentFragmentAddBackStack(taskOverviewFragment);
     }
 
     @Override

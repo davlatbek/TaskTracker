@@ -182,8 +182,12 @@ public class WeeklyViewFragment extends Fragment implements WeekSliderFragment.o
         }
     }
 
-    private void setTaskCounter(Calendar date_cursor, int tasks_counter) {
+    protected void setTaskCounter(Calendar date_cursor, int tasks_counter) {
         int day_of_week = date_cursor.get(Calendar.DAY_OF_WEEK);
+        setTaskCounter(day_of_week, tasks_counter);
+    }
+
+    protected void setTaskCounter(int day_of_week, int tasks_counter) {
         View view = null;
         switch (day_of_week){
             case Calendar.MONDAY:

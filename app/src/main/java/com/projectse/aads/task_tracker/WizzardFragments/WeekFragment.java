@@ -18,32 +18,24 @@ import com.projectse.aads.task_tracker.Fragments.WeekSliderFragment;
 import com.projectse.aads.task_tracker.Interfaces.ParentFragment;
 import com.projectse.aads.task_tracker.Interfaces.WizzardManager;
 import com.projectse.aads.task_tracker.R;
+import com.projectse.aads.task_tracker.WizzardActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-public class WeekFragment extends Fragment implements WeekSliderFragment.onWeekSliderEventListener,WeekDayFragment.onWeekDayEventListener, ParentFragment {
+public class WeekFragment extends WizzardFragment implements WeekSliderFragment.onWeekSliderEventListener,WeekDayFragment.onWeekDayEventListener, ParentFragment {
     private HashMap<Integer, Integer> scores = new HashMap<>(7);
     private List<WeekDayFragment> daysFrgments = new ArrayList<>();
-
-    @Override
-    public void scoreUpdated() {
-        updateTotal();
-    }
-
-    public interface onWeekViewEventListener{
-        public void callPlanFragment(Calendar first_day, int day_of_week);
-    }
 
     private DatabaseHelper db;
 
     List<DayPlanOverviewAdapter> adapters = new ArrayList<>();
+
     private static View view;
     private WeekSliderFragment sliderFragment;
 
-    private WizzardManager wizzardManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,6 +114,11 @@ public class WeekFragment extends Fragment implements WeekSliderFragment.onWeekS
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                wizzardActivity.setWeek(sliderFragment.getWeekFirstDay());
+                for(WeekDayFragment df: daysFrgments){
+                    WizzardActivity.Load load = wizzardActivity.loadByDay.get(df.getDayOfWeek());
+                    load.setScore(df.getScore());
+                }
                 wizzardManager.callTasksFragment();
             }
         });
@@ -129,22 +126,17 @@ public class WeekFragment extends Fragment implements WeekSliderFragment.onWeekS
         return view;
     }
 
-    private void updateTotal() {
+    private Integer updateTotal() {
         Integer total = 0;
         for(WeekDayFragment df : daysFrgments)
             total += df.getScore();
 
         TextView textTotal = (TextView) getView().findViewById(R.id.txtTotal);
         textTotal.setText(String.valueOf(total));
+        return total;
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if(activity instanceof WizzardManager){
-            wizzardManager = (WizzardManager) activity;
-        }
-    }
+
 
     @Override
     public void setWeek(Calendar week_first_date) {
@@ -167,5 +159,10 @@ public class WeekFragment extends Fragment implements WeekSliderFragment.onWeekS
         }
         if(daysFrgments.size() == 7)
             updateTotal();
+    }
+
+    @Override
+    public void scoreUpdated() {
+        updateTotal();
     }
 }

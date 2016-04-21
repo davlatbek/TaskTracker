@@ -36,13 +36,13 @@ public class WeeklyViewFragment extends Fragment implements WeekSliderFragment.o
 
     private DatabaseHelper db;
 
-    List<DayPlanOverviewAdapter> adapters = new ArrayList<>();
+    protected List<DayPlanOverviewAdapter> adapters = new ArrayList<>();
     private static View view;
-    private WeekSliderFragment sliderFragment;
+    protected WeekSliderFragment sliderFragment;
 
-    Map<Integer,List<TaskModel>> week_task_list = new HashMap<>();
+    protected Map<Integer,List<TaskModel>> week_task_list = new HashMap<>();
 
-    private onWeekViewEventListener planViewCaller;
+    protected onWeekViewEventListener planViewCaller;
     private AddTaskCaller addTaskCaller;
 
     private View.OnClickListener requestButtonListener

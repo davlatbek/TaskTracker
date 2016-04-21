@@ -5,12 +5,17 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.ParentFragment;
+import com.projectse.aads.task_tracker.Interfaces.WizzardCaller;
+import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 
 import java.util.Calendar;
@@ -27,12 +32,16 @@ public class PlanFragment extends Fragment
     private TasksListFragment tasksListFragment;
     private WeekSliderFragment sliderFragment;
     private AddTaskCaller addTaskCaller;
+    private WizzardCaller wizzardCaller;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         if (activity instanceof AddTaskCaller) {
             addTaskCaller = (AddTaskCaller) activity;
+        }
+        if (activity instanceof WizzardCaller) {
+            wizzardCaller = (WizzardCaller) activity;
         }
     }
 
@@ -75,7 +84,26 @@ public class PlanFragment extends Fragment
         }
         view = inflater.inflate(R.layout.fragment_plan_view, null);
 
+        setHasOptionsMenu(true);
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().getMenuInflater().inflate(R.menu.menu_plan_edit, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                return true;
+        }
+        if (item.getTitle().equals("editplan")) {
+            if(wizzardCaller != null)wizzardCaller.callWizzard();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**

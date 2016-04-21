@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.projectse.aads.task_tracker.PlanActivity">
+    <item
+        android:id="@+id/action_edittask"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_mode_edit_24dp"
+        android:title="edittask"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_deletetask"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_delete_24dp"
+        android:title="deletetask"
+        app:showAsAction="always" />
+</menu>

@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.SettingsModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
@@ -142,7 +143,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Constructor
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-//        context.deleteDatabase(DATABASE_NAME);
+        if(MainActivity.DEBUG)
+            context.deleteDatabase(DATABASE_NAME);
     }
 
     // Using just only one instance to connect
@@ -255,6 +257,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         course.setId(c.getLong(c.getColumnIndex(COURSE_ID)));
         course.setName(c.getString(c.getColumnIndex(COURSE_NAME)));
         course.setClr(c.getInt(c.getColumnIndex(COURSE_COLOR)));
+        c.close();
         return course;
     }
 
@@ -388,15 +391,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Delete method.
     public void deleteTask(long id) {
         // delete row in task table based on id
-
+        deleteEntryFromCourseToTaskTable(id);
         SQLiteDatabase db = getWritableDatabase();
-        db.beginTransaction();
         String where = TASKS_KEY_ID + " = " + id;
+        db.beginTransaction();
         try {
             db.delete(TABLE_TASKS, where, null);
             db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.d(TAG, "Error while trying to delete all posts and users");
+            e.printStackTrace();
         } finally {
             db.endTransaction();
         }
@@ -489,6 +493,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 // adding to Task list
                 tasksArrayList.add(task);
             } while (c.moveToNext());
+            c.close();
         }
         return tasksArrayList;
     }
@@ -512,9 +517,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     course.setClr(c.getInt(c.getColumnIndex(COURSE_COLOR)));
                     courseArrayList.add(course);
                 } while (c.moveToNext());
+                c.close();
             }
         } finally {
             c.close();
+
         }
         return courseArrayList;
     }
@@ -570,7 +577,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      *
      * @return
      */
-
     public void deleteEntryFromCourseToTaskTable(long task_id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
@@ -609,6 +615,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 do {
                     taskList.add(getTask(c.getLong(c.getColumnIndex(TASKS_KEY_ID))));
                 } while (c.moveToNext());
+                c.close();
             }
         } catch (Exception e) {
             Log.d(TAG, "Error while trying select tasks by course_id");
@@ -641,6 +648,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 do {
                     taskList.add(getTask(c.getLong(c.getColumnIndex(TASKS_KEY_ID))));
                 } while (c.moveToNext());
+                c.close();
             }
         } catch (Exception e) {
             Log.d(TAG, "Error while trying select tasks by course_id");
@@ -673,6 +681,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 do {
                     taskList.add(getTask(c.getLong(c.getColumnIndex(TASKS_KEY_ID))));
                 } while (c.moveToNext());
+                c.close();
             }
         } catch (Exception e) {
             Log.d(TAG, "Error while trying select tasks by course_id");
@@ -701,6 +710,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 do {
                     taskList.add(getTask(c.getLong(c.getColumnIndex(TASKS_KEY_ID))));
                 } while (c.moveToNext());
+                c.close();
             }
         } catch (Exception e) {
             Log.d(TAG, "Error while trying select tasks by course_id");
@@ -732,6 +742,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     Log.d(TAG, "add to list");
 
                 } while (c.moveToNext());
+                c.close();
             }
         } catch (Exception e) {
             Log.d(TAG, "Error while trying select tasks by course_id");
@@ -768,6 +779,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         settings.setINSSSD(c.getInt(c.getColumnIndex(SETTINGS_NOTIFY_INSSSD)));
         settings.setINSTD(c.getInt(c.getColumnIndex(SETTINGS_NOTIFY_INSTD)));
         settings.setSettingsId(c.getLong(c.getColumnIndex(SETTINGS_ID)));
+        c.close();
         return settings;
     }
 
@@ -824,7 +836,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.close();
         }
     }
-
 
     /**
      * Set isDone true for task with id.
@@ -927,6 +938,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 subtasksIdsArrayList.add(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
             } while (c.moveToNext());
         }
+        c.close();
         task.setSubtasks_ids(subtasksIdsArrayList);
     }
 
@@ -957,6 +969,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     subtasksIdsArrayList.add(tid);
             } while (c.moveToNext());
         }
+        c.close();
         return subtasksIdsArrayList;
     }
 
@@ -973,8 +986,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(selectQuery, null);
 
         // is cursor stores anything
-        if (c.moveToFirst())
+        if (c.moveToFirst()){
+            c.close();
             return true;
+        }
+        c.close();
         return false;
     }
 
@@ -1022,6 +1038,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     tasksArrayList.add(task);
                 } while (c.moveToNext());
             }
+            c.close();
             return tasksArrayList;
         } else
             return null;
@@ -1053,6 +1070,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     tasksArrayList.add(task);
                 } while (c.moveToNext());
             }
+            c.close();
             return tasksArrayList;
         } else
             return null;
@@ -1083,6 +1101,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     tasksArrayList.add(task);
                 } while (c.moveToNext());
             }
+            c.close();
             return tasksArrayList;
         } else
             return null;
@@ -1108,6 +1127,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     tasksArrayList.add(task);
                 } while (c.moveToNext());
             }
+            c.close();
             return tasksArrayList;
         } else
             return null;

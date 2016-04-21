@@ -74,6 +74,7 @@ public class ListOfCourses extends DialogFragment implements DialogInterface.OnC
                                 Toast.LENGTH_SHORT).show();*/
                         /*t.setText("Course: "
                                 + finalCourseModelList.get(which));*/
+                        courseName.setText(finalCourseModelList.get(which).getName());
                         int p = finalCourseModelList.get(which).getClr();
                         Log.d("COLOR",p+"");
                         switch (finalCourseModelList.get(which).getClr()) {

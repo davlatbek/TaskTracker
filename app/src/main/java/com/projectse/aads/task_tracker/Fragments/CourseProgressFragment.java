@@ -236,6 +236,7 @@ public class CourseProgressFragment extends Fragment {
                 if (task.getCourse().getId() == course_id)
                     totalNumber++;
             }
+            taskModels = db.getActualTasks(Calendar.getInstance());
             for (TaskModel task : taskModels){
                 if (task.getCourse().getId() == course_id)
                     actualNumber++;

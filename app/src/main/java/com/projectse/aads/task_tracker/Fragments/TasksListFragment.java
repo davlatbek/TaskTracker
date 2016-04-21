@@ -103,6 +103,7 @@ public class TasksListFragment extends Fragment {
                         task_hierarchy.get(super_task).add(task);
                 }
             }
-        tasks_adapter.notifyDataSetChanged();
+        if (tasks_adapter != null)
+            tasks_adapter.notifyDataSetChanged();
     }
 }

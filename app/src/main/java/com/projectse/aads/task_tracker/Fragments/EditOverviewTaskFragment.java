@@ -41,6 +41,12 @@ public class EditOverviewTaskFragment extends TaskFragment{
     private ActualTasksCaller actualTasksCaller;
     private Menu menu;
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        onDestroyOptionsMenu();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

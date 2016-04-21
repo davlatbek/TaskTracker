@@ -40,10 +40,16 @@ public class WizzardActivity extends AppCompatActivity implements WizzardManager
     public void calculateDefaultDuration() {
         double total = 0;
         int count = 0;
+        double minScore = 8.0; // 8 free hours per day
         for(Integer day : loadByDay.keySet()){
             Load load = loadByDay.get(day);
             total += load.getScore();
+
+            if (minScore > load.getScore()) {
+                minScore = load.getScore();
+            }
         }
+
         for(TaskModel task : selected_tasks){
             if( !(task.getDuration() > 0) ){
                 count++;
@@ -51,7 +57,11 @@ public class WizzardActivity extends AppCompatActivity implements WizzardManager
                 total -= task.getDuration();
             }
         }
+
         standard_duration = total/count;
+        if (standard_duration > minScore) {
+            standard_duration = minScore;
+        }
     }
 
     public class Load{

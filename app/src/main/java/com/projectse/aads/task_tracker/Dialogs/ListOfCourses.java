@@ -96,7 +96,7 @@ public class ListOfCourses extends DialogFragment implements DialogInterface.OnC
                                 courseName.setBackgroundColor(parsedColor);
                                 break;
                         }
-                        courseName.setBackgroundColor(finalCourseModelList.get(which).getClr());
+                        //courseName.setBackgroundColor(finalCourseModelList.get(which).getClr());
 
                         setCourseId(finalCourseModelList.get(which).getId());
                         dismiss();

@@ -2,6 +2,7 @@ package com.projectse.aads.task_tracker;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -192,7 +193,11 @@ public class MainActivity
 
     public void setCurrentFragment(Fragment fragment) {
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        for(int i = 0; i < fragmentManager.getBackStackEntryCount(); ++i) {
+            fragmentManager.popBackStack();
+        }
+        transaction.replace(R.id.flContent, fragment).commit();
         fragmentManager.executePendingTransactions();
     }
 
@@ -248,7 +253,7 @@ public class MainActivity
 
     public void callAddTaskActivity() {
         AddTaskFragment addTaskFragment = new AddTaskFragment();
-        setCurrentFragment(addTaskFragment);
+        setCurrentFragmentAddBackStack(addTaskFragment);
     }
 
     public void callTaskOverviewActivity(TaskModel taskModel) {

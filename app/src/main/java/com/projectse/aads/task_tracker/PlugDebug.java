@@ -20,13 +20,7 @@ import java.util.TimeZone;
 /**
  * Created by smith on 2/29/16.
  */
-public class PlugActivity extends Activity {
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_plug);
-        //initDebugData();
-    }
+public class PlugDebug{
 
     public static void initDebugData(DatabaseHelper db){
         CourseModel cMPP = new CourseModel("Modern programming paradigms");
@@ -342,10 +336,5 @@ public class PlugActivity extends Activity {
 //        t11.setName("Frank");
 //        t11.setStartTime(dateWrong2);
 //        t11.setId(db.addTask(t11));
-    }
-
-    public void callDaylyPlan(View v){
-        Intent intent = new Intent (getApplicationContext(), DailyPlanActivity.class);
-        startActivity(intent);
     }
 }

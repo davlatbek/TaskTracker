@@ -2,6 +2,7 @@ package com.projectse.aads.task_tracker;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -28,7 +29,6 @@ import com.projectse.aads.task_tracker.Fragments.EditOverviewTaskFragment;
 import com.projectse.aads.task_tracker.Fragments.EditTaskFragment;
 import com.projectse.aads.task_tracker.Fragments.OverdueTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.PlanFragment;
-import com.projectse.aads.task_tracker.Fragments.ProgressFragment;
 import com.projectse.aads.task_tracker.Fragments.SettingsFragment;
 import com.projectse.aads.task_tracker.Fragments.TaskCategoriesFragment;
 import com.projectse.aads.task_tracker.Fragments.WeeklyViewFragment;
@@ -124,7 +124,7 @@ public class MainActivity
         setCurrentFragment(new TaskCategoriesFragment());
 
         if(DEBUG)
-            PlugActivity.initDebugData(db);
+            PlugDebug.initDebugData(db);
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
@@ -192,7 +192,11 @@ public class MainActivity
 
     public void setCurrentFragment(Fragment fragment) {
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        for(int i = 0; i < fragmentManager.getBackStackEntryCount(); ++i) {
+            fragmentManager.popBackStack();
+        }
+        transaction.replace(R.id.flContent, fragment).commit();
         fragmentManager.executePendingTransactions();
     }
 
@@ -248,7 +252,7 @@ public class MainActivity
 
     public void callAddTaskActivity() {
         AddTaskFragment addTaskFragment = new AddTaskFragment();
-        setCurrentFragment(addTaskFragment);
+        setCurrentFragmentAddBackStack(addTaskFragment);
     }
 
     public void callTaskOverviewActivity(TaskModel taskModel) {
@@ -286,14 +290,14 @@ public class MainActivity
 
     @Override
     public void callAddTask(long defaultCourseId, Calendar defaultStartTime) {
-        Intent intent = new Intent(getApplicationContext(), TaskAddActivity.class);
-        startActivity(intent);
+        AddTaskFragment addTaskFragment = new AddTaskFragment();
+        setCurrentFragment(addTaskFragment);
     }
 
     @Override
     public void callAddTask() {
         AddTaskFragment addTaskFragment = new AddTaskFragment();
-        setCurrentFragment(addTaskFragment);
+        setCurrentFragmentAddBackStack(addTaskFragment);
     }
 
     @Override
@@ -308,7 +312,7 @@ public class MainActivity
         Bundle bundle = new Bundle();
         bundle.putLong("task_id", taskModel.getId());
         taskOverviewFragment.setArguments(bundle);
-        setCurrentFragment(taskOverviewFragment);
+        setCurrentFragmentAddBackStack(taskOverviewFragment);
     }
 
     @Override

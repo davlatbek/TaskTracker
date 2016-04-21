@@ -26,7 +26,6 @@ import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
-import com.projectse.aads.task_tracker.TaskEditActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -40,6 +39,12 @@ import java.util.TimeZone;
 public class EditOverviewTaskFragment extends TaskFragment{
     private ActualTasksCaller actualTasksCaller;
     private Menu menu;
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        onDestroyOptionsMenu();
+    }
 
     @Nullable
     @Override
@@ -95,8 +100,9 @@ public class EditOverviewTaskFragment extends TaskFragment{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getTitle().equals("edittask")) {
-            Intent intent = new Intent(getActivity(), TaskEditActivity.class);
-            intent.putExtra("task_id", task.getId());
+            //TODO solve it
+//            Intent intent = new Intent(getActivity(), TaskEditActivity.class);
+//            intent.putExtra("task_id", task.getId());
             switchToEditMode();
             menu.findItem(R.id.action_savetask).setEnabled(true).getIcon().setAlpha(255);
             menu.findItem(R.id.action_deletetask).setEnabled(false).getIcon().setAlpha(70);

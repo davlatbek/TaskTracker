@@ -199,6 +199,8 @@ public class CourseProgressFragment extends Fragment {
                     finishedNumber++;
             }
             for (TaskModel task : allTasks){
+                if(task.getCourse()== null || courseModel == null)
+                    continue;
                 if (task.getCourse().getId() == courseModel.getId())
                     allNumber++;
             }

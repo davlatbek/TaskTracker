@@ -17,11 +17,15 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Fragments.AddTaskFragment;
 import com.projectse.aads.task_tracker.Fragments.ActualTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.CourseOverviewFragment;
+import com.projectse.aads.task_tracker.Fragments.CourseProgressFragment;
 import com.projectse.aads.task_tracker.Fragments.CoursesFragment;
 import com.projectse.aads.task_tracker.Fragments.DoneTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.ImportFragment;
+import com.projectse.aads.task_tracker.Fragments.EditOverviewTaskFragment;
+import com.projectse.aads.task_tracker.Fragments.EditTaskFragment;
 import com.projectse.aads.task_tracker.Fragments.OverdueTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.PlanFragment;
 import com.projectse.aads.task_tracker.Fragments.ProgressFragment;
@@ -31,8 +35,10 @@ import com.projectse.aads.task_tracker.Fragments.WeeklyViewFragment;
 import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.DoneTasksCaller;
+import com.projectse.aads.task_tracker.Interfaces.EditTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.OverdueTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.WizzardCaller;
+import com.projectse.aads.task_tracker.Interfaces.TaskOverviewCaller;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
 import java.io.BufferedReader;
@@ -65,8 +71,8 @@ public class MainActivity
         extends AppCompatActivity
         implements WeeklyViewFragment.onWeekViewEventListener, CoursesFragment.onCourseClickListener,
         AddTaskCaller, ActualTasksCaller, DoneTasksCaller, OverdueTasksCaller, ImportFragment.TaskCategoriesCaller,
-        WizzardCaller
-{
+        WizzardCaller, EditTaskCaller, TaskOverviewCaller
+    {
     DatabaseHelper db;
     private DrawerLayout menuDrawer;
     private android.support.v7.widget.Toolbar toolbar;
@@ -156,7 +162,8 @@ public class MainActivity
                 fragmentClass = CoursesFragment.class;
                 break;
             case R.id.nav_progress_fragment:
-                fragmentClass = ProgressFragment.class;
+                /*fragmentClass = ProgressFragment.class;*/
+                fragmentClass = CourseProgressFragment.class;
                 break;
             case R.id.nav_settings_fragment:
                 fragmentClass = SettingsFragment.class;
@@ -240,14 +247,15 @@ public class MainActivity
      ************************************************/
 
     public void callAddTaskActivity() {
-        Intent intent = new Intent(getApplicationContext(), TaskAddActivity.class);
-        startActivity(intent);
+        AddTaskFragment addTaskFragment = new AddTaskFragment();
+        setCurrentFragment(addTaskFragment);
     }
 
     public void callTaskOverviewActivity(TaskModel taskModel) {
-        Intent intent = new Intent(getApplicationContext(), TaskOverviewActivity.class);
+        /*Intent intent = new Intent(getApplicationContext(), TaskOverviewActivity.class);
         intent.putExtra("task_id", taskModel.getId());
-        startActivityForResult(intent, 0);
+        startActivityForResult(intent, 0);*/
+        callTaskOverview(taskModel);
     }
 
     /************************************
@@ -269,7 +277,6 @@ public class MainActivity
         }
     }
 
-
     @Override
     public void callCourseOverviewFragment(long course_id) {
         CourseOverviewFragment fragment = new CourseOverviewFragment();
@@ -281,6 +288,27 @@ public class MainActivity
     public void callAddTask(long defaultCourseId, Calendar defaultStartTime) {
         Intent intent = new Intent(getApplicationContext(), TaskAddActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void callAddTask() {
+        AddTaskFragment addTaskFragment = new AddTaskFragment();
+        setCurrentFragment(addTaskFragment);
+    }
+
+    @Override
+    public void callEditTask() {
+        EditTaskFragment editTaskFragment = new EditTaskFragment();
+        setCurrentFragment(editTaskFragment);
+    }
+
+    @Override
+    public void callTaskOverview(TaskModel taskModel) {
+        EditOverviewTaskFragment taskOverviewFragment = new EditOverviewTaskFragment();
+        Bundle bundle = new Bundle();
+        bundle.putLong("task_id", taskModel.getId());
+        taskOverviewFragment.setArguments(bundle);
+        setCurrentFragment(taskOverviewFragment);
     }
 
     @Override
@@ -437,4 +465,5 @@ public class MainActivity
             }
         }
     }
+
 }

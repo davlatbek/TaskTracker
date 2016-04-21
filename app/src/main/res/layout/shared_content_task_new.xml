@@ -1,0 +1,302 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1"
+    tools:context="company.tasktracker.AddTaskActivity"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:background="#dcedc8">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Priority:"
+            android:id="@+id/textViewPriority"
+            android:paddingEnd="16dp" />
+
+        <Button
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/btnPriorityColor"
+            android:foreground="#4daf51"
+            android:layout_gravity="right" />
+
+        <Spinner
+            android:layout_width="106dp"
+            android:layout_height="33dp"
+            android:id="@+id/spinnerPriority"
+            android:spinnerMode="dropdown"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.47" />
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Done"
+            android:id="@+id/doneSwitch"
+            android:textSize="18sp"
+            android:checked="false"
+            android:paddingStart="40px"
+            android:layout_weight="0.29" />
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Task Name:"
+        android:id="@+id/textViewName"
+        android:paddingTop="8px" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/txtName"
+        android:hint="Type a name for a task..." />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Description:"
+        android:id="@+id/textViewDesc"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/txtDescription"
+        android:hint="More about task..."
+        android:password="false" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="43dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Course: "
+            android:id="@+id/textSelectedCourse"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true" />
+
+        <ImageButton
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonCourseSelect"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/ic_school_24dp1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/textViewCourseLabel"
+            android:layout_alignBottom="@+id/textSelectedCourse"
+            android:layout_toEndOf="@+id/textSelectedCourse"
+            android:background="#97dec9"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp" />
+
+    </RelativeLayout>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/editTextCourseName"
+        android:hint="The name of a course..."
+        android:layout_alignTop="@+id/textSelectedCourse"
+        android:layout_alignParentStart="false" />
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_marginLeft="0dp"
+            android:layout_below="@+id/textView"
+            android:layout_alignParentStart="true"
+            android:id="@+id/linearLayout"
+            android:layout_marginTop="5dp">
+
+            <EditText
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:inputType="date"
+                android:ems="10"
+                android:id="@+id/txtDateStartTime"
+                android:layout_weight="0.65"
+                android:enabled="true"
+                android:focusable="false"
+                android:hint="Set date..." />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/btnDateStartTime"
+                android:clickable="false"
+                android:background="@drawable/ic_event_note_24dp" />
+
+            <EditText
+                android:layout_width="139dp"
+                android:layout_height="wrap_content"
+                android:inputType="date"
+                android:ems="10"
+                android:id="@+id/txtDateDeadline"
+                android:editable="true"
+                android:enabled="true"
+                android:focusable="false"
+                android:hint="Set date..."
+                android:layout_weight="0.15"
+                android:layout_marginLeft="10dp" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/btnDateDeadline"
+                android:background="@drawable/ic_event_note_24dp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Start Date"
+            android:id="@+id/textView" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Due Date"
+            android:id="@+id/textView2"
+            android:layout_marginStart="93dp"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/textView" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Estimated duration"
+            android:id="@+id/textViewDuration"
+            android:paddingRight="5dp" />
+
+        <EditText
+            android:layout_width="95dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/txtDuration"
+            android:enabled="true" />
+
+        <TextView
+            android:layout_width="56dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="hours"
+            android:id="@+id/textView3"
+            android:layout_weight="0.08" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/subtasksScrollView"
+        android:fillViewport="false">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="0dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="0dp"
+                android:id="@+id/subtasksRelativeLayout"
+                android:layout_gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:text="Subtasks:"
+                    android:id="@+id/textViewSubtasks"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_row="0"
+                    android:layout_column="0"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentStart="true" />
+
+                <Button
+                    android:layout_width="31dp"
+                    android:layout_height="31dp"
+                    android:id="@+id/btnAddSubtask"
+                    android:layout_row="0"
+                    android:layout_column="17"
+                    android:background="@android:drawable/ic_input_add"
+                    android:layout_marginLeft="158dp"
+                    android:backgroundTint="#5bb55f"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true" />
+
+            </RelativeLayout>
+
+            <ListView
+                android:layout_width="fill_parent"
+                android:layout_height="351dp"
+                android:id="@+id/listViewSubtasks"
+                android:layout_row="5"
+                android:layout_column="0"
+                android:layout_below="@+id/subtasksRelativeLayout"
+                android:drawSelectorOnTop="false"
+                android:layout_marginLeft="10dp" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

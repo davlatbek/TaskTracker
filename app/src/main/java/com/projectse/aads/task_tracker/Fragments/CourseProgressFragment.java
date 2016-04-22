@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -39,7 +40,7 @@ public class CourseProgressFragment extends Fragment {
     private ImageButton buttonPreviousChart, buttonNextChart;
     DatabaseHelper db;
     List<CourseModel> courseModels;
-    TextView courseLabel, totalTasks, finished, actual, overdue, postponed, deleted;
+    TextView courseLabel, totalTasks, finished, actual, overdue;
     int courseNumb;
 
     @Override
@@ -57,6 +58,12 @@ public class CourseProgressFragment extends Fragment {
         barChart = (BarChart) view.findViewById(R.id.barChartForCourse);
         barChart.setData(createBarChartForAllCourses(courseModels));
         barChart.animateXY(2000, 2000);
+        barChart.setDescription("");
+        YAxis leftAxis = barChart.getAxisLeft();
+        YAxis rightAxis = barChart.getAxisRight();
+        rightAxis.setEnabled(false);
+        leftAxis.setAxisMinValue(0f);
+        leftAxis.setAxisMaxValue(100f);
         barChart.invalidate();
         getViews(view);
         try {
@@ -103,6 +110,7 @@ public class CourseProgressFragment extends Fragment {
                 }
             }
         });
+
         buttonNextChart.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 barChart.setVisibility(View.VISIBLE);
@@ -113,9 +121,12 @@ public class CourseProgressFragment extends Fragment {
                 }
                 if (courseNumb == -1) {
                     courseLabel.setText("All Courses");
+                    barChart.setDrawValueAboveBar(false);
+                    YAxis leftAxis = barChart.getAxisLeft();
+                    leftAxis.setAxisMinValue(0f);
                     barChart.setData(createBarChartForAllCourses(courseModels));
                     barChart.animateXY(500, 500);
-                    pieChart.setDescription("Done/All");
+                    pieChart.setDescription("");
                     barChart.invalidate();
                     try {
                         setCourseStatistics(-1);
@@ -136,15 +147,13 @@ public class CourseProgressFragment extends Fragment {
         finished = (TextView) view.findViewById(R.id.finished);
         actual = (TextView) view.findViewById(R.id.actual);
         overdue = (TextView) view.findViewById(R.id.overdue);
-        postponed = (TextView) view.findViewById(R.id.postponed);
-        deleted = (TextView) view.findViewById(R.id.deleted);
     }
 
     public void switchChart(long course_id) throws Exception {
         courseLabel.setText(db.getCourse(course_id).getName());
         barChart.setVisibility(View.INVISIBLE);
         pieChart.setVisibility(View.VISIBLE);
-        pieChart.setDescription("Pie Chart");
+        pieChart.setDescription("");
         pieChart.setDescriptionTextSize(40f);
         pieChart.setData(createPieChartByCourse(course_id));
         pieChart.animateXY(2000, 2000);
@@ -204,10 +213,10 @@ public class CourseProgressFragment extends Fragment {
                 if (task.getCourse().getId() == courseModel.getId())
                     allNumber++;
             }
-            entries.add(new BarEntry(((float)finishedNumber/(float)allNumber), courseNumber));
+            entries.add(new BarEntry(((float)finishedNumber/(float)allNumber)*100, courseNumber));
             courseNumber++;
         }
-        BarDataSet barDataSet = new BarDataSet(entries, "# of tasks in a course");
+        BarDataSet barDataSet = new BarDataSet(entries, "% of done tasks");
         barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
 
         String[] courseLabels = new String[courseModels.size()];
@@ -230,8 +239,6 @@ public class CourseProgressFragment extends Fragment {
             finished.setText("Finished: " + String.valueOf(db.getDoneTasks().size()));
             actual.setText("Actual: " + String.valueOf(db.getActualTasks(Calendar.getInstance()).size()));
             overdue.setText("Overdue: " + String.valueOf(db.getOverdueTasks(Calendar.getInstance()).size()));
-            postponed.setText("Postponed: " + "0");
-            deleted.setText("Deleted: " + "0");
         } else {
             List<TaskModel> taskModels = db.getTaskModelList();
             for (TaskModel task : taskModels){
@@ -257,8 +264,6 @@ public class CourseProgressFragment extends Fragment {
             finished.setText("Finished: " + finishedNumber);
             actual.setText("Actual: " + actualNumber);
             overdue.setText("Overdue: " + overDueNumber);
-            postponed.setText("Postponed: " + 0);
-            deleted.setText("Deleted: " + 0);
         }
     }
 }

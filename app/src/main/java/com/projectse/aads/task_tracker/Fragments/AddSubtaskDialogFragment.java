@@ -30,7 +30,6 @@ public class AddSubtaskDialogFragment extends DialogFragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_add_subtask_dialog, container, false);
-        //getDialog().setTitle("Add Subtask Dialog");
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         db = DatabaseHelper.getsInstance(getActivity());
         getView(rootView);

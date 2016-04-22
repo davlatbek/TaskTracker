@@ -35,7 +35,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="@string/wizzard_title"
+                    android:text="@string/wizard_title"
                     android:id="@+id/textView10"
                     android:layout_gravity="center_horizontal"
                     android:textSize="32dp"
@@ -68,7 +68,7 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@android:string/cancel"
+                android:text="@string/cancel"
                 android:id="@+id/btnCancel"
                 android:layout_weight="1" />
 

@@ -1,41 +1,36 @@
-package com.projectse.aads.task_tracker.WizzardFragments;
+package com.projectse.aads.task_tracker.WizardFragments;
 
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.projectse.aads.task_tracker.Adapters.DayPlanOverviewAdapter;
-import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
-import com.projectse.aads.task_tracker.Fragments.WeekSliderFragment;
 import com.projectse.aads.task_tracker.Fragments.WeeklyViewFragment;
-import com.projectse.aads.task_tracker.Interfaces.WizzardManager;
+import com.projectse.aads.task_tracker.Interfaces.WizardManager;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
-import com.projectse.aads.task_tracker.WizzardActivity;
+import com.projectse.aads.task_tracker.WizardActivity;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 public class PreviewFragment extends WeeklyViewFragment {
-    private WizzardManager wizzardManager;
-    private WizzardActivity wizzardActivity;
+    private WizardManager wizardManager;
+    private WizardActivity wizardActivity;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if(activity instanceof WizzardManager){
-            wizzardManager = (WizzardManager) activity;
+        if(activity instanceof WizardManager){
+            wizardManager = (WizardManager) activity;
         }
-        if(activity instanceof WizzardActivity){
-            wizzardActivity = (WizzardActivity) activity;
+        if(activity instanceof WizardActivity){
+            wizardActivity = (WizardActivity) activity;
         }
     }
 
@@ -93,7 +88,7 @@ public class PreviewFragment extends WeeklyViewFragment {
             prev.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    wizzardManager.callAllocateFragment();
+                    wizardManager.callAllocateFragment();
                 }
             });
 
@@ -111,7 +106,7 @@ public class PreviewFragment extends WeeklyViewFragment {
 
             List<TaskModel> list =  week_task_list.get(day);
             list.clear();
-            list.addAll((wizzardActivity.loadByDay.get(day)).getTasks());
+            list.addAll((wizardActivity.loadByDay.get(day)).getTasks());
             setTaskCounter(day,list.size());
         }
         for(DayPlanOverviewAdapter adapter : adapters)

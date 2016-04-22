@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
@@ -77,7 +78,10 @@ public class ListOfCourses extends DialogFragment implements DialogInterface.OnC
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         EditText courseName = (EditText) testActivity.findViewById(R.id.editTextCourseName);
+                        TextView textViewCourseLabel = (TextView) testActivity.findViewById(R.id.textViewCourseLabel);
                         courseName.setText(finalCourseModelList.get(which).getName());
+                        textViewCourseLabel.setText(finalCourseModelList.get(which).getAbbreviation());
+                        textViewCourseLabel.setBackgroundColor(finalCourseModelList.get(which).getClr()/*db.getCourse(course_id).getClr()*/);
                         int p = finalCourseModelList.get(which).getClr();
                         Log.d("COLOR", p + "");
                         switch (finalCourseModelList.get(which).getClr()) {

@@ -1,4 +1,4 @@
-package com.projectse.aads.task_tracker.WizzardFragments;
+package com.projectse.aads.task_tracker.WizardFragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.projectse.aads.task_tracker.Adapters.TaskListCheckableAdapter;
@@ -22,7 +21,7 @@ import java.util.List;
 /**
  * Created by smith on 4/19/16.
  */
-public class TasksFragment extends WizzardFragment {
+public class AllocateFragment extends WizardFragment {
 
     private List<CheckableTaskModel> tasks_list = new ArrayList<>();
     private DatabaseHelper db;
@@ -57,37 +56,53 @@ public class TasksFragment extends WizzardFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_wizzard_tasks, null);
-        ListView listView = (ListView) view.findViewById(R.id.task_list);
-        adapter = new TaskListCheckableAdapter(getActivity(), R.id.task_list, tasks_list);
-        listView.setAdapter(adapter);
-        selectAll = (CheckBox) view.findViewById(R.id.btnSelectAll);
-        selectAll.setOnClickListener(selectAllListener);
+        View view = inflater.inflate(R.layout.fragment_wizzard_allocate, null);
+
+        View allocate_start = view.findViewById(R.id.allocate_to_start);
+        View allocate_evenly = view.findViewById(R.id.allocate_evenly);
+        View allocate_to_end = view.findViewById(R.id.allocate_to_end);
+        View allocate_manually = view.findViewById(R.id.allocate_manually);
+
+        allocate_start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                wizardActivity.allocateToStart();
+            }
+        });
+
+        allocate_evenly.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                wizardActivity.allocateEvenly();
+            }
+        });
+
+        allocate_to_end.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                wizardActivity.allocateToEnd();
+            }
+        });
+
+        allocate_manually.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                wizardActivity.allocateManually();
+            }
+        });
 
         TextView tooltip = (TextView) view.findViewById(R.id.txtTooltip);
-        tooltip.setText(getString(R.string.tasks_tooltip));
+        tooltip.setText(getString(R.string.allocate_tooltip));
 
         Button prev = (Button) view.findViewById(R.id.btnPrev);
         prev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wizzardManager.callWeekFragment();
+                wizardManager.callTasksFragment();
             }
         });
         Button next = (Button) view.findViewById(R.id.btnNext);
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                wizzardActivity.selected_tasks.clear();
-                for(CheckableTaskModel t : tasks_list){
-                    if(t.getChecked() == true) {
-                        wizzardActivity.selected_tasks.add(t.getTask());
-                    }
-                    wizzardActivity.calculateDefaultDuration();
-                }
-                wizzardManager.callAllocateFragment();
-            }
-        });
+        next.setVisibility(View.INVISIBLE);
 
         return view;
     }

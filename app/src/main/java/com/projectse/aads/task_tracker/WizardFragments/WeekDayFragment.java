@@ -1,4 +1,4 @@
-package com.projectse.aads.task_tracker.WizzardFragments;
+package com.projectse.aads.task_tracker.WizardFragments;
 
 import android.app.Fragment;
 import android.os.Bundle;

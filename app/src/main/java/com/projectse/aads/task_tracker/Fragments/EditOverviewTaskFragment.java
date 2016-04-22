@@ -119,6 +119,7 @@ public class EditOverviewTaskFragment extends TaskFragment{
             }
             super.listNewSubtasks.clear();
             db.updateTask(task);
+            db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
 
             super.listAllSubtasks.clear();
             subtasks_adapter.notifyDataSetChanged();
@@ -127,7 +128,7 @@ public class EditOverviewTaskFragment extends TaskFragment{
             menu.findItem(R.id.action_deletetask).setEnabled(true).getIcon().setAlpha(255);
             menu.findItem(R.id.action_edittask).setEnabled(true).getIcon().setAlpha(255);
             try {
-                fillData(task.getCourse().getId());
+                fillData(db.getTask(task.getId()).getCourse().getId());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -160,6 +161,12 @@ public class EditOverviewTaskFragment extends TaskFragment{
         spinnerPriority.setEnabled(false);
         buttonCourseSelect.setEnabled(false);
         buttonCourseSelect.setAlpha(.4f);
+        buttonCourseSelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         buttonDateStartTime.setEnabled(false);
         buttonDateStartTime.setAlpha(.4f);
         buttonDateDeadline.setEnabled(false);
@@ -258,6 +265,12 @@ public class EditOverviewTaskFragment extends TaskFragment{
         spinnerPriority.setEnabled(true);
         buttonCourseSelect.setEnabled(true);
         buttonCourseSelect.setAlpha(1f);
+        buttonCourseSelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickCourseList(v);
+            }
+        });
         buttonDateStartTime.setEnabled(true);
         buttonDateStartTime.setAlpha(1f);
         buttonDateDeadline.setEnabled(true);
@@ -316,7 +329,7 @@ public class EditOverviewTaskFragment extends TaskFragment{
     public void onDestroy() {
         // write changes to base
         db.updateTask(task);
-        //long courseID = db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
+        db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
         //Log.d("UPDATE COURSE", courseID + "");
         //db.updateTask(task);
         //long courseID = db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());

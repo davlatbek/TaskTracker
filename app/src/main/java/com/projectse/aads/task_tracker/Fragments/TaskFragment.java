@@ -462,4 +462,8 @@ public abstract class TaskFragment extends Fragment {
             }
         });
     }
+
+    public void onClickCourseList(View view) {
+        dialogFragmentBuilder.show(getFragmentManager(), "selectcourse");
+    }
 }

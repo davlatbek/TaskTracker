@@ -39,6 +39,7 @@ public class AddTaskFragment extends TaskFragment {
     private Long parent_id = -1L;
     ActualTasksCaller actualTasksCaller;
     private Menu menu;
+    Long course_id;
 
     @Override
     public void onDestroyOptionsMenu() {
@@ -77,6 +78,19 @@ public class AddTaskFragment extends TaskFragment {
         getActivity().getMenuInflater().inflate(R.menu.menu_plan_addtask, menu);
         this.menu = menu;
         menu.findItem(R.id.action_addtask).setEnabled(true);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        course_id = getArguments().getLong("course_id");
+        try {
+            textViewCourseLabel.setText(db.getCourse(course_id).getAbbreviation());
+            textViewCourseLabel.setBackgroundColor(db.getCourse(course_id).getClr());
+            editTextCourseName.setText(db.getCourse(course_id).getName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -123,11 +137,17 @@ public class AddTaskFragment extends TaskFragment {
     public void addAndSaveToDb(View v) {
         if (validateTaskFields(v)) {
             long task_id = addTaskToDatabase();
-            long course_id = dialogFragmentBuilder.getCourseId();
             if (course_id != 0) {
                 db.addCourseToTask(task_id);
                 db.updateCourseToTask(task_id, course_id);
                 Log.d("course id", course_id + "");
+            } else {
+                course_id = dialogFragmentBuilder.getCourseId();
+                if (course_id != 0) {
+                    db.addCourseToTask(task_id);
+                    db.updateCourseToTask(task_id, course_id);
+                    Log.d("course id", course_id + "");
+                }
             }
             actualTasksCaller.callActualTasks();
         }

@@ -3,6 +3,7 @@ package com.projectse.aads.task_tracker;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -11,6 +12,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -346,9 +348,19 @@ public class MainActivity
     Intent intent;
 
     public void callOpenFileForImport() {
-        intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("text/*.ics");
-        startActivityForResult(intent, RequestCode.REQ_CODE_OPENFILE);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure")
+                .setTitle("Title");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("text/*.ics");
+                startActivityForResult(intent, RequestCode.REQ_CODE_OPENFILE);
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private List<String> readFile(String path) throws IOException {

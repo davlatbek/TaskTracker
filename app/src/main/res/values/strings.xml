@@ -111,12 +111,14 @@
     <string name="actual">actual</string>
     <string name="notify_about_start_date">Notify about start date</string>
     <string name="creating_plan_title">Creating plan</string>
-    <string name="wizzard_title">Wizzard</string>
+    <string name="wizard_title">Wizard</string>
     <string name="import_title">Import</string>
     <string name="intro_text">Hello, here you can create a week plan by easy way</string>
     <string name="week_tooltip">Please, specify a week and how much time do you have per day</string>
     <string name="tasks_tooltip">Please, choose tasks for creating plan</string>
     <string name="import_tooltip">Select items by one from each list to connect courses and push confirm</string>
     <string name="allocate_tooltip">Please, choose the way how to allocate the tasks</string>
+    <string name="import_hint">Choose a iCal file (*.ics) for importing courses and tasks.</string>
+    <string name="ok">OK</string>
 
 </resources>

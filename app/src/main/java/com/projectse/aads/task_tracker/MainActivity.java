@@ -291,7 +291,7 @@ public class MainActivity
     @Override
     public void callAddTask(long defaultCourseId, Calendar defaultStartTime) {
         AddTaskFragment addTaskFragment = new AddTaskFragment();
-        setCurrentFragment(addTaskFragment);
+        setCurrentFragmentAddBackStack(addTaskFragment);
     }
 
     @Override

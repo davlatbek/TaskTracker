@@ -294,7 +294,7 @@ public class MainActivity
         Bundle bundle = new Bundle();
         bundle.putLong("course_id", defaultCourseId);
         addTaskFragment.setArguments(bundle);
-        setCurrentFragment(addTaskFragment);
+        setCurrentFragmentAddBackStack(addTaskFragment);
     }
 
     @Override

@@ -67,6 +67,7 @@ public class ListOfCourses extends DialogFragment implements DialogInterface.OnC
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         EditText courseName = (EditText) testActivity.findViewById(R.id.editTextCourseName);
+                        TextView textViewCourseLabel = (TextView) testActivity.findViewById(R.id.textViewCourseLabel);
                         /*Toast.makeText(
                                 testActivity,
                                 "Selected course: "
@@ -75,6 +76,8 @@ public class ListOfCourses extends DialogFragment implements DialogInterface.OnC
                         /*t.setText("Course: "
                                 + finalCourseModelList.get(which));*/
                         courseName.setText(finalCourseModelList.get(which).getName());
+                        textViewCourseLabel.setText(finalCourseModelList.get(which).getAbbreviation());
+                        textViewCourseLabel.setBackgroundColor(finalCourseModelList.get(which).getClr()/*db.getCourse(course_id).getClr()*/);
                         int p = finalCourseModelList.get(which).getClr();
                         Log.d("COLOR",p+"");
                         switch (finalCourseModelList.get(which).getClr()) {

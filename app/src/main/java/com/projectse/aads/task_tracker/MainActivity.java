@@ -349,16 +349,16 @@ public class MainActivity
 
     public void callOpenFileForImport() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure")
-                .setTitle("Title");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setMessage(getString(R.string.import_hint))
+                .setTitle(getString(R.string.import_title));
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("text/*.ics");
                 startActivityForResult(intent, RequestCode.REQ_CODE_OPENFILE);
             }
         });
-        builder.setNegativeButton("Cancel", null);
+        builder.setNegativeButton(R.string.cancel, null);
         AlertDialog dialog = builder.create();
         dialog.show();
     }

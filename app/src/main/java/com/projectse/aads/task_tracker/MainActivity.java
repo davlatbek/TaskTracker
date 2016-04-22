@@ -363,36 +363,6 @@ public class MainActivity
         dialog.show();
     }
 
-    private List<String> readFile(String path) throws IOException {
-        File file = new File(path);
-        List<String> textt = new ArrayList<>();
-        if(file.exists()){
-            StringBuilder text = new StringBuilder();
-
-            try {
-                BufferedReader br = new BufferedReader(new FileReader(file));
-                String line;
-
-                while ((line = br.readLine()) != null) {
-                    textt.add(line);
-                    text.append(line);
-                    text.append('\n');
-                }
-                br.close();
-            }
-            catch (IOException e) {
-                throw e;
-            }
-            Log.d("FILEOPENED",text.toString());
-            return textt;
-        }else
-            throw new IOException("File is not exist.");
-    }
-
-    private void parse(List<String> text){
-
-    }
-
     private Map<String,List<TaskModel>> parse(String path) throws IOException, ParserException {
         FileInputStream fin = new FileInputStream(path);
         CalendarBuilder builder = new CalendarBuilder();

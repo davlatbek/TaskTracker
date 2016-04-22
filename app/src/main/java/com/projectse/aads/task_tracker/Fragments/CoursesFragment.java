@@ -43,7 +43,22 @@ public class CoursesFragment extends Fragment {
     private View.OnClickListener requestButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            CourseDialog newFragment = new CourseDialog("Add new course");
+            CourseDialog newFragment = new CourseDialog("Add new course") {
+                @Override
+                public void reloadFragment() {
+                    {
+                        Fragment fragment = null;
+                        Class fragmentClass;
+                        fragmentClass = CoursesFragment.class;
+                        try {
+                            fragment = (Fragment) fragmentClass.newInstance();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        setCurrentFragment(fragment);
+                    }
+                }
+            };
             newFragment.show(getFragmentManager(), "ecd");
         }
     };

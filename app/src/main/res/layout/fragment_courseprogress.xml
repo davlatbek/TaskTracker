@@ -80,7 +80,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="24dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Finished: "
+                android:text="Done: "
                 android:id="@+id/finished"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp" />
@@ -103,23 +103,6 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="24dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Postponed: "
-                android:id="@+id/postponed"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="8dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="24dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Deleted: "
-                android:id="@+id/deleted"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="8dp" />
         </LinearLayout>
 
     </ScrollView>

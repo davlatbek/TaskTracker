@@ -337,10 +337,6 @@ public class MainActivity
         setCurrentFragmentAddBackStack(fragment);
     }
 
-    public void callImportFragment(){
-
-    }
-
     @Override
     public void callWizzard() {
         Intent intent = new Intent(getApplicationContext(), WizzardActivity.class);

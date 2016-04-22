@@ -32,6 +32,7 @@ public class ListOfCourses extends DialogFragment implements DialogInterface.OnC
     private Activity testActivity;
     private DatabaseHelper db;
     private long courseID = 0;
+    AlertDialog.Builder adb;
 
     public ListOfCourses(Activity testActivity, DatabaseHelper db) {
         this.db = db;
@@ -47,6 +48,8 @@ public class ListOfCourses extends DialogFragment implements DialogInterface.OnC
     }
 
     public void reloadFragment() {
+        adb.create();
+        adb.show();
     }
 
     public void setCurrentFragment(Fragment fragment) {
@@ -71,7 +74,7 @@ public class ListOfCourses extends DialogFragment implements DialogInterface.OnC
                 android.R.layout.simple_list_item_1, courseModelList);
 
         final List<CourseModel> finalCourseModelList = courseModelList;
-        final AlertDialog.Builder adb = new AlertDialog.Builder(getActivity())
+        /*final AlertDialog.Builder */adb = new AlertDialog.Builder(getActivity())
                 .setTitle("Courses")
                 .setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener() {
 
@@ -81,7 +84,7 @@ public class ListOfCourses extends DialogFragment implements DialogInterface.OnC
                         TextView textViewCourseLabel = (TextView) testActivity.findViewById(R.id.textViewCourseLabel);
                         courseName.setText(finalCourseModelList.get(which).getName());
                         textViewCourseLabel.setText(finalCourseModelList.get(which).getAbbreviation());
-                        textViewCourseLabel.setBackgroundColor(finalCourseModelList.get(which).getClr()/*db.getCourse(course_id).getClr()*/);
+                        textViewCourseLabel.setBackgroundColor(finalCourseModelList.get(which).getClr());
                         int p = finalCourseModelList.get(which).getClr();
                         Log.d("COLOR", p + "");
                         switch (finalCourseModelList.get(which).getClr()) {

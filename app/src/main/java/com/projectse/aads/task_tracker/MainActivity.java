@@ -291,6 +291,9 @@ public class MainActivity
     @Override
     public void callAddTask(long defaultCourseId, Calendar defaultStartTime) {
         AddTaskFragment addTaskFragment = new AddTaskFragment();
+        Bundle bundle = new Bundle();
+        bundle.putLong("course_id", defaultCourseId);
+        addTaskFragment.setArguments(bundle);
         setCurrentFragment(addTaskFragment);
     }
 

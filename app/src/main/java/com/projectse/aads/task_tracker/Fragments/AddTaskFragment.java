@@ -83,13 +83,15 @@ public class AddTaskFragment extends TaskFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        course_id = getArguments().getLong("course_id");
-        try {
-            textViewCourseLabel.setText(db.getCourse(course_id).getAbbreviation());
-            textViewCourseLabel.setBackgroundColor(db.getCourse(course_id).getClr());
-            editTextCourseName.setText(db.getCourse(course_id).getName());
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (getArguments() != null){
+            course_id = getArguments().getLong("course_id");
+            try {
+                textViewCourseLabel.setText(db.getCourse(course_id).getAbbreviation());
+                textViewCourseLabel.setBackgroundColor(db.getCourse(course_id).getClr());
+                editTextCourseName.setText(db.getCourse(course_id).getName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

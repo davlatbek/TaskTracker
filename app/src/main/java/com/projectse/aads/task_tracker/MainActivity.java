@@ -39,15 +39,12 @@ import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.DoneTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.EditTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.OverdueTasksCaller;
-import com.projectse.aads.task_tracker.Interfaces.WizzardCaller;
+import com.projectse.aads.task_tracker.Interfaces.WizardCaller;
 import com.projectse.aads.task_tracker.Interfaces.TaskOverviewCaller;
 import com.projectse.aads.task_tracker.Models.SettingsModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -74,7 +71,7 @@ public class MainActivity
         extends AppCompatActivity
         implements WeeklyViewFragment.onWeekViewEventListener, CoursesFragment.onCourseClickListener,
         AddTaskCaller, ActualTasksCaller, DoneTasksCaller, OverdueTasksCaller, ImportFragment.TaskCategoriesCaller,
-        WizzardCaller, EditTaskCaller, TaskOverviewCaller
+        WizardCaller, EditTaskCaller, TaskOverviewCaller
     {
     DatabaseHelper db;
     private DrawerLayout menuDrawer;
@@ -178,7 +175,7 @@ public class MainActivity
                 callOpenFileForImport();
                 return;
             case R.id.nav_wizzard_fragment:
-                callWizzard();
+                callWizard();
                 return;
             default:
                 fragmentClass = TaskCategoriesFragment.class;
@@ -340,8 +337,8 @@ public class MainActivity
     }
 
     @Override
-    public void callWizzard() {
-        Intent intent = new Intent(getApplicationContext(), WizzardActivity.class);
+    public void callWizard() {
+        Intent intent = new Intent(getApplicationContext(), WizardActivity.class);
         startActivityForResult(intent, RequestCode.REQ_CODE_WIZZARD);
     }
 

@@ -111,7 +111,7 @@
     <string name="actual">actual</string>
     <string name="notify_about_start_date">Notify about start date</string>
     <string name="creating_plan_title">Creating plan</string>
-    <string name="wizzard_title">Wizzard</string>
+    <string name="wizard_title">Wizard</string>
     <string name="import_title">Import</string>
     <string name="intro_text">Hello, here you can create a week plan by easy way</string>
     <string name="week_tooltip">Please, specify a week and how much time do you have per day</string>

@@ -7,14 +7,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
-import com.projectse.aads.task_tracker.Interfaces.WizzardManager;
+import com.projectse.aads.task_tracker.Interfaces.WizardManager;
 import com.projectse.aads.task_tracker.Models.TaskModel;
-import com.projectse.aads.task_tracker.WizzardFragments.AllocateFragment;
-import com.projectse.aads.task_tracker.WizzardFragments.IntroFragment;
-import com.projectse.aads.task_tracker.WizzardFragments.PreviewFragment;
-import com.projectse.aads.task_tracker.WizzardFragments.TasksFragment;
-import com.projectse.aads.task_tracker.WizzardFragments.WeekFragment;
+import com.projectse.aads.task_tracker.WizardFragments.AllocateFragment;
+import com.projectse.aads.task_tracker.WizardFragments.IntroFragment;
+import com.projectse.aads.task_tracker.WizardFragments.PreviewFragment;
+import com.projectse.aads.task_tracker.WizardFragments.TasksFragment;
+import com.projectse.aads.task_tracker.WizardFragments.WeekFragment;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,7 +25,7 @@ import java.util.Map;
 /**
  * Created by smith on 4/19/16.
  */
-public class WizzardActivity extends AppCompatActivity implements WizzardManager {
+public class WizardActivity extends AppCompatActivity implements WizardManager {
     private android.support.v7.widget.Toolbar toolbar;
     private double standard_duration = 0;
     public Map<Integer,Load> loadByDay = new HashMap<>();
@@ -128,7 +127,7 @@ public class WizzardActivity extends AppCompatActivity implements WizzardManager
     }
 
     @Override
-    public void closeWizzard() {
+    public void closeWizard() {
         Intent intent = new Intent();
 //        intent.putExtra() if it's needed
         setResult(RESULT_OK, intent);
@@ -171,7 +170,7 @@ public class WizzardActivity extends AppCompatActivity implements WizzardManager
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                closeWizzard();
+                closeWizard();
                 return true;
         }
         return super.onOptionsItemSelected(item);

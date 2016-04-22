@@ -14,8 +14,7 @@ import android.widget.ImageButton;
 
 import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.ParentFragment;
-import com.projectse.aads.task_tracker.Interfaces.WizzardCaller;
-import com.projectse.aads.task_tracker.Models.TaskModel;
+import com.projectse.aads.task_tracker.Interfaces.WizardCaller;
 import com.projectse.aads.task_tracker.R;
 
 import java.util.Calendar;
@@ -32,7 +31,7 @@ public class PlanFragment extends Fragment
     private TasksListFragment tasksListFragment;
     private WeekSliderFragment sliderFragment;
     private AddTaskCaller addTaskCaller;
-    private WizzardCaller wizzardCaller;
+    private WizardCaller wizardCaller;
 
     @Override
     public void onAttach(Activity activity) {
@@ -40,8 +39,8 @@ public class PlanFragment extends Fragment
         if (activity instanceof AddTaskCaller) {
             addTaskCaller = (AddTaskCaller) activity;
         }
-        if (activity instanceof WizzardCaller) {
-            wizzardCaller = (WizzardCaller) activity;
+        if (activity instanceof WizardCaller) {
+            wizardCaller = (WizardCaller) activity;
         }
     }
 
@@ -101,7 +100,7 @@ public class PlanFragment extends Fragment
                 return true;
         }
         if (item.getTitle().equals("editplan")) {
-            if(wizzardCaller != null)wizzardCaller.callWizzard();
+            if(wizardCaller != null) wizardCaller.callWizard();
         }
         return super.onOptionsItemSelected(item);
     }

@@ -139,7 +139,9 @@ public class ListOfCourses extends DialogFragment implements DialogInterface.OnC
                                         long id = db.addCourse(course);
                                         Log.d(TAG, id + "");
                                         setCourseId(id);
-                                        reloadFragment();
+                                        //reloadFragment();
+                                        EditText t = (EditText) testActivity.findViewById(R.id.editTextCourseName);
+                                        t.setText(course.getName());
                                     }
 
                                 })

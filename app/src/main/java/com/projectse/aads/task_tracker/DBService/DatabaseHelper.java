@@ -112,7 +112,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + " INTEGER, " + SETTINGS_NOTIFY_DEADLINE_BEFORE + " INTEGER, "
             + SETTINGS_NOTIFY_INSSSD + " INTEGER, " + SETTINGS_NOTIFY_INSTD + " INTEGER);";
 
-//    private static final String INSERT_SETTING_ROW = "INSERT INTO `settings` DEFAULT VALUES;";
+    private static final String INSERT_SETTING_ROW = "INSERT OR IGNORE INTO `settings`(" + SETTINGS_ALWAYS_NOTIFY_START_TIME + ", "
+            + SETTINGS_ALWAYS_NOTIFY_DEADLINE + ", "
+            + SETTINGS_NOTIFY_START_TIME_BEFORE + ", "
+            + SETTINGS_NOTIFY_DEADLINE_BEFORE + ", "
+            + SETTINGS_NOTIFY_INSSSD + ", "
+            + SETTINGS_NOTIFY_INSTD + ") VALUES ('true', 'true', 1,1,2,2);";
+
     /**
      * CREATE TABLE TABLE_COURSES_TO_TASKS
      */
@@ -143,7 +149,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Constructor
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        if(MainActivity.DEBUG)
+        if (MainActivity.DEBUG)
             context.deleteDatabase(DATABASE_NAME);
     }
 
@@ -179,6 +185,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_COURSES); // create course table
         db.execSQL(CREATE_TABLE_COURSES_TO_TASK); // create course to task table
         db.execSQL(CREATE_TABLE_SETTINGS); // create table settings
+        db.execSQL(INSERT_SETTING_ROW); // insert default setting row
     }
 
     /**
@@ -760,6 +767,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Return object of class SettingModel with all settings
+     *
      * @return settings object
      */
     public SettingsModel getSettings() {
@@ -789,6 +797,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Add all settings to DB
+     *
      * @param settingsModel
      * @return count of affected rows
      */
@@ -817,6 +826,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Update settings
+     *
      * @param settingsModel
      */
     public void updateSettings(SettingsModel settingsModel) {
@@ -990,7 +1000,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(selectQuery, null);
 
         // is cursor stores anything
-        if (c.moveToFirst()){
+        if (c.moveToFirst()) {
             c.close();
             return true;
         }
@@ -1182,7 +1192,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param t
      */
     private void updateSubtasks(TaskModel t) {
-        if(t == null)
+        if (t == null)
             return;
         // UPDATE PARENT_ID = NULL
         SQLiteDatabase db = getWritableDatabase();

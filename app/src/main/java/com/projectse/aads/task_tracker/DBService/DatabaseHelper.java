@@ -1003,7 +1003,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param high_date
      * @return list of tasks or null
      */
-    private List<TaskModel> getTasksBetweenDates(Calendar low_date, Calendar high_date) {
+    public List<TaskModel> getTasksBetweenDates(Calendar low_date, Calendar high_date) {
         List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
 
         String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE " + TASKS_START_TIME +

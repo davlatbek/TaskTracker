@@ -37,6 +37,31 @@ public class WizzardActivity extends AppCompatActivity implements WizzardManager
 
     private Calendar first_day_of_week = Calendar.getInstance();
 
+    private List<TaskModel> getTasksToWeek() {
+        List<TaskModel> taskList = null;
+        List<TaskModel> taskToAWeekList = null;
+        DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
+        taskList = db.getOverdueTasks(first_day_of_week);
+
+       // taskToAWeekList = db.getTasksBetweenDates(first_day_of_week, )
+
+        return taskList;
+    }
+
+    private List<TaskModel> getAllTasks() {
+        List<TaskModel> actualTaskList = null;
+        List<TaskModel> taskList = null;
+        DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
+        actualTaskList = db.getActualTasks(first_day_of_week);
+        taskList = db.getOverdueTasks(first_day_of_week);
+
+        for (TaskModel task: actualTaskList) {
+            taskList.add(task);
+        }
+
+        return taskList;
+    }
+
     public void calculateDefaultDuration() {
         double total = 0;
         int count = 0;

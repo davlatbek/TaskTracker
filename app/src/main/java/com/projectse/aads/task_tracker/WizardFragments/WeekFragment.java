@@ -1,7 +1,5 @@
-package com.projectse.aads.task_tracker.WizzardFragments;
+package com.projectse.aads.task_tracker.WizardFragments;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -16,16 +14,15 @@ import com.projectse.aads.task_tracker.Adapters.DayPlanOverviewAdapter;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Fragments.WeekSliderFragment;
 import com.projectse.aads.task_tracker.Interfaces.ParentFragment;
-import com.projectse.aads.task_tracker.Interfaces.WizzardManager;
 import com.projectse.aads.task_tracker.R;
-import com.projectse.aads.task_tracker.WizzardActivity;
+import com.projectse.aads.task_tracker.WizardActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-public class WeekFragment extends WizzardFragment implements WeekSliderFragment.onWeekSliderEventListener,WeekDayFragment.onWeekDayEventListener, ParentFragment {
+public class WeekFragment extends WizardFragment implements WeekSliderFragment.onWeekSliderEventListener,WeekDayFragment.onWeekDayEventListener, ParentFragment {
     private HashMap<Integer, Integer> scores = new HashMap<>(7);
     private List<WeekDayFragment> daysFrgments = new ArrayList<>();
 
@@ -107,19 +104,19 @@ public class WeekFragment extends WizzardFragment implements WeekSliderFragment.
         prev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wizzardManager.callIntroFragment();
+                wizardManager.callIntroFragment();
             }
         });
         Button next = (Button) view.findViewById(R.id.btnNext);
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wizzardActivity.setWeek(sliderFragment.getWeekFirstDay());
+                wizardActivity.setWeek(sliderFragment.getWeekFirstDay());
                 for(WeekDayFragment df: daysFrgments){
-                    WizzardActivity.Load load = wizzardActivity.loadByDay.get(df.getDayOfWeek());
+                    WizardActivity.Load load = wizardActivity.loadByDay.get(df.getDayOfWeek());
                     load.setScore(df.getScore());
                 }
-                wizzardManager.callTasksFragment();
+                wizardManager.callTasksFragment();
             }
         });
 

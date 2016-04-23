@@ -3,6 +3,7 @@ package com.projectse.aads.task_tracker;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -11,6 +12,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -29,7 +31,6 @@ import com.projectse.aads.task_tracker.Fragments.EditOverviewTaskFragment;
 import com.projectse.aads.task_tracker.Fragments.EditTaskFragment;
 import com.projectse.aads.task_tracker.Fragments.OverdueTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.PlanFragment;
-import com.projectse.aads.task_tracker.Fragments.ProgressFragment;
 import com.projectse.aads.task_tracker.Fragments.SettingsFragment;
 import com.projectse.aads.task_tracker.Fragments.TaskCategoriesFragment;
 import com.projectse.aads.task_tracker.Fragments.WeeklyViewFragment;
@@ -38,14 +39,12 @@ import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.DoneTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.EditTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.OverdueTasksCaller;
-import com.projectse.aads.task_tracker.Interfaces.WizzardCaller;
+import com.projectse.aads.task_tracker.Interfaces.WizardCaller;
 import com.projectse.aads.task_tracker.Interfaces.TaskOverviewCaller;
+import com.projectse.aads.task_tracker.Models.SettingsModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -72,13 +71,15 @@ public class MainActivity
         extends AppCompatActivity
         implements WeeklyViewFragment.onWeekViewEventListener, CoursesFragment.onCourseClickListener,
         AddTaskCaller, ActualTasksCaller, DoneTasksCaller, OverdueTasksCaller, ImportFragment.TaskCategoriesCaller,
-        WizzardCaller, EditTaskCaller, TaskOverviewCaller
+        WizardCaller, EditTaskCaller, TaskOverviewCaller
     {
     DatabaseHelper db;
     private DrawerLayout menuDrawer;
     private android.support.v7.widget.Toolbar toolbar;
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
+    public static SettingsModel settings = null;
+
     public static Boolean DEBUG = false;
 
     @Override
@@ -123,9 +124,10 @@ public class MainActivity
         // Set default locale prog-ly to English (Customer req)
         Locale.setDefault(new Locale("en"));
         setCurrentFragment(new TaskCategoriesFragment());
+        MainActivity.settings = db.getSettings();
 
         if(DEBUG)
-            PlugActivity.initDebugData(db);
+            PlugDebug.initDebugData(db);
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
@@ -173,7 +175,7 @@ public class MainActivity
                 callOpenFileForImport();
                 return;
             case R.id.nav_wizzard_fragment:
-                callWizzard();
+                callWizard();
                 return;
             default:
                 fragmentClass = TaskCategoriesFragment.class;
@@ -291,14 +293,14 @@ public class MainActivity
 
     @Override
     public void callAddTask(long defaultCourseId, Calendar defaultStartTime) {
-        Intent intent = new Intent(getApplicationContext(), TaskAddActivity.class);
-        startActivity(intent);
+        AddTaskFragment addTaskFragment = new AddTaskFragment();
+        setCurrentFragmentAddBackStack(addTaskFragment);
     }
 
     @Override
     public void callAddTask() {
         AddTaskFragment addTaskFragment = new AddTaskFragment();
-        setCurrentFragment(addTaskFragment);
+        setCurrentFragmentAddBackStack(addTaskFragment);
     }
 
     @Override
@@ -313,7 +315,7 @@ public class MainActivity
         Bundle bundle = new Bundle();
         bundle.putLong("task_id", taskModel.getId());
         taskOverviewFragment.setArguments(bundle);
-        setCurrentFragment(taskOverviewFragment);
+        setCurrentFragmentAddBackStack(taskOverviewFragment);
     }
 
     @Override
@@ -334,52 +336,28 @@ public class MainActivity
         setCurrentFragmentAddBackStack(fragment);
     }
 
-    public void callImportFragment(){
-
-    }
-
     @Override
-    public void callWizzard() {
-        Intent intent = new Intent(getApplicationContext(), WizzardActivity.class);
+    public void callWizard() {
+        Intent intent = new Intent(getApplicationContext(), WizardActivity.class);
         startActivityForResult(intent, RequestCode.REQ_CODE_WIZZARD);
     }
 
     Intent intent;
 
     public void callOpenFileForImport() {
-        intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("text/*.ics");
-        startActivityForResult(intent, RequestCode.REQ_CODE_OPENFILE);
-    }
-
-    private List<String> readFile(String path) throws IOException {
-        File file = new File(path);
-        List<String> textt = new ArrayList<>();
-        if(file.exists()){
-            StringBuilder text = new StringBuilder();
-
-            try {
-                BufferedReader br = new BufferedReader(new FileReader(file));
-                String line;
-
-                while ((line = br.readLine()) != null) {
-                    textt.add(line);
-                    text.append(line);
-                    text.append('\n');
-                }
-                br.close();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.import_hint))
+                .setTitle(getString(R.string.import_title));
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("text/*.ics");
+                startActivityForResult(intent, RequestCode.REQ_CODE_OPENFILE);
             }
-            catch (IOException e) {
-                throw e;
-            }
-            Log.d("FILEOPENED",text.toString());
-            return textt;
-        }else
-            throw new IOException("File is not exist.");
-    }
-
-    private void parse(List<String> text){
-
+        });
+        builder.setNegativeButton(R.string.cancel, null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private Map<String,List<TaskModel>> parse(String path) throws IOException, ParserException {

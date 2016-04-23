@@ -17,14 +17,16 @@ public class SettingsModel {
     private Integer NotifyStartTimeBefore;
     private Integer NotifyDeadLineBefore;
     private Integer INSSSD;
+    private Integer INSTD; // if not spec. task duration hours
 
 
     public SettingsModel() {
-        this.AlwaysNotifyStartTime = false;
-        this.AlwaysNotifyDeadLine = false;
+        this.AlwaysNotifyStartTime = true;
+        this.AlwaysNotifyDeadLine = true;
         this.NotifyStartTimeBefore = 1;
         this.NotifyDeadLineBefore = 1;
         this.INSSSD = 2;
+        this.INSTD = 2;
         this.SettingsId = 1L;
     }
 
@@ -82,5 +84,13 @@ public class SettingsModel {
         StringBuilder sb = new StringBuilder();
         sb.append(getAlwaysNotifyDeadLine()).append(getAlwaysNotifyStartTime()).append(getINSSSD()).append(getSettingsId());
         return String.valueOf(sb);
+    }
+
+    public Integer getINSTD() {
+        return INSTD;
+    }
+
+    public void setINSTD(Integer INSTD) {
+        this.INSTD = INSTD;
     }
 }

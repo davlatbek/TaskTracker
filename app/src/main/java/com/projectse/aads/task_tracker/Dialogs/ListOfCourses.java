@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -13,13 +15,11 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.R;
-import com.projectse.aads.task_tracker.TaskActivity;
 
 import java.util.List;
 
@@ -28,23 +28,34 @@ import java.util.List;
  */
 public class ListOfCourses extends DialogFragment implements DialogInterface.OnClickListener {
     final String TAG = "TAG";
-    private Activity testActivity;
     final CourseModel course = new CourseModel();
+    private Activity testActivity;
     private DatabaseHelper db;
     private long courseID = 0;
-
-    public long getCourseId(){
-        return this.courseID;
-    }
-    private void setCourseId(long course_id){
-        this.courseID = course_id;
-    }
-
 
     public ListOfCourses(Activity testActivity, DatabaseHelper db) {
         this.db = db;
         this.testActivity = testActivity;
     }
+
+    public long getCourseId() {
+        return this.courseID;
+    }
+
+    private void setCourseId(long course_id) {
+        this.courseID = course_id;
+    }
+
+    public void reloadFragment() {
+    }
+
+    public void setCurrentFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getFragmentManager();
+//        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        fragmentManager.beginTransaction().add(fragment, "List").commit();
+        fragmentManager.executePendingTransactions();
+    }
+
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -67,37 +78,38 @@ public class ListOfCourses extends DialogFragment implements DialogInterface.OnC
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         EditText courseName = (EditText) testActivity.findViewById(R.id.editTextCourseName);
-                        /*Toast.makeText(
-                                testActivity,
-                                "Selected course: "
-                                        + finalCourseModelList.get(which),
-                                Toast.LENGTH_SHORT).show();*/
-                        /*t.setText("Course: "
-                                + finalCourseModelList.get(which));*/
+                        TextView textViewCourseLabel = (TextView) testActivity.findViewById(R.id.textViewCourseLabel);
+                        courseName.setText(finalCourseModelList.get(which).getName());
+                        textViewCourseLabel.setText(finalCourseModelList.get(which).getAbbreviation());
+                        textViewCourseLabel.setBackgroundColor(finalCourseModelList.get(which).getClr()/*db.getCourse(course_id).getClr()*/);
                         int p = finalCourseModelList.get(which).getClr();
-                        Log.d("COLOR",p+"");
+                        Log.d("COLOR", p + "");
                         switch (finalCourseModelList.get(which).getClr()) {
-                            case 7617718:  int parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor1)));
+                            case 7617718:
+                                int parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor1)));
                                 courseName.setBackgroundColor(parsedColor);
                                 break;
-                            case 16728876: parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor2)));
+                            case 16728876:
+                                parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor2)));
                                 courseName.setBackgroundColor(parsedColor);
                                 break;
-                            case 5317:  parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor3)));
+                            case 5317:
+                                parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor3)));
                                 courseName.setBackgroundColor(parsedColor);
                                 break;
-                            case 2937298:  parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor4)));
+                            case 2937298:
+                                parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor4)));
                                 courseName.setBackgroundColor(parsedColor);
                                 break;
-                            case 10011977:  parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor5)));
+                            case 10011977:
+                                parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor5)));
                                 courseName.setBackgroundColor(parsedColor);
                                 break;
-                            case 12627531:  parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor6)));
+                            case 12627531:
+                                parsedColor = Color.parseColor(String.valueOf(getResources().getColor(R.color.coursecolor6)));
                                 courseName.setBackgroundColor(parsedColor);
                                 break;
                         }
-                        //courseName.setBackgroundColor(finalCourseModelList.get(which).getClr());
-
                         setCourseId(finalCourseModelList.get(which).getId());
                         dismiss();
                     }
@@ -119,17 +131,12 @@ public class ListOfCourses extends DialogFragment implements DialogInterface.OnC
                                         course.setName(courseName.getText().toString());
                                         // Get color from slider
                                         Integer intColor = shadeSlider.getColor();
-//                                        String hexColor = "#" + Integer.toHexString(intColor).substring(2);
-//                                        int color = Integer.parseInt(hexColor.replaceFirst("^#", ""), 16);
-                                        Log.d(TAG,intColor+"<-<-<-<-CHOOSED COLOR");
+                                        Log.d(TAG, intColor + "<-<-<-<-CHOOSED COLOR");
                                         course.setClr(intColor);
                                         long id = db.addCourse(course);
                                         Log.d(TAG, id + "");
                                         setCourseId(id);
-                                        //TextView t = (TextView) testActivity.findViewById(R.id.textSelectedCourse);
-                                        //t.setText("Course: "
-                                        //        + course.getName());
-                                        //t.setBackgroundColor(course.getClr());
+                                        reloadFragment();
                                     }
 
                                 })
@@ -138,6 +145,7 @@ public class ListOfCourses extends DialogFragment implements DialogInterface.OnC
                                             @Override
                                             public void onClick(DialogInterface dialog, int id) {
                                                 dialog.cancel();
+                                                reloadFragment();
                                             }
                                         });
                         addnewcourse.show();

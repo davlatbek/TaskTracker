@@ -61,7 +61,7 @@ public abstract class TaskFragment extends Fragment {
     protected EditText durationView;
     protected TextView courseView;
 
-    protected Button buttonDateDeadline, buttonDateStartTime, addSubtasks, clearSubtasks;
+    protected Button buttonDateDeadline, buttonDateStartTime, addSubtasks;
 
     protected static DatabaseHelper db;
     protected ListView subtasksListView = null;
@@ -127,7 +127,6 @@ public abstract class TaskFragment extends Fragment {
                 callAddSubtaskDialog(v);
             }
         });
-        clearSubtasks = (Button) view.findViewById(R.id.btnClearSubtasks);
         subtasksListView = (ListView) view.findViewById(R.id.listViewSubtasks);
         subtasks_adapter = new ArrayAdapter<TaskModel>(getActivity(),
                 android.R.layout.simple_list_item_1, listAllSubtasks);
@@ -461,5 +460,9 @@ public abstract class TaskFragment extends Fragment {
                 dialogFragment.show(getFragmentManager(), "sas");
             }
         });
+    }
+
+    public void onClickCourseList(View view) {
+        dialogFragmentBuilder.show(getFragmentManager(), "selectcourse");
     }
 }

@@ -1,7 +1,5 @@
 package com.projectse.aads.task_tracker.Fragments;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,10 +16,6 @@ import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 import com.projectse.aads.task_tracker.RequestCode;
-import com.projectse.aads.task_tracker.TaskAddActivity;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Davlatbek Isroilov on 4/7/2016.
@@ -36,7 +30,6 @@ public class AddSubtaskDialogFragment extends DialogFragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_add_subtask_dialog, container, false);
-        //getDialog().setTitle("Add Subtask Dialog");
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         db = DatabaseHelper.getsInstance(getActivity());
         getView(rootView);

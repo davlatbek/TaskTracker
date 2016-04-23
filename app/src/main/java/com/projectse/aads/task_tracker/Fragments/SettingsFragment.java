@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Switch;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.SettingsModel;
 import com.projectse.aads.task_tracker.R;
 
@@ -28,6 +29,7 @@ public class SettingsFragment extends Fragment {
     EditText beforeStartDate;
     EditText beforeDueDate;
     EditText notSpecefiedStartDate;
+    EditText notSpecDurationTaskEdit;
 
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -45,6 +47,7 @@ public class SettingsFragment extends Fragment {
         beforeStartDate = (EditText) view.findViewById(R.id.startTime);
         beforeDueDate = (EditText) view.findViewById(R.id.dueTime);
         notSpecefiedStartDate = (EditText) view.findViewById(R.id.notSpecefiedStartDate);
+        notSpecDurationTaskEdit = (EditText) view.findViewById(R.id.notSpecDurationTaskEdit);
 
         // Switches
         startDateSwitch = (Switch) view.findViewById(R.id.startDateSwitch);
@@ -58,6 +61,7 @@ public class SettingsFragment extends Fragment {
         beforeStartDate.setText(settingsModel.getNotifyStartTimeBefore() + "");
         beforeDueDate.setText(settingsModel.getNotifyDeadLineBefore() + "");
         notSpecefiedStartDate.setText(settingsModel.getINSSSD() + "");
+        notSpecDurationTaskEdit.setText(settingsModel.getINSTD() + "");
 
         beforeStartDate.setSelection(beforeStartDate.getText().length());
         beforeStartDate.setSelectAllOnFocus(true);
@@ -65,6 +69,8 @@ public class SettingsFragment extends Fragment {
         beforeDueDate.setSelectAllOnFocus(true);
         notSpecefiedStartDate.setSelection(notSpecefiedStartDate.getText().length());
         notSpecefiedStartDate.setSelectAllOnFocus(true);
+        notSpecDurationTaskEdit.setSelection(notSpecDurationTaskEdit.getText().length());
+        notSpecDurationTaskEdit.setSelectAllOnFocus(true);
 
         startDateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -143,7 +149,9 @@ public class SettingsFragment extends Fragment {
         settingsModel.setNotifyStartTimeBefore(Integer.valueOf(beforeStartDate.getText().toString()));
         settingsModel.setNotifyDeadLineBefore(Integer.valueOf(beforeDueDate.getText().toString()));
         settingsModel.setINSSSD(Integer.valueOf(notSpecefiedStartDate.getText().toString()));
+        settingsModel.setINSTD(Integer.valueOf(notSpecDurationTaskEdit.getText().toString()));
         db.updateSettings(settingsModel);
+        MainActivity.settings = db.getSettings();
     }
 
     @Override

@@ -38,13 +38,24 @@ import java.util.TimeZone;
 public class AddTaskFragment extends TaskFragment {
     private Long parent_id = -1L;
     ActualTasksCaller actualTasksCaller;
+    private Menu menu;
+
+    @Override
+    public void onDestroyOptionsMenu() {
+        super.onDestroyOptionsMenu();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle("Add Task");
         View view = inflater.inflate(R.layout.shared_content_task_new, container, false);
-        //setupUI(view.findViewById(R.id.parentId));
+        setupUI(view);
         getViews(view);
         task = new TaskModel();
         course = new CourseModel();
@@ -64,6 +75,8 @@ public class AddTaskFragment extends TaskFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         getActivity().getMenuInflater().inflate(R.menu.menu_plan_addtask, menu);
+        this.menu = menu;
+        menu.findItem(R.id.action_addtask).setEnabled(true);
     }
 
     @Override
@@ -110,12 +123,12 @@ public class AddTaskFragment extends TaskFragment {
     public void addAndSaveToDb(View v) {
         if (validateTaskFields(v)) {
             long task_id = addTaskToDatabase();
-            /*long course_id = dialogFragmentBuilder.getCourseId();
+            long course_id = dialogFragmentBuilder.getCourseId();
             if (course_id != 0) {
                 db.addCourseToTask(task_id);
                 db.updateCourseToTask(task_id, course_id);
                 Log.d("course id", course_id + "");
-            }*/
+            }
             actualTasksCaller.callActualTasks();
         }
     }
@@ -142,7 +155,7 @@ public class AddTaskFragment extends TaskFragment {
         task.setDescription(descView.getText().toString());
         task.setStartTime(startTimeCal);
         task.setDeadline(deadLineCal);
-        if (!durationView.getText().toString().equals("") || !durationView.getText().toString().equals("0"))
+        if (!durationView.getText().toString().equals("")/* || !durationView.getText().toString().equals("0")*/)
             task.setDuration(Long.parseLong(durationView.getText().toString()));
         else task.setDuration(1L);
 
@@ -152,11 +165,6 @@ public class AddTaskFragment extends TaskFragment {
         db = DatabaseHelper.getsInstance(getActivity());
         return db.addTask(task);
 
-    }
-
-    public static void hideSoftKeyboard(Activity activity) {
-        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
 
     public void setAlarmNotif() {
@@ -171,29 +179,28 @@ public class AddTaskFragment extends TaskFragment {
                 PendingIntent.getBroadcast(getActivity(), 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
     }
 
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    }
+
     public void setupUI(View view) {
-
         //Set up touch listener for non-text box views to hide keyboard.
-        if (!(view instanceof EditText)) {
-
-            view.setOnTouchListener(new View.OnTouchListener() {
-
-                public boolean onTouch(View v, MotionEvent event) {
-                    hideSoftKeyboard(getActivity());
-                    return false;
+        if (view != null){
+            if (!(view instanceof EditText)) {
+                view.setOnTouchListener(new View.OnTouchListener() {
+                    public boolean onTouch(View v, MotionEvent event) {
+                        hideSoftKeyboard(getActivity());
+                        return false;
+                    }
+                });
+            }
+            //If a layout container, iterate over children and seed recursion.
+            if (view instanceof ViewGroup) {
+                for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                    View innerView = ((ViewGroup) view).getChildAt(i);
+                    setupUI(innerView);
                 }
-
-            });
-        }
-
-        //If a layout container, iterate over children and seed recursion.
-        if (view instanceof ViewGroup) {
-
-            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-
-                View innerView = ((ViewGroup) view).getChildAt(i);
-
-                setupUI(innerView);
             }
         }
     }
@@ -216,9 +223,5 @@ public class AddTaskFragment extends TaskFragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public void onClickCourseList(View view) {
-        dialogFragmentBuilder.show(getFragmentManager(), "selectcourse");
     }
 }

@@ -26,7 +26,6 @@ import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
-import com.projectse.aads.task_tracker.TaskEditActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -40,6 +39,12 @@ import java.util.TimeZone;
 public class EditOverviewTaskFragment extends TaskFragment{
     private ActualTasksCaller actualTasksCaller;
     private Menu menu;
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        onDestroyOptionsMenu();
+    }
 
     @Nullable
     @Override
@@ -95,8 +100,9 @@ public class EditOverviewTaskFragment extends TaskFragment{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getTitle().equals("edittask")) {
-            Intent intent = new Intent(getActivity(), TaskEditActivity.class);
-            intent.putExtra("task_id", task.getId());
+            //TODO solve it
+//            Intent intent = new Intent(getActivity(), TaskEditActivity.class);
+//            intent.putExtra("task_id", task.getId());
             switchToEditMode();
             menu.findItem(R.id.action_savetask).setEnabled(true).getIcon().setAlpha(255);
             menu.findItem(R.id.action_deletetask).setEnabled(false).getIcon().setAlpha(70);
@@ -113,6 +119,7 @@ public class EditOverviewTaskFragment extends TaskFragment{
             }
             super.listNewSubtasks.clear();
             db.updateTask(task);
+            db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
 
             super.listAllSubtasks.clear();
             subtasks_adapter.notifyDataSetChanged();
@@ -121,7 +128,7 @@ public class EditOverviewTaskFragment extends TaskFragment{
             menu.findItem(R.id.action_deletetask).setEnabled(true).getIcon().setAlpha(255);
             menu.findItem(R.id.action_edittask).setEnabled(true).getIcon().setAlpha(255);
             try {
-                fillData(task.getCourse().getId());
+                fillData(db.getTask(task.getId()).getCourse().getId());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -154,6 +161,12 @@ public class EditOverviewTaskFragment extends TaskFragment{
         spinnerPriority.setEnabled(false);
         buttonCourseSelect.setEnabled(false);
         buttonCourseSelect.setAlpha(.4f);
+        buttonCourseSelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         buttonDateStartTime.setEnabled(false);
         buttonDateStartTime.setAlpha(.4f);
         buttonDateDeadline.setEnabled(false);
@@ -252,6 +265,12 @@ public class EditOverviewTaskFragment extends TaskFragment{
         spinnerPriority.setEnabled(true);
         buttonCourseSelect.setEnabled(true);
         buttonCourseSelect.setAlpha(1f);
+        buttonCourseSelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickCourseList(v);
+            }
+        });
         buttonDateStartTime.setEnabled(true);
         buttonDateStartTime.setAlpha(1f);
         buttonDateDeadline.setEnabled(true);
@@ -310,7 +329,7 @@ public class EditOverviewTaskFragment extends TaskFragment{
     public void onDestroy() {
         // write changes to base
         db.updateTask(task);
-        //long courseID = db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
+        db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
         //Log.d("UPDATE COURSE", courseID + "");
         //db.updateTask(task);
         //long courseID = db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());

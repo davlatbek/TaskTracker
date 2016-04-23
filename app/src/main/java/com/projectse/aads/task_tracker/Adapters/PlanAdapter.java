@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.projectse.aads.task_tracker.Fragments.PlanFragment;
 import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
@@ -24,11 +25,23 @@ public class PlanAdapter extends BaseExpandableListAdapter {
 
     private Context context;
     private Map<TaskModel, List<TaskModel>> task_hierarchy = new HashMap<>();
+    public boolean isEditMode;
 
     public PlanAdapter(Context context, Map<TaskModel, List<TaskModel>> groups) {
         this.context = context;
         task_hierarchy = groups;
     }
+
+    public void setEditMode(boolean isEditMode) {
+        this.isEditMode = isEditMode;
+        notifyDataSetChanged();
+    }
+
+    public void setPlanFragment(PlanFragment planFragment) {
+        this.planFragment = planFragment;
+    }
+
+    private PlanFragment planFragment = null;
 
     @Override
     public int getGroupCount() {
@@ -80,7 +93,7 @@ public class PlanAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.supertask_listitem_view, null);
         }
 
-        ImageView indicator = (ImageView) convertView.findViewById(R.id.group_indicator);
+        final ImageView indicator = (ImageView) convertView.findViewById(R.id.group_indicator);
         if (isExpanded){
             indicator.setImageResource(R.drawable.up_arrow);
         }
@@ -91,12 +104,6 @@ public class PlanAdapter extends BaseExpandableListAdapter {
 
         TextView textSupertaskName = (TextView) convertView.findViewById(R.id.txtSuperTaskName);
         LinearLayout super_task_block = (LinearLayout) convertView.findViewById(R.id.supertask_info);
-        super_task_block.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((MainActivity) context).callTaskOverviewActivity(supertask);
-            }
-        });
 
         setPriority(convertView.findViewById(R.id.priority), supertask.getPriority());
 
@@ -151,6 +158,31 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         if (supertask.getIsDone())
             textSupertaskName.setPaintFlags(textSupertaskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
+        if(!isEditMode)
+            super_task_block.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((MainActivity) context).callTaskOverviewActivity(supertask);
+                }
+            });
+        else{
+            indicator.setVisibility(View.INVISIBLE);
+            super_task_block.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(planFragment != null){
+                        if(indicator.getVisibility() == View.INVISIBLE) {
+                            indicator.setImageResource(R.drawable.checked);
+                            indicator.setVisibility(View.VISIBLE);
+                            planFragment.addSelectedTask(supertask);
+                        }else {
+                            indicator.setVisibility(View.INVISIBLE);
+                            planFragment.removeSelectedTask(supertask);
+                        }
+                    }
+                }
+            });
+        }
         return convertView;
 
     }

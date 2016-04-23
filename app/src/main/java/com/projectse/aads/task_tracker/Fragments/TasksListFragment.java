@@ -26,6 +26,12 @@ import java.util.Map;
  */
 public class TasksListFragment extends Fragment {
     DatabaseHelper db;
+    private ExpandableListView listView;
+
+    public PlanAdapter getTasksAdapter() {
+        return tasks_adapter;
+    }
+
     PlanAdapter tasks_adapter;
     private static View view;
 
@@ -60,7 +66,7 @@ public class TasksListFragment extends Fragment {
         } catch (InflateException e) {
         /* map is already there, just return view as it is */
         }
-        ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.listView);
+        listView = (ExpandableListView) view.findViewById(R.id.listView);
         tasks_adapter = new PlanAdapter(getActivity(),task_hierarchy);
         listView.setAdapter(tasks_adapter);
         return view;
@@ -105,5 +111,13 @@ public class TasksListFragment extends Fragment {
             }
         if (tasks_adapter != null)
             tasks_adapter.notifyDataSetChanged();
+    }
+
+    public void collapseAll() {
+        if (listView != null && tasks_adapter != null){
+            int count =  tasks_adapter.getGroupCount();
+            for (int i = 0; i <count ; i++)
+                listView.collapseGroup(i);
+        }
     }
 }

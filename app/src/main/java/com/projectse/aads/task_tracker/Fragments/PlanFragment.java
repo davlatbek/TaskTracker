@@ -15,9 +15,12 @@ import android.widget.ImageButton;
 import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.ParentFragment;
 import com.projectse.aads.task_tracker.Interfaces.WizardCaller;
+import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created by Andrey Zolin on 20.03.2016.
@@ -32,6 +35,10 @@ public class PlanFragment extends Fragment
     private WeekSliderFragment sliderFragment;
     private AddTaskCaller addTaskCaller;
     private WizardCaller wizardCaller;
+
+    /**EDIT MODE**/
+    private List<TaskModel> selectedTasks = new ArrayList<>();
+    private boolean isEditMode;
 
     @Override
     public void onAttach(Activity activity) {
@@ -100,7 +107,16 @@ public class PlanFragment extends Fragment
                 return true;
         }
         if (item.getTitle().equals("editplan")) {
-            if(wizardCaller != null) wizardCaller.callWizard();
+//            if(wizardCaller != null) wizardCaller.callWizard();
+            isEditMode = isEditMode?false:true; //change the state
+            if(isEditMode) {
+                tasksListFragment.collapseAll();
+                tasksListFragment.getTasksAdapter().setPlanFragment(this);
+                tasksListFragment.getTasksAdapter().setEditMode(true);
+            }else {
+                selectedTasks.clear();
+                tasksListFragment.getTasksAdapter().setEditMode(false);
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -149,5 +165,13 @@ public class PlanFragment extends Fragment
             ImageButton addRequestButton = (ImageButton) getView().findViewById(R.id.create_task_btn);
             addRequestButton.setOnClickListener(requestButtonListener);
         }
+    }
+
+    public void addSelectedTask(TaskModel selectedTask) {
+        this.selectedTasks.add(selectedTask);
+    }
+
+    public void removeSelectedTask(TaskModel selectedTask) {
+        this.selectedTasks.remove(selectedTask);
     }
 }

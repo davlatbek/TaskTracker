@@ -161,7 +161,6 @@ public class PlugDebug{
         dd = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         st.add(Calendar.DAY_OF_MONTH, 3);
         dd.add(Calendar.DAY_OF_MONTH, 5);
-        t_A_OOP_1.setStartTime(st);
         t_A_OOP_1.setDeadline(dd);
         t_A_OOP_1.setId(db.addTask(t_A_OOP_1));
 
@@ -169,7 +168,6 @@ public class PlugDebug{
         t_A_OOP_2.setName("Read Chapter #6");
         st = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         dd = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
-        t_A_OOP_2.setStartTime(st);
         t_A_OOP_2.setDeadline(dd);
         t_A_OOP_2.setPriority(TaskModel.Priority.LOW);
         t_A_OOP_2.setId(db.addTask(t_A_OOP_2));
@@ -178,7 +176,6 @@ public class PlugDebug{
         t_A_OOP_3.setName("Prepare for a meeting with Mayer");
         st = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         dd = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
-        t_A_OOP_3.setStartTime(st);
         t_A_OOP_3.setDeadline(dd);
         t_A_OOP_3.setPriority(TaskModel.Priority.HIGH);
         t_A_OOP_3.setId(db.addTask(t_A_OOP_3));
@@ -187,7 +184,6 @@ public class PlugDebug{
         t_A_OOP_4.setName("Repeat Inheritance");
         st = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         dd = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
-        t_A_OOP_4.setStartTime(st);
         t_A_OOP_4.setDeadline(dd);
         t_A_OOP_4.setPriority(TaskModel.Priority.LOW);
         t_A_OOP_4.setId(db.addTask(t_A_OOP_4));
@@ -196,7 +192,6 @@ public class PlugDebug{
         t_A_OOP_5.setName("Repeat Incapsulation");
         st = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         dd = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
-        t_A_OOP_5.setStartTime(st);
         t_A_OOP_5.setDeadline(dd);
         t_A_OOP_5.setPriority(TaskModel.Priority.LOW);
         t_A_OOP_5.setId(db.addTask(t_A_OOP_5));
@@ -225,7 +220,6 @@ public class PlugDebug{
         TaskModel t1 = new TaskModel();
         t1.setName("TestTask1");
         t1.setId(db.addTask(t1));
-        t1.setStartTime(Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault()));
         t1.setDeadline(Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault()));
         subts.add(t1.getId());
 

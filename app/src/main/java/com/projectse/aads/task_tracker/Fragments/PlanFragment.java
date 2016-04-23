@@ -27,6 +27,7 @@ import com.projectse.aads.task_tracker.RequestCode;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -144,10 +145,21 @@ public class PlanFragment extends Fragment
                 Calendar date = sliderFragment.getWeekFirstDay();
                 Calendar first_day = (Calendar) date.clone();
                 List<TaskModel> unset_tasks = new ArrayList<>();
-                Exception err = null;
+                HashSet<String> errors = new HashSet<>();
                 for(TaskModel t : selectedTasks){
                     date.set(Calendar.DAY_OF_WEEK,weekDay);
                     try {
+                        Calendar today = Calendar.getInstance();
+                        today.set(
+                                today.get(Calendar.YEAR),
+                                today.get(Calendar.MONTH),
+                                today.get(Calendar.DAY_OF_MONTH),
+                                0,
+                                0
+                                );
+                        if(date.compareTo(today)<0){
+                            throw new IllegalArgumentException("You cannot manage start time in the past");
+                        }
                         t.setStartTime(date);
                         for(Long id : t.getSubtasks_ids()){
                             TaskModel subtask = db.getTask(id);
@@ -156,7 +168,7 @@ public class PlanFragment extends Fragment
                         }
                         db.updateTask(t);
                     }catch (IllegalArgumentException e){
-                        err = e;
+                        errors.add(e.getMessage());
                         unset_tasks.add(t);
                     }
                 }
@@ -168,7 +180,12 @@ public class PlanFragment extends Fragment
                         stringBuilder.append("\n");
                         stringBuilder.append(t.getName());
                     }
-                    stringBuilder.append("\nBecause of: " + err.getMessage());
+                    StringBuilder errorsStringBuilder = new StringBuilder();
+                    for(String err : errors) {
+                        stringBuilder.append("\n");
+                        errorsStringBuilder.append(err);
+                    }
+                    stringBuilder.append("\nBecause of: " + errorsStringBuilder);
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage(stringBuilder.toString())
                             .setTitle("Tasks aren't moved");

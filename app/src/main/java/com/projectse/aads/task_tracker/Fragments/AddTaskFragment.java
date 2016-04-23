@@ -37,7 +37,7 @@ import java.util.TimeZone;
  */
 public class AddTaskFragment extends TaskFragment {
     ActualTasksCaller actualTasksCaller;
-    Long course_id;
+    Long course_id = 0L;
     private Long parent_id = -1L;
     private Menu menu;
 
@@ -144,7 +144,7 @@ public class AddTaskFragment extends TaskFragment {
     public void addAndSaveToDb(View v) {
         if (validateTaskFields(v)) {
             long task_id = addTaskToDatabase();
-            if (course_id != 0) {
+            if (0 != course_id) {
                 db.addCourseToTask(task_id);
                 db.updateCourseToTask(task_id, course_id);
                 Log.d("course id", course_id + "");

@@ -37,9 +37,9 @@ import java.util.TimeZone;
  */
 public class AddTaskFragment extends TaskFragment {
     ActualTasksCaller actualTasksCaller;
-    Long course_id;
     private Long parent_id = -1L;
     private Menu menu;
+    long course_id;
 
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);

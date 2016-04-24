@@ -63,7 +63,7 @@ public class CourseProgressFragment extends Fragment {
         YAxis rightAxis = barChart.getAxisRight();
         rightAxis.setEnabled(false);
         leftAxis.setAxisMinValue(0f);
-        leftAxis.setAxisMaxValue(100f);
+        leftAxis.setAxisMaxValue(110f);
         barChart.invalidate();
         getViews(view);
         try {
@@ -75,7 +75,7 @@ public class CourseProgressFragment extends Fragment {
     }
 
     public void getViews(View view) {
-        courseNumb = 0;
+        courseNumb = -1;
         courseLabel = (TextView) view.findViewById(R.id.week_label);
         courseLabel.setText("All Courses");
 
@@ -93,20 +93,32 @@ public class CourseProgressFragment extends Fragment {
 
         buttonPreviousChart.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                barChart.setVisibility(View.INVISIBLE);
-                pieChart.setVisibility(View.VISIBLE);
-                pieChart.setDescriptionTextSize(40f);
-                try {
-                    pieChart.setData(createPieChartByCourse(1));
-                } catch (Exception e) {
-                    e.printStackTrace();
+                barChart.setVisibility(View.VISIBLE);
+                pieChart.setVisibility(View.INVISIBLE);
+                courseNumb--;
+                if (courseNumb < -1){
+                    courseNumb = courseList.size() - 1;
                 }
-                pieChart.animateXY(2000, 2000);
-                pieChart.invalidate();
-                try {
-                    setCourseStatistics(0);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (courseNumb == -1) {
+                    courseLabel.setText("All Courses");
+                    barChart.setDrawValueAboveBar(false);
+                    YAxis leftAxis = barChart.getAxisLeft();
+                    leftAxis.setAxisMinValue(0f);
+                    barChart.setData(createBarChartForAllCourses(courseModels));
+                    barChart.animateXY(500, 500);
+                    pieChart.setDescription("");
+                    barChart.invalidate();
+                    try {
+                        setCourseStatistics(-1);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        switchChart(courseList.get(courseNumb));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -165,17 +177,17 @@ public class CourseProgressFragment extends Fragment {
         int actualNumber = 0, finishedNumber = 0, overDueNumber = 0;
         List<TaskModel> taskModels = db.getActualTasks(Calendar.getInstance());
         for (TaskModel task : taskModels){
-           if (task.getCourse().getId() == courseId)
+           if (task.getCourse() != null && task.getCourse().getId() == courseId)
                actualNumber++;
         }
         taskModels = db.getDoneTasks();
         for (TaskModel task : taskModels){
-            if (task.getCourse().getId() == courseId)
+            if (task.getCourse() != null && task.getCourse().getId() == courseId)
                 finishedNumber++;
         }
         taskModels = db.getOverdueTasks(Calendar.getInstance());
         for (TaskModel task : taskModels){
-            if (task.getCourse().getId() == courseId)
+            if (task.getCourse() != null && task.getCourse().getId() == courseId)
                 overDueNumber++;
         }
         ArrayList<Entry> entries = new ArrayList<>();
@@ -204,7 +216,7 @@ public class CourseProgressFragment extends Fragment {
             finishedNumber = 0;
             allNumber = 0;
             for (TaskModel task : doneTasks){
-                if (task.getCourse().getId() == courseModel.getId())
+                if (task.getCourse() != null && task.getCourse().getId() == courseModel.getId())
                     finishedNumber++;
             }
             for (TaskModel task : allTasks){
@@ -242,22 +254,22 @@ public class CourseProgressFragment extends Fragment {
         } else {
             List<TaskModel> taskModels = db.getTaskModelList();
             for (TaskModel task : taskModels){
-                if (task.getCourse().getId() == course_id)
+                if (task.getCourse() != null && task.getCourse().getId() == course_id)
                     totalNumber++;
             }
             taskModels = db.getActualTasks(Calendar.getInstance());
             for (TaskModel task : taskModels){
-                if (task.getCourse().getId() == course_id)
+                if (task.getCourse() != null && task.getCourse().getId() == course_id)
                     actualNumber++;
             }
             taskModels = db.getDoneTasks();
             for (TaskModel task : taskModels){
-                if (task.getCourse().getId() == course_id)
+                if (task.getCourse() != null && task.getCourse().getId() == course_id)
                     finishedNumber++;
             }
             taskModels = db.getOverdueTasks(Calendar.getInstance());
             for (TaskModel task : taskModels){
-                if (task.getCourse().getId() == course_id)
+                if (task.getCourse() != null && task.getCourse().getId() == course_id)
                     overDueNumber++;
             }
             totalTasks.setText("Total tasks: " + totalNumber);

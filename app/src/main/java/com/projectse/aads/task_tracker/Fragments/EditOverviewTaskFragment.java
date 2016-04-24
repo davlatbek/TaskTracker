@@ -91,9 +91,8 @@ public class EditOverviewTaskFragment extends TaskFragment{
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         getActivity().getMenuInflater().inflate(R.menu.menu_plan_edit_overview, menu);
-        menu.findItem(R.id.action_savetask).setEnabled(false).getIcon().setAlpha(70);
-        menu.findItem(R.id.action_deletetask).setEnabled(true).getIcon().setAlpha(255);
-        menu.findItem(R.id.action_edittask).setEnabled(true).getIcon().setAlpha(255);
+        menu.findItem(R.id.action_deletetask).setEnabled(true);
+        menu.findItem(R.id.action_edittask).setEnabled(true);
         this.menu = menu;
     }
 
@@ -104,9 +103,8 @@ public class EditOverviewTaskFragment extends TaskFragment{
 //            Intent intent = new Intent(getActivity(), TaskEditActivity.class);
 //            intent.putExtra("task_id", task.getId());
             switchToEditMode();
-            menu.findItem(R.id.action_savetask).setEnabled(true).getIcon().setAlpha(255);
-            menu.findItem(R.id.action_deletetask).setEnabled(false).getIcon().setAlpha(70);
-            menu.findItem(R.id.action_edittask).setEnabled(false).getIcon().setAlpha(70);
+            menu.findItem(R.id.action_deletetask).setEnabled(false).setVisible(false);
+            menu.findItem(R.id.action_edittask).setIcon(R.drawable.ic_save_24dp).setTitle("savetask");
         }
         else if (item.getTitle().equals("deletetask")) {
             createDeleteDialog();
@@ -124,9 +122,9 @@ public class EditOverviewTaskFragment extends TaskFragment{
             super.listAllSubtasks.clear();
             subtasks_adapter.notifyDataSetChanged();
             switchToOverviewMode();
-            menu.findItem(R.id.action_savetask).setEnabled(false).getIcon().setAlpha(70);
-            menu.findItem(R.id.action_deletetask).setEnabled(true).getIcon().setAlpha(255);
-            menu.findItem(R.id.action_edittask).setEnabled(true).getIcon().setAlpha(255);
+//            menu.findItem(R.id.action_savetask).setEnabled(false);
+            menu.findItem(R.id.action_deletetask).setEnabled(false).setVisible(true);
+            menu.findItem(R.id.action_edittask).setEnabled(true).setIcon(R.drawable.edit_material).setTitle("edittask");
             try {
                 fillData(db.getTask(task.getId()).getCourse().getId());
             } catch (Exception e) {

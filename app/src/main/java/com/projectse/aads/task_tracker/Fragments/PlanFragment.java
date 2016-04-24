@@ -114,6 +114,7 @@ public class PlanFragment extends Fragment
         if(weekDay >= Calendar.SUNDAY && weekDay <= Calendar.SATURDAY){
             weekDaysFragment.setCurrentDay(weekDay);
             tasksListFragment.setCurrentDayOfWeek(weekDay);
+            tasksListFragment.getTasksAdapter().sortByName();
         }
     }
 

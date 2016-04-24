@@ -120,5 +120,10 @@
     <string name="allocate_tooltip">Please, choose the way how to allocate the tasks</string>
     <string name="import_hint">Choose a iCal file (*.ics) for importing courses and tasks.</string>
     <string name="ok">OK</string>
+    <string name="deadline_constrained_failed">Cannot set task over it\'s deadline.</string>
+    <string name="free_hourse_constrained_failed">It\'s not enough time for task</string>
+    <string name="manual_alloc_tooltip">Select a day for task in top...</string>
+    <string name="no_more_tasks">No more tasks in list. Tap NEXT button to confirm changes.</string>
+    <string name="list_is_empty">List is empty</string>
 
 </resources>

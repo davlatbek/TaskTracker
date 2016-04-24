@@ -46,8 +46,6 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
         return (Calendar) first_day_of_week.clone();
     }
 
-    private Calendar first_day_of_week = Calendar.getInstance();
-
     public class Load{
         private List<TaskModel> tasks = new ArrayList<>();
         private double score;
@@ -64,7 +62,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
             if(
                     ( ( (getLeftScore() + 1) > task.getDuration()) && (task.getDuration() > 0) )
                     ||
-                            ( (getLeftScore() > standard_duration) && (task.getDuration() == 0))
+                            ( (getLeftScore()+1 > standard_duration) && (task.getDuration() == 0))
                     ) {
                 this.tasks.add(task);
                 return true;
@@ -78,7 +76,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
         }
 
         public double getLeftScore() {
-            return score - getBusyHours() + 1;      // +1 because we can add not more then n+1 task-hours
+            return score - getBusyHours();
         }
 
         public double getBusyHours(){
@@ -103,8 +101,6 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
         DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
         taskList = db.getOverdueTasks(first_day_of_week);
 
-        Calendar last_day_of_week = first_day_of_week;
-        last_day_of_week.add(Calendar.DATE, 9);
         taskToAWeekList = db.getTasksBetweenDates(first_day_of_week, last_day_of_week);
 
         for (TaskModel task: taskToAWeekList) {
@@ -246,7 +242,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
                     break;
                 }
 
-                if(!added && (load.getLeftScore() > task.getDuration())){
+                if(!added && (load.getLeftScore()+1 > task.getDuration())){
                     load.addTask(task);
                     added = true;
                     break;
@@ -260,7 +256,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
                 while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
                     Load load = loadByDay.get(day);
 
-                    if (load.getLeftScore() > 0) {
+                    if (load.getLeftScore()+1 > 0) {
                         load.addTask(task);
                         added = true;
                         break;
@@ -284,8 +280,8 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
             while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
                 Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
 
-                if (deadline.after(day) && load.getLeftScore() > minLoad) {
-                    minLoad = load.getLeftScore();
+                if (deadline.after(day) && load.getLeftScore()+1 > minLoad) {
+                    minLoad = load.getLeftScore()+1;
                 }
                 day.add(Calendar.DATE, 1);
             }
@@ -293,7 +289,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
             day = first_day_of_week;
             while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
                 Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
-                if (load.getLeftScore() == minLoad) {
+                if (load.getLeftScore()+1 == minLoad) {
                     if (deadline.after(day)) {
                         load.addTask(task);
                         added = true;
@@ -345,7 +341,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
                 while (day.after(first_day_of_week) || day.equals(first_day_of_week)){
                     Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
 
-                    if (load.getLeftScore() > task.getDuration()) {
+                    if (load.getLeftScore()+1 > task.getDuration()) {
                         load.addTask(task);
                         added = true;
                         break;
@@ -359,7 +355,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
                 while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
                     Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
 
-                    if (load.getLeftScore() > 0) {
+                    if (load.getLeftScore()+1 > 0) {
                         load.addTask(task);
                         added = true;
                         break;

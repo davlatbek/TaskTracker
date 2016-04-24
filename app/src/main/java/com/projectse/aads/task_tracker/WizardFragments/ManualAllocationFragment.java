@@ -38,6 +38,9 @@ public class ManualAllocationFragment extends WizardFragment{
         getActivity().setTitle("Manual Allocation");
         view = inflater.inflate(R.layout.fragment_wizzard_manual, null);
 
+        TextView tooltip = (TextView) view.findViewById(R.id.txtTooltip);
+        tooltip.setText(getString(R.string.manual_alloc_tooltip));
+
         ListView listView = (ListView) view.findViewById(R.id.task_list);
         final TaskStackAdapter adapter = new TaskStackAdapter(getActivity(),R.id.task_list,selected_tasks);
         listView.setAdapter(adapter);
@@ -84,6 +87,16 @@ public class ManualAllocationFragment extends WizardFragment{
             day_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if(adapter.isEmpty()){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage(getString(R.string.no_more_tasks))
+                                .setTitle(getString(R.string.list_is_empty));
+                        builder.setPositiveButton(R.string.ok, null);
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                        return;
+                    }
+
                     TaskModel task = adapter.getItem(0);
 
                     WizardActivity.Load load = wizardActivity.loadByDay.get(finalDay);

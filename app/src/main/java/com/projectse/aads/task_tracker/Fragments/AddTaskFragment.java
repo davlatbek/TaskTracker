@@ -39,7 +39,7 @@ public class AddTaskFragment extends TaskFragment {
     private Long parent_id = -1L;
     ActualTasksCaller actualTasksCaller;
     private Menu menu;
-    Long course_id;
+    long course_id;
 
     @Override
     public void onDestroyOptionsMenu() {

@@ -95,6 +95,14 @@ public class PreviewFragment extends WeeklyViewFragment {
                 wizardManager.callAllocateFragment();
             }
         });
+
+        Button next = (Button) view.findViewById(R.id.btnNext);
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                wizardActivity.commitChanges();
+            }
+        });
         return view;
     }
 

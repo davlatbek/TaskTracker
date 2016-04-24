@@ -17,9 +17,13 @@ import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 import com.projectse.aads.task_tracker.WizardActivity;
 
+import org.apache.commons.lang3.time.DateUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+
+import static com.projectse.aads.task_tracker.Models.TaskModel.roundByDay;
 
 /**
  * Created by smith on 4/24/16.
@@ -120,15 +124,17 @@ public class ManualAllocationFragment extends WizardFragment{
                     Calendar date = wizardActivity.getFirstDayOfWeek();
                     date.set(Calendar.DAY_OF_WEEK,finalDay);
 
-                    if( date.get(Calendar.DAY_OF_YEAR) > task.getDeadline().get(Calendar.DAY_OF_YEAR) ||
-                            date.get(Calendar.YEAR) > task.getDeadline().get(Calendar.YEAR)
-                            ){
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yyyy");
+                    Calendar deadline = roundByDay(task.getDeadline());
+                    date = roundByDay(date);
+                    date.setTimeZone(deadline.getTimeZone());
+
+                    if( date.compareTo(deadline) > 0){
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
                         StringBuilder stringBuilder = new StringBuilder();
                         stringBuilder.append("Try to set: ");
                         stringBuilder.append(dateFormat.format(date.getTime()));
                         stringBuilder.append("\nTask's deadline: ");
-                        stringBuilder.append(dateFormat.format(task.getDeadline().getTime()));
+                        stringBuilder.append(dateFormat.format(deadline.getTime()));
                         stringBuilder.append("\n");
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                         builder.setMessage(stringBuilder)
@@ -153,6 +159,14 @@ public class ManualAllocationFragment extends WizardFragment{
             @Override
             public void onClick(View v) {
                 wizardManager.callAllocateFragment();
+            }
+        });
+
+        Button next = (Button) view.findViewById(R.id.btnNext);
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                wizardActivity.commitChanges();
             }
         });
         return view;

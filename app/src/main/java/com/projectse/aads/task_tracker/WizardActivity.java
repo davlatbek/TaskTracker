@@ -36,6 +36,9 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
 
     private Calendar first_day_of_week = Calendar.getInstance();
     private Calendar last_day_of_week = Calendar.getInstance();
+
+    private DatabaseHelper db;
+
     public void setWeek(Calendar first_day_of_week) {
         this.first_day_of_week = (Calendar) first_day_of_week.clone();
         this.last_day_of_week = (Calendar) first_day_of_week.clone();
@@ -152,6 +155,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        db = DatabaseHelper.getsInstance(getApplicationContext());
         first_day_of_week.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         setContentView(R.layout.activity_wizzard);
 
@@ -171,6 +175,19 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
         fragmentManager.executePendingTransactions();
+    }
+
+    public void commitChanges(){
+        Calendar date_cursor = (Calendar) first_day_of_week.clone();
+        for(int day_of_week = Calendar.SUNDAY; day_of_week <= Calendar.SATURDAY; day_of_week++){
+            Load load = loadByDay.get(day_of_week);
+            date_cursor.set(Calendar.DAY_OF_WEEK,day_of_week);
+            for(TaskModel task : load.getTasks()){
+                task.setStartTime(date_cursor);
+                db.updateTask(task);
+            }
+        }
+        closeWizard();
     }
 
     @Override

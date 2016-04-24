@@ -2,6 +2,10 @@ package com.projectse.aads.task_tracker.Models;
 
 import com.projectse.aads.task_tracker.MainActivity;
 
+
+import org.apache.commons.lang3.time.DateUtils;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -174,9 +178,13 @@ public class TaskModel implements Comparable<TaskModel>{
     }
 
     public void setStartTime(Calendar startTime) {
-        if(startTime.get(Calendar.DAY_OF_YEAR)>deadline.get(Calendar.DAY_OF_YEAR))
-            throw new IllegalArgumentException("Start time cannot be after deadline");
-        this.startTime = startTime;
+        Calendar st_candidate = roundByDay(startTime);
+        Calendar dd =  roundByDay(deadline);
+        if(st_candidate.compareTo( dd )>0) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
+            throw new IllegalArgumentException("Start time cannot be after deadline: "+ dateFormat.format(st_candidate.getTime()) + "; " + dateFormat.format(dd.getTime()));
+        }
+        this.startTime = st_candidate;
         isStartTimeSet = true;
     }
 
@@ -185,7 +193,9 @@ public class TaskModel implements Comparable<TaskModel>{
     }
 
     public void setDeadline(Calendar deadline) {
-        this.deadline = deadline;
+        this.deadline = (Calendar) deadline.clone();
+        deadline = roundByDay(deadline);
+//        deadline.add(Calendar.HOUR_OF_DAY,10);
         if(!isStartTimeSet) {
             startTime = (Calendar) deadline.clone();
             Integer diff = 1;
@@ -234,5 +244,14 @@ public class TaskModel implements Comparable<TaskModel>{
 
     public boolean isSupertask() {
         return !isSubtask();
+    }
+
+    public static Calendar roundByDay(Calendar src){
+        src = (Calendar) src.clone();
+        src.set(Calendar.MILLISECOND, 0);
+        src.set(Calendar.SECOND, 0);
+        src.set(Calendar.MINUTE, 0);
+        src.set(Calendar.HOUR_OF_DAY, 0);
+        return src;
     }
 }

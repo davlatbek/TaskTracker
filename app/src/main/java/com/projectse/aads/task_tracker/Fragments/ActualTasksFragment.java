@@ -57,6 +57,7 @@ public class ActualTasksFragment extends Fragment implements ParentFragment {
     @Override
     public void onChildCreated() {
         tasksListFragment.setTaskHierarchy(db.getActualTasks(Calendar.getInstance()));
+        tasksListFragment.getTasksAdapter().sortByDeadline();
         ImageButton addRequestButton = (ImageButton) getView().findViewById(R.id.create_task_btn);
         addRequestButton.setOnClickListener(requestButtonListener);
     }

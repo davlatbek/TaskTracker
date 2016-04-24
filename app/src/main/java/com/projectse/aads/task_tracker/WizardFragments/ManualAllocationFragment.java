@@ -2,22 +2,22 @@ package com.projectse.aads.task_tracker.WizardFragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.projectse.aads.task_tracker.Adapters.DayPlanOverviewAdapter;
 import com.projectse.aads.task_tracker.Adapters.TaskStackAdapter;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 import com.projectse.aads.task_tracker.WizardActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -79,12 +79,55 @@ public class ManualAllocationFragment extends WizardFragment{
             counterView.setText( String.valueOf(wizardActivity.loadByDay.get(day).getLeftScore()) );
 
             Button day_button = (Button) view.findViewById(btn_id);
+            final int finalCounter_id = counter_id;
+            final int finalDay = day;
             day_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    TaskModel task = adapter.pop();
+                    TaskModel task = adapter.getItem(0);
+
+                    WizardActivity.Load load = wizardActivity.loadByDay.get(finalDay);
+                    if( load.getLeftScore() <= 0 || (load.getLeftScore() + 1) < task.getDuration()){
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("Left free hours: ");
+                        stringBuilder.append(load.getLeftScore());
+                        stringBuilder.append("\nTask's duration: ");
+                        stringBuilder.append(task.getDuration());
+                        stringBuilder.append("\n");
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage(stringBuilder)
+                                .setTitle(getString(R.string.free_hourse_constrained_failed));
+                        builder.setPositiveButton(R.string.ok, null);
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                        return;
+                    }
+
+                    Calendar date = wizardActivity.getFirstDayOfWeek();
+                    date.set(Calendar.DAY_OF_WEEK,finalDay);
+
+                    if( date.get(Calendar.DAY_OF_YEAR) > task.getDeadline().get(Calendar.DAY_OF_YEAR) ||
+                            date.get(Calendar.YEAR) > task.getDeadline().get(Calendar.YEAR)
+                            ){
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yyyy");
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("Try to set: ");
+                        stringBuilder.append(dateFormat.format(date.getTime()));
+                        stringBuilder.append("\nTask's deadline: ");
+                        stringBuilder.append(dateFormat.format(task.getDeadline().getTime()));
+                        stringBuilder.append("\n");
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage(stringBuilder)
+                                .setTitle(getString(R.string.deadline_constrained_failed));
+                        builder.setPositiveButton(R.string.ok, null);
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                        return;
+                    }
+                    task = adapter.pop();
                     if(task != null){
-                        //TODO do smth
+                        addTask(load,task, finalCounter_id);
                     }else{
                         Toast.makeText(getActivity(),"List is empty",Toast.LENGTH_SHORT);
                     }
@@ -100,5 +143,17 @@ public class ManualAllocationFragment extends WizardFragment{
             }
         });
         return view;
+    }
+
+    private void addTask(WizardActivity.Load load, TaskModel task, int counter_id){
+        load.addTask(task);
+        if(getView() != null){
+            try {
+                TextView counterView = (TextView) getView().findViewById(counter_id);
+                counterView.setText(String.valueOf(load.getLeftScore()));
+            }catch (Exception e){
+                Log.d("CaughtError",e.getMessage());
+            }
+        }
     }
 }

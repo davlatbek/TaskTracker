@@ -36,6 +36,10 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
         this.first_day_of_week = first_day_of_week;
     }
 
+    public Calendar getFirstDayOfWeek() {
+        return (Calendar) first_day_of_week.clone();
+    }
+
     private Calendar first_day_of_week = Calendar.getInstance();
 
     public void calculateDefaultDuration() {
@@ -69,7 +73,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
 
         public boolean addTask(TaskModel task){
             if(
-                    ( (getLeftScore() > task.getDuration()) && (task.getDuration() > 0))
+                    ( ( (getLeftScore() + 1) > task.getDuration()) && (task.getDuration() > 0) )
                     ||
                             ( (getLeftScore() > standard_duration) && (task.getDuration() == 0))
                     ) {

@@ -104,9 +104,9 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
         DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
         taskList = db.getOverdueTasks(first_day_of_week);
 
-        Calendar last_day_of_week = first_day_of_week;
-        last_day_of_week.add(Calendar.DATE, 9);
-        taskToAWeekList = db.getTasksBetweenDates(first_day_of_week, last_day_of_week);
+        Calendar last_day_of_plan = (Calendar)last_day_of_week.clone();
+        last_day_of_plan.add(Calendar.DATE, 3);
+        taskToAWeekList = db.getTasksBetweenDates(first_day_of_week, last_day_of_plan);
 
         for (TaskModel task: taskToAWeekList) {
             taskList.add(task);

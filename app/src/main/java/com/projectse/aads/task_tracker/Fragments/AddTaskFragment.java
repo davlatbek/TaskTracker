@@ -21,6 +21,7 @@ import android.widget.ScrollView;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
+import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.NotifyService.AlertReceiver;
@@ -40,6 +41,7 @@ public class AddTaskFragment extends TaskFragment {
     Long course_id = 0L;
     private Long parent_id = -1L;
     private Menu menu;
+    private MainActivity test = new MainActivity();
 
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -156,9 +158,13 @@ public class AddTaskFragment extends TaskFragment {
                     Log.d("course id", course_id + "");
                 }
             }
+            test.scheduleJob();
+
             getFragmentManager().popBackStack();
         }
     }
+
+
 
     /**
      * Creating task data and adding to local database

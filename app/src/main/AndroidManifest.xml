@@ -22,6 +22,8 @@
             android:configChanges="orientation"
             android:screenOrientation="portrait">
         </activity>
+        <service android:name=".NotifyService.TaskSchedulerService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
 
         <service

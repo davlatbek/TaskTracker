@@ -180,6 +180,7 @@ public class TaskModel implements Comparable<TaskModel>{
     public void setStartTime(Calendar startTime) {
         Calendar st_candidate = roundByDay(startTime);
         Calendar dd =  roundByDay(deadline);
+        st_candidate.setTimeZone(dd.getTimeZone());
         if(st_candidate.compareTo( dd )>0) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
             throw new IllegalArgumentException("Start time cannot be after deadline: "+ dateFormat.format(st_candidate.getTime()) + "; " + dateFormat.format(dd.getTime()));

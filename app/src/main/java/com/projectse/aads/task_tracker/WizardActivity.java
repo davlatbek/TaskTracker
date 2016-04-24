@@ -2,8 +2,10 @@ package com.projectse.aads.task_tracker;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateUtils;
 import android.view.MenuItem;
@@ -21,6 +23,7 @@ import com.projectse.aads.task_tracker.WizardFragments.WeekFragment;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -182,9 +185,34 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
         for(int day_of_week = Calendar.SUNDAY; day_of_week <= Calendar.SATURDAY; day_of_week++){
             Load load = loadByDay.get(day_of_week);
             date_cursor.set(Calendar.DAY_OF_WEEK,day_of_week);
+            HashSet<String> errors = new HashSet<>();
             for(TaskModel task : load.getTasks()){
-                task.setStartTime(date_cursor);
-                db.updateTask(task);
+                try {
+                    task.setStartTime(date_cursor);
+                    db.updateTask(task);
+                }catch (IllegalArgumentException e){
+                    errors.add(e.getLocalizedMessage());
+                }
+            }
+            if(!errors.isEmpty()){
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append(errors.size() + " task(s) haven't been committed chenges, because of: \n");
+                for(String err : errors){
+                    stringBuilder.append(err);
+                    stringBuilder.append("\n");
+                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(stringBuilder)
+                        .setTitle(getString(R.string.warning));
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        closeWizard();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                return;
             }
         }
         closeWizard();

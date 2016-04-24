@@ -174,6 +174,8 @@ public class TaskModel implements Comparable<TaskModel>{
     }
 
     public void setStartTime(Calendar startTime) {
+        if(startTime.get(Calendar.DAY_OF_YEAR)>deadline.get(Calendar.DAY_OF_YEAR))
+            throw new IllegalArgumentException("Start time cannot be after deadline");
         this.startTime = startTime;
         isStartTimeSet = true;
     }

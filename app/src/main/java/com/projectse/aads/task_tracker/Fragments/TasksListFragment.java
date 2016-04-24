@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
  */
 public class TasksListFragment extends Fragment {
     DatabaseHelper db;
+    private ExpandableListView listView;
 
     public PlanAdapter getTasksAdapter() {
         return tasks_adapter;
@@ -67,7 +68,7 @@ public class TasksListFragment extends Fragment {
         } catch (InflateException e) {
         /* map is already there, just return view as it is */
         }
-        ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.listView);
+        listView = (ExpandableListView) view.findViewById(R.id.listView);
         tasks_adapter = new PlanAdapter(getActivity(),task_hierarchy);
         listView.setAdapter(tasks_adapter);
         return view;
@@ -116,6 +117,14 @@ public class TasksListFragment extends Fragment {
             tasks_adapter.notifyDataSetChanged();
         }catch (NullPointerException e){
             //INPOSSIBLE, but it's happening
+        }
+    }
+
+    public void collapseAll() {
+        if (listView != null && tasks_adapter != null){
+            int count =  tasks_adapter.getGroupCount();
+            for (int i = 0; i <count ; i++)
+                listView.collapseGroup(i);
         }
     }
 }

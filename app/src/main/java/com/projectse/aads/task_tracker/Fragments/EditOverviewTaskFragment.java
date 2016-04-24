@@ -2,6 +2,8 @@ package com.projectse.aads.task_tracker.Fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -38,7 +40,13 @@ import java.util.TimeZone;
  */
 public class EditOverviewTaskFragment extends TaskFragment{
     private ActualTasksCaller actualTasksCaller;
+    private TaskCategoriesCaller categoriesCaller;
+
     private Menu menu;
+
+    public interface TaskCategoriesCaller{
+        void callTasksCategory();
+    }
 
     @Override
     public void onDestroyView() {
@@ -86,6 +94,8 @@ public class EditOverviewTaskFragment extends TaskFragment{
         if (activity instanceof ActualTasksCaller) {
             actualTasksCaller = (ActualTasksCaller) activity;
         }
+        if(activity instanceof TaskCategoriesCaller)
+            categoriesCaller = (TaskCategoriesCaller) activity;
     }
 
     @Override
@@ -130,7 +140,6 @@ public class EditOverviewTaskFragment extends TaskFragment{
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            //long courseID = db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
         }
         return super.onOptionsItemSelected(item);
     }
@@ -199,7 +208,7 @@ public class EditOverviewTaskFragment extends TaskFragment{
                             for (Long sub_id : task.getSubtasks_ids())
                                 db.deleteTask(sub_id);
                             db.deleteTask(task.getId());
-                            actualTasksCaller.callActualTasks();
+                            getFragmentManager().popBackStack();
                         }
                     });
 
@@ -213,7 +222,7 @@ public class EditOverviewTaskFragment extends TaskFragment{
                     alertDialog1.create().show();
                 } else {
                     db.deleteTask(task.getId());
-                    actualTasksCaller.callActualTasks();
+                    getFragmentManager().popBackStack();
                 }
             }
         });

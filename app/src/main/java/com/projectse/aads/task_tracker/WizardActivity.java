@@ -5,8 +5,10 @@ import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.format.DateUtils;
 import android.view.MenuItem;
 
+import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Interfaces.WizardManager;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.WizardFragments.AllocateFragment;
@@ -31,30 +33,95 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
     public Map<Integer,Load> loadByDay = new HashMap<>();
     public List<TaskModel> selected_tasks = new ArrayList<>();
 
+    private Calendar first_day_of_week = Calendar.getInstance();
+    private Calendar last_day_of_week = Calendar.getInstance();
     public void setWeek(Calendar first_day_of_week) {
         this.first_day_of_week = first_day_of_week;
+        this.last_day_of_week = first_day_of_week;
+        last_day_of_week.add(Calendar.DATE, 6);
     }
 
-    private Calendar first_day_of_week = Calendar.getInstance();
+    public class Load{
+        private List<TaskModel> tasks = new ArrayList<>();
+        private double score;
 
-    private List<TaskModel> getTasksToWeek() {
+        public List<TaskModel> getTasks() {
+            return tasks;
+        }
+
+        public void setTasks(List<TaskModel> tasks) {
+            this.tasks = tasks;
+        }
+
+//        public boolean addTask(TaskModel task){
+//            if(
+//                    ( (getLeftScore()  > task.getDuration()) && (task.getDuration() > 0))
+//                    ||
+//                            ( (getLeftScore() > standard_duration) && (task.getDuration() == 0))
+//                    ) {
+//                this.tasks.add(task);
+//                return true;
+//            }else
+//                return false;
+//        }
+
+        public boolean addTask(TaskModel task) {
+            this.tasks.add(task);
+            if (getLeftScore() > -1) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        public double getScore() {
+            return score;
+        }
+
+        public double getLeftScore() {
+            return score - getBusyHours() + 1;      // +1 because we can add not more then n+1 task-hours
+        }
+
+        public double getBusyHours(){
+            double busy_hours = 0;
+            for(TaskModel t : tasks){
+                if(t.getDuration() > 0)
+                    busy_hours += t.getDuration();
+                else
+                    busy_hours += standard_duration;
+            }
+            return busy_hours;
+        }
+
+        public void setScore(double score) {
+            this.score = score;
+        }
+    }
+
+    public List<TaskModel> getTasksToWeek() {
         List<TaskModel> taskList = null;
         List<TaskModel> taskToAWeekList = null;
         DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
         taskList = db.getOverdueTasks(first_day_of_week);
 
-       // taskToAWeekList = db.getTasksBetweenDates(first_day_of_week, )
+        Calendar last_day_of_week = first_day_of_week;
+        last_day_of_week.add(Calendar.DATE, 9);
+        taskToAWeekList = db.getTasksBetweenDates(first_day_of_week, last_day_of_week);
+
+        for (TaskModel task: taskToAWeekList) {
+            taskList.add(task);
+        }
 
         return taskList;
     }
 
-    private List<TaskModel> getAllTasks() {
-        List<TaskModel> actualTaskList = null;
-        List<TaskModel> taskList = null;
+    public List<TaskModel> getAllTasks() {
         DatabaseHelper db = DatabaseHelper.getsInstance(getApplicationContext());
-        actualTaskList = db.getActualTasks(first_day_of_week);
+
+        List<TaskModel> taskList = null;
         taskList = db.getOverdueTasks(first_day_of_week);
 
+        List<TaskModel> actualTaskList = db.getActualTasks(first_day_of_week);
         for (TaskModel task: actualTaskList) {
             taskList.add(task);
         }
@@ -89,58 +156,10 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
         }
     }
 
-    public class Load{
-        private List<TaskModel> tasks = new ArrayList<>();
-        private double score;
-
-        public List<TaskModel> getTasks() {
-            return tasks;
-        }
-
-        public void setTasks(List<TaskModel> tasks) {
-            this.tasks = tasks;
-        }
-
-        public boolean addTask(TaskModel task){
-            if(
-                    ( (getLeftScore() > task.getDuration()) && (task.getDuration() > 0))
-                    ||
-                            ( (getLeftScore() > standard_duration) && (task.getDuration() == 0))
-                    ) {
-                this.tasks.add(task);
-                return true;
-            }else
-                return false;
-        }
-
-        public double getScore() {
-            return score;
-        }
-
-        public double getLeftScore() {
-            return score - getBusyHours();
-        }
-
-        public double getBusyHours(){
-            double busy_hours = 0;
-            for(TaskModel t : tasks){
-                if(t.getDuration() > 0)
-                    busy_hours += t.getDuration();
-                else
-                    busy_hours += standard_duration;
-            }
-            return busy_hours;
-        }
-
-        public void setScore(double score) {
-            this.score = score;
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        first_day_of_week.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
+        first_day_of_week.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         setContentView(R.layout.activity_wizzard);
 
         //Set a toolbar to replace the Actionbar
@@ -151,7 +170,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
         Locale.setDefault(new Locale("en"));
 
         for(int day = Calendar.SUNDAY; day <= Calendar.SATURDAY; day++){
-            loadByDay.put(day,new Load());
+            loadByDay.put(day, new Load());
         }
     }
 
@@ -212,54 +231,144 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
     }
 
     public void allocateToStart(){
-        //TODO allocate
-        boolean notAddedTasksFinded = false;
         for(TaskModel task : selected_tasks){
+            Calendar deadline = task.getDeadline();
             boolean added = false;
-            for(int day = Calendar.MONDAY; day <= Calendar.SATURDAY; day++){
-                Load load = loadByDay.get(day);
-                if(load.addTask(task)){
+
+            Calendar day = first_day_of_week;
+            while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
+                Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
+
+                Calendar tomorrow = (Calendar) day.clone();
+                tomorrow.add(Calendar.DATE, 1);
+                if (deadline.equals(tomorrow) || deadline.before(day)) {
+                    load.addTask(task);
                     added = true;
                     break;
                 }
+
+                if(!added && (load.getLeftScore() > task.getDuration())){
+                    load.addTask(task);
+                    added = true;
+                    break;
+                }
+
+                day.add(Calendar.DATE, 1);
             }
+
             if(!added) {
-                Load sunday = loadByDay.get(Calendar.SUNDAY);
-                added = sunday.addTask(task);
+                day = first_day_of_week;
+                while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
+                    Load load = loadByDay.get(day);
+
+                    if (load.getLeftScore() > 0) {
+                        load.addTask(task);
+                        added = true;
+                        break;
+                    }
+
+                    day.add(Calendar.DATE, 1);
+                }
             }
-            if(!added)
-                notAddedTasksFinded = true;
         }
-        //TODO react, if notAddedTasksFinded = true
+
         callPreviewFragment();
     }
 
     public void allocateEvenly(){
-        //TODO allocate
-        callPreviewFragment();
-    }
-
-    public void allocateToEnd(){
-        //TODO allocate
-        boolean notAddedTasksFinded = false;
         for(TaskModel task : selected_tasks){
             boolean added = false;
-            Load sunday = loadByDay.get(Calendar.SUNDAY);
-            added = sunday.addTask(task);
+            Calendar deadline = task.getDeadline();
 
-            if(!added) {
-                for(int day = Calendar.SATURDAY; day >= Calendar.MONDAY; day--){
-                    Load load = loadByDay.get(day);
-                    if(load.addTask(task)){
+            double minLoad = 0;
+            Calendar day = first_day_of_week;
+            while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
+                Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
+
+                if (deadline.after(day) && load.getLeftScore() > minLoad) {
+                    minLoad = load.getLeftScore();
+                }
+                day.add(Calendar.DATE, 1);
+            }
+
+            day = first_day_of_week;
+            while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
+                Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
+                if (load.getLeftScore() == minLoad) {
+                    if (deadline.after(day)) {
+                        load.addTask(task);
                         added = true;
                         break;
                     }
                 }
+                day.add(Calendar.DATE, 1);
             }
-            if(!added)
-                notAddedTasksFinded = true;
+
+            if (!added) {
+                day = first_day_of_week;
+                while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
+                    Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
+
+                    Calendar tomorrow = (Calendar) day.clone();
+                    tomorrow.add(Calendar.DATE, 1);
+                    if (deadline.equals(tomorrow) || deadline.before(day)) {
+                        load.addTask(task);
+                        added = true;
+                        break;
+                    }
+                    day.add(Calendar.DATE, 1);
+                }
+            }
         }
-        //TODO react, if notAddedTasksFinded = true
+
+        callPreviewFragment();
+    }
+
+    public void allocateToEnd(){
+        for(TaskModel task : selected_tasks){
+            boolean added = false;
+            Calendar deadline = task.getDeadline();
+
+            Calendar day = first_day_of_week;
+            while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
+                Calendar tomorrow = (Calendar) day.clone();
+                tomorrow.add(Calendar.DATE, 1);
+                if (deadline.equals(tomorrow) || deadline.before(day)) {
+                    loadByDay.get(day.get(Calendar.DAY_OF_WEEK)).addTask(task);
+                    added = true;
+                    break;
+                }
+                day.add(Calendar.DATE, 1);
+            }
+
+            if (!added) {
+                day = last_day_of_week;
+                while (day.after(first_day_of_week) || day.equals(first_day_of_week)){
+                    Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
+
+                    if (load.getLeftScore() > task.getDuration()) {
+                        load.addTask(task);
+                        added = true;
+                        break;
+                    }
+                    day.add(Calendar.DATE, -1);
+                }
+            }
+
+            if (!added) {
+                day = first_day_of_week;
+                while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
+                    Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
+
+                    if (load.getLeftScore() > 0) {
+                        load.addTask(task);
+                        added = true;
+                        break;
+                    }
+                    day.add(Calendar.DATE, 1);
+                }
+            }
+        }
         callPreviewFragment();
     }
 

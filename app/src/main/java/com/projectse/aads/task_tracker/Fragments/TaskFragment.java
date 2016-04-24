@@ -158,9 +158,11 @@ public abstract class TaskFragment extends Fragment {
         switchDone.setChecked(task.getIsDone());
         if (task.getName() != null) nameView.setText(task.getName());
         if (task.getDescription() != null) descView.setText(task.getDescription());
-        textViewCourseLabel.setText(db.getCourse(course_id).getAbbreviation());
-        textViewCourseLabel.setBackgroundColor(db.getCourse(course_id).getClr());
-        editTextCourseName.setText(db.getCourse(course_id).getName());
+        if (course_id != 0){
+            textViewCourseLabel.setText(db.getCourse(course_id).getAbbreviation());
+            textViewCourseLabel.setBackgroundColor(db.getCourse(course_id).getClr());
+            editTextCourseName.setText(db.getCourse(course_id).getName());
+        }
         if (task.getStartTime() != null) {
             setDateTime(startTimeDateView, task.getStartTime().getTimeInMillis());
         }
@@ -238,13 +240,24 @@ public abstract class TaskFragment extends Fragment {
 
         //in case there is no start time: duration must be less than deadline - current time
         if (stCal == null && !durationView.getText().toString().equals("") &&
-                dCal.getTime().getTime() - Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault()).getTime().getTime()
-                        < Long.parseLong(durationView.getText().toString()) * 60 * 60 * 1000) {
+                dCal.getTime().getTime() - Calendar.getInstance(TimeZone.getTimeZone("UTC"),
+                        Locale.getDefault()).getTime().getTime() <
+                        Long.parseLong(durationView.getText().toString()) * 60 * 60 * 1000) {
             Toast.makeText(getActivity().getApplicationContext(),
                     "Duration can't be more than time between deadline and current time!",
                     Toast.LENGTH_SHORT).show();
             return false;
         }
+
+        //if startDate is not set, then startDate = deadlineDate - Settings.ISSSTD
+        if (stCal == null){
+            int startDateDefaultDays = db.getSettings().getINSSSD();
+            Calendar startDateDefault = dCal;
+            startDateDefault.add(Calendar.DAY_OF_YEAR, -startDateDefaultDays);
+            stCal = startDateDefault;
+            setDateTime(startTimeDateView, stCal.getTimeInMillis());
+        }
+
         return true;
     }
 

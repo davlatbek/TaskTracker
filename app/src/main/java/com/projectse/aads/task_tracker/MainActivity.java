@@ -71,7 +71,7 @@ public class MainActivity
         extends AppCompatActivity
         implements WeeklyViewFragment.onWeekViewEventListener, CoursesFragment.onCourseClickListener,
         AddTaskCaller, ActualTasksCaller, DoneTasksCaller, OverdueTasksCaller, ImportFragment.TaskCategoriesCaller,
-        WizardCaller, EditTaskCaller, TaskOverviewCaller
+        WizardCaller, EditTaskCaller, TaskOverviewCaller, EditOverviewTaskFragment.TaskCategoriesCaller
     {
     DatabaseHelper db;
     private DrawerLayout menuDrawer;

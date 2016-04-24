@@ -27,6 +27,7 @@ public class DayPlanOverviewAdapter extends ArrayAdapter<TaskModel> {
         super(context, resource, objects);
     }
 
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {

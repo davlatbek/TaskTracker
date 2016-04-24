@@ -120,5 +120,6 @@
     <string name="allocate_tooltip">Please, choose the way how to allocate the tasks</string>
     <string name="import_hint">Choose a iCal file (*.ics) for importing courses and tasks.</string>
     <string name="ok">OK</string>
+    <string name="warning">Warning</string>
 
 </resources>

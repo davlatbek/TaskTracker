@@ -26,6 +26,7 @@ import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.NotifyService.AlertReceiver;
 import com.projectse.aads.task_tracker.R;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -39,7 +40,7 @@ public class AddTaskFragment extends TaskFragment {
     ActualTasksCaller actualTasksCaller;
     private Long parent_id = -1L;
     private Menu menu;
-    long course_id;
+    long course_id, default_start_time;
 
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -90,12 +91,19 @@ public class AddTaskFragment extends TaskFragment {
         super.onViewCreated(view, savedInstanceState);
         if (getArguments() != null) {
             course_id = getArguments().getLong("course_id");
-            try {
-                textViewCourseLabel.setText(db.getCourse(course_id).getAbbreviation());
-                textViewCourseLabel.setBackgroundColor(db.getCourse(course_id).getClr());
-                editTextCourseName.setText(db.getCourse(course_id).getName());
-            } catch (Exception e) {
-                e.printStackTrace();
+            default_start_time = getArguments().getLong("default_start_time");
+
+            Calendar startDate = Calendar.getInstance();
+            startDate.setTimeInMillis(default_start_time);
+            setDateTime(startTimeDateView, startDate.getTimeInMillis());
+            if (course_id != -1L){
+                try {
+                    textViewCourseLabel.setText(db.getCourse(course_id).getAbbreviation());
+                    textViewCourseLabel.setBackgroundColor(db.getCourse(course_id).getClr());
+                    editTextCourseName.setText(db.getCourse(course_id).getName());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

@@ -130,7 +130,6 @@ public class EditOverviewTaskFragment extends TaskFragment{
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            //long courseID = db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
         }
         return super.onOptionsItemSelected(item);
     }

@@ -137,7 +137,7 @@ public class WeeklyViewFragment extends Fragment implements WeekSliderFragment.o
             });
         }
 
-        RelativeLayout addRequestButton = (RelativeLayout) view.findViewById(R.id.add_task_btn);
+        View addRequestButton = view.findViewById(R.id.add_task_btn);
         addRequestButton.setOnClickListener(requestButtonListener);
 
         return view;

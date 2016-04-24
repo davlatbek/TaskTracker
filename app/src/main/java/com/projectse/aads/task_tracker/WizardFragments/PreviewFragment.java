@@ -1,13 +1,18 @@
 package com.projectse.aads.task_tracker.WizardFragments;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.projectse.aads.task_tracker.Adapters.DayPlanOverviewAdapter;
 import com.projectse.aads.task_tracker.Fragments.WeeklyViewFragment;
@@ -22,6 +27,12 @@ import java.util.List;
 public class PreviewFragment extends WeeklyViewFragment {
     private WizardManager wizardManager;
     private WizardActivity wizardActivity;
+    private View.OnClickListener commitChangesListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            wizardActivity.commitChanges();
+        }
+    };
 
     @Override
     public void onAttach(Activity activity) {
@@ -88,6 +99,14 @@ public class PreviewFragment extends WeeklyViewFragment {
             RelativeLayout day_button = (RelativeLayout) view.findViewById(btn_id);
             day_button.setOnClickListener(null);
         }
+
+//        view.findViewById(R.id.add_task_btn).setVisibility(View.INVISIBLE);
+        ((TextView) view.findViewById(R.id.add_task_lbl)).setText(R.string.confirm);
+        Drawable drawable = getActivity().getDrawable(R.drawable.ic_check_circle_24dp);
+        drawable.mutate().setColorFilter( 0xfffdfdfe, PorterDuff.Mode.XOR);
+        ((ImageView)view.findViewById(R.id.add_task_icon)).setImageDrawable(drawable);
+        view.findViewById(R.id.add_task_btn).setOnClickListener(commitChangesListener);
+
         Button prev = (Button) view.findViewById(R.id.btnPrev);
         prev.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,12 +116,8 @@ public class PreviewFragment extends WeeklyViewFragment {
         });
 
         Button next = (Button) view.findViewById(R.id.btnNext);
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                wizardActivity.commitChanges();
-            }
-        });
+        next.setVisibility(View.INVISIBLE);
+//        next.setOnClickListener(commitChangesListener);
         return view;
     }
 

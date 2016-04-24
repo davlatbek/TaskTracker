@@ -166,7 +166,7 @@ public class ManualAllocationFragment extends WizardFragment{
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wizardActivity.commitChanges();
+                wizardActivity.callPreviewFragment();
             }
         });
         return view;

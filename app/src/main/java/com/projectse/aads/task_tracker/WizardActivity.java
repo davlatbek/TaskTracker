@@ -11,6 +11,7 @@ import com.projectse.aads.task_tracker.Interfaces.WizardManager;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.WizardFragments.AllocateFragment;
 import com.projectse.aads.task_tracker.WizardFragments.IntroFragment;
+import com.projectse.aads.task_tracker.WizardFragments.ManualAllocationFragment;
 import com.projectse.aads.task_tracker.WizardFragments.PreviewFragment;
 import com.projectse.aads.task_tracker.WizardFragments.TasksFragment;
 import com.projectse.aads.task_tracker.WizardFragments.WeekFragment;
@@ -156,7 +157,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
 
     @Override
     public void callManualAllocateFragment() {
-        throw new InternalError("Implement this");
+        setCurrentFragment(new ManualAllocationFragment(selected_tasks));
     }
 
     @Override

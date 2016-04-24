@@ -71,7 +71,7 @@ public class MainActivity
         extends AppCompatActivity
         implements WeeklyViewFragment.onWeekViewEventListener, CoursesFragment.onCourseClickListener,
         AddTaskCaller, ActualTasksCaller, DoneTasksCaller, OverdueTasksCaller, ImportFragment.TaskCategoriesCaller,
-        WizardCaller, EditTaskCaller, TaskOverviewCaller
+        WizardCaller, EditTaskCaller, TaskOverviewCaller, EditOverviewTaskFragment.TaskCategoriesCaller
     {
     DatabaseHelper db;
     private DrawerLayout menuDrawer;
@@ -296,6 +296,9 @@ public class MainActivity
         AddTaskFragment addTaskFragment = new AddTaskFragment();
         Bundle bundle = new Bundle();
         bundle.putLong("course_id", defaultCourseId);
+        if (defaultStartTime != null){
+            bundle.putLong("default_start_time", defaultStartTime.getTimeInMillis());
+        }
         addTaskFragment.setArguments(bundle);
         setCurrentFragmentAddBackStack(addTaskFragment);
     }

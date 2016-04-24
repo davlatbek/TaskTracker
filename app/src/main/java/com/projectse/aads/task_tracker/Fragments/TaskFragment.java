@@ -69,7 +69,7 @@ public abstract class TaskFragment extends Fragment {
     //Temporary
     protected static ArrayAdapter<TaskModel> subtasks_adapter = null;
 
-    private static java.text.DateFormat dateFormat = new SimpleDateFormat("dd-MM-yy");
+    protected static java.text.DateFormat dateFormat = new SimpleDateFormat("dd-MM-yy");
 
     protected ListOfCourses dialogFragmentBuilder;
 

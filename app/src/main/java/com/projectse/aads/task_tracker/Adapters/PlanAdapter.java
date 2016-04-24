@@ -16,16 +16,30 @@ import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public class PlanAdapter extends BaseExpandableListAdapter {
 
     private Context context;
-    private Map<TaskModel, List<TaskModel>> task_hierarchy = new HashMap<>();
 
-    public PlanAdapter(Context context, Map<TaskModel, List<TaskModel>> groups) {
+    public SortedMap<TaskModel, List<TaskModel>> getTaskHierarchy() {
+        return task_hierarchy;
+    }
+
+    public void setTaskHierarchy(SortedMap<TaskModel, List<TaskModel>> task_hierarchy) {
+        this.task_hierarchy = task_hierarchy;
+        notifyDataSetChanged();
+    }
+
+    private SortedMap<TaskModel, List<TaskModel>> task_hierarchy = new ConcurrentSkipListMap<>();
+
+    public PlanAdapter(Context context, SortedMap<TaskModel, List<TaskModel>> groups) {
         this.context = context;
         task_hierarchy = groups;
     }
@@ -197,5 +211,36 @@ public class PlanAdapter extends BaseExpandableListAdapter {
                 break;
         }
 
+    }
+
+    public void sortByDeadline(){
+        SortedMap<TaskModel, List<TaskModel>> newsorted =
+                new ConcurrentSkipListMap(new Comparator<TaskModel>() {
+                    public int compare(TaskModel o1, TaskModel o2) {
+                        return o1.getDeadline().compareTo(o2.getDeadline());
+                    }
+                });
+        newsorted.putAll(task_hierarchy);
+        task_hierarchy = newsorted;
+        notifyDataSetChanged();
+    }
+
+    public void sortByName(){
+        SortedMap<TaskModel, List<TaskModel>> new_map =
+                new ConcurrentSkipListMap(new Comparator<TaskModel>() {
+                    public int compare(TaskModel o1, TaskModel o2) {
+                        return o1.getName().compareTo(o2.getName());
+                    }
+                });
+        new_map.putAll(task_hierarchy);
+        task_hierarchy = new_map;
+        notifyDataSetChanged();
+    }
+
+    public TaskModel pop(){
+        TaskModel task = task_hierarchy.firstKey();
+        task_hierarchy.remove(task);
+        notifyDataSetChanged();
+        return task;
     }
 }

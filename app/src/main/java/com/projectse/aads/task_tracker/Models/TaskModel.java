@@ -13,7 +13,7 @@ import java.util.TimeZone;
  * <p/>
  * Contain data of task entity.
  */
-public class TaskModel {
+public class TaskModel implements Comparable<TaskModel>{
     private String name = "";
     private Long id;
     private String description = "";
@@ -36,6 +36,20 @@ public class TaskModel {
 
     public void setCourse(CourseModel course) {
         this.course = course;
+    }
+
+    @Override
+    public int compareTo(TaskModel another) {
+        if(another != null){
+            if(another.getId() == id)
+                return 0;
+            if(another.getName().compareTo(name) == 0){
+                return another.getDeadline().compareTo(deadline);
+            }else{
+                return another.getName().compareTo(name);
+            }
+        }
+        throw new IllegalArgumentException();
     }
 
     public enum Priority {

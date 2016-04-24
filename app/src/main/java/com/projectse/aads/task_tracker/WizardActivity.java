@@ -13,6 +13,7 @@ import com.projectse.aads.task_tracker.Interfaces.WizardManager;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.WizardFragments.AllocateFragment;
 import com.projectse.aads.task_tracker.WizardFragments.IntroFragment;
+import com.projectse.aads.task_tracker.WizardFragments.ManualAllocationFragment;
 import com.projectse.aads.task_tracker.WizardFragments.PreviewFragment;
 import com.projectse.aads.task_tracker.WizardFragments.TasksFragment;
 import com.projectse.aads.task_tracker.WizardFragments.WeekFragment;
@@ -36,10 +37,16 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
     private Calendar first_day_of_week = Calendar.getInstance();
     private Calendar last_day_of_week = Calendar.getInstance();
     public void setWeek(Calendar first_day_of_week) {
-        this.first_day_of_week = first_day_of_week;
-        this.last_day_of_week = first_day_of_week;
+        this.first_day_of_week = (Calendar) first_day_of_week.clone();
+        this.last_day_of_week = (Calendar) first_day_of_week.clone();
         last_day_of_week.add(Calendar.DATE, 6);
     }
+
+    public Calendar getFirstDayOfWeek() {
+        return (Calendar) first_day_of_week.clone();
+    }
+
+    private Calendar first_day_of_week = Calendar.getInstance();
 
     public class Load{
         private List<TaskModel> tasks = new ArrayList<>();
@@ -53,21 +60,13 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
             this.tasks = tasks;
         }
 
-//        public boolean addTask(TaskModel task){
-//            if(
-//                    ( (getLeftScore()  > task.getDuration()) && (task.getDuration() > 0))
-//                    ||
-//                            ( (getLeftScore() > standard_duration) && (task.getDuration() == 0))
-//                    ) {
-//                this.tasks.add(task);
-//                return true;
-//            }else
-//                return false;
-//        }
-
-        public boolean addTask(TaskModel task) {
-            this.tasks.add(task);
-            if (getLeftScore() > -1) {
+        public boolean addTask(TaskModel task){
+            if(
+                    ( ( (getLeftScore() + 1) > task.getDuration()) && (task.getDuration() > 0) )
+                    ||
+                            ( (getLeftScore() > standard_duration) && (task.getDuration() == 0))
+                    ) {
+                this.tasks.add(task);
                 return true;
             } else {
                 return false;
@@ -210,7 +209,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
 
     @Override
     public void callManualAllocateFragment() {
-        throw new InternalError("Implement this");
+        setCurrentFragment(new ManualAllocationFragment(selected_tasks));
     }
 
     @Override

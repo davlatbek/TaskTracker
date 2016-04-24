@@ -84,17 +84,17 @@ public class PreviewFragment extends WeeklyViewFragment {
             adapters.add(adapter);
             listView.setAdapter(adapter);
 
-            Button prev = (Button) view.findViewById(R.id.btnPrev);
-            prev.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    wizardManager.callAllocateFragment();
-                }
-            });
 
             RelativeLayout day_button = (RelativeLayout) view.findViewById(btn_id);
             day_button.setOnClickListener(null);
         }
+        Button prev = (Button) view.findViewById(R.id.btnPrev);
+        prev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                wizardManager.callAllocateFragment();
+            }
+        });
         return view;
     }
 

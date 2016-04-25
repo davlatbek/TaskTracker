@@ -963,37 +963,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Get candidates for subtask
-     *
-     * @param task_id - task id, that's candidates we are looking for.
-     * @return list of id, task is available to be subtask
-     */
-    public List<Long> getSubtasksCandidates(Long task_id) {
-        List<Long> subtasksIdsArrayList = new ArrayList<>();
-
-        String selectQuery = "SELECT * FROM " + TABLE_TASKS
-                + " WHERE " + TASKS_KEY_ID + "!=" + task_id + " AND " + TASKS_PARENT_TASK + " IS NULL";
-        Log.d(TAG, selectQuery);
-
-        List<TaskModel> list = getTaskModelList();
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery(selectQuery, null);
-
-        // looping through all rows and adding to list
-        if (c.moveToFirst()) {
-            do {
-                Log.d(TAG, c.getLong(c.getColumnIndex(TASKS_PARENT_TASK)) + " " + c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
-                Long tid = c.getLong(c.getColumnIndex(TASKS_KEY_ID));
-                if (!isAnyChildrenForTask(tid))
-                    subtasksIdsArrayList.add(tid);
-            } while (c.moveToNext());
-        }
-        c.close();
-        return subtasksIdsArrayList;
-    }
-
-    /**
      * @param task_id
      * @return true if children exist, else false
      */
@@ -1181,10 +1150,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Calendar low_date = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         Calendar high_date = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
 
+
         low_date.setTime(date.getTime());
-        low_date.set(Calendar.HOUR_OF_DAY, 0);
-        low_date.set(Calendar.MINUTE, 0);
-        low_date.set(Calendar.SECOND, 0);
+        low_date = TaskModel.roundByDay(low_date);
 
         high_date.setTime(date.getTime());
         high_date.set(Calendar.HOUR_OF_DAY, 23);
@@ -1244,10 +1212,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<TaskModel> getTasksForAChosenWeek(Calendar startingDay) {
         List<TaskModel> tasks = new ArrayList<>();
 
-        //setting starting day time
-        startingDay.set(Calendar.HOUR_OF_DAY, 00);
-        startingDay.set(Calendar.MINUTE, 00);
-        startingDay.set(Calendar.SECOND, 01);
+//        //setting starting day time
+//        startingDay.set(Calendar.HOUR_OF_DAY, 00);
+//        startingDay.set(Calendar.MINUTE, 00);
+//        startingDay.set(Calendar.SECOND, 01);
 
         //setting last day of random week
         Calendar lastDay = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
@@ -1292,15 +1260,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         lastDayOfCurrentWeek.set(Calendar.SECOND, 59);
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         Calendar today = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
-        today.set(Calendar.HOUR_OF_DAY, 00);
-        today.set(Calendar.MINUTE, 00);
-        today.set(Calendar.SECOND, 01);
+//        today.set(Calendar.HOUR_OF_DAY, 00);
+//        today.set(Calendar.MINUTE, 00);
+//        today.set(Calendar.SECOND, 01);
         String selectQuery = "SELECT * FROM " + TABLE_TASKS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);
         if (c.moveToFirst()) {
             do {
-                TaskModel task = new TaskModel();
                 cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_START_TIME)));
                 if (cal.getTimeInMillis() >= today.getTimeInMillis() &&
                         cal.getTimeInMillis() <= lastDayOfCurrentWeek.getTimeInMillis()) {

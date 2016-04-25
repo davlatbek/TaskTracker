@@ -169,6 +169,8 @@ public class ManualAllocationFragment extends WizardFragment{
                 wizardActivity.callPreviewFragment();
             }
         });
+
+        setDrawablesToImageViews(view);
         return view;
     }
 

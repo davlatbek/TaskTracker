@@ -120,6 +120,8 @@ public class WeekFragment extends WizardFragment implements WeekSliderFragment.o
             }
         });
 
+        setDrawablesToImageViews(view);
+
         return view;
     }
 

@@ -88,6 +88,7 @@ public class TasksFragment extends WizardFragment {
             }
         });
 
+        setDrawablesToImageViews(view);
         return view;
     }
 }

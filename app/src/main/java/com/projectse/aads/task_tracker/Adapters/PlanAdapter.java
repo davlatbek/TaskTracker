@@ -171,7 +171,8 @@ public class PlanAdapter extends BaseExpandableListAdapter {
 
         if (supertask.getIsDone())
             textSupertaskName.setPaintFlags(textSupertaskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-
+        else
+            textSupertaskName.setPaintFlags(textSupertaskName.getPaintFlags());
         if(!isEditMode)
             super_task_block.setOnClickListener(new View.OnClickListener() {
                 @Override

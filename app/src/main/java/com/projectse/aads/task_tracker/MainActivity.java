@@ -80,7 +80,7 @@ public class MainActivity
     private ActionBarDrawerToggle drawerToggle;
     public static SettingsModel settings = null;
 
-    public static Boolean DEBUG = true;
+    public static Boolean DEBUG = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

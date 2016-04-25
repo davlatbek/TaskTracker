@@ -369,7 +369,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
 
 
             if (first_day_of_week.after(deadline)) {
-                Load load = loadByDay.get(first_day_of_week);
+                Load load = loadByDay.get(first_day_of_week.get(Calendar.DAY_OF_WEEK));
                 load.addTask(task);
                 added = true;
                 break;

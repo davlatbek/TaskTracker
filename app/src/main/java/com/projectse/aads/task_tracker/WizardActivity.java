@@ -273,7 +273,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
             Calendar deadline = task.getDeadline();
             boolean added = false;
 
-            Calendar day = first_day_of_week;
+            Calendar day = (Calendar)first_day_of_week.clone();
             while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
                 Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
 
@@ -295,7 +295,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
             }
 
             if(!added) {
-                day = first_day_of_week;
+                day = (Calendar)first_day_of_week.clone();
                 while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
                     Load load = loadByDay.get(day);
 
@@ -319,7 +319,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
             Calendar deadline = task.getDeadline();
 
             double minLoad = 0;
-            Calendar day = first_day_of_week;
+            Calendar day = (Calendar)first_day_of_week.clone();
             while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
                 Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
 
@@ -329,7 +329,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
                 day.add(Calendar.DATE, 1);
             }
 
-            day = first_day_of_week;
+            day = (Calendar)first_day_of_week.clone();
             while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
                 Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
                 if (load.getLeftScore()+1 == minLoad) {
@@ -343,7 +343,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
             }
 
             if (!added) {
-                day = first_day_of_week;
+                day = (Calendar)first_day_of_week.clone();
                 while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
                     Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
 
@@ -367,45 +367,70 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
             boolean added = false;
             Calendar deadline = task.getDeadline();
 
-            Calendar day = first_day_of_week;
-            while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
-                Calendar tomorrow = (Calendar) day.clone();
-                tomorrow.add(Calendar.DATE, 1);
-                if (deadline.equals(tomorrow) || deadline.before(day)) {
-                    loadByDay.get(day.get(Calendar.DAY_OF_WEEK)).addTask(task);
-                    added = true;
-                    break;
-                }
-                day.add(Calendar.DATE, 1);
+
+            if (first_day_of_week.after(deadline)) {
+                Load load = loadByDay.get(first_day_of_week.get(Calendar.DAY_OF_WEEK));
+                load.addTask(task);
+                added = true;
+                break;
             }
 
-            if (!added) {
-                day = last_day_of_week;
-                while (day.after(first_day_of_week) || day.equals(first_day_of_week)){
-                    Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
+            if(!added) {
+                Calendar day = (Calendar)deadline.clone();
+                day.add(Calendar.DATE, -1);
 
-                    if (load.getLeftScore()+1 > task.getDuration()) {
+                while (day.after(first_day_of_week) || day.equals(first_day_of_week)) {
+                    Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
+                    if (load.getLeftScore() + 1 > task.getDuration()) {
                         load.addTask(task);
                         added = true;
                         break;
                     }
+
                     day.add(Calendar.DATE, -1);
                 }
             }
 
-            if (!added) {
-                day = first_day_of_week;
-                while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
-                    Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
 
-                    if (load.getLeftScore()+1 > 0) {
-                        load.addTask(task);
-                        added = true;
-                        break;
-                    }
-                    day.add(Calendar.DATE, 1);
-                }
-            }
+//            while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
+//                Calendar tomorrow = (Calendar) day.clone();
+//                tomorrow.add(Calendar.DATE, 1);
+//                if (deadline.equals(tomorrow) || deadline.before(day)) {
+//                    Load load = loadByDay.get(Calendar.DAY_OF_WEEK);
+//                    load.addTask(task);
+//                    added = true;
+//                    break;
+//                }
+//                day.add(Calendar.DATE, 1);
+//            }
+//
+//            if (!added) {
+//                day = (Calendar)first_day_of_week.clone();
+//                while (day.after(first_day_of_week) || day.equals(first_day_of_week)){
+//                    Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
+//
+//                    if (load.getLeftScore()+1 > task.getDuration()) {
+//                        load.addTask(task);
+//                        added = true;
+//                        break;
+//                    }
+//                    day.add(Calendar.DATE, -1);
+//                }
+//            }
+//
+//            if (!added) {
+//                day = (Calendar)first_day_of_week.clone();
+//                while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
+//                    Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
+//
+//                    if (load.getLeftScore()+1 > 0) {
+//                        load.addTask(task);
+//                        added = true;
+//                        break;
+//                    }
+//                    day.add(Calendar.DATE, 1);
+//                }
+//            }
         }
         callPreviewFragment();
     }

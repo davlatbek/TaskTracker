@@ -437,6 +437,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         TaskModel tasks = new TaskModel();
         tasks.setId(c.getLong(c.getColumnIndex(TASKS_KEY_ID)));
         tasks.setName(c.getString(c.getColumnIndex(TASKS_NAME)));
+
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
+        tasks.setDeadline(cal);
+
         Calendar calStart = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         calStart.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_START_TIME)));
         tasks.setStartTime(calStart);
@@ -456,9 +461,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         tasks.setDescription(c.getString(c.getColumnIndex(TASKS_DESCRIPTION)));
         tasks.setParentTaskId(c.getLong(c.getColumnIndex(TASKS_PARENT_TASK)));
 
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
-        cal.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_DEADLINE)));
-        tasks.setDeadline(cal);
         try {
             tasks.setPriority(tasks.intToPriority(c.getInt(c.getColumnIndex(TASKS_PRIORITY))));
         } catch (Exception e) {

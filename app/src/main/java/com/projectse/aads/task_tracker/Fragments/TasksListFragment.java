@@ -20,6 +20,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * Created by smith on 3/21/16.
@@ -32,7 +34,7 @@ public class TasksListFragment extends Fragment {
         return tasks_adapter;
     }
 
-    PlanAdapter tasks_adapter;
+    PlanAdapter tasks_adapter = new PlanAdapter(getActivity(),null);
     private static View view;
 
     public TasksListFragment(){
@@ -42,7 +44,7 @@ public class TasksListFragment extends Fragment {
     /**
      * Current day's task hierarchy
      */
-    Map<TaskModel, List<TaskModel>> task_hierarchy = new HashMap<>();
+    SortedMap<TaskModel, List<TaskModel>> task_hierarchy = new ConcurrentSkipListMap<>();
 
     Map<Integer,List<TaskModel>> week_task_list = new HashMap<>();
 
@@ -110,7 +112,12 @@ public class TasksListFragment extends Fragment {
                 }
             }
         if (tasks_adapter != null)
+            tasks_adapter.setTaskHierarchy(task_hierarchy);
+        try {
             tasks_adapter.notifyDataSetChanged();
+        }catch (NullPointerException e){
+            //INPOSSIBLE, but it's happening
+        }
     }
 
     public void collapseAll() {

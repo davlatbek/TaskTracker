@@ -80,7 +80,7 @@ public class MainActivity
     private ActionBarDrawerToggle drawerToggle;
     public static SettingsModel settings = null;
 
-    public static Boolean DEBUG = true;
+    public static Boolean DEBUG = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +124,7 @@ public class MainActivity
         // Set default locale prog-ly to English (Customer req)
         Locale.setDefault(new Locale("en"));
         setCurrentFragment(new TaskCategoriesFragment());
-        MainActivity.settings = db.getSettings();
+//        MainActivity.settings = db.getSettings();
 
         if(DEBUG)
             PlugDebug.initDebugData(db);

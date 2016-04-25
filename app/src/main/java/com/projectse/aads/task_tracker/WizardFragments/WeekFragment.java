@@ -120,6 +120,8 @@ public class WeekFragment extends WizardFragment implements WeekSliderFragment.o
             }
         });
 
+        setDrawablesToImageViews(view);
+
         return view;
     }
 
@@ -139,7 +141,6 @@ public class WeekFragment extends WizardFragment implements WeekSliderFragment.o
     public void setWeek(Calendar week_first_date) {
         if(sliderFragment != null)
             sliderFragment.updateLabel();
-
     }
 
     /**

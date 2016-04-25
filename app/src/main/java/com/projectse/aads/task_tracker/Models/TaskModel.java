@@ -2,6 +2,10 @@ package com.projectse.aads.task_tracker.Models;
 
 import com.projectse.aads.task_tracker.MainActivity;
 
+
+import org.apache.commons.lang3.time.DateUtils;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -13,7 +17,7 @@ import java.util.TimeZone;
  * <p/>
  * Contain data of task entity.
  */
-public class TaskModel {
+public class TaskModel implements Comparable<TaskModel>{
     private String name = "";
     private Long id;
     private String description = "";
@@ -36,6 +40,20 @@ public class TaskModel {
 
     public void setCourse(CourseModel course) {
         this.course = course;
+    }
+
+    @Override
+    public int compareTo(TaskModel another) {
+        if(another != null){
+            if(another.getId() == id)
+                return 0;
+            if(another.getName().compareTo(name) == 0){
+                return another.getDeadline().compareTo(deadline);
+            }else{
+                return another.getName().compareTo(name);
+            }
+        }
+        throw new IllegalArgumentException();
     }
 
     public enum Priority {
@@ -160,9 +178,14 @@ public class TaskModel {
     }
 
     public void setStartTime(Calendar startTime) {
-        if(startTime.get(Calendar.DAY_OF_YEAR)>deadline.get(Calendar.DAY_OF_YEAR))
-            throw new IllegalArgumentException("Start time cannot be after deadline");
-        this.startTime = startTime;
+        Calendar st_candidate = roundByDay(startTime);
+        Calendar dd =  roundByDay(deadline);
+        st_candidate.setTimeZone(dd.getTimeZone());
+        if(st_candidate.compareTo( dd )>0) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
+            throw new IllegalArgumentException("Start time cannot be after deadline: "+ dateFormat.format(st_candidate.getTime()) + "; " + dateFormat.format(dd.getTime()));
+        }
+        this.startTime = st_candidate;
         isStartTimeSet = true;
     }
 
@@ -171,7 +194,9 @@ public class TaskModel {
     }
 
     public void setDeadline(Calendar deadline) {
-        this.deadline = deadline;
+        this.deadline = (Calendar) deadline.clone();
+        deadline = roundByDay(deadline);
+//        deadline.add(Calendar.HOUR_OF_DAY,10);
         if(!isStartTimeSet) {
             startTime = (Calendar) deadline.clone();
             Integer diff = 1;
@@ -220,5 +245,14 @@ public class TaskModel {
 
     public boolean isSupertask() {
         return !isSubtask();
+    }
+
+    public static Calendar roundByDay(Calendar src){
+        src = (Calendar) src.clone();
+        src.set(Calendar.MILLISECOND, 0);
+        src.set(Calendar.SECOND, 0);
+        src.set(Calendar.MINUTE, 0);
+        src.set(Calendar.HOUR_OF_DAY, 0);
+        return src;
     }
 }

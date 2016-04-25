@@ -7,12 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -30,7 +33,7 @@ public class TaskStackAdapter extends ArrayAdapter<TaskModel> {
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.plan_list_supertask_view, null);
+            convertView = inflater.inflate(R.layout.supertask_listitem_view, null);
         }
 
         TextView textView = (TextView) convertView.findViewById(R.id.txtSuperTaskName);
@@ -48,15 +51,34 @@ public class TaskStackAdapter extends ArrayAdapter<TaskModel> {
         else
             back.setBackgroundResource(R.color.light_green_400);
 
-        if(task.isSupertask())
+        if(task.isSupertask()) {
             setPriority(convertView.findViewById(R.id.priority), task.getPriority());
+            TextView course_label = (TextView) convertView.findViewById(R.id.lblCourse);
+            setCourse(course_label, task);
+            TextView more = (TextView) convertView.findViewById(R.id.txtSubsCount);
+            setMore(more,task);
+        }
 
         convertView.setOnClickListener(null);
 
         return convertView;
     }
 
-    void setPriority(View viewById, TaskModel.Priority priority){
+    private void setMore(TextView view, TaskModel task) {
+        if(view == null || task == null)
+            return;
+        else{
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Duration: ");
+            stringBuilder.append(task.getDuration());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yyyy");
+            stringBuilder.append("; Deadline: ");
+            stringBuilder.append( dateFormat.format(task.getDeadline().getTime()) );
+            view.setText(stringBuilder);
+        }
+    }
+
+    private void setPriority(View viewById, TaskModel.Priority priority){
         switch (priority){
             case HIGH:
                 viewById.setBackgroundResource(R.color.hignPriority);
@@ -69,6 +91,45 @@ public class TaskStackAdapter extends ArrayAdapter<TaskModel> {
                 break;
         }
 
+    }
+
+    private void setCourse(TextView viewById, TaskModel supertask){
+        if(viewById == null || supertask == null)
+            return;
+        CourseModel course = supertask.getCourse();
+        if (course != null) {
+            viewById.setText(course.getAbbreviation());
+            //TODO BLYUA, eto zhest'!!! REMOVE THIS hardcode part. [smith]
+            switch ((-1) * course.getClr()) {
+                case 7617718:
+                    viewById.setBackgroundResource(R.color.coursecolor1);
+                    break;
+                case 16728876:
+                    viewById.setBackgroundResource(R.color.coursecolor2);
+                    break;
+                case 5317:
+                    viewById.setBackgroundResource(R.color.coursecolor3);
+                    break;
+                case 2937298:
+                    viewById.setBackgroundResource(R.color.coursecolor4);
+                    break;
+                case 10011977:
+                    viewById.setBackgroundResource(R.color.coursecolor5);
+                    break;
+                case 12627531:
+                    viewById.setBackgroundResource(R.color.coursecolor6);
+                    break;
+                default:
+                    try {
+                        viewById.setBackgroundResource(course.getClr());
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+            }
+        } else {
+            viewById.setText("NaN");
+            viewById.setBackgroundColor(Color.DKGRAY);
+        }
     }
 
     public TaskModel pop() {

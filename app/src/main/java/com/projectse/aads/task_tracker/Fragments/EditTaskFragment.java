@@ -110,6 +110,7 @@ public class EditTaskFragment extends TaskFragment {
         db.addCourseToTask(task.getId());
         long courseID = db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
         Log.d("UPDATE COURSE", courseID + "");
+        hideSoftKeyboard(getActivity());
         super.onPause();
     }
 
@@ -121,6 +122,7 @@ public class EditTaskFragment extends TaskFragment {
         long courseID = db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
         Log.d("UPDATE COURSE", courseID + "");
         //setResult(RESULT_OK);
+        hideSoftKeyboard(getActivity());
         super.onDestroy();
         //finish();
     }

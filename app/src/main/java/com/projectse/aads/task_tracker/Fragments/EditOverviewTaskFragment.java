@@ -299,6 +299,7 @@ public class EditOverviewTaskFragment extends TaskFragment{
     public void switchToOverviewMode(){
         getActivity().setTitle("Task Overview");
         setDefaultOverviewView();
+        hideSoftKeyboard(getActivity());
     }
 
     /*@Override
@@ -340,6 +341,7 @@ public class EditOverviewTaskFragment extends TaskFragment{
         //Log.d("UPDATE COURSE", courseID + "");
         //db.updateTask(task);
         //long courseID = db.updateCourseToTask(task.getId(), dialogFragmentBuilder.getCourseId());
+        hideSoftKeyboard(getActivity());
         super.onDestroy();
     }
 

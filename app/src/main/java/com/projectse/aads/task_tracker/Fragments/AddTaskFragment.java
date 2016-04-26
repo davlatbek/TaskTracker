@@ -54,6 +54,7 @@ public class AddTaskFragment extends TaskFragment {
 
     @Override
     public void onDestroy() {
+        hideSoftKeyboard(getActivity());
         super.onDestroy();
     }
 
@@ -167,6 +168,7 @@ public class AddTaskFragment extends TaskFragment {
                 }
             }
             getFragmentManager().popBackStack();
+            hideSoftKeyboard(getActivity());
         }
     }
 

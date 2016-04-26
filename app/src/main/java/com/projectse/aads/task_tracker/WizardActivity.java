@@ -274,7 +274,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
             boolean added = false;
 
             Calendar day = (Calendar)first_day_of_week.clone();
-            while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
+            while (day.get(Calendar.DATE) <= last_day_of_week.get(Calendar.DATE)) {
                 Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
 
                 Calendar tomorrow = (Calendar) day.clone();
@@ -296,7 +296,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
 
             if(!added) {
                 day = (Calendar)first_day_of_week.clone();
-                while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
+                while (day.get(Calendar.DATE) <= last_day_of_week.get(Calendar.DATE)){
                     Load load = loadByDay.get(day);
 
                     if (load.getLeftScore()+1 > 0) {

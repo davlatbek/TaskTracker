@@ -17,6 +17,7 @@ import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -120,6 +121,8 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         LinearLayout super_task_block = (LinearLayout) convertView.findViewById(R.id.supertask_info);
 
         setPriority(convertView.findViewById(R.id.priority), supertask.getPriority());
+        TextView more = (TextView) convertView.findViewById(R.id.txtSubsCount);
+        setMore(more,supertask);
 
         CourseModel course = supertask.getCourse();
         if (course != null) {
@@ -158,11 +161,9 @@ public class PlanAdapter extends BaseExpandableListAdapter {
             course_label.setBackgroundColor(Color.DKGRAY);
         }
 
-        TextView textSubs = (TextView) convertView.findViewById(R.id.txtSubsCount);
         int children_count = getChildrenCount(groupPosition);
         if (children_count > 0) {
             textSupertaskName.setText(supertask.toString() + " (" + children_count + " subtasks)");
-            textSubs.setText(children_count + " subtasks");
             indicator.setVisibility(View.VISIBLE);
         }else{
             textSupertaskName.setText(supertask.toString());
@@ -171,7 +172,8 @@ public class PlanAdapter extends BaseExpandableListAdapter {
 
         if (supertask.getIsDone())
             textSupertaskName.setPaintFlags(textSupertaskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-
+        else
+            textSupertaskName.setPaintFlags(textSupertaskName.getPaintFlags());
         if(!isEditMode)
             super_task_block.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -267,6 +269,20 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         new_map.putAll(task_hierarchy);
         task_hierarchy = new_map;
         notifyDataSetChanged();
+    }
+
+    private void setMore(TextView view, TaskModel task) {
+        if(view == null || task == null)
+            return;
+        else{
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Duration: ");
+            stringBuilder.append(task.getDuration());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yyyy");
+            stringBuilder.append("; Deadline: ");
+            stringBuilder.append( dateFormat.format(task.getDeadline().getTime()) );
+            view.setText(stringBuilder);
+        }
     }
 
     public TaskModel pop(){

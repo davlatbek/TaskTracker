@@ -1069,14 +1069,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public List<TaskModel> getActualTasks(Calendar date) {
-        Calendar due_to_date = (Calendar) date.clone();
-        due_to_date.set(Calendar.HOUR_OF_DAY, 0);
-        due_to_date.set(Calendar.MINUTE, 0);
-        due_to_date.set(Calendar.SECOND, 0);
+        Calendar due_to_date = TaskModel.roundByDay(date);
+
         List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
 
         String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE " + TASKS_DEADLINE +
-                " > " + due_to_date.getTime().getTime() + " AND " + TASKS_IS_DONE + " == 0" + " ORDER BY " + TASKS_DEADLINE;
+                " >= " + due_to_date.getTime().getTime() + " AND " + TASKS_IS_DONE + " == 0" + " ORDER BY " + TASKS_DEADLINE;
         Log.d(TAG, selectQuery);
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -1100,10 +1098,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public List<TaskModel> getOverdueTasks(Calendar date) {
-        Calendar due_to_date = (Calendar) date.clone();
-        due_to_date.set(Calendar.HOUR_OF_DAY, 23);
-        due_to_date.set(Calendar.MINUTE, 59);
-        due_to_date.set(Calendar.SECOND, 59);
+        Calendar due_to_date = TaskModel.roundByDay(date);
         List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
 
         String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE " + TASKS_DEADLINE +

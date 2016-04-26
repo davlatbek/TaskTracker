@@ -93,9 +93,11 @@ public class AddTaskFragment extends TaskFragment {
             course_id = getArguments().getLong("course_id");
             default_start_time = getArguments().getLong("default_start_time");
 
-            Calendar startDate = Calendar.getInstance();
-            startDate.setTimeInMillis(default_start_time);
-            setDateTime(startTimeDateView, startDate.getTimeInMillis());
+            if(default_start_time > 0) {
+                Calendar startDate = Calendar.getInstance();
+                startDate.setTimeInMillis(default_start_time);
+                setDateTime(startTimeDateView, startDate.getTimeInMillis());
+            }
             if (course_id != -1L){
                 try {
                     textViewCourseLabel.setText(db.getCourse(course_id).getAbbreviation());

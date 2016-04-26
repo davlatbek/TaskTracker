@@ -105,7 +105,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
 
         Calendar last_day_of_plan = (Calendar)last_day_of_week.clone();
         last_day_of_plan.add(Calendar.DATE, 3);
-        taskToAWeekList = db.getTasksBetweenDates(first_day_of_week, last_day_of_plan);
+        taskToAWeekList = db.getTasksWithDeadlinesBetweenDates(first_day_of_week, last_day_of_plan);
 
         for (TaskModel task: taskToAWeekList) {
             taskList.add(task);
@@ -368,8 +368,9 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
             Calendar deadline = task.getDeadline();
 
 
-            if (first_day_of_week.after(deadline)) {
-                Load load = loadByDay.get(first_day_of_week.get(Calendar.DAY_OF_WEEK));
+            Calendar day = (Calendar)first_day_of_week.clone();
+            if (day.after(deadline)) {
+                Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
                 load.addTask(task);
                 added = true;
                 break;

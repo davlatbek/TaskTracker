@@ -3,10 +3,6 @@ package com.projectse.aads.task_tracker;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -24,15 +20,15 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
-import com.projectse.aads.task_tracker.Fragments.ActualTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.AddTaskFragment;
+import com.projectse.aads.task_tracker.Fragments.ActualTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.CourseOverviewFragment;
 import com.projectse.aads.task_tracker.Fragments.CourseProgressFragment;
 import com.projectse.aads.task_tracker.Fragments.CoursesFragment;
 import com.projectse.aads.task_tracker.Fragments.DoneTasksFragment;
+import com.projectse.aads.task_tracker.Fragments.ImportFragment;
 import com.projectse.aads.task_tracker.Fragments.EditOverviewTaskFragment;
 import com.projectse.aads.task_tracker.Fragments.EditTaskFragment;
-import com.projectse.aads.task_tracker.Fragments.ImportFragment;
 import com.projectse.aads.task_tracker.Fragments.OverdueTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.PlanFragment;
 import com.projectse.aads.task_tracker.Fragments.SettingsFragment;
@@ -43,11 +39,19 @@ import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.DoneTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.EditTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.OverdueTasksCaller;
-import com.projectse.aads.task_tracker.Interfaces.TaskOverviewCaller;
 import com.projectse.aads.task_tracker.Interfaces.WizardCaller;
+import com.projectse.aads.task_tracker.Interfaces.TaskOverviewCaller;
 import com.projectse.aads.task_tracker.Models.SettingsModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
-import com.projectse.aads.task_tracker.NotifyService.TaskSchedulerService;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
@@ -60,15 +64,6 @@ import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.Categories;
 import net.fortuna.ical4j.model.property.DtEnd;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 /**
  * Created by Andrey Zolin on 20.03.2016.
  */
@@ -76,23 +71,16 @@ public class MainActivity
         extends AppCompatActivity
         implements WeeklyViewFragment.onWeekViewEventListener, CoursesFragment.onCourseClickListener,
         AddTaskCaller, ActualTasksCaller, DoneTasksCaller, OverdueTasksCaller, ImportFragment.TaskCategoriesCaller,
-        WizardCaller, EditTaskCaller, TaskOverviewCaller {
-    public static SettingsModel settings = null;
-    public static Boolean DEBUG = false;
+        WizardCaller, EditTaskCaller, TaskOverviewCaller, EditOverviewTaskFragment.TaskCategoriesCaller
+    {
     DatabaseHelper db;
-    Intent intent;
     private DrawerLayout menuDrawer;
     private android.support.v7.widget.Toolbar toolbar;
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
+    public static SettingsModel settings = null;
 
-    /** Service object to interact scheduled jobs. */
-
-    TaskSchedulerService mTestService;
-    private static int kJobId = 0;
-
-    ComponentName mServiceComponent;
-
+    public static Boolean DEBUG = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,10 +124,9 @@ public class MainActivity
         // Set default locale prog-ly to English (Customer req)
         Locale.setDefault(new Locale("en"));
         setCurrentFragment(new TaskCategoriesFragment());
-        MainActivity.settings = db.getSettings();
-        mServiceComponent = new ComponentName(this, TaskSchedulerService.class);
+//        MainActivity.settings = db.getSettings();
 
-        if (DEBUG)
+        if(DEBUG)
             PlugDebug.initDebugData(db);
     }
 
@@ -157,14 +144,6 @@ public class MainActivity
                     }
                 }
         );
-    }
-
-    public void scheduleJob() {
-        JobInfo.Builder builder = new JobInfo.Builder(kJobId++,mServiceComponent);
-        builder.setOverrideDeadline(3000);
-        JobScheduler jobScheduler =
-                (JobScheduler) getApplication().getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        jobScheduler.schedule(builder.build());
     }
 
     public void selectDrawerItem(MenuItem item) {
@@ -217,7 +196,7 @@ public class MainActivity
     public void setCurrentFragment(Fragment fragment) {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        for (int i = 0; i < fragmentManager.getBackStackEntryCount(); ++i) {
+        for(int i = 0; i < fragmentManager.getBackStackEntryCount(); ++i) {
             fragmentManager.popBackStack();
         }
         transaction.replace(R.id.flContent, fragment).commit();
@@ -265,7 +244,7 @@ public class MainActivity
     }
 
     @Override
-    public void callTasksCategory() {
+    public void callTasksCategory(){
         TaskCategoriesFragment fr = new TaskCategoriesFragment();
         setCurrentFragment(fr);
     }
@@ -317,6 +296,9 @@ public class MainActivity
         AddTaskFragment addTaskFragment = new AddTaskFragment();
         Bundle bundle = new Bundle();
         bundle.putLong("course_id", defaultCourseId);
+        if (defaultStartTime != null){
+            bundle.putLong("default_start_time", defaultStartTime.getTimeInMillis());
+        }
         addTaskFragment.setArguments(bundle);
         setCurrentFragmentAddBackStack(addTaskFragment);
     }
@@ -366,6 +348,8 @@ public class MainActivity
         startActivityForResult(intent, RequestCode.REQ_CODE_WIZZARD);
     }
 
+    Intent intent;
+
     public void callOpenFileForImport() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.import_hint))
@@ -382,13 +366,13 @@ public class MainActivity
         dialog.show();
     }
 
-    private Map<String, List<TaskModel>> parse(String path) throws IOException, ParserException {
+    private Map<String,List<TaskModel>> parse(String path) throws IOException, ParserException {
         FileInputStream fin = new FileInputStream(path);
         CalendarBuilder builder = new CalendarBuilder();
         net.fortuna.ical4j.model.Calendar calendar = builder.build(fin);
 
         ComponentList listEvent = calendar.getComponents(Component.VEVENT);
-        Map<String, List<TaskModel>> map = new HashMap<>();
+        Map<String,List<TaskModel>> map = new HashMap<>();
 
         for (Object elem : listEvent) {
             VEvent event = (VEvent) elem;
@@ -398,11 +382,11 @@ public class MainActivity
             String description = event.getDescription().getValue();
 
             PropertyList categories = event.getProperties(Property.CATEGORIES);
-            for (Property c : categories) {
-                if (c instanceof Categories) {
+            for(Property c : categories){
+                if(c instanceof Categories){
                     cousre_name = c.getValue();
-                    if (!map.containsKey(cousre_name)) {
-                        map.put(cousre_name, new ArrayList<TaskModel>());
+                    if(!map.containsKey(cousre_name)) {
+                        map.put(cousre_name,new ArrayList<TaskModel>());
                     }
                 }
             }
@@ -412,39 +396,39 @@ public class MainActivity
             task.setName(title);
             task.setDescription(description);
             DtEnd date = event.getEndDate();
-            if (date != null) {
+            if(date != null){
                 TimeZone zone = date.getTimeZone();
                 Calendar deadline;
-                if (zone != null)
+                if(zone != null)
                     deadline = Calendar.getInstance(zone);
                 else
                     deadline = Calendar.getInstance();
                 deadline.setTime(date.getDate());
-                task.setDeadline(deadline);
+                task.setDeadline( deadline );
             }
-            if (cousre_name != null)
+            if(cousre_name != null)
                 (map.get(cousre_name)).add(task);
             else {
-                if (!map.containsKey("UNSET")) {
+                if(!map.containsKey("UNSET")) {
                     map.put("UNSET", new ArrayList<TaskModel>());
                 }
                 (map.get("UNSET")).add(task);
             }
-            Log.d("OPENED", title + " : " + description);
+            Log.d("OPENED",title + " : " + description);
         }
         return map;
     }
 
-    public void ICalToData(Uri currFileURI) {
-        Map<String, List<TaskModel>> map = null;
+    public void ICalToData(Uri currFileURI){
+        Map<String,List<TaskModel>> map = null;
         try {
 //            List<String> text = readFile(currFileURI.getPath());
             map = parse(currFileURI.getPath());
         } catch (IOException e) {
-            Toast.makeText(this, "Cannot read from file: " + e.getMessage(), Toast.LENGTH_LONG);
+            Toast.makeText(this,"Cannot read from file: "+e.getMessage(),Toast.LENGTH_LONG);
             e.printStackTrace();
         } catch (ParserException e) {
-            Toast.makeText(this, "Cannot parse iCal: " + e.getMessage(), Toast.LENGTH_LONG);
+            Toast.makeText(this,"Cannot parse iCal: "+e.getMessage(),Toast.LENGTH_LONG);
             e.printStackTrace();
         }
         if (map == null)
@@ -464,7 +448,7 @@ public class MainActivity
                     break;
                 case RequestCode.REQ_CODE_OPENFILE:
                     Uri currFileURI = data.getData();
-                    Log.d("FILE", currFileURI.getPath());
+                    Log.d("FILE",currFileURI.getPath());
                     ICalToData(currFileURI);
                     break;
             }

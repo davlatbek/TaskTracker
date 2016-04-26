@@ -12,7 +12,7 @@ import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Interfaces.WizardManager;
 import com.projectse.aads.task_tracker.R;
 
-public class IntroFragment extends Fragment {
+public class IntroFragment extends WizardFragment {
     DatabaseHelper db;
     private WizardManager wizardManager;
 
@@ -54,6 +54,8 @@ public class IntroFragment extends Fragment {
         cancelBtn.setOnClickListener(closeWizardListener);
         Button createBtn = (Button) view.findViewById(R.id.btnCreate);
         createBtn.setOnClickListener(createListener);
+
+        setDrawablesToImageViews(view);
         return view;
     }
 

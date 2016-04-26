@@ -21,12 +21,12 @@ import android.widget.ScrollView;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
-import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.NotifyService.AlertReceiver;
 import com.projectse.aads.task_tracker.R;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -38,10 +38,9 @@ import java.util.TimeZone;
  */
 public class AddTaskFragment extends TaskFragment {
     ActualTasksCaller actualTasksCaller;
-    Long course_id = 0L;
     private Long parent_id = -1L;
     private Menu menu;
-    private MainActivity test = new MainActivity();
+    long course_id, default_start_time;
 
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -55,6 +54,7 @@ public class AddTaskFragment extends TaskFragment {
 
     @Override
     public void onDestroy() {
+        hideSoftKeyboard(getActivity());
         super.onDestroy();
     }
 
@@ -92,12 +92,21 @@ public class AddTaskFragment extends TaskFragment {
         super.onViewCreated(view, savedInstanceState);
         if (getArguments() != null) {
             course_id = getArguments().getLong("course_id");
-            try {
-                textViewCourseLabel.setText(db.getCourse(course_id).getAbbreviation());
-                textViewCourseLabel.setBackgroundColor(db.getCourse(course_id).getClr());
-                editTextCourseName.setText(db.getCourse(course_id).getName());
-            } catch (Exception e) {
-                e.printStackTrace();
+            default_start_time = getArguments().getLong("default_start_time");
+
+            if(default_start_time > 0) {
+                Calendar startDate = Calendar.getInstance();
+                startDate.setTimeInMillis(default_start_time);
+                setDateTime(startTimeDateView, startDate.getTimeInMillis());
+            }
+            if (course_id != -1L){
+                try {
+                    textViewCourseLabel.setText(db.getCourse(course_id).getAbbreviation());
+                    textViewCourseLabel.setBackgroundColor(db.getCourse(course_id).getClr());
+                    editTextCourseName.setText(db.getCourse(course_id).getName());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -146,7 +155,7 @@ public class AddTaskFragment extends TaskFragment {
     public void addAndSaveToDb(View v) {
         if (validateTaskFields(v)) {
             long task_id = addTaskToDatabase();
-            if (0 != course_id) {
+            if (course_id != 0) {
                 db.addCourseToTask(task_id);
                 db.updateCourseToTask(task_id, course_id);
                 Log.d("course id", course_id + "");
@@ -158,13 +167,10 @@ public class AddTaskFragment extends TaskFragment {
                     Log.d("course id", course_id + "");
                 }
             }
-            test.scheduleJob();
-
             getFragmentManager().popBackStack();
+            hideSoftKeyboard(getActivity());
         }
     }
-
-
 
     /**
      * Creating task data and adding to local database
@@ -186,8 +192,8 @@ public class AddTaskFragment extends TaskFragment {
 
         task.setName(nameView.getText().toString());
         task.setDescription(descView.getText().toString());
-        task.setStartTime(startTimeCal);
         task.setDeadline(deadLineCal);
+        task.setStartTime(startTimeCal);
         if (!durationView.getText().toString().equals("")/* || !durationView.getText().toString().equals("0")*/)
             task.setDuration(Long.parseLong(durationView.getText().toString()));
         else task.setDuration(1L);

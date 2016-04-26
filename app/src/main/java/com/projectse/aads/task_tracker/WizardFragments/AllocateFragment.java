@@ -104,6 +104,8 @@ public class AllocateFragment extends WizardFragment {
         Button next = (Button) view.findViewById(R.id.btnNext);
         next.setVisibility(View.INVISIBLE);
 
+        setDrawablesToImageViews(view);
+
         return view;
     }
 }

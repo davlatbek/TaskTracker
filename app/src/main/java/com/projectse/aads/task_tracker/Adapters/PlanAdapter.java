@@ -11,24 +11,52 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.projectse.aads.task_tracker.Fragments.PlanFragment;
 import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public class PlanAdapter extends BaseExpandableListAdapter {
 
     private Context context;
-    private Map<TaskModel, List<TaskModel>> task_hierarchy = new HashMap<>();
+    public boolean isEditMode;
 
-    public PlanAdapter(Context context, Map<TaskModel, List<TaskModel>> groups) {
+    private SortedMap<TaskModel, List<TaskModel>> task_hierarchy = new ConcurrentSkipListMap<>();
+
+    public SortedMap<TaskModel, List<TaskModel>> getTaskHierarchy() {
+        return task_hierarchy;
+    }
+
+    public void setTaskHierarchy(SortedMap<TaskModel, List<TaskModel>> task_hierarchy) {
+        this.task_hierarchy = task_hierarchy;
+        notifyDataSetChanged();
+    }
+
+    public PlanAdapter(Context context, SortedMap<TaskModel, List<TaskModel>> groups) {
         this.context = context;
         task_hierarchy = groups;
     }
+
+    public void setEditMode(boolean isEditMode) {
+        this.isEditMode = isEditMode;
+        notifyDataSetChanged();
+    }
+
+    public void setPlanFragment(PlanFragment planFragment) {
+        this.planFragment = planFragment;
+    }
+
+    private PlanFragment planFragment = null;
 
     @Override
     public int getGroupCount() {
@@ -80,7 +108,7 @@ public class PlanAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.supertask_listitem_view, null);
         }
 
-        ImageView indicator = (ImageView) convertView.findViewById(R.id.group_indicator);
+        final ImageView indicator = (ImageView) convertView.findViewById(R.id.group_indicator);
         if (isExpanded){
             indicator.setImageResource(R.drawable.up_arrow);
         }
@@ -91,14 +119,10 @@ public class PlanAdapter extends BaseExpandableListAdapter {
 
         TextView textSupertaskName = (TextView) convertView.findViewById(R.id.txtSuperTaskName);
         LinearLayout super_task_block = (LinearLayout) convertView.findViewById(R.id.supertask_info);
-        super_task_block.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((MainActivity) context).callTaskOverviewActivity(supertask);
-            }
-        });
 
         setPriority(convertView.findViewById(R.id.priority), supertask.getPriority());
+        TextView more = (TextView) convertView.findViewById(R.id.txtSubsCount);
+        setMore(more,supertask);
 
         CourseModel course = supertask.getCourse();
         if (course != null) {
@@ -137,11 +161,9 @@ public class PlanAdapter extends BaseExpandableListAdapter {
             course_label.setBackgroundColor(Color.DKGRAY);
         }
 
-        TextView textSubs = (TextView) convertView.findViewById(R.id.txtSubsCount);
         int children_count = getChildrenCount(groupPosition);
         if (children_count > 0) {
             textSupertaskName.setText(supertask.toString() + " (" + children_count + " subtasks)");
-            textSubs.setText(children_count + " subtasks");
             indicator.setVisibility(View.VISIBLE);
         }else{
             textSupertaskName.setText(supertask.toString());
@@ -150,7 +172,33 @@ public class PlanAdapter extends BaseExpandableListAdapter {
 
         if (supertask.getIsDone())
             textSupertaskName.setPaintFlags(textSupertaskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-
+        else
+            textSupertaskName.setPaintFlags(textSupertaskName.getPaintFlags());
+        if(!isEditMode)
+            super_task_block.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((MainActivity) context).callTaskOverviewActivity(supertask);
+                }
+            });
+        else{
+            indicator.setVisibility(View.INVISIBLE);
+            super_task_block.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(planFragment != null){
+                        if(indicator.getVisibility() == View.INVISIBLE) {
+                            indicator.setImageResource(R.drawable.checked);
+                            indicator.setVisibility(View.VISIBLE);
+                            planFragment.addSelectedTask(supertask);
+                        }else {
+                            indicator.setVisibility(View.INVISIBLE);
+                            planFragment.removeSelectedTask(supertask);
+                        }
+                    }
+                }
+            });
+        }
         return convertView;
 
     }
@@ -197,5 +245,50 @@ public class PlanAdapter extends BaseExpandableListAdapter {
                 break;
         }
 
+    }
+
+    public void sortByDeadline(){
+        SortedMap<TaskModel, List<TaskModel>> newsorted =
+                new ConcurrentSkipListMap(new Comparator<TaskModel>() {
+                    public int compare(TaskModel o1, TaskModel o2) {
+                        return o1.getDeadline().compareTo(o2.getDeadline());
+                    }
+                });
+        newsorted.putAll(task_hierarchy);
+        task_hierarchy = newsorted;
+        notifyDataSetChanged();
+    }
+
+    public void sortByName(){
+        SortedMap<TaskModel, List<TaskModel>> new_map =
+                new ConcurrentSkipListMap(new Comparator<TaskModel>() {
+                    public int compare(TaskModel o1, TaskModel o2) {
+                        return o1.getName().compareTo(o2.getName());
+                    }
+                });
+        new_map.putAll(task_hierarchy);
+        task_hierarchy = new_map;
+        notifyDataSetChanged();
+    }
+
+    private void setMore(TextView view, TaskModel task) {
+        if(view == null || task == null)
+            return;
+        else{
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Duration: ");
+            stringBuilder.append(task.getDuration());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yyyy");
+            stringBuilder.append("; Deadline: ");
+            stringBuilder.append( dateFormat.format(task.getDeadline().getTime()) );
+            view.setText(stringBuilder);
+        }
+    }
+
+    public TaskModel pop(){
+        TaskModel task = task_hierarchy.firstKey();
+        task_hierarchy.remove(task);
+        notifyDataSetChanged();
+        return task;
     }
 }

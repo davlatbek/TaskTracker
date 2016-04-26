@@ -44,8 +44,7 @@ public class TasksFragment extends WizardFragment {
         super.onCreate(savedInstanceState);
         db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
 
-        //TODO implement method get tasks for plan
-        List<TaskModel> tasks = db.getTaskModelList();
+        List<TaskModel> tasks = wizardActivity.getTasksToWeek();
         for(TaskModel t : tasks){
             if(t.isSupertask()) {
                 CheckableTaskModel tt = new CheckableTaskModel( t );
@@ -89,6 +88,7 @@ public class TasksFragment extends WizardFragment {
             }
         });
 
+        setDrawablesToImageViews(view);
         return view;
     }
 }

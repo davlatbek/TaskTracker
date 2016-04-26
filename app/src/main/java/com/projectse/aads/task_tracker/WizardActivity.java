@@ -315,48 +315,24 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
 
     public void allocateEvenly(){
         for(TaskModel task : selected_tasks){
-            boolean added = false;
             Calendar deadline = task.getDeadline();
 
-            double minLoad = 0;
+            double maxFreeTime = Double.MIN_VALUE;
             Calendar day = (Calendar)first_day_of_week.clone();
-            while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
+            Calendar mostFreeDay = (Calendar)first_day_of_week.clone();
+            while (day.get(Calendar.DATE) <= last_day_of_week.get(Calendar.DATE)) {
                 Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
 
-                if (deadline.after(day) && load.getLeftScore()+1 > minLoad) {
-                    minLoad = load.getLeftScore()+1;
+                if (day.get(Calendar.DATE) < deadline.get(Calendar.DATE) &&
+                        load.getLeftScore() + 1 > maxFreeTime) {
+                    maxFreeTime = load.getLeftScore() + 1;
+                    mostFreeDay = (Calendar) day.clone();
                 }
                 day.add(Calendar.DATE, 1);
             }
 
-            day = (Calendar)first_day_of_week.clone();
-            while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
-                Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
-                if (load.getLeftScore()+1 == minLoad) {
-                    if (deadline.after(day)) {
-                        load.addTask(task);
-                        added = true;
-                        break;
-                    }
-                }
-                day.add(Calendar.DATE, 1);
-            }
-
-            if (!added) {
-                day = (Calendar)first_day_of_week.clone();
-                while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
-                    Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
-
-                    Calendar tomorrow = (Calendar) day.clone();
-                    tomorrow.add(Calendar.DATE, 1);
-                    if (deadline.equals(tomorrow) || deadline.before(day)) {
-                        load.addTask(task);
-                        added = true;
-                        break;
-                    }
-                    day.add(Calendar.DATE, 1);
-                }
-            }
+            Load load = loadByDay.get(mostFreeDay.get(Calendar.DAY_OF_WEEK));
+            load.addTask(task);
         }
 
         callPreviewFragment();

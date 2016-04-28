@@ -274,7 +274,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
             boolean added = false;
 
             Calendar day = (Calendar)first_day_of_week.clone();
-            while (day.get(Calendar.DATE) <= last_day_of_week.get(Calendar.DATE)) {
+            while (day.before(last_day_of_week) || day.equals(last_day_of_week)) {
                 Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
 
                 Calendar tomorrow = (Calendar) day.clone();
@@ -296,7 +296,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
 
             if(!added) {
                 day = (Calendar)first_day_of_week.clone();
-                while (day.get(Calendar.DATE) <= last_day_of_week.get(Calendar.DATE)){
+                while (day.before(last_day_of_week) || day.equals(last_day_of_week)){
                     Load load = loadByDay.get(day);
 
                     if (load.getLeftScore()+1 > 0) {
@@ -320,11 +320,10 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
             double maxFreeTime = Double.MIN_VALUE;
             Calendar day = (Calendar)first_day_of_week.clone();
             Calendar mostFreeDay = (Calendar)first_day_of_week.clone();
-            while (day.get(Calendar.DATE) <= last_day_of_week.get(Calendar.DATE)) {
+            while (day.before(last_day_of_week) || day.equals(last_day_of_week)) {
                 Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
 
-                if (day.get(Calendar.DATE) < deadline.get(Calendar.DATE) &&
-                        load.getLeftScore() + 1 > maxFreeTime) {
+                if (day.before(deadline) && load.getLeftScore() + 1 > maxFreeTime) {
                     maxFreeTime = load.getLeftScore() + 1;
                     mostFreeDay = (Calendar) day.clone();
                 }
@@ -344,7 +343,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
             boolean added = false;
 
             Calendar day = (Calendar)first_day_of_week.clone();
-            if (day.get(Calendar.DATE) >= deadline.get(Calendar.DATE)) {
+            if (day.after(deadline) || day.equals(deadline)) {
                 Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
                 load.addTask(task);
                 added = true;
@@ -355,7 +354,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
                 day = (Calendar)deadline.clone();
                 day.set(Calendar.DATE, day.get(Calendar.DATE) - 1);
 
-                while (day.get(Calendar.DATE) >= first_day_of_week.get(Calendar.DATE)) {
+                while (day.after(first_day_of_week) || day.equals(first_day_of_week)) {
                     Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
                     if (load.getLeftScore() + 1 > task.getDuration()) {
                         load.addTask(task);
@@ -371,7 +370,7 @@ public class WizardActivity extends AppCompatActivity implements WizardManager {
                 day = (Calendar)deadline.clone();
                 day.set(Calendar.DATE, day.get(Calendar.DATE) - 1);
 
-                while (day.get(Calendar.DATE) >= first_day_of_week.get(Calendar.DATE)) {
+                while (day.after(first_day_of_week) || day.equals(first_day_of_week)) {
                     Load load = loadByDay.get(day.get(Calendar.DAY_OF_WEEK));
                     if (load.getLeftScore() + 1 > 0) {
                         load.addTask(task);

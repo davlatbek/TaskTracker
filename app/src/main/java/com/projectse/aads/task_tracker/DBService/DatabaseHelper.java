@@ -1009,7 +1009,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private List<TaskModel> getTasksBetweenDates(Calendar low_date, Calendar high_date) {
         List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
 
-        String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE " + TASKS_START_TIME +
+        String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE "  + TASKS_START_TIME +
                 " BETWEEN " + low_date.getTime().getTime() + " AND " + high_date.getTime().getTime() + " ORDER BY " + TASKS_START_TIME;
         Log.d(TAG, selectQuery);
 
@@ -1043,9 +1043,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<TaskModel> getTasksWithDeadlinesBetweenDates(Calendar low_date, Calendar high_date) {
         List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
 
-        String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE " + TASKS_DEADLINE +
-                " BETWEEN " + low_date.getTime().getTime() + " AND " + high_date.getTime().getTime() +
-                " ORDER BY " + TASKS_DEADLINE;
+        String selectQuery = "SELECT * FROM " + TABLE_TASKS + " WHERE " + TASKS_IS_DONE + " == 0" +
+                " AND " + TASKS_DEADLINE + " BETWEEN " + low_date.getTime().getTime() + " AND " +
+                high_date.getTime().getTime() + " ORDER BY " + TASKS_DEADLINE;
         Log.d(TAG, selectQuery);
 
         SQLiteDatabase db = this.getReadableDatabase();

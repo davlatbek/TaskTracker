@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/colorContentBackground"
+    android:orientation="vertical"
+    android:id="@+id/container">
+    <FrameLayout
+        android:id="@+id/fragment_week_slider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout="@layout/fragment_week_slider">
+    </FrameLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/tasks_categories_buttons">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/light_green_300"
+                android:layout_margin="4dp"
+                android:id="@+id/btnMonday">
+
+                <ListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/monday_list" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="24dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:gravity="left|center_vertical|center_horizontal"
+                    android:background="@color/black_transparent"
+                    android:text="@string/monday"
+                    android:paddingLeft="5dp"
+                    android:textColor="@android:color/white" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/ic_triangual"
+                    android:layout_alignParentRight="true"
+                    android:gravity="bottom|right">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="0"
+                        android:id="@+id/txtMonTasksCount"
+                        android:gravity="right"
+                        android:paddingRight="5dp"
+                        android:textSize="12dp"
+                        android:textColor="@android:color/black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Tasks"
+                        android:id="@+id/txtMonTasksCountLabel"
+                        android:gravity="right"
+                        android:textSize="12dp"
+                        android:textColor="@android:color/black" />
+                </LinearLayout>
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/light_green_300"
+                android:layout_margin="4dp"
+                android:id="@+id/btnTuesday">
+
+                <ListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tuesday_list" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="24dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:gravity="left|center_vertical|center_horizontal"
+                    android:background="@color/black_transparent"
+                    android:text="@string/tuesday"
+                    android:paddingLeft="5dp"
+                    android:textColor="@android:color/white" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/ic_triangual"
+                    android:layout_alignParentRight="true"
+                    android:gravity="bottom|right">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="0"
+                        android:id="@+id/txtTueTasksCount"
+                        android:gravity="right"
+                        android:paddingRight="5dp"
+                        android:textSize="12dp"
+                        android:textColor="@android:color/black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Tasks"
+                        android:id="@+id/txtTueTasksCountLabel"
+                        android:gravity="right"
+                        android:textSize="12dp"
+                        android:textColor="@android:color/black" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/light_green_300"
+                android:layout_margin="4dp"
+                android:id="@+id/btnWednesday">
+
+                <ListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/wednesday_list" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="24dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:gravity="left|center_vertical|center_horizontal"
+                    android:background="@color/black_transparent"
+                    android:text="@string/wednesday"
+                    android:paddingLeft="5dp"
+                    android:textColor="@android:color/white" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/ic_triangual"
+                    android:layout_alignParentRight="true"
+                    android:gravity="bottom|right">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="0"
+                        android:id="@+id/txtWedTasksCount"
+                        android:gravity="right"
+                        android:paddingRight="5dp"
+                        android:textSize="12dp"
+                        android:textColor="@android:color/black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Tasks"
+                        android:id="@+id/txtWedTasksCountLabel"
+                        android:gravity="right"
+                        android:textSize="12dp"
+                        android:textColor="@android:color/black" />
+                </LinearLayout>
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/light_green_300"
+                android:layout_margin="4dp"
+                android:id="@+id/btnThursday">
+
+                <ListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/thursday_list" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="24dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:gravity="left|center_vertical|center_horizontal"
+                    android:background="@color/black_transparent"
+                    android:text="@string/thursday"
+                    android:paddingLeft="5dp"
+                    android:textColor="@android:color/white" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/ic_triangual"
+                    android:layout_alignParentRight="true"
+                    android:gravity="bottom|right">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="0"
+                        android:id="@+id/txtThuTasksCount"
+                        android:gravity="right"
+                        android:paddingRight="5dp"
+                        android:textSize="12dp"
+                        android:textColor="@android:color/black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Tasks"
+                        android:id="@+id/txtThuTasksCountLabel"
+                        android:gravity="right"
+                        android:textSize="12dp"
+                        android:textColor="@android:color/black" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/light_green_300"
+                android:layout_margin="4dp"
+                android:id="@+id/btnFriday">
+
+                <ListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/friday_list" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="24dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:gravity="left|center_vertical|center_horizontal"
+                    android:background="@color/black_transparent"
+                    android:text="@string/friday"
+                    android:paddingLeft="5dp"
+                    android:textColor="@android:color/white" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/ic_triangual"
+                    android:layout_alignParentRight="true"
+                    android:gravity="bottom|right">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="0"
+                        android:id="@+id/txtFriTasksCount"
+                        android:gravity="right"
+                        android:paddingRight="5dp"
+                        android:textSize="12dp"
+                        android:textColor="@android:color/black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Tasks"
+                        android:id="@+id/txtFriTasksCountLabel"
+                        android:gravity="right"
+                        android:textSize="12dp"
+                        android:textColor="@android:color/black" />
+                </LinearLayout>
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/light_green_300"
+                android:layout_margin="4dp"
+                android:id="@+id/btnSaturday">
+
+                <ListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/saturday_list" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="24dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:gravity="left|center_vertical|center_horizontal"
+                    android:background="@color/black_transparent"
+                    android:text="@string/saturday"
+                    android:paddingLeft="5dp"
+                    android:textColor="@android:color/white" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/ic_triangual"
+                    android:layout_alignParentRight="true"
+                    android:gravity="bottom|right">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="0"
+                        android:id="@+id/txtSatTasksCount"
+                        android:gravity="right"
+                        android:paddingRight="5dp"
+                        android:textSize="12dp"
+                        android:textColor="@android:color/black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Tasks"
+                        android:id="@+id/txtSatTasksCountLabel"
+                        android:gravity="right"
+                        android:textSize="12dp"
+                        android:textColor="@android:color/black" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="visible"
+            android:layout_weight="1">
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/light_green_300"
+                android:layout_margin="4dp"
+                android:id="@+id/btnSunday">
+
+                <ListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/sunday_list" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="24dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:gravity="left|center_vertical|center_horizontal"
+                    android:background="@color/black_transparent"
+                    android:text="@string/sunday"
+                    android:paddingLeft="5dp"
+                    android:textColor="@android:color/white" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/ic_triangual"
+                    android:layout_alignParentRight="true"
+                    android:gravity="bottom|right">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="0"
+                        android:id="@+id/txtSunTasksCount"
+                        android:gravity="right"
+                        android:paddingRight="5dp"
+                        android:textSize="12dp"
+                        android:textColor="@android:color/black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Tasks"
+                        android:id="@+id/txtSunTasksCountLabel"
+                        android:gravity="right"
+                        android:textSize="12dp"
+                        android:textColor="@android:color/black" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:background="@color/light_green_800"
+                android:layout_margin="4dp"
+                android:id="@+id/add_task_btn"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_add_circle_outline_24dp"
+                    android:layout_gravity="center"
+                    android:id="@+id/add_task_icon"/>
+                <TextView
+                    android:id="@+id/add_task_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#ffffff"
+                    android:text="Add Task"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:gravity="center_horizontal"
+                    android:layout_centerInParent="true" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:id="@+id/group1"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_tasks_fragment"
+            android:icon="@drawable/ic_assignment_24dp"
+            android:title="Tasks" />
+        <item
+            android:id="@+id/nav_plan_fragment"
+            android:icon="@drawable/ic_event_24dp"
+            android:title="Plan" />
+        <item
+            android:id="@+id/nav_weekly_view_fragment"
+            android:icon="@drawable/ic_view_column_24dp"
+            android:title="Weekly view" />
+        <item
+            android:id="@+id/nav_courses_fragment"
+            android:icon="@drawable/ic_school_24dp"
+            android:title="Courses" />
+        <item
+            android:id="@+id/nav_progress_fragment"
+            android:icon="@drawable/ic_insert_chart_24dp"
+            android:title="Progress" />
+        <item
+            android:id="@+id/nav_wizzard_fragment"
+            android:icon="@drawable/auto_fix"
+            android:title="@string/wizard_title" />
+        <item
+            android:id="@+id/nav_import_fragment"
+            android:icon="@drawable/ic_import"
+            android:title="@string/import_title" />
+
+    </group>
+
+    <group
+        android:id="@+id/group2"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_settings_fragment"
+            android:icon="@drawable/ic_settings_24dp"
+            android:title="Settings" />
+
+    </group>
+
+
+</menu>

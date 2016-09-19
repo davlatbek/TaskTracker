@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:layout_width="87dp"
+        android:layout_height="75dp"
+        android:id="@+id/koala"
+        android:layout_gravity="left|center_vertical"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="5dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="450dp"
+            android:layout_height="75dp"
+            android:id="@+id/cloud"
+            android:layout_gravity="left"
+            android:nestedScrollingEnabled="false"
+            android:scaleType="fitXY"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_margin="5dp" />
+
+        <TextView
+            android:layout_width="450dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/week_tooltip"
+            android:id="@+id/txtTooltip"
+            android:layout_centerVertical="true"
+            android:paddingLeft="50dp"
+            android:paddingRight="20dp"
+            android:textAlignment="gravity"
+            android:gravity="center_vertical|center_horizontal"/>
+    </RelativeLayout>
+
+</LinearLayout>

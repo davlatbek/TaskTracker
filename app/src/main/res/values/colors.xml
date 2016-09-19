@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorToolbarBackground">#8bc34a</color>
+    <color name="colorContentBackground">#dcedc8</color>
+
+    <color name="lowPriority">#4daf51</color>
+    <color name="mediumPriority">#ffc107</color>
+    <color name="hignPriority">#f44336</color>
+
+    <color name="color_list_background">#aed581</color>
+
+
+    <color name="light_green_900">#33691e</color>
+    <color name="light_green_800">#558b2f</color>
+    <color name="light_green_700">#689f38</color>
+    <color name="light_green_600">#7cb342</color>
+    <color name="light_green_500">#8bc34a</color>
+    <color name="light_green_400">#9ccc65</color>
+    <color name="light_green_300">#aed581</color>
+    <color name="light_green_200">#c5e1a5</color>
+    <color name="light_green_100">#dcedc8</color>
+
+    <color name="black_transparent">#50000000</color>
+
+    <color name="colorPrimary">#8ac24a</color>
+    <color name="colorPrimaryDark">#dbecc7</color>
+    <color name="colorAccent">#67c200</color>
+
+    <color name="coursecolor1">#8bc34a</color>
+    <color name="coursecolor2">#28c4d8</color>
+    <color name="coursecolor3">#ffeb3b</color>
+    <color name="coursecolor4">#d32e2e</color>
+    <color name="coursecolor5">#673ab7</color>
+    <color name="coursecolor6">#3f51b5</color>
+    <!--<color name="primary_text_default_material_light">#f9f9f9</color>-->
+    <!--<color name="background_material_light">#dbecc7</color>-->
+    <color name="drawer_menu_background">#558a2f</color>
+    <color name="colorBackground">#e3b1b1</color>
+    <color name="color_menu_items">#fdfdfe</color>
+
+</resources>

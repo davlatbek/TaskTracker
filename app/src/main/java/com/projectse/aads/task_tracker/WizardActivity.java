@@ -31,6 +31,7 @@ import java.util.Map;
 /**
  * Created by smith on 4/19/16.
  */
+//first comment
 public class WizardActivity extends AppCompatActivity implements WizardManager {
     private android.support.v7.widget.Toolbar toolbar;
     private double standard_duration = 0;

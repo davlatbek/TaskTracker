@@ -57,6 +57,14 @@
         android:id="@+id/textViewName"
         android:paddingTop="8px" />
 
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Timer"
+        android:id="@+id/timer"
+        android:layout_gravity="right"
+        android:checked="false" />
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

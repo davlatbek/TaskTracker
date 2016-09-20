@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.format.DateUtils;
 import android.view.MenuItem;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
@@ -28,7 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-//TODO: delete this class
+//TODO: goodbye wizard
 /**
  * Created by smith on 4/19/16.
  */

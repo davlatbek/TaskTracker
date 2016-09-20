@@ -3,9 +3,6 @@ package com.projectse.aads.task_tracker.Fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.ListFragment;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -20,10 +17,8 @@ import android.widget.Toast;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.ParentFragment;
-import com.projectse.aads.task_tracker.Interfaces.WizardCaller;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
-import com.projectse.aads.task_tracker.RequestCode;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,7 +37,7 @@ public class PlanFragment extends Fragment
     private TasksListFragment tasksListFragment;
     private WeekSliderFragment sliderFragment;
     private AddTaskCaller addTaskCaller;
-    private WizardCaller wizardCaller;
+
 
     /**EDIT MODE**/
     private List<TaskModel> selectedTasks = new ArrayList<>();
@@ -54,9 +49,6 @@ public class PlanFragment extends Fragment
         super.onAttach(activity);
         if (activity instanceof AddTaskCaller) {
             addTaskCaller = (AddTaskCaller) activity;
-        }
-        if (activity instanceof WizardCaller) {
-            wizardCaller = (WizardCaller) activity;
         }
     }
 
@@ -117,7 +109,7 @@ public class PlanFragment extends Fragment
                 return true;
         }
         if (item.getTitle().equals("editplan")) {
-//            if(wizardCaller != null) wizardCaller.callWizard();
+
             isEditMode = isEditMode?false:true; //change the state
             if(isEditMode) {
                 item.setIcon(R.drawable.save);

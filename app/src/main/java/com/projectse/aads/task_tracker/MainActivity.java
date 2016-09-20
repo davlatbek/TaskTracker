@@ -39,7 +39,6 @@ import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.DoneTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.EditTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.OverdueTasksCaller;
-import com.projectse.aads.task_tracker.Interfaces.WizardCaller;
 import com.projectse.aads.task_tracker.Interfaces.TaskOverviewCaller;
 import com.projectse.aads.task_tracker.Models.SettingsModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
@@ -75,7 +74,7 @@ public class MainActivity
         extends AppCompatActivity
         implements WeeklyViewFragment.onWeekViewEventListener, CoursesFragment.onCourseClickListener,
         AddTaskCaller, ActualTasksCaller, DoneTasksCaller, OverdueTasksCaller, ImportFragment.TaskCategoriesCaller,
-        WizardCaller, EditTaskCaller, TaskOverviewCaller, EditOverviewTaskFragment.TaskCategoriesCaller
+         EditTaskCaller, TaskOverviewCaller, EditOverviewTaskFragment.TaskCategoriesCaller
     {
     DatabaseHelper db;
     private DrawerLayout menuDrawer;
@@ -178,9 +177,7 @@ public class MainActivity
             case R.id.nav_import_fragment:
                 callOpenFileForImport();
                 return;
-            case R.id.nav_wizzard_fragment:
-                callWizard();
-                return;
+
             default:
                 fragmentClass = TaskCategoriesFragment.class;
         }
@@ -346,11 +343,7 @@ public class MainActivity
         setCurrentFragmentAddBackStack(fragment);
     }
 
-    @Override
-    public void callWizard() {
-        Intent intent = new Intent(getApplicationContext(), WizardActivity.class);
-        startActivityForResult(intent, RequestCode.REQ_CODE_WIZZARD);
-    }
+
 
     Intent intent;
 

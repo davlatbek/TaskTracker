@@ -4,10 +4,6 @@
     android:layout_height="match_parent"
     android:background="@color/light_green_100">
 
-    <include
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        layout="@layout/fragment_wizzard_toopltip" />
 
     <LinearLayout
         android:orientation="horizontal"

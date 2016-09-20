@@ -31,6 +31,7 @@ public class TaskModel implements Comparable<TaskModel>{
     private Long parentTaskId = -1L;
     private CourseModel course;
     private boolean isStartTimeSet = false;
+    //TODO: Add total time, last session start
 
     private Priority priority = Priority.LOW;
 

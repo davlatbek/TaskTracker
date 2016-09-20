@@ -51,6 +51,7 @@ public abstract class TaskFragment extends Fragment {
     protected Button priorityColor;
     protected Spinner spinnerPriority;
     protected Switch switchDone;
+    protected Switch timerOn;
     protected EditText nameView;
     protected EditText descView;
     protected TextView textViewCourseLabel;
@@ -95,6 +96,7 @@ public abstract class TaskFragment extends Fragment {
         spinnerPriority = (Spinner) view.findViewById(R.id.spinnerPriority);
         setPrioritySpinner(view);
         switchDone = (Switch) view.findViewById(R.id.doneSwitch);
+        timerOn = (Switch) view.findViewById(R.id.timer);
 
         nameView = (EditText) view.findViewById(R.id.txtName);
         descView = (EditText) view.findViewById(R.id.txtDescription);

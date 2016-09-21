@@ -158,6 +158,7 @@ public abstract class TaskFragment extends Fragment {
         }
 
         switchDone.setChecked(task.getIsDone());
+        timerOn.setChecked(task.getRunning());
         if (task.getName() != null) nameView.setText(task.getName());
         if (task.getDescription() != null) descView.setText(task.getDescription());
         if (course_id != 0){

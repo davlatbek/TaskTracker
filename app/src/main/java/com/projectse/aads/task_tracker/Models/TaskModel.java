@@ -28,6 +28,7 @@ public class TaskModel implements Comparable<TaskModel>{
     private Boolean isNotifyDeadline = Boolean.FALSE;
     private Boolean isNotifyStartTime = Boolean.FALSE;
     private Boolean isDone = Boolean.FALSE;
+    private Boolean isRunning = Boolean.FALSE;
     private List<Long> subtasks_ids = new ArrayList<>();
     private Long parentTaskId = -1L;
     private CourseModel course;
@@ -209,6 +210,14 @@ public class TaskModel implements Comparable<TaskModel>{
 
     public void setLastSessionStart(Calendar lastSessionStart) {
         this.lastSessionStart = lastSessionStart;
+    }
+
+    public Boolean getRunning() {
+        return isRunning;
+    }
+
+    public void setRunning(Boolean running) {
+        isRunning = running;
     }
 
     public Calendar getDeadline() {

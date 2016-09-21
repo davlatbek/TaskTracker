@@ -192,6 +192,25 @@ public class TaskModel implements Comparable<TaskModel>{
         isStartTimeSet = true;
     }
 
+    //Return time spent to this task not including subtasks. Also doesn't count last started session.
+    //TODO: add current session
+    //TODO: count subtasks
+    public long getTimeSpentMs() {
+        return timeSpentMs;
+    }
+
+    public void setTimeSpentMs(long timeSpentMs) {
+        this.timeSpentMs = timeSpentMs;
+    }
+
+    public Calendar getLastSessionStart() {
+        return lastSessionStart;
+    }
+
+    public void setLastSessionStart(Calendar lastSessionStart) {
+        this.lastSessionStart = lastSessionStart;
+    }
+
     public Calendar getDeadline() {
         return deadline;
     }

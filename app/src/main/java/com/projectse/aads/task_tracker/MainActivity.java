@@ -67,6 +67,10 @@ import net.fortuna.ical4j.model.property.DtEnd;
 /**
  * Created by Andrey Zolin on 20.03.2016.
  */
+/*
+New features by Ivan Dmitriev
+*/
+
 public class MainActivity
         extends AppCompatActivity
         implements WeeklyViewFragment.onWeekViewEventListener, CoursesFragment.onCourseClickListener,

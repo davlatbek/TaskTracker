@@ -23,6 +23,7 @@ public class TaskModel implements Comparable<TaskModel>{
     private String description = "";
     private Calendar startTime = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
     private Calendar deadline = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+    //TODO: discuss do we need duration at all.
     private Long duration;
     private Boolean isNotifyDeadline = Boolean.FALSE;
     private Boolean isNotifyStartTime = Boolean.FALSE;
@@ -31,7 +32,8 @@ public class TaskModel implements Comparable<TaskModel>{
     private Long parentTaskId = -1L;
     private CourseModel course;
     private boolean isStartTimeSet = false;
-    //TODO: Add total time, last session start
+    private long timeSpentMs = 0;
+    private Calendar lastSessionStart = null;
 
     private Priority priority = Priority.LOW;
 

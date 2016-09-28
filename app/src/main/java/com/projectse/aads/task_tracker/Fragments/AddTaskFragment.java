@@ -115,6 +115,7 @@ public class AddTaskFragment extends TaskFragment {
     protected void getViews(View view) {
         super.getViews(view);
         textViewCourseLabel.setVisibility(View.INVISIBLE);
+        timerOn.setVisibility(View.INVISIBLE);
         switchDone.setVisibility(View.INVISIBLE);
         editTextCourseName.setFocusable(false);
         if (getActivity().getIntent().getBooleanExtra("hide_subtasks", false)) {

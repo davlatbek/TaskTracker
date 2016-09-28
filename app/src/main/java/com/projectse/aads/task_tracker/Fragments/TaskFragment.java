@@ -91,6 +91,7 @@ public abstract class TaskFragment extends Fragment {
         return view;
     }
 
+    //this method called by fragment onCreateView
     protected void getViews(View view) {
         priorityColor = (Button) view.findViewById(R.id.btnPriorityColor);
         spinnerPriority = (Spinner) view.findViewById(R.id.spinnerPriority);

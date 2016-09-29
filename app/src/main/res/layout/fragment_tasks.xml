@@ -23,7 +23,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@color/light_red_300"
+                android:background="@drawable/background_with_shadow"
                 android:gravity="center_vertical|center_horizontal"
                 android:layout_margin="10dp"
                 android:id="@+id/over_due_btn">
@@ -46,7 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@color/light_green_300"
+                android:background="@drawable/background_with_shadow_green"
                 android:gravity="center_vertical|center_horizontal"
                 android:layout_margin="10dp"
                 android:id="@+id/actual_btn">
@@ -77,7 +77,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@color/light_green_300"
+                android:background="@drawable/background_with_shadow_green"
                 android:gravity="center_vertical|center_horizontal"
                 android:layout_margin="10dp"
                 android:id="@+id/done_btn">
@@ -100,7 +100,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@color/light_green_800"
+                android:background="@drawable/background_with_shadow_green"
                 android:gravity="center_vertical|center_horizontal"
                 android:layout_margin="10dp"
                 android:id="@+id/add_task_btn"

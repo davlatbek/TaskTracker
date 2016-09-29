@@ -22,9 +22,9 @@
 
     <color name="black_transparent">#50000000</color>
 
-    <color name="colorPrimary">#8ac24a</color>
-    <color name="colorPrimaryDark">#dbecc7</color>
-    <color name="colorAccent">#67c200</color>
+    <color name="colorPrimary">#85c0ef</color>
+    <color name="colorPrimaryDark">#7effd4</color>
+    <color name="colorAccent">#f8caa4</color>
 
     <color name="coursecolor1">#8bc34a</color>
     <color name="coursecolor2">#28c4d8</color>

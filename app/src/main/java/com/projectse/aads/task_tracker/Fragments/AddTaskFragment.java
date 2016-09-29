@@ -94,6 +94,7 @@ public class AddTaskFragment extends TaskFragment {
             course_id = getArguments().getLong("course_id");
             default_start_time = getArguments().getLong("default_start_time");
 
+            timeView.setVisibility(View.INVISIBLE);
             if(default_start_time > 0) {
                 Calendar startDate = Calendar.getInstance();
                 startDate.setTimeInMillis(default_start_time);

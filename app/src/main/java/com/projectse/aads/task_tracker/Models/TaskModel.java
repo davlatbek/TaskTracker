@@ -32,8 +32,8 @@ public class TaskModel implements Comparable<TaskModel>{
     private List<Long> subtasks_ids = new ArrayList<>();
     private Long parentTaskId = -1L;
     private CourseModel course;
-    private boolean isStartTimeSet = false;
-    private long timeSpentMs = 0;
+    private Boolean isStartTimeSet =  Boolean.FALSE;
+    private Long timeSpentMs = 0L;
     private Calendar lastSessionStart = null;
 
     private Priority priority = Priority.LOW;
@@ -196,11 +196,11 @@ public class TaskModel implements Comparable<TaskModel>{
     //Return time spent to this task not including subtasks. Also doesn't count last started session.
     //TODO: add current session
     //TODO: count subtasks
-    public long getTimeSpentMs() {
+    public Long getTimeSpentMs() {
         return timeSpentMs;
     }
 
-    public void setTimeSpentMs(long timeSpentMs) {
+    public void setTimeSpentMs(Long timeSpentMs) {
         this.timeSpentMs = timeSpentMs;
     }
 

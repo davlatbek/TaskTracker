@@ -5,11 +5,13 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
@@ -51,6 +53,7 @@ public class CourseDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         //   AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final CourseModel course = new CourseModel();
+        final Context context = getActivity();
         final DatabaseHelper db = DatabaseHelper.getsInstance(getActivity().getApplicationContext());
         final LayoutInflater inflater = getActivity().getLayoutInflater();
         View inflate = inflater.inflate(R.layout.add_new_course_form, null);
@@ -66,17 +69,21 @@ public class CourseDialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Get name from field
-                        course.setName(courseName.getText().toString());
-                        // Get color from slider
-                        Integer intColor = shadeSlider.getColor();
-                        course.setClr(intColor);
-                        if (isEdit == true) {
-                            db.updateCourse(course);
+                        String name = courseName.getText().toString();
+                        if(name == null || name.equals("")){
+                            Toast.makeText(context, "Course without name not created!", Toast.LENGTH_LONG).show();
                         } else {
-                            long id = db.addCourse(course);
+                            course.setName(name.toString());
+                            // Get color from slider
+                            Integer intColor = shadeSlider.getColor();
+                            course.setClr(intColor);
+                            if (isEdit == true) {
+                                db.updateCourse(course);
+                            } else {
+                                long id = db.addCourse(course);
+                            }
+                            reloadFragment();
                         }
-                        reloadFragment();
-
                     }
 
                 })

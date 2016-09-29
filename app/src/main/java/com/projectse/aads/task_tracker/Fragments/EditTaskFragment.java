@@ -43,6 +43,8 @@ public class EditTaskFragment extends TaskFragment {
         //setupUI(view.findViewById(R.id.parentId));
         getViews(view);
         setListeners();
+        timeView.setVisibility(View.INVISIBLE);
+        timerOn.setVisibility(View.INVISIBLE);
         switchDone.setVisibility(View.INVISIBLE);
         task = new TaskModel();
         course = new CourseModel();

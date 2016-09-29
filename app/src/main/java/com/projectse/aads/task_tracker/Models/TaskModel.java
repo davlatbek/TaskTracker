@@ -23,14 +23,18 @@ public class TaskModel implements Comparable<TaskModel>{
     private String description = "";
     private Calendar startTime = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
     private Calendar deadline = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+    //TODO: discuss do we need duration at all.
     private Long duration;
     private Boolean isNotifyDeadline = Boolean.FALSE;
     private Boolean isNotifyStartTime = Boolean.FALSE;
     private Boolean isDone = Boolean.FALSE;
+    private Boolean isRunning = Boolean.FALSE;
     private List<Long> subtasks_ids = new ArrayList<>();
     private Long parentTaskId = -1L;
     private CourseModel course;
-    private boolean isStartTimeSet = false;
+    private Boolean isStartTimeSet =  Boolean.FALSE;
+    private Long timeSpentMs = 0L;
+    private Calendar lastSessionStart = null;
 
     private Priority priority = Priority.LOW;
 
@@ -187,6 +191,33 @@ public class TaskModel implements Comparable<TaskModel>{
         }
         this.startTime = st_candidate;
         isStartTimeSet = true;
+    }
+
+    //Return time spent to this task not including subtasks. Also doesn't count last started session.
+    //TODO: add current session
+    //TODO: count subtasks
+    public Long getTimeSpentMs() {
+        return timeSpentMs;
+    }
+
+    public void setTimeSpentMs(Long timeSpentMs) {
+        this.timeSpentMs = timeSpentMs;
+    }
+
+    public Calendar getLastSessionStart() {
+        return lastSessionStart;
+    }
+
+    public void setLastSessionStart(Calendar lastSessionStart) {
+        this.lastSessionStart = lastSessionStart;
+    }
+
+    public Boolean getRunning() {
+        return isRunning;
+    }
+
+    public void setRunning(Boolean running) {
+        isRunning = running;
     }
 
     public Calendar getDeadline() {

@@ -51,8 +51,10 @@ public abstract class TaskFragment extends Fragment {
     protected Button priorityColor;
     protected Spinner spinnerPriority;
     protected Switch switchDone;
+    protected Switch timerOn;
     protected EditText nameView;
     protected EditText descView;
+    protected TextView timeView;
     protected TextView textViewCourseLabel;
     protected ImageButton buttonCourseSelect;
     protected EditText editTextCourseName;
@@ -90,14 +92,17 @@ public abstract class TaskFragment extends Fragment {
         return view;
     }
 
+    //this method called by fragment onCreateView
     protected void getViews(View view) {
         priorityColor = (Button) view.findViewById(R.id.btnPriorityColor);
         spinnerPriority = (Spinner) view.findViewById(R.id.spinnerPriority);
         setPrioritySpinner(view);
         switchDone = (Switch) view.findViewById(R.id.doneSwitch);
+        timerOn = (Switch) view.findViewById(R.id.timer);
 
         nameView = (EditText) view.findViewById(R.id.txtName);
         descView = (EditText) view.findViewById(R.id.txtDescription);
+        timeView = (TextView) view.findViewById(R.id.timeSpent);
         textViewCourseLabel = (TextView) view.findViewById(R.id.textViewCourseLabel);
         buttonCourseSelect = (ImageButton) view.findViewById(R.id.buttonCourseSelect);
         editTextCourseName = (EditText) view.findViewById(R.id.editTextCourseName);
@@ -156,6 +161,7 @@ public abstract class TaskFragment extends Fragment {
         }
 
         switchDone.setChecked(task.getIsDone());
+        timerOn.setChecked(task.getRunning());
         if (task.getName() != null) nameView.setText(task.getName());
         if (task.getDescription() != null) descView.setText(task.getDescription());
         if (course_id != 0){
@@ -171,7 +177,28 @@ public abstract class TaskFragment extends Fragment {
         }
         if (task.getDuration() != null)
             durationView.setText(task.getDuration().toString());
+
         fillSubtasks();
+        String time;
+        Long seconds = task.getTimeSpentMs() / 1000;
+        Long minutes = seconds / 60;
+        Long hours = minutes / 60;
+        Long days = hours / 24;
+        String s = (seconds %= 60).toString();
+        if (s.length() == 1) {
+            s = "0" + s;
+        }
+        String m = (minutes %= 60).toString();
+        if (m.length() == 1) {
+            m = "0" + m;
+        }
+        String h = (hours %= 24).toString();
+        if (days > 0) {
+            time = days + "d " + hours + "h";
+        } else {
+            time = h + ":" + m + ":" + s;
+        }
+        timeView.setText(time);
     }
 
     /**

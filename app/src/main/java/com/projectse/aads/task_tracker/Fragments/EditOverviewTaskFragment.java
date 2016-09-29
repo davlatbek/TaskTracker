@@ -154,6 +154,23 @@ public class EditOverviewTaskFragment extends TaskFragment{
                 task.setIsDone(isChecked);
             }
         });
+        timerOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //copy paste.
+                task.setRunning(isChecked);
+                if (isChecked) {
+                    task.setStartTime(Calendar.getInstance());
+                }
+                if(!isChecked && task.getLastSessionStart() != null) {
+                    Long timeSpent = task.getTimeSpentMs();
+                    Long tStart = task.getLastSessionStart().getTimeInMillis();
+                    Long tFinish = Calendar.getInstance().getTimeInMillis();
+                    timeSpent += tFinish - tStart;
+                    task.setTimeSpentMs(timeSpent);
+                }
+            }
+        });
     }
 
     private void setDefaultOverviewView() {
@@ -163,6 +180,25 @@ public class EditOverviewTaskFragment extends TaskFragment{
                 task.setIsDone(isChecked);
             }
         });
+        timerOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //copy paste.
+                task.setRunning(isChecked);
+                if (isChecked) {
+                    task.setStartTime(Calendar.getInstance());
+                }
+                if(!isChecked && task.getLastSessionStart() != null) {
+                    Long timeSpent = task.getTimeSpentMs();
+                    Long tStart = task.getLastSessionStart().getTimeInMillis();
+                    Long tFinish = Calendar.getInstance().getTimeInMillis();
+                    timeSpent += tFinish - tStart;
+                    task.setTimeSpentMs(timeSpent);
+                }
+            }
+        });
+
+        //timerOn.setEnabled(true);
         switchDone.setEnabled(true);
         switchDone.setAlpha(1f);
         spinnerPriority.setEnabled(false);
@@ -267,6 +303,7 @@ public class EditOverviewTaskFragment extends TaskFragment{
         getActivity().setTitle("Edit Task");
         super.listNewSubtasks = new ArrayList<>();
         setListeners();
+        //timerOn.setEnabled(true);
         switchDone.setEnabled(false);
         switchDone.setAlpha(.4f);
         spinnerPriority.setEnabled(true);

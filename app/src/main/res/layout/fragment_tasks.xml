@@ -32,14 +32,15 @@
                     android:id="@+id/over_due_lbl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableTop="@drawable/vector_drawable_ic_error_outline_black___px"
                     android:text="Over Due"
                     android:layout_weight="1"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
-                    android:layout_margin="10dp"
+                    android:layout_margin="0dp"
                     android:gravity="center_horizontal"
-                    android:layout_centerInParent="true" />
+                    android:layout_centerInParent="true"
+                    android:elegantTextHeight="true"
+                    android:drawableTop="@android:drawable/ic_dialog_alert" />
             </RelativeLayout>
 
             <RelativeLayout

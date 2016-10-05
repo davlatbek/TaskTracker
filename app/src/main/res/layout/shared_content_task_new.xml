@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:text="Done"
             android:id="@+id/doneSwitch"
-            android:textSize="18sp"
+            android:textSize="30px"
             android:checked="false"
             android:paddingStart="40px"
             android:layout_weight="0.29" />

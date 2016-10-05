@@ -130,7 +130,6 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_below="@+id/linearLayout7"
-        android:layout_centerHorizontal="true"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:weightSum="1">
@@ -149,7 +148,6 @@
             android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_weight="0.00"
             android:digits="0123456789"
             android:ems="10"
             android:focusable="true"
@@ -169,14 +167,21 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/abc_primary_text_material_light" />
     </LinearLayout>
-
+    <Space
+        android:layout_width="fill_parent"
+        android:layout_height="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/linearLayout6"
+        android:layout_alignParentStart="true"
+        android:background="#000000" />
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:id="@+id/linearLayout8"
         android:layout_centerVertical="true"
-        android:layout_alignParentStart="false">
+        android:layout_alignParentStart="false"
+        android:weightSum="1">
 
         <TextView
             android:id="@+id/textView6"
@@ -185,7 +190,7 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="20dp"
-            android:text="If not specified set start date"
+            android:text="Default start before due date."
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/abc_primary_text_material_light" />
 
@@ -213,11 +218,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/textView6"
-            android:layout_marginStart="14dp"
             android:layout_toEndOf="@+id/notSpecefiedStartDate"
-            android:text="days"
+            android:text="days."
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/abc_primary_text_material_light" />
+            android:textColor="@color/abc_primary_text_material_light"
+            android:layout_marginLeft="10dp" />
 
     </LinearLayout>
 
@@ -225,7 +230,6 @@
         android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="before due date."
 
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/abc_primary_text_material_light"
@@ -235,11 +239,11 @@
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="60dp"
         android:id="@+id/linearLayout9"
-        android:layout_below="@+id/textView8"
-        android:layout_centerHorizontal="true">
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView8">
 
         <TextView
             android:id="@+id/textViewTaskDuration"
@@ -248,39 +252,43 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="20dp"
-            android:text="If not specified set task duration to"
+            android:text="Default task duration"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/abc_primary_text_material_light" />
 
-        <EditText
-            android:id="@+id/notSpecDurationTaskEdit"
-            android:layout_width="20dp"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/textViewTaskDuration"
-            android:layout_alignBottom="@+id/textViewTaskDuration"
-            android:layout_marginLeft="10dp"
-            android:layout_toEndOf="@+id/textViewTaskDuration"
-            android:layout_weight="0.00"
-            android:digits="0123456789"
-            android:ems="10"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:hint="X"
-            android:inputType="phone"
-            android:lines="1"
-            android:maxLength="1"
-            android:textColor="@color/abc_primary_text_material_light" />
-
-        <TextView
-            android:id="@+id/textViewTaskDurationH"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/textViewTaskDuration"
-            android:layout_marginStart="14dp"
-            android:layout_toEndOf="@+id/notSpecDurationTaskEdit"
-            android:text="h."
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/abc_primary_text_material_light" />
     </LinearLayout>
+
+    <EditText
+        android:id="@+id/notSpecDurationTaskEdit"
+        android:layout_width="20dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_weight="0.00"
+        android:digits="0123456789"
+        android:ems="10"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:hint="X"
+        android:inputType="phone"
+        android:lines="1"
+        android:maxLength="1"
+        android:textColor="@color/abc_primary_text_material_light"
+        android:clickable="false"
+        android:layout_marginStart="75dp"
+        android:layout_below="@+id/textView8"
+        android:layout_toEndOf="@+id/linearLayout9" />
+
+    <TextView
+        android:id="@+id/textViewTaskDurationH"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="hours."
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/abc_primary_text_material_light"
+        android:layout_alignBottom="@+id/notSpecDurationTaskEdit"
+        android:layout_toEndOf="@+id/notSpecDurationTaskEdit"
+        android:layout_marginLeft="10dp" />
+
+
 
 </RelativeLayout>

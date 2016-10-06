@@ -100,7 +100,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * CREATE TABLE courses (course_id INTEGER PRIMARY KEY AUTOINCREMENT, course_name TEXT,
      * course_color INTEGER, course_priority INTEGER)
-     */
+     */ 
 
     private static final String CREATE_TABLE_COURSES = "CREATE TABLE "
             + TABLE_COURSES + "(" + COURSE_ID

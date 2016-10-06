@@ -118,6 +118,7 @@ public class AddTaskFragment extends TaskFragment {
         textViewCourseLabel.setVisibility(View.INVISIBLE);
         timerOn.setVisibility(View.INVISIBLE);
         switchDone.setVisibility(View.INVISIBLE);
+        timeView.setVisibility(View.INVISIBLE);
         editTextCourseName.setFocusable(false);
         if (getActivity().getIntent().getBooleanExtra("hide_subtasks", false)) {
             ScrollView sub_l = (ScrollView) view.findViewById(R.id.subtasksScrollView);

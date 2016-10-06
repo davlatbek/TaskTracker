@@ -2,9 +2,6 @@ package com.projectse.aads.task_tracker.Models;
 
 import com.projectse.aads.task_tracker.MainActivity;
 
-
-import org.apache.commons.lang3.time.DateUtils;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,7 +31,7 @@ public class TaskModel implements Comparable<TaskModel>{
     private CourseModel course;
     private Boolean isStartTimeSet =  Boolean.FALSE;
     private Long timeSpentMs = 0L;
-    private Calendar lastSessionStart = null;
+    private Long lastSessionStart = null;
 
     private Priority priority = Priority.LOW;
 
@@ -204,11 +201,11 @@ public class TaskModel implements Comparable<TaskModel>{
         this.timeSpentMs = timeSpentMs;
     }
 
-    public Calendar getLastSessionStart() {
+    public Long getLastSessionStart() {
         return lastSessionStart;
     }
 
-    public void setLastSessionStart(Calendar lastSessionStart) {
+    public void setLastSessionStart(Long lastSessionStart) {
         this.lastSessionStart = lastSessionStart;
     }
 

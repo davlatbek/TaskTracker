@@ -8,6 +8,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Gravity;
@@ -82,6 +83,16 @@ public abstract class TaskFragment extends Fragment {
     protected List<TaskModel> listAllSubtasks= new ArrayList<>();
     protected List<TaskModel> listNewSubtasks = new ArrayList<>();
 
+    protected Handler timerHandler = new Handler();
+    protected Runnable timerRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            setTimeView();
+            timerHandler.postDelayed(this, 1000);
+        }
+    };
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -90,6 +101,26 @@ public abstract class TaskFragment extends Fragment {
         TimeZone timeZone = TimeZone.getTimeZone("UTC");
         dateFormat.setTimeZone(timeZone);
         return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        timerHandler.removeCallbacks(timerRunnable);
+        if(task.getRunning()) {
+            updateTimer();
+            task.setLastSessionStart(Calendar.getInstance().getTimeInMillis());
+        }
+
+        db.updateTask(task);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(task.getRunning()) {
+            timerHandler.postDelayed(timerRunnable, 0);
+        }
     }
 
     //this method called by fragment onCreateView
@@ -162,6 +193,10 @@ public abstract class TaskFragment extends Fragment {
 
         switchDone.setChecked(task.getIsDone());
         timerOn.setChecked(task.getRunning());
+        if(task.getRunning()){
+            timerHandler.postDelayed(timerRunnable, 0);
+        }
+
         if (task.getName() != null) nameView.setText(task.getName());
         if (task.getDescription() != null) descView.setText(task.getDescription());
         if (course_id != 0){
@@ -179,8 +214,18 @@ public abstract class TaskFragment extends Fragment {
             durationView.setText(task.getDuration().toString());
 
         fillSubtasks();
+        setTimeView();
+    }
+
+    protected void setTimeView(){
         String time;
-        Long seconds = task.getTimeSpentMs() / 1000;
+        long milis = task.getTimeSpentMs();
+        if(task.getRunning()){
+            long timeTrackedCurrentlyInMs = Calendar.getInstance().getTimeInMillis() - task.getLastSessionStart();
+            milis += timeTrackedCurrentlyInMs;
+        }
+
+        Long seconds = milis / 1000;
         Long minutes = seconds / 60;
         Long hours = minutes / 60;
         Long days = hours / 24;
@@ -198,7 +243,16 @@ public abstract class TaskFragment extends Fragment {
         } else {
             time = h + ":" + m + ":" + s;
         }
+
         timeView.setText(time);
+    }
+
+    protected void updateTimer(){
+        Long timeSpent = task.getTimeSpentMs();
+        Long tStart = task.getLastSessionStart();
+        Long tFinish = Calendar.getInstance().getTimeInMillis();
+        timeSpent += tFinish - tStart;
+        task.setTimeSpentMs(timeSpent);
     }
 
     /**

@@ -20,15 +20,15 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
-import com.projectse.aads.task_tracker.Fragments.AddTaskFragment;
 import com.projectse.aads.task_tracker.Fragments.ActualTasksFragment;
+import com.projectse.aads.task_tracker.Fragments.AddTaskFragment;
 import com.projectse.aads.task_tracker.Fragments.CourseOverviewFragment;
 import com.projectse.aads.task_tracker.Fragments.CourseProgressFragment;
 import com.projectse.aads.task_tracker.Fragments.CoursesFragment;
 import com.projectse.aads.task_tracker.Fragments.DoneTasksFragment;
-import com.projectse.aads.task_tracker.Fragments.ImportFragment;
 import com.projectse.aads.task_tracker.Fragments.EditOverviewTaskFragment;
 import com.projectse.aads.task_tracker.Fragments.EditTaskFragment;
+import com.projectse.aads.task_tracker.Fragments.ImportFragment;
 import com.projectse.aads.task_tracker.Fragments.OverdueTasksFragment;
 import com.projectse.aads.task_tracker.Fragments.PlanFragment;
 import com.projectse.aads.task_tracker.Fragments.SettingsFragment;
@@ -43,15 +43,6 @@ import com.projectse.aads.task_tracker.Interfaces.TaskOverviewCaller;
 import com.projectse.aads.task_tracker.Models.SettingsModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Component;
@@ -62,6 +53,15 @@ import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.Categories;
 import net.fortuna.ical4j.model.property.DtEnd;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by Andrey Zolin on 20.03.2016.
@@ -129,7 +129,7 @@ public class MainActivity
         setCurrentFragment(new TaskCategoriesFragment());
 //        MainActivity.settings = db.getSettings();
 
-        if(DEBUG)
+        if(DEBUG && db.getCourseModelList().size() == 0)
             PlugDebug.initDebugData(db);
     }
 

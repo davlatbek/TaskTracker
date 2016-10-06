@@ -2,10 +2,7 @@ package com.projectse.aads.task_tracker.Fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
@@ -157,17 +154,14 @@ public class EditOverviewTaskFragment extends TaskFragment{
         timerOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //copy paste.
                 task.setRunning(isChecked);
                 if (isChecked) {
-                    task.setStartTime(Calendar.getInstance());
+                    task.setLastSessionStart(Calendar.getInstance().getTimeInMillis());
+                    timerHandler.postDelayed(timerRunnable, 0);
                 }
                 if(!isChecked && task.getLastSessionStart() != null) {
-                    Long timeSpent = task.getTimeSpentMs();
-                    Long tStart = task.getLastSessionStart().getTimeInMillis();
-                    Long tFinish = Calendar.getInstance().getTimeInMillis();
-                    timeSpent += tFinish - tStart;
-                    task.setTimeSpentMs(timeSpent);
+                    timerHandler.removeCallbacks(timerRunnable);
+                    updateTimer();
                 }
             }
         });
@@ -190,7 +184,7 @@ public class EditOverviewTaskFragment extends TaskFragment{
                 }
                 if(!isChecked && task.getLastSessionStart() != null) {
                     Long timeSpent = task.getTimeSpentMs();
-                    Long tStart = task.getLastSessionStart().getTimeInMillis();
+                    Long tStart = task.getLastSessionStart();
                     Long tFinish = Calendar.getInstance().getTimeInMillis();
                     timeSpent += tFinish - tStart;
                     task.setTimeSpentMs(timeSpent);

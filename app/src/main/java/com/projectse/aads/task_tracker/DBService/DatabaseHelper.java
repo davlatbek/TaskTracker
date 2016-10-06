@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.SettingsModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
@@ -50,6 +49,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TASKS_PARENT_TASK = "task_parent_task";
     private static final String TASKS_PRIORITY = "task_priority";
     private static final String TASKS_IS_DONE = "task_is_done";
+    private static final String TASKS_TIME_SPENT_MS = "task_time_spent_ms";
+    private static final String TASKS_LAST_SESSION_START = "task_last_session_start";
+    private static final String TASKS_IS_RUNNING = "task_is_running";
     // All keys used in table COURSES
     private static final String COURSE_ID = "course_id";
     private static final String COURSE_NAME = "course_name";
@@ -90,6 +92,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + TASKS_IS_NOTIFY_DEADLINE + " INTEGER,"
             + TASKS_IS_NOTIFY_START_TIME + " INTEGER,"
             + TASKS_PRIORITY + " INTEGER, "
+            + TASKS_TIME_SPENT_MS + " INTEGER, "
+            + TASKS_LAST_SESSION_START + " INTEGER, "
+            + TASKS_IS_RUNNING + " INTEGER, "
             + "FOREIGN KEY(" + TASKS_PARENT_TASK + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + ")"
             + ");";
     /**
@@ -149,8 +154,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Constructor
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        if (MainActivity.DEBUG)
-            context.deleteDatabase(DATABASE_NAME);
+//        if (MainActivity.DEBUG)
+//            context.deleteDatabase(DATABASE_NAME);
     }
 
     // Using just only one instance to connect
@@ -355,6 +360,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 values.put(TASKS_PRIORITY, task.priorityToInt(task.getPriority()));
             }
 
+            values.put(TASKS_IS_RUNNING, 0);
+            values.put(TASKS_TIME_SPENT_MS, 0);
+            values.put(TASKS_LAST_SESSION_START, 0);
+
             // Return id of the added task
             id = db.insertOrThrow(TABLE_TASKS, null, values);
             db.setTransactionSuccessful();
@@ -460,6 +469,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         tasks.setIsNotifyStartTime(boolString);
         tasks.setDescription(c.getString(c.getColumnIndex(TASKS_DESCRIPTION)));
         tasks.setParentTaskId(c.getLong(c.getColumnIndex(TASKS_PARENT_TASK)));
+
+        tasks.setRunning(c.getInt(c.getColumnIndex(TASKS_IS_RUNNING)) == 1);
+        tasks.setTimeSpentMs((long) c.getInt(c.getColumnIndex(TASKS_TIME_SPENT_MS)));
+        tasks.setLastSessionStart(c.getLong(c.getColumnIndex(TASKS_LAST_SESSION_START)));
 
         try {
             tasks.setPriority(tasks.intToPriority(c.getInt(c.getColumnIndex(TASKS_PRIORITY))));
@@ -992,6 +1005,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(TASKS_IS_NOTIFY_START_TIME, task.getIsNotifyStartTime() ? 1 : 0);
         values.put(TASKS_IS_NOTIFY_DEADLINE, task.getIsNotifyDeadline() ? 1 : 0);
         values.put(TASKS_IS_DONE, task.getIsDone() ? 1 : 0);
+        values.put(TASKS_IS_RUNNING, task.getRunning() ? 1 : 0);
+        values.put(TASKS_TIME_SPENT_MS, task.getTimeSpentMs());
+        values.put(TASKS_LAST_SESSION_START, task.getLastSessionStart());
+
         try {
             values.put(TASKS_PRIORITY, task.priorityToInt(task.getPriority()));
         } catch (Exception e) {

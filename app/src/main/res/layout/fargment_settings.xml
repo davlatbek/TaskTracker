@@ -290,5 +290,50 @@
         android:layout_marginLeft="10dp" />
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="right"
+        android:orientation="horizontal"
+        android:layout_below="@+id/linearLayout9"
+        android:layout_alignParentStart="true"
+        android:weightSum="1"
+        android:id="@+id/linearLayout2">
+
+        <TextView
+            android:id="@+id/enableSound"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/textViewTaskDurationH"
+            android:layout_marginLeft="20dp"
+            android:text="Enable sounds"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/abc_primary_text_material_light"
+            android:layout_weight="1.00" />
+
+        <Switch
+            android:id="@+id/enableSoundSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_alignBottom="@+id/notSpecDurationTaskEdit"
+
+            android:checked="true"
+            android:singleLine="false"
+            android:splitTrack="false"
+            android:textOff="OFF"
+            android:textOn="ON" />
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test Sound"
+        android:id="@+id/button"
+        android:layout_below="@+id/linearLayout2"
+        android:layout_alignParentEnd="true"
+        android:onClick="butTestSound_Click"
+        android:layout_marginTop="36dp" />
 
 </RelativeLayout>

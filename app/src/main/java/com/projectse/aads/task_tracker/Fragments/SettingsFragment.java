@@ -12,11 +12,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.SettingsModel;
 import com.projectse.aads.task_tracker.R;
+import com.projectse.aads.task_tracker.Utils.ShPrefUtils;
 
 /**
  * Created by Andrey Zolin on 20.03.2016.
@@ -26,6 +28,7 @@ public class SettingsFragment extends Fragment {
     DatabaseHelper db;
     Switch startDateSwitch;
     Switch dueDateSwitch;
+    Switch enableSoundSwitch;
     EditText beforeStartDate;
     EditText beforeDueDate;
     EditText notSpecefiedStartDate;
@@ -52,6 +55,10 @@ public class SettingsFragment extends Fragment {
         // Switches
         startDateSwitch = (Switch) view.findViewById(R.id.startDateSwitch);
         dueDateSwitch = (Switch) view.findViewById(R.id.dueDateSwitch);
+
+        enableSoundSwitch = (Switch) view.findViewById(R.id.enableSoundSwitch);
+        enableSoundSwitch.setChecked(ShPrefUtils.isPlaySounds(getActivity()));
+
 
         settingsModel = db.getSettings();
         startDateSwitch.setChecked(settingsModel.getAlwaysNotifyStartTime());
@@ -93,6 +100,26 @@ public class SettingsFragment extends Fragment {
                 } else {
                     settingsModel.setAlwaysNotifyDeadLine(false);
                     db.updateSettings(settingsModel);
+                }
+            }
+        });
+
+        enableSoundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                /*Toast toast = Toast.makeText(getActivity(),
+                        "enable sound:" + String.valueOf(isChecked), Toast.LENGTH_SHORT);
+                toast.show();*/
+
+                ShPrefUtils.setSoundsPlay(getActivity(), isChecked);
+
+                if (isChecked) {
+                    //settingsModel.setAlwaysNotifyDeadLine(true);
+                    //db.updateSettings(settingsModel);
+
+                } else {
+                    //settingsModel.setAlwaysNotifyDeadLine(false);
+                    //db.updateSettings(settingsModel);
                 }
             }
         });

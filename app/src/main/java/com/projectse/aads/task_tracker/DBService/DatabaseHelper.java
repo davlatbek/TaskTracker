@@ -1142,6 +1142,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return null;
     }
 
+    //get task for time calculating
+    public List<TaskModel> getTimeTasks(){
+        List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
+
+        String selectQuery = "SELECT * FROM " + TABLE_TASKS;
+        Log.d(TAG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null) {
+            // looping through all rows and adding to list
+            if (c.moveToFirst()) {
+                do {
+                    TaskModel task = new TaskModel();
+                    task = createTaskByCursor(c);
+
+                    // adding to Task list
+                    tasksArrayList.add(task);
+                } while (c.moveToNext());
+            }
+            c.close();
+            return tasksArrayList;
+        } else
+            return null;
+    }
     public List<TaskModel> getDoneTasks() {
         List<TaskModel> tasksArrayList = new ArrayList<TaskModel>();
 

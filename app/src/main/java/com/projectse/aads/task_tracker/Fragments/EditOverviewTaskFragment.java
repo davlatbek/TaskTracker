@@ -157,7 +157,7 @@ public class EditOverviewTaskFragment extends TaskFragment{
                         Long tStart = task.getLastSessionStart();
                         Long tFinish = Calendar.getInstance().getTimeInMillis();
                         timeSpent += tFinish - tStart;
-                        task.setTimeSpentMs(timeSpent);
+                        //task.setTimeSpentMs(timeSpent);
                     }
                     timerOn.setVisibility(View.INVISIBLE);
                 } else {

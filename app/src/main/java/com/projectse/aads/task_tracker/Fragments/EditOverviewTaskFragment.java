@@ -152,12 +152,6 @@ public class EditOverviewTaskFragment extends TaskFragment{
                 if (isChecked) {
                     if (timerOn.isChecked()) {
                         timerOn.setChecked(false);
-                        task.setRunning(false);
-                        Long timeSpent = task.getTimeSpentMs();
-                        Long tStart = task.getLastSessionStart();
-                        Long tFinish = Calendar.getInstance().getTimeInMillis();
-                        timeSpent += tFinish - tStart;
-                        task.setTimeSpentMs(timeSpent);
                     }
                     timerOn.setVisibility(View.INVISIBLE);
                 } else {

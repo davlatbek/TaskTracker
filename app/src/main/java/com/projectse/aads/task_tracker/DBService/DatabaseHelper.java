@@ -355,7 +355,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 values.put(TASKS_START_TIME, task.getStartTime().getTimeInMillis());
             if (task.getDeadline() != null)
                 values.put(TASKS_DEADLINE, task.getDeadline().getTime().getTime());
-
+ 
             if (task.getPriority() != null) {
                 values.put(TASKS_PRIORITY, task.priorityToInt(task.getPriority()));
             }

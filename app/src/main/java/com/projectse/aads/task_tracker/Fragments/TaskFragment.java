@@ -172,10 +172,10 @@ public abstract class TaskFragment extends Fragment {
         courseView = (TextView) view.findViewById(R.id.coursename);
         db = DatabaseHelper.getsInstance(getActivity());
         dialogFragmentBuilder = new ListOfCourses(getActivity(), db);
-        setTimerOnChechChangedListener();
+        setTimerOnCheckedChangedListener();
     }
 
-    private void setTimerOnChechChangedListener(){
+    private void setTimerOnCheckedChangedListener(){
         timerOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -217,7 +217,7 @@ public abstract class TaskFragment extends Fragment {
         //not be triggered by the user but by us
         timerOn.setOnCheckedChangeListener(null);
         timerOn.setChecked(task.getRunning());
-        setTimerOnChechChangedListener();
+        setTimerOnCheckedChangedListener();
         if(task.getRunning()){
             timerHandler.postDelayed(timerRunnable, 0);
         }

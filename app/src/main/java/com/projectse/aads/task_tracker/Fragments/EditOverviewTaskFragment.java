@@ -149,6 +149,12 @@ public class EditOverviewTaskFragment extends TaskFragment{
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 task.setIsDone(isChecked);
+                if (isChecked) {
+                    timerOn.setChecked(false);
+                    timerOn.setVisibility(View.INVISIBLE);
+                } else {
+                    timerOn.setVisibility(View.VISIBLE);
+                }
             }
         });
         timerOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

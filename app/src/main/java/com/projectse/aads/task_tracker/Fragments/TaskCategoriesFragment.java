@@ -2,6 +2,8 @@ package com.projectse.aads.task_tracker.Fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.DoneTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.OverdueTasksCaller;
 import com.projectse.aads.task_tracker.R;
+import com.projectse.aads.task_tracker.Utils.ShPrefUtils;
 
 /**
  * Created by Andrey Zolin on 20.03.2016.
@@ -46,6 +49,16 @@ public class TaskCategoriesFragment extends Fragment {
         getActivity().setTitle("Tasks");
         View view = inflater.inflate(R.layout.fragment_tasks, container, false);
 
+        final int MAX_STREAMS = 1;
+        final SoundPool sp;
+        final int sndActual,sndAddnew,sndDone,sndOverdue;
+
+        sp = new SoundPool(MAX_STREAMS, AudioManager.STREAM_MUSIC, 0);
+        sndActual = sp.load(getActivity(), R.raw.actual, 1);
+        sndAddnew = sp.load(getActivity(), R.raw.addnew, 1);
+        sndDone = sp.load(getActivity(), R.raw.done, 1);
+        sndOverdue = sp.load(getActivity(), R.raw.overdue, 1);
+
         // mapping correction
         LinearLayout buttons_layout = (LinearLayout) view.findViewById(R.id.tasks_categories_buttons);
         int width = getActivity().getResources().getDisplayMetrics().widthPixels;
@@ -56,6 +69,9 @@ public class TaskCategoriesFragment extends Fragment {
             @Override
             public void onClick(View v) {
 //                addTaskCaller.callAddTask(-1, null);
+                if (ShPrefUtils.isPlaySounds(getActivity())) {
+                    sp.play(sndAddnew, 1, 1, 0, 0, 1);
+                }
                 addTaskCaller.callAddTask();
             }
         });
@@ -64,6 +80,9 @@ public class TaskCategoriesFragment extends Fragment {
         actualTasksButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (ShPrefUtils.isPlaySounds(getActivity())) {
+                    sp.play(sndActual, 1, 1, 0, 0, 1);
+                }
                 actualTasksCaller.callActualTasks();
             }
         });
@@ -72,6 +91,9 @@ public class TaskCategoriesFragment extends Fragment {
         doneTasksButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (ShPrefUtils.isPlaySounds(getActivity())) {
+                    sp.play(sndDone, 1, 1, 0, 0, 1);
+                }
                 doneTasksCaller.callDoneTasks();
             }
         });
@@ -80,6 +102,9 @@ public class TaskCategoriesFragment extends Fragment {
         overdueTasksButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (ShPrefUtils.isPlaySounds(getActivity())) {
+                    sp.play(sndOverdue, 1, 1, 0, 0, 1);
+                }
                 overdueTasksCaller.callOverdueTasks();
             }
         });

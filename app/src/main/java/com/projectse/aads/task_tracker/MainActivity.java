@@ -6,6 +6,8 @@ import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -42,6 +44,7 @@ import com.projectse.aads.task_tracker.Interfaces.OverdueTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.TaskOverviewCaller;
 import com.projectse.aads.task_tracker.Models.SettingsModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
+import com.projectse.aads.task_tracker.Utils.ShPrefUtils;
 
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
@@ -83,12 +86,19 @@ public class MainActivity
     private ActionBarDrawerToggle drawerToggle;
     public static SettingsModel settings = null;
 
+    final int MAX_STREAMS = 1;
+    SoundPool sp;
+    int soundIdSax;
+
     public static Boolean DEBUG = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sp = new SoundPool(MAX_STREAMS, AudioManager.STREAM_MUSIC, 0);
+        soundIdSax = sp.load(this, R.raw.tmz, 1);
 
         //Set a toolbar to replace the Actionbar
         toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
@@ -131,6 +141,20 @@ public class MainActivity
 
         if(DEBUG && db.getCourseModelList().size() == 0)
             PlugDebug.initDebugData(db);
+    }
+
+    public void butTestSound_Click(View v){
+        Toast toast;
+        String ss;
+        if (ShPrefUtils.isPlaySounds(this)) {
+            ss = "Sounds are enabled!";
+            sp.play(soundIdSax, 1, 1, 0, 0, 1);
+        } else {
+            ss = "Sounds are disabled";
+        }
+        toast = Toast.makeText(getApplicationContext(), ss, Toast.LENGTH_SHORT);
+        toast.show();
+
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {

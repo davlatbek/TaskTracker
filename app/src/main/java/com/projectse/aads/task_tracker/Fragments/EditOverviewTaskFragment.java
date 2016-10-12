@@ -153,6 +153,7 @@ public class EditOverviewTaskFragment extends TaskFragment{
                     if (timerOn.isChecked()) {
                         timerOn.setChecked(false);
                     }
+                    
                     timerOn.setVisibility(View.INVISIBLE);
                 } else {
                     timerOn.setVisibility(View.VISIBLE);

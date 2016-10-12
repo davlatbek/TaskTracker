@@ -172,6 +172,7 @@ public abstract class TaskFragment extends Fragment {
         courseView = (TextView) view.findViewById(R.id.coursename);
         db = DatabaseHelper.getsInstance(getActivity());
         dialogFragmentBuilder = new ListOfCourses(getActivity(), db);
+
         setTimerOnCheckedChangedListener();
     }
 
@@ -229,12 +230,15 @@ public abstract class TaskFragment extends Fragment {
             textViewCourseLabel.setBackgroundColor(db.getCourse(course_id).getClr());
             editTextCourseName.setText(db.getCourse(course_id).getName());
         }
+
         if (task.getStartTime() != null) {
             setDateTime(startTimeDateView, task.getStartTime().getTimeInMillis());
         }
+
         if (task.getDeadline() != null) {
             setDateTime(deadlineDateView, task.getDeadline().getTimeInMillis());
         }
+
         if (task.getDuration() != null)
             durationView.setText(task.getDuration().toString());
 

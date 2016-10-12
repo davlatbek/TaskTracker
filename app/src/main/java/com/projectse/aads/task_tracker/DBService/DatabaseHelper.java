@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.SettingsModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
@@ -155,8 +154,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Constructor
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        if (MainActivity.DEBUG)
-            context.deleteDatabase(DATABASE_NAME);
+//        if (MainActivity.DEBUG)
+//            context.deleteDatabase(DATABASE_NAME);
     }
 
     // Using just only one instance to connect
@@ -362,7 +361,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
 
             values.put(TASKS_IS_RUNNING, 0);
-            values.put(TASKS_TIME_SPENT_MS, 3456000000000l);
+            values.put(TASKS_TIME_SPENT_MS, 0);
             values.put(TASKS_LAST_SESSION_START, 0);
 
             // Return id of the added task

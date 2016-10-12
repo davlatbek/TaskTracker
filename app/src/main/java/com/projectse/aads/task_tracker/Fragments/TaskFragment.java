@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -171,6 +172,25 @@ public abstract class TaskFragment extends Fragment {
         courseView = (TextView) view.findViewById(R.id.coursename);
         db = DatabaseHelper.getsInstance(getActivity());
         dialogFragmentBuilder = new ListOfCourses(getActivity(), db);
+        setTimerOnChechChangedListener();
+    }
+
+    private void setTimerOnChechChangedListener(){
+        timerOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                task.setRunning(isChecked);
+                if (isChecked) {
+                    task.setLastSessionStart(Calendar.getInstance().getTimeInMillis());
+                    timerHandler.postDelayed(timerRunnable, 0);
+                }
+
+                if(!isChecked && task.getLastSessionStart() != 0) {
+                    timerHandler.removeCallbacks(timerRunnable);
+                    updateTimer();
+                }
+            }
+        });
     }
 
     protected void fillData(long course_id) throws Exception {
@@ -192,7 +212,12 @@ public abstract class TaskFragment extends Fragment {
         }
 
         switchDone.setChecked(task.getIsDone());
+        //removing the listener and then adding it back because when setting the value here
+        //we don't want the code from the listener to be executed because the switch will
+        //not be triggered by the user but by us
+        timerOn.setOnCheckedChangeListener(null);
         timerOn.setChecked(task.getRunning());
+        setTimerOnChechChangedListener();
         if(task.getRunning()){
             timerHandler.postDelayed(timerRunnable, 0);
         }

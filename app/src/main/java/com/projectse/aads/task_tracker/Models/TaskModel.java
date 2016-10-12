@@ -35,6 +35,7 @@ public class TaskModel implements Comparable<TaskModel>{
 
     private Priority priority = Priority.LOW;
 
+
     public CourseModel getCourse() {
         return course;
     }
@@ -196,7 +197,7 @@ public class TaskModel implements Comparable<TaskModel>{
     public Long getTimeSpentMs() {
         return timeSpentMs;
     }
-
+    //set time spent for current task
     public void setTimeSpentMs(Long timeSpentMs) {
         this.timeSpentMs = timeSpentMs;
     }

@@ -1,5 +1,5 @@
 package com.projectse.aads.task_tracker.DBService;
-  
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.SettingsModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
@@ -154,8 +155,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Constructor
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-//        if (MainActivity.DEBUG)
-//            context.deleteDatabase(DATABASE_NAME);
+        if (MainActivity.DEBUG)
+            context.deleteDatabase(DATABASE_NAME);
     }
 
     // Using just only one instance to connect
@@ -361,7 +362,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
 
             values.put(TASKS_IS_RUNNING, 0);
-            values.put(TASKS_TIME_SPENT_MS, 0);
+            values.put(TASKS_TIME_SPENT_MS, 3456000000000l);
             values.put(TASKS_LAST_SESSION_START, 0);
 
             // Return id of the added task
@@ -454,7 +455,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Calendar calStart = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
         calStart.setTimeInMillis(c.getLong(c.getColumnIndex(TASKS_START_TIME)));
         tasks.setStartTime(calStart);
-        tasks.setDuration((long) c.getInt(c.getColumnIndex(TASKS_DURATION)));
+        tasks.setDuration(c.getLong(c.getColumnIndex(TASKS_DURATION)));
 
         int boolInt = c.getInt(c.getColumnIndex(TASKS_IS_DONE));
         Boolean boolString = boolInt == 1 ? true : false;
@@ -471,7 +472,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         tasks.setParentTaskId(c.getLong(c.getColumnIndex(TASKS_PARENT_TASK)));
 
         tasks.setRunning(c.getInt(c.getColumnIndex(TASKS_IS_RUNNING)) == 1);
-        tasks.setTimeSpentMs((long) c.getInt(c.getColumnIndex(TASKS_TIME_SPENT_MS)));
+        tasks.setTimeSpentMs(c.getLong(c.getColumnIndex(TASKS_TIME_SPENT_MS)));
         tasks.setLastSessionStart(c.getLong(c.getColumnIndex(TASKS_LAST_SESSION_START)));
 
         try {

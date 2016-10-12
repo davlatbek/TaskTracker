@@ -362,7 +362,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
 
             values.put(TASKS_IS_RUNNING, 0);
-            values.put(TASKS_TIME_SPENT_MS, 3456000000000l);
+            values.put(TASKS_TIME_SPENT_MS, 0);
             values.put(TASKS_LAST_SESSION_START, 0);
 
             // Return id of the added task

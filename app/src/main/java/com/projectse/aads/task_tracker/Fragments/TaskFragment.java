@@ -262,7 +262,7 @@ public abstract class TaskFragment extends Fragment {
         if (s.length() == 1) {
             s = "0" + s;
         }
-        String m = (minutes %= 60).toString();
+        String m = (minutes %= 60).toString(); 
         if (m.length() == 1) {
             m = "0" + m;
         }

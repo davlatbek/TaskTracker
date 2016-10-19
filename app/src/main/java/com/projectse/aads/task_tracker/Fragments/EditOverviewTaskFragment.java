@@ -38,6 +38,7 @@ import java.util.TimeZone;
 public class EditOverviewTaskFragment extends TaskFragment{
     private ActualTasksCaller actualTasksCaller;
     private TaskCategoriesCaller categoriesCaller;
+    private boolean areEditListenersRegistered = false;
 
     private Menu menu;
 
@@ -273,7 +274,11 @@ public class EditOverviewTaskFragment extends TaskFragment{
     public void switchToEditMode(){
         getActivity().setTitle("Edit Task");
         super.listNewSubtasks = new ArrayList<>();
-        setListeners();
+        if(!areEditListenersRegistered) {
+            setListeners();
+            areEditListenersRegistered = true;
+        }
+
         //timerOn.setEnabled(true);
         switchDone.setEnabled(false);
         switchDone.setAlpha(.4f);

@@ -268,7 +268,7 @@ public abstract class TaskFragment extends Fragment {
         }
         String h = (hours %= 24).toString();
         if (days > 0) {
-            time = days + "d " + hours + "h";
+            time = days + "d " + h + ":" + m + ":" + s;
         } else {
             time = h + ":" + m + ":" + s;
         }

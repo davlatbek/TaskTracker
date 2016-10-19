@@ -8,6 +8,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -54,10 +56,18 @@ public class TaskOverviewFragment extends TaskFragment {
     private Long parent_id = -1L;
     EditTaskCaller editTaskCaller;
 
+    final int MAX_STREAMS = 1;
+    SoundPool sp;
+    int soundIdFinishTask;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getActivity().setTitle("Task Overview");
+
+        sp = new SoundPool(MAX_STREAMS, AudioManager.STREAM_MUSIC, 0);
+        soundIdFinishTask = sp.load(getActivity(), R.raw.finishtask, 1);
+
         View view = inflater.inflate(R.layout.shared_content_task_new, container, false);
         //setupUI(view.findViewById(R.id.parentId));
         getViews(view);

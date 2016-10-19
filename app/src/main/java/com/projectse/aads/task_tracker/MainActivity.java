@@ -89,6 +89,7 @@ public class MainActivity
     final int MAX_STREAMS = 1;
     SoundPool sp;
     int soundIdSax;
+    int soundIdTaskDone;
 
     public static Boolean DEBUG = true;
 
@@ -99,6 +100,7 @@ public class MainActivity
 
         sp = new SoundPool(MAX_STREAMS, AudioManager.STREAM_MUSIC, 0);
         soundIdSax = sp.load(this, R.raw.tmz, 1);
+        soundIdTaskDone = sp.load(this, R.raw.taskdone, 1);
 
         //Set a toolbar to replace the Actionbar
         toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);

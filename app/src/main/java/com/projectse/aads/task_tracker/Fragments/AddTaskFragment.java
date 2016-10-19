@@ -32,6 +32,7 @@ import com.projectse.aads.task_tracker.Utils.ShPrefUtils;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -131,6 +132,28 @@ public class AddTaskFragment extends TaskFragment {
         timerOn.setVisibility(View.INVISIBLE);
         switchDone.setVisibility(View.INVISIBLE);
         timeView.setVisibility(View.INVISIBLE);
+        spentText.setVisibility(View.INVISIBLE);
+
+        int nonzero_count = 0;
+        long sum = 0L;
+        List<TaskModel> allTasks = db.getTaskModelList();
+
+        for (TaskModel task : allTasks) {
+            Long spent = task.getTimeSpentMs();
+            if (spent > 0) {
+                nonzero_count += 1;
+                sum += spent;
+            }
+        }
+
+        if (nonzero_count == 0) {
+            durationView.setText(String.valueOf(60));
+        }
+        else {
+            Long minutes = sum / nonzero_count / 1000 / 60;
+            durationView.setText(String.valueOf(minutes));
+        }
+
         editTextCourseName.setFocusable(false);
         if (getActivity().getIntent().getBooleanExtra("hide_subtasks", false)) {
             ScrollView sub_l = (ScrollView) view.findViewById(R.id.subtasksScrollView);

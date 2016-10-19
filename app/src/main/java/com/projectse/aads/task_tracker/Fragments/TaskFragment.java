@@ -57,6 +57,7 @@ public abstract class TaskFragment extends Fragment {
     protected EditText nameView;
     protected EditText descView;
     protected TextView timeView;
+    protected TextView spentText;
     protected TextView textViewCourseLabel;
     protected ImageButton buttonCourseSelect;
     protected EditText editTextCourseName;
@@ -135,6 +136,7 @@ public abstract class TaskFragment extends Fragment {
         nameView = (EditText) view.findViewById(R.id.txtName);
         descView = (EditText) view.findViewById(R.id.txtDescription);
         timeView = (TextView) view.findViewById(R.id.timeSpent);
+        spentText = (TextView) view.findViewById(R.id.textSpent);
         textViewCourseLabel = (TextView) view.findViewById(R.id.textViewCourseLabel);
         buttonCourseSelect = (ImageButton) view.findViewById(R.id.buttonCourseSelect);
         editTextCourseName = (EditText) view.findViewById(R.id.editTextCourseName);
@@ -344,7 +346,7 @@ public abstract class TaskFragment extends Fragment {
         //in case there is start time and deadline: duration must be less than deadline - start time
         if (stCal != null && !durationView.getText().toString().equals("") &&
                 dCal.getTime().getTime() - stCal.getTime().getTime()
-                        < Long.parseLong(durationView.getText().toString()) * 60 * 60 * 1000) {
+                        < Long.parseLong(durationView.getText().toString()) * 60 * 1000) {
             Toast.makeText(getActivity(),
                     "Duration can't be more than time between deadline and start time!",
                     Toast.LENGTH_SHORT).show();
@@ -355,7 +357,7 @@ public abstract class TaskFragment extends Fragment {
         if (stCal == null && !durationView.getText().toString().equals("") &&
                 dCal.getTime().getTime() - Calendar.getInstance(TimeZone.getTimeZone("UTC"),
                         Locale.getDefault()).getTime().getTime() <
-                        Long.parseLong(durationView.getText().toString()) * 60 * 60 * 1000) {
+                        Long.parseLong(durationView.getText().toString()) * 60 * 1000) {
             Toast.makeText(getActivity().getApplicationContext(),
                     "Duration can't be more than time between deadline and current time!",
                     Toast.LENGTH_SHORT).show();

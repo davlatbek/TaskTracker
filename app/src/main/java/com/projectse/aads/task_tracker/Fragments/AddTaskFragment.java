@@ -5,6 +5,8 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -25,6 +27,7 @@ import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.NotifyService.AlertReceiver;
 import com.projectse.aads.task_tracker.R;
+import com.projectse.aads.task_tracker.Utils.ShPrefUtils;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -41,6 +44,11 @@ public class AddTaskFragment extends TaskFragment {
     private Long parent_id = -1L;
     private Menu menu;
     long course_id, default_start_time;
+
+
+    final int MAX_STREAMS = 1;
+    SoundPool sp;
+    int soundIdTaskDone;
 
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -90,6 +98,10 @@ public class AddTaskFragment extends TaskFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        sp = new SoundPool(MAX_STREAMS, AudioManager.STREAM_MUSIC, 0);
+        soundIdTaskDone = sp.load(getActivity(), R.raw.taskdone, 1);
+
         if (getArguments() != null) {
             course_id = getArguments().getLong("course_id");
             default_start_time = getArguments().getLong("default_start_time");
@@ -171,6 +183,11 @@ public class AddTaskFragment extends TaskFragment {
                 }
             }
             getFragmentManager().popBackStack();
+
+
+            if (ShPrefUtils.isPlaySounds(getActivity())) {
+                sp.play(soundIdTaskDone, 1, 1, 0, 0, 1);
+            }
             hideSoftKeyboard(getActivity());
         }
     }

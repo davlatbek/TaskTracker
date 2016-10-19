@@ -3,6 +3,8 @@ package com.projectse.aads.task_tracker.Fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
@@ -25,6 +27,7 @@ import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
+import com.projectse.aads.task_tracker.Utils.ShPrefUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -38,8 +41,13 @@ import java.util.TimeZone;
 public class EditOverviewTaskFragment extends TaskFragment{
     private ActualTasksCaller actualTasksCaller;
     private TaskCategoriesCaller categoriesCaller;
+    private boolean areEditListenersRegistered = false;
 
     private Menu menu;
+
+    final int MAX_STREAMS = 1;
+    SoundPool sp;
+    int soundIdFinishTask;
 
     public interface TaskCategoriesCaller{
         void callTasksCategory();
@@ -55,6 +63,10 @@ public class EditOverviewTaskFragment extends TaskFragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+
+        sp = new SoundPool(MAX_STREAMS, AudioManager.STREAM_MUSIC, 0);
+        soundIdFinishTask = sp.load(getActivity(), R.raw.finishtask, 1);
+
         getActivity().setTitle("Task Overview");
         View view = inflater.inflate(R.layout.shared_content_task_new, container, false);
         setupUI(view);
@@ -149,6 +161,11 @@ public class EditOverviewTaskFragment extends TaskFragment{
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 task.setIsDone(isChecked);
+
+                if (isChecked && ShPrefUtils.isPlaySounds(getActivity())) {
+                    sp.play(soundIdFinishTask, 1, 1, 0, 0, 1);
+                }
+
                 if (isChecked) {
                     if (timerOn.isChecked()) {
                         timerOn.setChecked(false);
@@ -273,7 +290,11 @@ public class EditOverviewTaskFragment extends TaskFragment{
     public void switchToEditMode(){
         getActivity().setTitle("Edit Task");
         super.listNewSubtasks = new ArrayList<>();
-        setListeners();
+        if(!areEditListenersRegistered) {
+            setListeners();
+            areEditListenersRegistered = true;
+        }
+
         //timerOn.setEnabled(true);
         switchDone.setEnabled(false);
         switchDone.setAlpha(.4f);

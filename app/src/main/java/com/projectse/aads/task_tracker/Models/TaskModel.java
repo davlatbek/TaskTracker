@@ -195,10 +195,14 @@ public class TaskModel implements Comparable<TaskModel>{
     //TODO: add current session
     //TODO: count subtasks
     public Long getTimeSpentMs() {
+        System.out.println("Write to tabl9id:"+id);
+        System.out.println("Write to tabl99id:"+timeSpentMs);
         return timeSpentMs;
     }
     //set time spent for current task
     public void setTimeSpentMs(Long timeSpentMs) {
+        System.out.println("Write to tabl999id:"+id);
+        System.out.println("Write to tabl9999id:"+timeSpentMs);
         this.timeSpentMs = timeSpentMs;
     }
 

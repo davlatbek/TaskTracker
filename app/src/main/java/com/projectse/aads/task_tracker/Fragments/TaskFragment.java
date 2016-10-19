@@ -278,8 +278,11 @@ public abstract class TaskFragment extends Fragment {
 
     protected void updateTimer(){
         Long timeSpent = task.getTimeSpentMs();
+        System.out.println("timeSpent1:"+timeSpent);
         Long tStart = task.getLastSessionStart();
+        System.out.println("timeSpent2:"+tStart);
         Long tFinish = Calendar.getInstance().getTimeInMillis();
+        System.out.println("timeSpent3:"+tFinish);
         timeSpent += tFinish - tStart;
         task.setTimeSpentMs(timeSpent);
     }

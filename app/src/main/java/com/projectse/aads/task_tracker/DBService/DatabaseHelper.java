@@ -472,6 +472,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         tasks.setRunning(c.getInt(c.getColumnIndex(TASKS_IS_RUNNING)) == 1);
         tasks.setTimeSpentMs(c.getLong(c.getColumnIndex(TASKS_TIME_SPENT_MS)));
+        System.out.println("Write to tabl1:"+id);
+        System.out.println("Write to tabl11:"+c.getLong(c.getColumnIndex(TASKS_TIME_SPENT_MS)));
+        System.out.println("Write to tabl111:"+c.getString(c.getColumnIndex(TASKS_TIME_SPENT_MS)));
         tasks.setLastSessionStart(c.getLong(c.getColumnIndex(TASKS_LAST_SESSION_START)));
 
         try {
@@ -930,8 +933,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (!c.isNull(c.getColumnIndex(TASKS_IS_DONE))) {
             task.setIsDone(c.getInt(c.getColumnIndex(TASKS_IS_DONE)) > 0);
         }
-        if (!c.isNull(c.getColumnIndex(TASKS_PARENT_TASK)))
-            task.setParentTaskId(c.getLong(c.getColumnIndex(TASKS_PARENT_TASK)));
+        if (!c.isNull(c.getColumnIndex(TASKS_PARENT_TASK))){
+            task.setParentTaskId(c.getLong(c.getColumnIndex(TASKS_PARENT_TASK)));}
+        //added xomak
+        if (!c.isNull(c.getColumnIndex(TASKS_TIME_SPENT_MS))){
+            task.setTimeSpentMs(c.getLong(c.getColumnIndex(TASKS_TIME_SPENT_MS)));}
+        if (!c.isNull(c.getColumnIndex(TASKS_LAST_SESSION_START))){
+            task.setLastSessionStart(c.getLong(c.getColumnIndex(TASKS_LAST_SESSION_START)));}
+        if (!c.isNull(c.getColumnIndex(TASKS_IS_RUNNING))){
+            task.setRunning(c.getInt(c.getColumnIndex(TASKS_IS_RUNNING)) == 1);}
+
+
         if (!c.isNull(c.getColumnIndex(TASKS_PRIORITY))) {
             try {
                 task.setPriority(task.intToPriority(c.getInt(c.getColumnIndex(TASKS_PRIORITY))));
@@ -1006,6 +1018,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(TASKS_IS_NOTIFY_DEADLINE, task.getIsNotifyDeadline() ? 1 : 0);
         values.put(TASKS_IS_DONE, task.getIsDone() ? 1 : 0);
         values.put(TASKS_IS_RUNNING, task.getRunning() ? 1 : 0);
+        System.out.println("Write to tabl1111:"+task.getId());
+        System.out.println("Write to tabl11111:"+ task.getTimeSpentMs());
+
         values.put(TASKS_TIME_SPENT_MS, task.getTimeSpentMs());
         values.put(TASKS_LAST_SESSION_START, task.getLastSessionStart());
 

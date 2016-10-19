@@ -302,14 +302,15 @@ public class CourseProgressFragment extends Fragment {
             for (TaskModel task : timeTasks){
                 if (task.getCourse() != null && task.getCourse().getId() == courseModel.getId())
                 {
+                    System.out.println("TimeSpend1:"+task.getTimeSpentMs());
                     //timeSpend += task.getTimeSpentMs() / 1000 / 60 ;
-                    timeSpend+=task.getTimeSpentMs();
-                    timeSpend+=11;
-                    System.out.println("TimeSpend"+timeSpend);
+                    timeSpend+=task.getTimeSpentMs()/1000/60;
+                 //   timeSpend+=11;
+                    System.out.println("TimeSpend2:"+timeSpend);
                 }
             }
 
-            entries.add(new BarEntry((float)timeSpend/10, courseNumber));
+            entries.add(new BarEntry((float)timeSpend, courseNumber));
             courseNumber++;
         }
         BarDataSet barDataSet = new BarDataSet(entries, "% of done tasks");

@@ -83,6 +83,7 @@ public class CourseProgressFragment extends Fragment {
         final List<Long> courseList = new ArrayList<>();
         for (CourseModel courseModel : courseModels){
             courseList.add(courseModel.getId());
+            courseList.add(-courseModel.getId());
         }
 
         buttonPreviousChart = (ImageButton) view.findViewById(R.id.btnPrevWeek);
@@ -96,7 +97,7 @@ public class CourseProgressFragment extends Fragment {
                 barChart.setVisibility(View.VISIBLE);
                 pieChart.setVisibility(View.INVISIBLE);
                 courseNumb--;
-                if (courseNumb < -1){
+                if (courseNumb < -2){
                     courseNumb = courseList.size() - 1;
                 }
                 if (courseNumb == -1) {
@@ -113,8 +114,30 @@ public class CourseProgressFragment extends Fragment {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                } else {
+                }
+
+                if (courseNumb == -2) {
+                    courseLabel.setText("All Courses Time");
+                    barChart.setDrawValueAboveBar(false);
+                    YAxis leftAxis = barChart.getAxisLeft();
+                    leftAxis.setAxisMinValue(0f);
+                    barChart.setData(createBarChartForAllCoursesTime(courseModels));
+                    barChart.animateXY(500, 500);
+                    pieChart.setDescription("");
+                    barChart.invalidate();
                     try {
+                        setCourseStatistics(-1);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+
+
+                else {
+                    try {
+
                         switchChart(courseList.get(courseNumb));
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -129,7 +152,7 @@ public class CourseProgressFragment extends Fragment {
                 pieChart.setVisibility(View.INVISIBLE);
                 courseNumb++;
                 if (courseNumb > courseList.size() - 1){
-                    courseNumb = -1;
+                    courseNumb = -2;
                 }
                 if (courseNumb == -1) {
                     courseLabel.setText("All Courses");
@@ -145,7 +168,25 @@ public class CourseProgressFragment extends Fragment {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                } else {
+                }
+                if (courseNumb == -2) {
+                    courseLabel.setText("All Courses Time");
+                    barChart.setDrawValueAboveBar(false);
+                    YAxis leftAxis = barChart.getAxisLeft();
+                    leftAxis.setAxisMinValue(0f);
+                    barChart.setData(createBarChartForAllCoursesTime(courseModels));
+                    barChart.animateXY(500, 500);
+                    pieChart.setDescription("");
+                    barChart.invalidate();
+                    try {
+                        setCourseStatistics(-1);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+                else {
                     try {
                         switchChart(courseList.get(courseNumb));
                     } catch (Exception e) {
@@ -162,6 +203,7 @@ public class CourseProgressFragment extends Fragment {
     }
 
     public void switchChart(long course_id) throws Exception {
+        if(course_id >0){
         courseLabel.setText(db.getCourse(course_id).getName());
         barChart.setVisibility(View.INVISIBLE);
         pieChart.setVisibility(View.VISIBLE);
@@ -171,14 +213,53 @@ public class CourseProgressFragment extends Fragment {
         pieChart.animateXY(2000, 2000);
         pieChart.invalidate();
         setCourseStatistics(course_id);
+        }
+        else {
+            {
+                courseLabel.setText(db.getCourse(course_id).getName());
+                barChart.setVisibility(View.INVISIBLE);
+                pieChart.setVisibility(View.VISIBLE);
+                pieChart.setDescription("");
+                pieChart.setDescriptionTextSize(40f);
+                pieChart.setData(createPieChartTimeByCourse(course_id));
+                pieChart.animateXY(2000, 2000);
+                pieChart.invalidate();
+                setCourseStatistics(course_id);
+            }
+        }
     }
+    //take time spent on course
+    public PieData createPieChartTimeByCourse(long courseId) throws Exception {
+        int actualNumber = 0, finishedNumber = 0, overDueNumber = 0;
+        Long timeSpent=0L;
+        List<TaskModel> taskModels = taskModels = db.getTimeTasks();
+        for (TaskModel task : taskModels){
+            if (task.getCourse() != null && task.getCourse().getId() == courseId)
+                finishedNumber++;
+                timeSpent+=task.getTimeSpentMs();
+        }
 
+        ArrayList<Entry> entries = new ArrayList<>();
+        entries.add(new Entry(actualNumber, 0));
+        entries.add(new Entry(finishedNumber, 1));
+        entries.add(new Entry(overDueNumber, 2));
+
+        PieDataSet pieDataSet = new PieDataSet(entries, "# of tasks in a course");
+        pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+
+        ArrayList<String> labels = new ArrayList<String>();
+        labels.add("Actual");
+        labels.add("Finished");
+        labels.add("Overdue");
+
+        return new PieData(labels, pieDataSet);
+    }
     public PieData createPieChartByCourse(long courseId) throws Exception {
         int actualNumber = 0, finishedNumber = 0, overDueNumber = 0;
         List<TaskModel> taskModels = db.getActualTasks(Calendar.getInstance());
         for (TaskModel task : taskModels){
-           if (task.getCourse() != null && task.getCourse().getId() == courseId)
-               actualNumber++;
+            if (task.getCourse() != null && task.getCourse().getId() == courseId)
+                actualNumber++;
         }
         taskModels = db.getDoneTasks();
         for (TaskModel task : taskModels){
@@ -205,6 +286,49 @@ public class CourseProgressFragment extends Fragment {
 
         return new PieData(labels, pieDataSet);
     }
+
+
+    public BarData createBarChartForAllCoursesTime(List<CourseModel> coursesList) {
+        List<TaskModel> timeTasks = db.getTimeTasks();
+        List<TaskModel> allTasks = db.getTaskModelList();
+        int finishedNumber = 0, allNumber = 0, courseNumber = 0;
+        Long timeSpend = 0L;
+
+        ArrayList<BarEntry> entries = new ArrayList<>();
+        for (CourseModel courseModel : courseModels){
+            finishedNumber = 0;
+            allNumber = 0;
+            timeSpend = 0L;
+            for (TaskModel task : timeTasks){
+                if (task.getCourse() != null && task.getCourse().getId() == courseModel.getId())
+                {
+                    //timeSpend += task.getTimeSpentMs() / 1000 / 60 ;
+                    timeSpend+=task.getTimeSpentMs();
+                    timeSpend+=11;
+                    System.out.println("TimeSpend"+timeSpend);
+                }
+            }
+
+            entries.add(new BarEntry((float)timeSpend/10, courseNumber));
+            courseNumber++;
+        }
+        BarDataSet barDataSet = new BarDataSet(entries, "% of done tasks");
+        barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+
+        String[] courseLabels = new String[courseModels.size()];
+        int i = 0;
+        ArrayList<String> labels = new ArrayList<String>();
+        for (CourseModel courseModel : coursesList){
+            labels.add(courseModel.getName());
+            courseLabels[i] = courseModel.getAbbreviation();
+            i++;
+        }
+        barDataSet.setStackLabels(courseLabels);
+
+        return new BarData(labels, barDataSet);
+    }
+
+
 
     public BarData createBarChartForAllCourses(List<CourseModel> coursesList) {
         List<TaskModel> doneTasks = db.getDoneTasks();

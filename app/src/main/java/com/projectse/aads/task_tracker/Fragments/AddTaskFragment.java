@@ -140,7 +140,8 @@ public class AddTaskFragment extends TaskFragment {
 
         for (TaskModel task : allTasks) {
             Long spent = task.getTimeSpentMs();
-            if (spent > 0) {
+
+            if (task.getIsDone() && spent > 0) {
                 nonzero_count += 1;
                 sum += spent;
             }

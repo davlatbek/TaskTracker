@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Models.CourseModel;
+import com.projectse.aads.task_tracker.Models.TaskModel;
 import com.projectse.aads.task_tracker.R;
 
 import java.util.List;
@@ -82,7 +83,44 @@ public class ListOfCourses extends DialogFragment implements DialogInterface.OnC
                     public void onClick(DialogInterface dialog, int which) {
                         EditText courseName = (EditText) testActivity.findViewById(R.id.editTextCourseName);
                         TextView textViewCourseLabel = (TextView) testActivity.findViewById(R.id.textViewCourseLabel);
-                        courseName.setText(finalCourseModelList.get(which).getName());
+                        String course = finalCourseModelList.get(which).getName();
+                        courseName.setText(course);
+                        EditText durationView = (EditText) testActivity.findViewById(R.id.txtDuration);
+
+                        List<TaskModel> allTasks = db.getTaskModelList();
+
+                        int nonzero_count = 0;
+                        long sum = 0L;
+                        int course_nonzero = 0;
+                        long course_sum = 0L;
+                        for (TaskModel task : allTasks) {
+                            if (task.getIsDone()) {
+                                Long spent = task.getTimeSpentMs();
+                                if (spent > 0) {
+                                    nonzero_count += 1;
+                                    sum += spent;
+                                }
+
+                                String taskCourse = task.getCourse().getName();
+
+                                if (course.equals(taskCourse)) {
+                                    course_nonzero += 1;
+                                    course_sum += spent;
+                                }
+
+                            }
+                        }
+
+                        if (course_nonzero > 0){
+                            Long minutes = course_sum / course_nonzero / 1000 / 60;
+                            durationView.setText(String.valueOf(minutes));
+                        } else if (nonzero_count > 0) {
+                            Long minutes = sum / nonzero_count / 1000 / 60;
+                            durationView.setText(String.valueOf(minutes));
+                        } else {
+                            durationView.setText(String.valueOf(60));
+                        }
+
                         textViewCourseLabel.setText(finalCourseModelList.get(which).getAbbreviation());
                         textViewCourseLabel.setBackgroundColor(finalCourseModelList.get(which).getClr());
                         int p = finalCourseModelList.get(which).getClr();
@@ -142,6 +180,8 @@ public class ListOfCourses extends DialogFragment implements DialogInterface.OnC
                                         //reloadFragment();
                                         EditText t = (EditText) testActivity.findViewById(R.id.editTextCourseName);
                                         t.setText(course.getName());
+                                        EditText durationView = (EditText) testActivity.findViewById(R.id.txtDuration);
+                                        durationView.setText(String.valueOf(120));
                                     }
 
                                 })

@@ -3,18 +3,20 @@ package com.projectse.aads.task_tracker.Fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.GoogleDriveActivity;
 import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.SettingsModel;
 import com.projectse.aads.task_tracker.R;
@@ -33,6 +35,7 @@ public class SettingsFragment extends Fragment {
     EditText beforeDueDate;
     EditText notSpecefiedStartDate;
     EditText notSpecDurationTaskEdit;
+    Button btnBackup;
 
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -58,6 +61,16 @@ public class SettingsFragment extends Fragment {
 
         enableSoundSwitch = (Switch) view.findViewById(R.id.enableSoundSwitch);
         enableSoundSwitch.setChecked(ShPrefUtils.isPlaySounds(getActivity()));
+
+        btnBackup = (Button) view.findViewById(R.id.btnBackup);
+        final Activity activity = getActivity();
+        btnBackup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(activity, GoogleDriveActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         settingsModel = db.getSettings();

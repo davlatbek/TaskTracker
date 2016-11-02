@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
@@ -36,6 +37,7 @@ import com.projectse.aads.task_tracker.Fragments.PlanFragment;
 import com.projectse.aads.task_tracker.Fragments.SettingsFragment;
 import com.projectse.aads.task_tracker.Fragments.TaskCategoriesFragment;
 import com.projectse.aads.task_tracker.Fragments.WeeklyViewFragment;
+import com.projectse.aads.task_tracker.GoogleDrive.GoogleDrive;
 import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
 import com.projectse.aads.task_tracker.Interfaces.AddTaskCaller;
 import com.projectse.aads.task_tracker.Interfaces.DoneTasksCaller;
@@ -78,12 +80,14 @@ public class MainActivity
         implements WeeklyViewFragment.onWeekViewEventListener, CoursesFragment.onCourseClickListener,
         AddTaskCaller, ActualTasksCaller, DoneTasksCaller, OverdueTasksCaller, ImportFragment.TaskCategoriesCaller,
          EditTaskCaller, TaskOverviewCaller, EditOverviewTaskFragment.TaskCategoriesCaller
+
     {
     DatabaseHelper db;
     private DrawerLayout menuDrawer;
     private android.support.v7.widget.Toolbar toolbar;
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
+    private GoogleDrive drive;
     public static SettingsModel settings = null;
 
     final int MAX_STREAMS = 1;
@@ -135,6 +139,8 @@ public class MainActivity
             }
         });
 
+        Button btnBackup = (Button) findViewById(R.id.btnBackup);
+
         db = DatabaseHelper.getsInstance(getApplicationContext());
         // Set default locale prog-ly to English (Customer req)
         Locale.setDefault(new Locale("en"));
@@ -143,8 +149,47 @@ public class MainActivity
 
         if(DEBUG && db.getCourseModelList().size() == 0)
             PlugDebug.initDebugData(db);
-    }
 
+        //TEST google api
+        //----------------------------------------
+//        mGoogleApiClient = new GoogleApiClient.Builder(this)
+//                .addApi(Drive.API)
+//                .addScope(Drive.SCOPE_FILE)
+//                .addConnectionCallbacks(this)
+//                .addOnConnectionFailedListener(this)
+//                .build();
+    }
+//        private GoogleApiClient mGoogleApiClient;
+//        protected static final int REQUEST_CODE_RESOLUTION = 1;
+//
+//        @Override
+//        protected void onStart() {
+//            super.onStart();
+//            mGoogleApiClient.connect();
+//        }
+//
+//        @Override
+//        public void onConnectionFailed(ConnectionResult connectionResult) {
+//            if (connectionResult.hasResolution()) {
+//                try {
+//                    connectionResult.startResolutionForResult(this, RESOLVE_CONNECTION_REQUEST_CODE);
+//                } catch (IntentSender.SendIntentException e) {
+//                    // Unable to resolve, message user appropriately
+//                }
+//            } else {
+//                GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), this, 0).show();
+//            }
+//        }
+//
+//        @Override
+//        protected void onActivityResult(int requestCode, int resultCode,
+//                                        Intent data) {
+//            super.onActivityResult(requestCode, resultCode, data);
+//            if (requestCode == REQUEST_CODE_RESOLUTION && resultCode == RESULT_OK) {
+//                mGoogleApiClient.connect();
+//            }
+//        }
+        //-------------------------------------
     public void butTestSound_Click(View v){
         Toast toast;
         String ss;
@@ -157,6 +202,11 @@ public class MainActivity
         toast = Toast.makeText(getApplicationContext(), ss, Toast.LENGTH_SHORT);
         toast.show();
 
+    }
+
+    public void btnBackup_Click(View v){
+        drive = new GoogleDrive(this);
+        drive.backup();
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
@@ -474,6 +524,8 @@ public class MainActivity
                     Log.d("FILE",currFileURI.getPath());
                     ICalToData(currFileURI);
                     break;
+                case RequestCode.REQUEST_CODE_RESOLUTION:
+                    drive.backup();
             }
         }
     }

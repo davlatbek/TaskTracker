@@ -9,4 +9,5 @@ public class RequestCode {
     public static final int REQ_CODE_VIEWTASK = 3;
     public static final int REQ_CODE_WIZZARD = 4;
     public static final int REQ_CODE_OPENFILE = 5;
+    public static final int REQUEST_CODE_RESOLUTION = 7;
 }

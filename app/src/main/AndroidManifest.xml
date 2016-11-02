@@ -34,7 +34,7 @@
 
         <receiver android:name=".NotifyService.AlertReceiver" />
 
-        <activity android:name=".GoogleDriveActivity"></activity>
+        <activity android:name=".GoogleDrive.GoogleDriveActivity"></activity>
     </application>
 
 </manifest>

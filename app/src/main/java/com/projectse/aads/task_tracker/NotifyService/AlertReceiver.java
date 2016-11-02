@@ -17,7 +17,7 @@ public class AlertReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        createNotfication(context, "Task tracker", intent.getStringExtra("task name"), "Alert");
+        createNotfication(context, intent.getStringExtra("course"), intent.getStringExtra("task name"), "Notification");
     }
 
     private void createNotfication(Context context, String s, String s1, String alert) {

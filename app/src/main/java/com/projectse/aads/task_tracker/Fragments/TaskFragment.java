@@ -194,6 +194,8 @@ public abstract class TaskFragment extends Fragment {
 
                     Intent alertIntent = new Intent(getActivity(), AlertReceiver.class);
                     alertIntent.putExtra("task name", task.getName());
+                    alertIntent.putExtra("last session start", task.getLastSessionStart());
+                    alertIntent.putExtra("course", task.getCourse().getName());
                     AlarmManager alarmManager = (AlarmManager)
                             getActivity().getSystemService(Context.ALARM_SERVICE);
                     alarmManager.set(AlarmManager.RTC_WAKEUP, 0,

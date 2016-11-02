@@ -13,11 +13,11 @@ import com.projectse.aads.task_tracker.MainActivity;
 /**
  * Created by Andrey Zolin on 07.03.2016.
  */
-public class AlertReceiver extends BroadcastReceiver {
+public class ToggleNotificationReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        createNotfication(context, "Times Up", "5 sec has passed", "Alert");
+        createNotfication(context, intent.getStringExtra("course"), intent.getStringExtra("task name"), "Notification");
     }
 
     private void createNotfication(Context context, String s, String s1, String alert) {

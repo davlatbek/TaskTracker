@@ -36,7 +36,7 @@ import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Dialogs.ListOfCourses;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
-import com.projectse.aads.task_tracker.NotifyService.AlertReceiver;
+import com.projectse.aads.task_tracker.NotifyService.ToggleNotificationReceiver;
 import com.projectse.aads.task_tracker.R;
 import com.projectse.aads.task_tracker.RequestCode;
 
@@ -192,14 +192,14 @@ public abstract class TaskFragment extends Fragment {
                     timerHandler.postDelayed(timerRunnable, 0);
 
 
-                    Intent alertIntent = new Intent(getActivity(), AlertReceiver.class);
-                    alertIntent.putExtra("task name", task.getName());
-                    alertIntent.putExtra("last session start", task.getLastSessionStart());
-                    alertIntent.putExtra("course", task.getCourse().getName());
+                    Intent notificationIntent = new Intent(getActivity(), ToggleNotificationReceiver.class);
+                    notificationIntent.putExtra("task name", task.getName());
+                    notificationIntent.putExtra("last session start", task.getLastSessionStart());
+                    notificationIntent.putExtra("course", task.getCourse().getName());
                     AlarmManager alarmManager = (AlarmManager)
                             getActivity().getSystemService(Context.ALARM_SERVICE);
                     alarmManager.set(AlarmManager.RTC_WAKEUP, 0,
-                            PendingIntent.getBroadcast(getActivity(), 1, alertIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+                            PendingIntent.getBroadcast(getActivity(), 1, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT));
 
                 }
 

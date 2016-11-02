@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    android:background="#dbecc7"
+    android:background="@drawable/todo3"
     android:orientation="vertical"
     android:weightSum="2"
     android:gravity="center_vertical">
@@ -11,6 +11,8 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="480dp"
+        android:layout_marginTop="140dp"
+
         android:id="@+id/tasks_categories_buttons">
 
         <LinearLayout
@@ -23,7 +25,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/background_with_shadow"
                 android:gravity="center_vertical|center_horizontal"
                 android:layout_margin="10dp"
                 android:id="@+id/over_due_btn">
@@ -32,22 +33,20 @@
                     android:id="@+id/over_due_lbl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/ic_notifications_black_24dp"
                     android:text="Over Due"
                     android:layout_weight="1"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
-                    android:layout_margin="0dp"
+                    android:layout_margin="10dp"
                     android:gravity="center_horizontal"
-                    android:layout_centerInParent="true"
-                    android:elegantTextHeight="true"
-                    android:drawableTop="@android:drawable/ic_dialog_alert" />
+                    android:layout_centerInParent="true" />
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/background_with_shadow_green"
                 android:gravity="center_vertical|center_horizontal"
                 android:layout_margin="10dp"
                 android:id="@+id/actual_btn">
@@ -78,7 +77,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/background_with_shadow_green"
                 android:gravity="center_vertical|center_horizontal"
                 android:layout_margin="10dp"
                 android:id="@+id/done_btn">
@@ -101,7 +99,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/background_with_shadow_green"
                 android:gravity="center_vertical|center_horizontal"
                 android:layout_margin="10dp"
                 android:id="@+id/add_task_btn"
@@ -111,8 +108,8 @@
                     android:id="@+id/add_task_lbl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#ffffff"
-                    android:drawableTop="@drawable/ic_add_circle_outline_24dp"
+                    android:textColor="#000000"
+                    android:drawableTop="@android:drawable/ic_input_add"
                     android:text="Add Task"
                     android:layout_weight="1"
                     android:layout_alignParentTop="true"

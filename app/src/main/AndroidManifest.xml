@@ -19,7 +19,12 @@
             </intent-filter>
         </activity>
 
-
+        <service
+            android:name=".NotifyService.ToggleNotificationReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":notificationservice"></service>
+        <receiver android:name=".NotifyService.ToggleNotificationReceiver"></receiver>
 
         <service
             android:name=".NotifyService.AlertReceiver"

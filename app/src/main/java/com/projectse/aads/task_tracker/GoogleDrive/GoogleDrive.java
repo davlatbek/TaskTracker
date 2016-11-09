@@ -2,10 +2,13 @@ package com.projectse.aads.task_tracker.GoogleDrive;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentSender.SendIntentException;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -17,6 +20,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi;
 import com.google.android.gms.drive.DriveContents;
+import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.DriveResource;
 import com.google.android.gms.drive.Metadata;
@@ -27,7 +31,9 @@ import com.projectse.aads.task_tracker.RequestCode;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -35,6 +41,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * An abstract activity that handles authorization and connection to the Drive
@@ -48,6 +55,9 @@ public class GoogleDrive implements
     private boolean isBackupSuccessful = false;
     private String backupName = "";
     private Context context;
+    private ProgressDialog progressBar;
+    public static boolean isBackup = false; //otherwise it is retore
+    private String restoredDatabaseDate;
 
     /**
      * Google API client.
@@ -56,6 +66,9 @@ public class GoogleDrive implements
 
     public GoogleDrive(Context context) {
         this.context = context;
+        progressBar = new ProgressDialog(context);
+        progressBar.setCancelable(false);
+        progressBar.setCanceledOnTouchOutside(false);
         mGoogleApiClient = new GoogleApiClient.Builder(context)
                 .addApi(Drive.API)
                 .addScope(Drive.SCOPE_FILE)
@@ -66,6 +79,12 @@ public class GoogleDrive implements
     }
 
     public void backup(){
+        isBackup = true;
+        mGoogleApiClient.connect();
+    }
+
+    public void restore(){
+        isBackup = false;
         mGoogleApiClient.connect();
     }
     /**
@@ -74,8 +93,15 @@ public class GoogleDrive implements
     @Override
     public void onConnected(Bundle connectionHint) {
         // create new contents resource
-        Drive.DriveApi.newDriveContents(getGoogleApiClient())
-                .setResultCallback(driveContentsCallback);
+        if(isBackup) {
+            Drive.DriveApi.newDriveContents(getGoogleApiClient())
+                    .setResultCallback(driveContentsCallback);
+        } else {
+            DriveFolder folder = Drive.DriveApi.getAppFolder(getGoogleApiClient());
+            folder.listChildren(getGoogleApiClient()).setResultCallback(childrenRetrievedCallback);
+        }
+
+        progressBar.show();
     }
 
     /**
@@ -181,7 +207,7 @@ public class GoogleDrive implements
                 @Override
                 public void onResult(DriveFolder.DriveFileResult result) {
                     if (!result.getStatus().isSuccess()) {
-                        showMessage("Error while trying to beckup your data to Google drive.");
+                        showMessage("Error while trying to backup your data to Google drive.");
                         isBackupSuccessful = false;
                         backupName = "";
                         close();
@@ -205,6 +231,22 @@ public class GoogleDrive implements
                         return;
                     }
 
+                    //This is a restore
+                    if(!isBackup){
+                        Metadata latestBackupMeta = getLatestBackupMetadata(result);
+                        if(latestBackupMeta == null){
+                            showMessage("You haven't backed up your data, yet!");
+                            close();
+                        } else {
+                            DriveFile file = latestBackupMeta.getDriveId().asDriveFile();
+                            file.open(mGoogleApiClient, DriveFile.MODE_READ_ONLY, null)
+                                    .setResultCallback(contentsOpenedCallback);
+                            restoredDatabaseDate = getDateString(latestBackupMeta.getCreatedDate());
+                        }
+
+                        return;
+                    }
+
                     if(isBackupSuccessful) {
                         for (Metadata metadata : result.getMetadataBuffer()) {
                             if(!metadata.getTitle().equals(backupName)){
@@ -225,18 +267,12 @@ public class GoogleDrive implements
                             }
                         }
                     } else {
-                        int count = result.getMetadataBuffer().getCount();
-                        if(count > 0){
-                            Metadata latestBackup = result.getMetadataBuffer().get(0);
-                            for(int i = 1; i < count; i++){
-                                if(result.getMetadataBuffer().get(i).getCreatedDate().after(latestBackup.getCreatedDate())){
-                                    latestBackup = result.getMetadataBuffer().get(i);
-                                }
-                            }
+                        if(result.getMetadataBuffer().getCount() > 0){
+                            Metadata latestBackup = getLatestBackupMetadata(result);
 
                             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                             String latestBackupDate = sdf.format(latestBackup.getCreatedDate());
-                            showMessage("Error creating new backup. The previous one is from " + latestBackupDate);
+                            showMessage("Error creating new backup. The previous one is from " + getDateString(latestBackup.getCreatedDate()));
                         } else {
                             showMessage("You don't have a previous backup of your data.");
                         }
@@ -246,7 +282,103 @@ public class GoogleDrive implements
                 }
             };
 
+    ResultCallback<DriveApi.DriveContentsResult> contentsOpenedCallback =
+            new ResultCallback<DriveApi.DriveContentsResult>() {
+                @Override
+                public void onResult(DriveApi.DriveContentsResult result) {
+                    if (!result.getStatus().isSuccess()) {
+                        showMessage("Sorry, but we couldn't retrieve your backup!");
+                        close();
+                        return;
+                    }
+                    // DriveContents object contains pointers
+                    // to the actual byte stream
+                    final DriveContents contents = result.getDriveContents();
+                    new Handler(Looper.getMainLooper()).post(new Thread() {
+                        @Override
+                        public void run() {
+                            File dbFile = context.getDatabasePath(DatabaseHelper.DATABASE_NAME + "_restored_" + Calendar.getInstance().getTimeInMillis());
+                            try {
+                                if (!dbFile.createNewFile()) {
+                                    showMessage("There was a problem restoring your data!");
+                                }
+                            } catch (IOException e) {
+                                showMessage("There was a problem restoring your data!");
+                                return;
+                            }
+
+                            try (InputStream inputStream = contents.getInputStream();
+                                 Reader reader = new InputStreamReader((inputStream));
+                                 FileOutputStream fos = new FileOutputStream(dbFile);
+                                 Writer writer = new OutputStreamWriter(fos)) {
+                                int read = 0;
+                                while ((read = reader.read()) != -1) {
+                                    writer.write(read);
+                                }
+
+                                File dbFolder = dbFile.getParentFile();
+                                boolean successDel = true;
+                                DatabaseHelper.disconnect();
+                                for (File file : dbFolder.listFiles()) {
+                                    Log.d(TAG + " f:", file.getName());
+                                    if (!file.getName().equals(dbFile.getName())) {
+                                        if (!file.delete()) {
+                                            Log.d(TAG, "not deleted" + file.getName());
+                                            successDel = false;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                if (successDel){
+                                    if(dbFile.renameTo(context.getDatabasePath(DatabaseHelper.DATABASE_NAME))){
+                                        showMessage("Successfully restored your data from " + restoredDatabaseDate);
+                                    } else {
+                                        showMessage("Problem: The old database couldn't be replaced with the new one!");
+                                    }
+                                } else {
+                                    showMessage("Sorry, the old database couldn't be replaced with the new one.");
+                                }
+
+                                    for (File file : dbFolder.listFiles()) {
+                                        Log.d(TAG + " pf:", file.getName());
+                                    }
+                            } catch (IOException e) {
+                                showMessage("There was a problem restoring your data!");
+                                Log.e(TAG, e.getMessage());
+                            }
+
+                            DatabaseHelper.connect(context);
+                            contents.discard(getGoogleApiClient());
+                            close();
+                        }
+                    });
+                }
+            };
+
+    private Metadata getLatestBackupMetadata(DriveApi.MetadataBufferResult result){
+        if(result.getMetadataBuffer().getCount() == 0){
+            return null;
+        }
+
+        Metadata latestBackup = result.getMetadataBuffer().get(0);
+        for(int i = 1; i < result.getMetadataBuffer().getCount(); i++){
+            if(result.getMetadataBuffer().get(i).getCreatedDate().after(latestBackup.getCreatedDate())){
+                latestBackup = result.getMetadataBuffer().get(i);
+            }
+        }
+
+        return latestBackup;
+    }
+
+    private String getDateString(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String dateStr = sdf.format(date);
+        return dateStr;
+    }
+
     private void close(){
         mGoogleApiClient.disconnect();
+        progressBar.dismiss();
     }
 }

@@ -212,6 +212,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    public static void disconnect(){
+        sInstance.close();
+    }
+
+    public static void connect(Context context){
+        sInstance = new DatabaseHelper(context.getApplicationContext());
+    }
+
     /**
      * Drop and recreate task table
      *
@@ -419,6 +427,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         } finally {
             db.endTransaction();
+            db.close();
         }
     }
 
@@ -810,6 +819,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         settings.setINSTD(c.getInt(c.getColumnIndex(SETTINGS_NOTIFY_INSTD)));
         settings.setSettingsId(c.getLong(c.getColumnIndex(SETTINGS_ID)));
         c.close();
+        db.close();
         return settings;
     }
 

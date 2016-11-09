@@ -19,7 +19,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
@@ -139,16 +138,14 @@ public class MainActivity
             }
         });
 
-        Button btnBackup = (Button) findViewById(R.id.btnBackup);
-
         db = DatabaseHelper.getsInstance(getApplicationContext());
         // Set default locale prog-ly to English (Customer req)
         Locale.setDefault(new Locale("en"));
         setCurrentFragment(new TaskCategoriesFragment());
 //        MainActivity.settings = db.getSettings();
 
-        if(DEBUG && db.getCourseModelList().size() == 0)
-            PlugDebug.initDebugData(db);
+//        if(DEBUG && db.getCourseModelList().size() == 0)
+//            PlugDebug.initDebugData(db);
 
         //TEST google api
         //----------------------------------------
@@ -207,6 +204,11 @@ public class MainActivity
     public void btnBackup_Click(View v){
         drive = new GoogleDrive(this);
         drive.backup();
+    }
+
+    public void btnRestore_Click(View v){
+        drive = new GoogleDrive(this);
+        drive.restore();
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
@@ -525,7 +527,11 @@ public class MainActivity
                     ICalToData(currFileURI);
                     break;
                 case RequestCode.REQUEST_CODE_RESOLUTION:
-                    drive.backup();
+                    if(GoogleDrive.isBackup) {
+                        drive.backup();
+                    }else{
+                        drive.restore();
+                    }
             }
         }
     }

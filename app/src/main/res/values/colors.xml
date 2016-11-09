@@ -37,7 +37,7 @@
     <!--<color name="primary_text_default_material_light">#f9f9f9</color>-->
     <!--<color name="background_material_light">#dbecc7</color>-->
     <color name="drawer_menu_background">#558a2f</color>
-    <color name="colorBackground">#e3b1b1</color>
+    <color name="colorBackground">#fbebeb</color>
     <color name="color_menu_items">#fdfdfe</color>
 
 </resources>

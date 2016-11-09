@@ -43,17 +43,22 @@
             android:text="Fri"
             android:id="@+id/btnFriday"
             android:layout_weight="1" />
+
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="59dp"
             android:layout_height="wrap_content"
             android:text="Sat"
             android:id="@+id/btnSaturday"
-            android:layout_weight="1" />
+            android:elevation="0dp"
+            android:background="#ef8787" />
+
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="66dp"
             android:layout_height="wrap_content"
             android:text="Sun"
             android:id="@+id/btnSunday"
-            android:layout_weight="1" />
+
+            android:background="#ef8787" />
+
     </LinearLayout>
 </LinearLayout>

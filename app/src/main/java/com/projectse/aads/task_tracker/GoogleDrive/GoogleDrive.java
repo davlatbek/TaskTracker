@@ -60,7 +60,7 @@ public class GoogleDrive implements
     private String restoredDatabaseDate;
 
     /**
-     * Google API client.
+     * Google API client..
      */
     private GoogleApiClient mGoogleApiClient;
 

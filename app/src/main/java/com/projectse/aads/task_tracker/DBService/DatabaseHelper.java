@@ -215,13 +215,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static void disconnect(){
         sInstance.close();
     }
-
     public static void connect(Context context){
         sInstance = new DatabaseHelper(context.getApplicationContext());
     }
 
     /**
-     * Drop and recreate task table
+     * Drop and recreate task table.
      *
      * @param db
      */

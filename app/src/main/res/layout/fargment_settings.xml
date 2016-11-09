@@ -372,6 +372,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Restore"
+        android:hint=""
         android:onClick="btnRestore_Click"
         android:id="@+id/btnRestore"
         android:layout_alignTop="@+id/btnBackup"

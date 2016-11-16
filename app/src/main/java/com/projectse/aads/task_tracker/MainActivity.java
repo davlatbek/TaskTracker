@@ -86,7 +86,6 @@ public class MainActivity
     private android.support.v7.widget.Toolbar toolbar;
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
-    private GoogleDrive drive;
     public static SettingsModel settings = null;
 
     final int MAX_STREAMS = 1;
@@ -202,13 +201,11 @@ public class MainActivity
     }
 
     public void btnBackup_Click(View v){
-        drive = new GoogleDrive(this);
-        drive.backup();
+        new GoogleDrive(this).backup();
     }
 
     public void btnRestore_Click(View v){
-        drive = new GoogleDrive(this);
-        drive.restore();
+        new GoogleDrive(this).restore();
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
@@ -528,9 +525,9 @@ public class MainActivity
                     break;
                 case RequestCode.REQUEST_CODE_RESOLUTION:
                     if(GoogleDrive.isBackup) {
-                        drive.backup();
+                        new GoogleDrive(this).backup();
                     }else{
-                        drive.restore();
+                        new GoogleDrive(this).restore();
                     }
             }
         }

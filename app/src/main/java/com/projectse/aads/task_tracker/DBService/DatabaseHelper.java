@@ -135,7 +135,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "FOREIGN KEY(" + COURSES_TO_TASKS_TASK_ID + ") REFERENCES " + TABLE_TASKS + "(" + TASKS_KEY_ID + ") ON UPDATE CASCADE,"
             + "FOREIGN KEY(" + COURSES_TO_TASKS_CURSE_ID + ") REFERENCES " + TABLE_COURSES + "(" + COURSE_ID + ") ON UPDATE CASCADE);";
     // Database Name
-    public static String DATABASE_NAME = "task_tracker_database";
+    public static String DATABASE_NAME = "task_tracker_database.db";
     public static String TAG = "tag";
 
 

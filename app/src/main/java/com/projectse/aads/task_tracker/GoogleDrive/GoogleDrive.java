@@ -5,10 +5,11 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.IntentSender.SendIntentException;
+import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -44,8 +45,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * An abstract activity that handles authorization and connection to the Drive
- * services.
+ * This class takes care of Google Drive interaction
+ * TODO: refactor - separate the logic for backup, restore, etc. but deadlines burned
  */
 public class GoogleDrive implements
         GoogleApiClient.ConnectionCallbacks,
@@ -56,13 +57,17 @@ public class GoogleDrive implements
     private String backupName = "";
     private Context context;
     private ProgressDialog progressBar;
-    public static boolean isBackup = false; //otherwise it is retore
+    public static boolean isBackup = false; //otherwise it is restore
     private String restoredDatabaseDate;
-
-    /**
-     * Google API client..
-     */
     private GoogleApiClient mGoogleApiClient;
+
+    final Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            showMessage(msg.obj.toString());
+            super.handleMessage(msg);
+        }
+    };
 
     public GoogleDrive(Context context) {
         this.context = context;
@@ -71,8 +76,8 @@ public class GoogleDrive implements
         progressBar.setCanceledOnTouchOutside(false);
         mGoogleApiClient = new GoogleApiClient.Builder(context)
                 .addApi(Drive.API)
-                .addScope(Drive.SCOPE_FILE)
-                .addScope(Drive.SCOPE_APPFOLDER) // required for App Folder sample
+               // .addScope(Drive.SCOPE_FILE)
+                .addScope(Drive.SCOPE_APPFOLDER)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
@@ -93,15 +98,26 @@ public class GoogleDrive implements
     @Override
     public void onConnected(Bundle connectionHint) {
         // create new contents resource
-        if(isBackup) {
-            Drive.DriveApi.newDriveContents(getGoogleApiClient())
-                    .setResultCallback(driveContentsCallback);
-        } else {
-            DriveFolder folder = Drive.DriveApi.getAppFolder(getGoogleApiClient());
-            folder.listChildren(getGoogleApiClient()).setResultCallback(childrenRetrievedCallback);
-        }
-
         progressBar.show();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Status status = Drive.DriveApi.requestSync(getGoogleApiClient()).await();
+                if(status.isSuccess()) {
+                    if (isBackup) {
+                        Drive.DriveApi.newDriveContents(getGoogleApiClient())
+                                .setResultCallback(driveContentsCallback);
+                    } else {
+                        DriveFolder folder = Drive.DriveApi.getAppFolder(getGoogleApiClient());
+                        folder.listChildren(getGoogleApiClient()).setResultCallback(childrenRetrievedCallback);
+                    }
+                } else {
+                    close();
+                    onGoogleDriveError(status);
+                }
+            }
+        }).start();
     }
 
     /**
@@ -120,33 +136,7 @@ public class GoogleDrive implements
     @Override
     public void onConnectionFailed(ConnectionResult result) {
         Log.i(TAG, "GoogleApiClient connection failed: " + result.toString());
-        if (!result.hasResolution()) {
-            // show the localized error dialog.
-            GoogleApiAvailability.getInstance().getErrorDialog((Activity) context, result.getErrorCode(), 0).show();
-            return;
-        }
-        try {
-            result.startResolutionForResult((Activity) context, RequestCode.REQUEST_CODE_RESOLUTION);
-        } catch (SendIntentException e) {
-            showMessage("Error connecting to Google drive. " + result.toString());
-            Log.e(TAG, "Exception while starting resolution activity", e);
-        }
-    }
-
-    /**
-     * Shows a toast message.
-     */
-    public void showMessage(String message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            }
-        })
-        //.setIcon(R.mipmap.ic_launcher)
-        //.setTitle(message);
-        .setMessage(message);
-
-        builder.create().show();
+        onGoogleDriveError(result);
     }
 
     /**
@@ -161,7 +151,7 @@ public class GoogleDrive implements
                 @Override
                 public void onResult(DriveApi.DriveContentsResult result) {
                     if (!result.getStatus().isSuccess()) {
-                        showMessage("Error while trying to create new file contents!");
+                        onGoogleDriveError(result.getStatus());
                         close();
                         return;
                     }
@@ -174,17 +164,13 @@ public class GoogleDrive implements
                         public void run() {
                             // write content to DriveContents
                             File dbFile = context.getDatabasePath(DatabaseHelper.DATABASE_NAME);
-
                             try (OutputStream outputStream = driveContents.getOutputStream();
-                                 Writer writer = new OutputStreamWriter(outputStream);
-                                 FileInputStream fis = new FileInputStream(dbFile);
-                                 Reader reader = new InputStreamReader(fis)) {
-                                int read = 0;
-                                while ((read = reader.read()) != -1) {
-                                    writer.write(read);
+                                 FileInputStream fis = new FileInputStream(dbFile)) {
+                                if(!InputOutput.copy(fis, outputStream)){
+                                    showMessageAsync("There was a problem backing up your data!");
                                 }
                             } catch (IOException e) {
-                                showMessage("There was a problem backing up your data!");
+                                showMessageAsync("There was a problem backing up your data!");
                                 Log.e(TAG, e.getMessage());
                             }
 
@@ -207,7 +193,7 @@ public class GoogleDrive implements
                 @Override
                 public void onResult(DriveFolder.DriveFileResult result) {
                     if (!result.getStatus().isSuccess()) {
-                        showMessage("Error while trying to backup your data to Google drive.");
+                        onGoogleDriveError(result.getStatus());
                         isBackupSuccessful = false;
                         backupName = "";
                         close();
@@ -218,7 +204,6 @@ public class GoogleDrive implements
                     showMessage("The backup of your data was successful");
                     DriveFolder folder = Drive.DriveApi.getAppFolder(getGoogleApiClient());
                     folder.listChildren(getGoogleApiClient()).setResultCallback(childrenRetrievedCallback);
-
                 }
             };
 
@@ -287,7 +272,7 @@ public class GoogleDrive implements
                 @Override
                 public void onResult(DriveApi.DriveContentsResult result) {
                     if (!result.getStatus().isSuccess()) {
-                        showMessage("Sorry, but we couldn't retrieve your backup!");
+                        onGoogleDriveError(result.getStatus());
                         close();
                         return;
                     }
@@ -300,10 +285,10 @@ public class GoogleDrive implements
                             File dbFile = context.getDatabasePath(DatabaseHelper.DATABASE_NAME + "_restored_" + Calendar.getInstance().getTimeInMillis());
                             try {
                                 if (!dbFile.createNewFile()) {
-                                    showMessage("There was a problem restoring your data!");
+                                    showMessageAsync("There was a problem restoring your data!");
                                 }
                             } catch (IOException e) {
-                                showMessage("There was a problem restoring your data!");
+                                showMessageAsync("There was a problem restoring your data!");
                                 return;
                             }
 
@@ -312,8 +297,8 @@ public class GoogleDrive implements
                                  FileOutputStream fos = new FileOutputStream(dbFile);
                                  Writer writer = new OutputStreamWriter(fos)) {
                                 int read = 0;
-                                while ((read = reader.read()) != -1) {
-                                    writer.write(read);
+                                if(!InputOutput.copy(inputStream, fos)){
+                                    showMessageAsync("Sorry, couldn't read the backup.");
                                 }
 
                                 File dbFolder = dbFile.getParentFile();
@@ -332,19 +317,19 @@ public class GoogleDrive implements
 
                                 if (successDel){
                                     if(dbFile.renameTo(context.getDatabasePath(DatabaseHelper.DATABASE_NAME))){
-                                        showMessage("Successfully restored your data from " + restoredDatabaseDate);
+                                        showMessageAsync("Successfully restored your data from " + restoredDatabaseDate);
                                     } else {
-                                        showMessage("Problem: The old database couldn't be replaced with the new one!");
+                                        showMessageAsync("Problem: The old database couldn't be replaced with the new one!");
                                     }
                                 } else {
-                                    showMessage("Sorry, the old database couldn't be replaced with the new one.");
+                                    showMessageAsync("Sorry, the old database couldn't be replaced with the new one.");
                                 }
 
                                     for (File file : dbFolder.listFiles()) {
                                         Log.d(TAG + " pf:", file.getName());
                                     }
                             } catch (IOException e) {
-                                showMessage("There was a problem restoring your data!");
+                                showMessageAsync("There was a problem restoring your data!");
                                 Log.e(TAG, e.getMessage());
                             }
 
@@ -371,11 +356,58 @@ public class GoogleDrive implements
         return latestBackup;
     }
 
+    private void onGoogleDriveError(ConnectionResult result){
+        if (!result.hasResolution()) {
+            // show the localized error dialog.
+            GoogleApiAvailability.getInstance().getErrorDialog((Activity) context, result.getErrorCode(), 0).show();
+            return;
+        }
+        try {
+            result.startResolutionForResult((Activity) context, RequestCode.REQUEST_CODE_RESOLUTION);
+        } catch (IntentSender.SendIntentException e) {
+            showMessage("Error connecting to Google drive. " + result.toString());
+            Log.e(TAG, "Exception while starting resolution activity", e);
+        }
+    }
+
+    private void onGoogleDriveError(Status status){
+        if (!status.hasResolution()) {
+            showMessageAsync("An error occurred: " + status.getStatusMessage() + "\nTry again later.");
+            return;
+        }
+        try {
+            status.startResolutionForResult((Activity) context, RequestCode.REQUEST_CODE_RESOLUTION);
+        } catch (IntentSender.SendIntentException e) {
+            showMessageAsync("Error connecting to Google drive. " + status.getStatusMessage());
+            Log.e(TAG, "Exception while starting resolution activity", e);
+        }
+    }
+
     private String getDateString(Date date){
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         String dateStr = sdf.format(date);
         return dateStr;
     }
+
+    private void showMessage(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        })
+                //.setIcon(R.mipmap.ic_launcher)
+                //.setTitle(message);
+                .setMessage(message);
+
+        builder.create().show();
+    }
+
+    private void showMessageAsync(String message){
+        Message msg = handler.obtainMessage();
+        msg.obj = message;
+        handler.sendMessage(msg);
+    }
+
 
     private void close(){
         mGoogleApiClient.disconnect();

@@ -7,17 +7,29 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
+import com.projectse.aads.task_tracker.GoogleDrive.AutomaticBackup;
+import com.projectse.aads.task_tracker.GoogleDrive.Constants;
+import com.projectse.aads.task_tracker.GoogleDrive.GoogleDrive;
 import com.projectse.aads.task_tracker.MainActivity;
 
 /**
  * Created by Andrey Zolin on 07.03.2016.
  */
-public class AlertReceiver extends BroadcastReceiver {
+public class TaskTrackerBroadcastReceiver extends BroadcastReceiver {
+    private static final String TAG = "TTReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        createNotfication(context, "Times Up", "5 sec has passed", "Alert");
+        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+            AutomaticBackup.start(context, true);
+            Log.d(TAG, "Started the automatic backup after reboot.");
+        }else if(intent.getBooleanExtra(Constants.BACKUP_KEY, false)) {
+            new GoogleDrive(context, true).backup();
+        }else{
+                createNotfication(context, "Times Up", "Time to start tasks!", "Alert");
+        }
     }
 
     private void createNotfication(Context context, String s, String s1, String alert) {

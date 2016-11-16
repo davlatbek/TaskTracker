@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -58,8 +59,9 @@ public class GoogleDrive implements
     private Context context;
     private ProgressDialog progressBar;
     public static boolean isBackup = false; //otherwise it is restore
-    private String restoredDatabaseDate;
+    private String latestDatabaseDate;
     private GoogleApiClient mGoogleApiClient;
+    private boolean isAutomatic = false;
 
     final Handler handler = new Handler(){
         @Override
@@ -68,6 +70,11 @@ public class GoogleDrive implements
             super.handleMessage(msg);
         }
     };
+
+    public GoogleDrive(Context context, boolean isAutomatic) {
+        this(context);
+        this.isAutomatic = isAutomatic;
+    }
 
     public GoogleDrive(Context context) {
         this.context = context;
@@ -98,7 +105,9 @@ public class GoogleDrive implements
     @Override
     public void onConnected(Bundle connectionHint) {
         // create new contents resource
-        progressBar.show();
+        if(!isAutomatic) {
+            progressBar.show();
+        }
 
         new Thread(new Runnable() {
             @Override
@@ -226,7 +235,7 @@ public class GoogleDrive implements
                             DriveFile file = latestBackupMeta.getDriveId().asDriveFile();
                             file.open(mGoogleApiClient, DriveFile.MODE_READ_ONLY, null)
                                     .setResultCallback(contentsOpenedCallback);
-                            restoredDatabaseDate = getDateString(latestBackupMeta.getCreatedDate());
+                            latestDatabaseDate = getDateString(latestBackupMeta.getCreatedDate());
                         }
 
                         return;
@@ -249,14 +258,15 @@ public class GoogleDrive implements
 
                                     Log.d(TAG + " del", metadata.getTitle() + " " + metadata.getCreatedDate().toString());
                                 }
+                            } else {
+                                latestDatabaseDate = getDateString(metadata.getCreatedDate());
+                                PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext())
+                                        .edit().putString(Constants.LAST_BACKUP_KEY, latestDatabaseDate).commit();
                             }
                         }
                     } else {
                         if(result.getMetadataBuffer().getCount() > 0){
                             Metadata latestBackup = getLatestBackupMetadata(result);
-
-                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                            String latestBackupDate = sdf.format(latestBackup.getCreatedDate());
                             showMessage("Error creating new backup. The previous one is from " + getDateString(latestBackup.getCreatedDate()));
                         } else {
                             showMessage("You don't have a previous backup of your data.");
@@ -317,7 +327,7 @@ public class GoogleDrive implements
 
                                 if (successDel){
                                     if(dbFile.renameTo(context.getDatabasePath(DatabaseHelper.DATABASE_NAME))){
-                                        showMessageAsync("Successfully restored your data from " + restoredDatabaseDate);
+                                        showMessageAsync("Successfully restored your data from " + latestDatabaseDate);
                                     } else {
                                         showMessageAsync("Problem: The old database couldn't be replaced with the new one!");
                                     }
@@ -357,7 +367,7 @@ public class GoogleDrive implements
     }
 
     private void onGoogleDriveError(ConnectionResult result){
-        if (!result.hasResolution()) {
+        if (!result.hasResolution() && !isAutomatic) {
             // show the localized error dialog.
             GoogleApiAvailability.getInstance().getErrorDialog((Activity) context, result.getErrorCode(), 0).show();
             return;
@@ -390,27 +400,33 @@ public class GoogleDrive implements
     }
 
     private void showMessage(String message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            }
-        })
-                //.setIcon(R.mipmap.ic_launcher)
-                //.setTitle(message);
-                .setMessage(message);
+        if(!isAutomatic) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                }
+            })
+                    //.setIcon(R.mipmap.ic_launcher)
+                    //.setTitle(message);
+                    .setMessage(message);
 
-        builder.create().show();
+            builder.create().show();
+        }
     }
 
     private void showMessageAsync(String message){
-        Message msg = handler.obtainMessage();
-        msg.obj = message;
-        handler.sendMessage(msg);
+        if(!isAutomatic) {
+            Message msg = handler.obtainMessage();
+            msg.obj = message;
+            handler.sendMessage(msg);
+        }
     }
 
 
     private void close(){
         mGoogleApiClient.disconnect();
-        progressBar.dismiss();
+        if(!isAutomatic) {
+            progressBar.dismiss();
+        }
     }
 }

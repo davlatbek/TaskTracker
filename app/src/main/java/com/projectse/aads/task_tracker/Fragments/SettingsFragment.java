@@ -4,17 +4,24 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.GoogleDrive.AutomaticBackup;
+import com.projectse.aads.task_tracker.GoogleDrive.Constants;
+import com.projectse.aads.task_tracker.GoogleDrive.GoogleDrive;
 import com.projectse.aads.task_tracker.MainActivity;
 import com.projectse.aads.task_tracker.Models.SettingsModel;
 import com.projectse.aads.task_tracker.R;
@@ -29,10 +36,14 @@ public class SettingsFragment extends Fragment {
     Switch startDateSwitch;
     Switch dueDateSwitch;
     Switch enableSoundSwitch;
+    Switch enableAutomaticBackup;
     EditText beforeStartDate;
     EditText beforeDueDate;
     EditText notSpecefiedStartDate;
     EditText notSpecDurationTaskEdit;
+    EditText txtBackupInterval;
+    TextView textViewLatestBackup;
+    LinearLayout linearLayoutBackupInterval;
 
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -51,10 +62,13 @@ public class SettingsFragment extends Fragment {
         beforeDueDate = (EditText) view.findViewById(R.id.dueTime);
         notSpecefiedStartDate = (EditText) view.findViewById(R.id.notSpecefiedStartDate);
         notSpecDurationTaskEdit = (EditText) view.findViewById(R.id.notSpecDurationTaskEdit);
+        txtBackupInterval = (EditText) view.findViewById(R.id.txtBackupInterval);
+        textViewLatestBackup = (TextView) view.findViewById(R.id.textViewLatestBackup);
 
         // Switches
         startDateSwitch = (Switch) view.findViewById(R.id.startDateSwitch);
         dueDateSwitch = (Switch) view.findViewById(R.id.dueDateSwitch);
+        enableAutomaticBackup = (Switch) view.findViewById(R.id.switchAutomaticBackup);
 
         enableSoundSwitch = (Switch) view.findViewById(R.id.enableSoundSwitch);
         enableSoundSwitch.setChecked(ShPrefUtils.isPlaySounds(getActivity()));
@@ -68,6 +82,18 @@ public class SettingsFragment extends Fragment {
         beforeDueDate.setText(settingsModel.getNotifyDeadLineBefore() + "");
         notSpecefiedStartDate.setText(settingsModel.getINSSSD() + "");
         notSpecDurationTaskEdit.setText(settingsModel.getINSTD() + "");
+        linearLayoutBackupInterval = (LinearLayout) view.findViewById(R.id.llSetBackupInterval);
+        String latestBackup = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext())
+                .getString(Constants.LAST_BACKUP_KEY, "");
+        textViewLatestBackup.setText(latestBackup);
+        int backupInterval = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext())
+                .getInt(Constants.BACKUP_INTERVAL_KEY, -1);
+        //If it is not the default value it means that automatic backup is enabled
+        if(backupInterval != -1){
+            enableAutomaticBackup.setChecked(true);
+            txtBackupInterval.setText(String.valueOf(backupInterval));
+            linearLayoutBackupInterval.setVisibility(View.VISIBLE);
+        }
 
         beforeStartDate.setSelection(beforeStartDate.getText().length());
         beforeStartDate.setSelectAllOnFocus(true);
@@ -119,6 +145,46 @@ public class SettingsFragment extends Fragment {
                 } else {
                     //settingsModel.setAlwaysNotifyDeadLine(false);
                     //db.updateSettings(settingsModel);
+                }
+            }
+        });
+
+        txtBackupInterval.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    String inputInterval = txtBackupInterval.getText().toString();
+                    try{
+                        int interval = Integer.parseInt(inputInterval);
+                        if(interval > 0){
+                            PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext())
+                                    .edit().putInt(Constants.BACKUP_INTERVAL_KEY, interval).commit();
+                            AutomaticBackup.start(getActivity(), false);
+                            Toast.makeText(getActivity(), "Successfully set backup interval to " + interval + " hours", Toast.LENGTH_LONG).show();
+                        }else{
+                            Toast.makeText(getActivity(), "Enter a positive number bigger than 0!", Toast.LENGTH_LONG).show();
+                        }
+                    }catch(NumberFormatException e){
+                        Toast.makeText(getActivity(), "Enter a valid number!", Toast.LENGTH_LONG).show();
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        enableAutomaticBackup.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    Toast.makeText(getActivity(), "After the backup now, please set the interval for automatic backup.", Toast.LENGTH_LONG).show();
+                    new GoogleDrive(getActivity()).backup();
+                    txtBackupInterval.setText("X");
+                    linearLayoutBackupInterval.setVisibility(View.VISIBLE);
+                }else{
+                    linearLayoutBackupInterval.setVisibility(View.GONE);
+                    AutomaticBackup.stop(getActivity());
                 }
             }
         });

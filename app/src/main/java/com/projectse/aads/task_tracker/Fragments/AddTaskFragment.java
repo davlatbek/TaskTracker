@@ -25,11 +25,10 @@ import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Interfaces.ActualTasksCaller;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
-import com.projectse.aads.task_tracker.NotifyService.AlertReceiver;
+import com.projectse.aads.task_tracker.NotifyService.TaskTrackerBroadcastReceiver;
 import com.projectse.aads.task_tracker.R;
 import com.projectse.aads.task_tracker.Utils.ShPrefUtils;
 
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -254,7 +253,7 @@ public class AddTaskFragment extends TaskFragment {
         Long time = new GregorianCalendar().getTimeInMillis() + 5 * 1000;
 
         Log.d("TIME_NOTIFICATIONS SET", time.toString() + "");
-        Intent alertIntent = new Intent(getActivity(), AlertReceiver.class);
+        Intent alertIntent = new Intent(getActivity(), TaskTrackerBroadcastReceiver.class);
         AlarmManager alarmManager = (AlarmManager)
                 getActivity().getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, time,

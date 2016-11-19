@@ -22,13 +22,14 @@ public class TaskTrackerBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+        Log.d(TAG, "onReceive");
+        if (intent.getAction() != null && intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
             AutomaticBackup.start(context, true);
             Log.d(TAG, "Started the automatic backup after reboot.");
         }else if(intent.getBooleanExtra(Constants.BACKUP_KEY, false)) {
             new GoogleDrive(context, true).backup();
         }else{
-                createNotfication(context, "Times Up", "Time to start tasks!", "Alert");
+            createNotfication(context, "Times Up", "Time to start tasks!", "Alert");
         }
     }
 

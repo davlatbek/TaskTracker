@@ -33,8 +33,7 @@
             android:exported="true"
             android:process=":notificationservice" />
 
-        <receiver android:name=".NotifyService.TaskTrackerBroadcastReceiver"
-                  android:enabled="false">
+        <receiver android:name=".NotifyService.TaskTrackerBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"></action>
             </intent-filter>

@@ -24,12 +24,12 @@ public class AutomaticBackup {
         if(interval > -1) {
             Calendar calendar = Calendar.getInstance();
             if(!fromReboot){
-                //calendar.add(Calendar.HOUR_OF_DAY, interval);
+                calendar.add(Calendar.HOUR_OF_DAY, interval);
             }
 
             alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                   // 1000 * 60 * 60 * interval, alarmIntent);
-                    1000 * 60  * interval, alarmIntent); //for testing - this is in minutes
+                    1000 * 60 * 60 * interval, alarmIntent);
+                    //1000 * 60  * interval, alarmIntent); //for testing - this is in minutes
         }
     }
 

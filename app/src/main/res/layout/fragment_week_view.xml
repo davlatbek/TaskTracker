@@ -345,7 +345,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentLeft="true"
                     android:gravity="left|center_vertical|center_horizontal"
-                    android:background="@color/black_transparent"
+                    android:background="@color/light_red_300"
                     android:text="@string/saturday"
                     android:paddingLeft="5dp"
                     android:textColor="@android:color/white" />
@@ -411,7 +411,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentLeft="true"
                     android:gravity="left|center_vertical|center_horizontal"
-                    android:background="@color/black_transparent"
+                    android:background="@color/light_red_300"
                     android:text="@string/sunday"
                     android:paddingLeft="5dp"
                     android:textColor="@android:color/white" />

@@ -139,10 +139,10 @@ public class WeekDaysFragment extends Fragment {
                 toggleButton(buttons.get(4));
                 break;
             case Calendar.SATURDAY:
-                toggleButton(buttons.get(5));
+                toggleRedButton(buttons.get(5));
                 break;
             case Calendar.SUNDAY:
-                toggleButton(buttons.get(6));
+                toggleRedButton(buttons.get(6));
                 break;
         }
     }
@@ -164,6 +164,10 @@ public class WeekDaysFragment extends Fragment {
 
     public void toggleButton(Button btn){
         btn.setBackgroundColor(getResources().getColor(R.color.light_green_800));
+        btn.setTextColor(Color.WHITE);
+    }
+    public void toggleRedButton(Button btn){
+        btn.setBackgroundColor(getResources().getColor(R.color.light_red_300));
         btn.setTextColor(Color.WHITE);
     }
 }

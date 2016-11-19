@@ -1,10 +1,13 @@
 package com.projectse.aads.task_tracker.Fragments;
 
 import android.annotation.TargetApi;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,6 +36,7 @@ import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
 import com.projectse.aads.task_tracker.Dialogs.ListOfCourses;
 import com.projectse.aads.task_tracker.Models.CourseModel;
 import com.projectse.aads.task_tracker.Models.TaskModel;
+import com.projectse.aads.task_tracker.NotifyService.ToggleNotificationReceiver;
 import com.projectse.aads.task_tracker.R;
 import com.projectse.aads.task_tracker.RequestCode;
 
@@ -186,6 +190,17 @@ public abstract class TaskFragment extends Fragment {
                 if (isChecked) {
                     task.setLastSessionStart(Calendar.getInstance().getTimeInMillis());
                     timerHandler.postDelayed(timerRunnable, 0);
+
+
+                    Intent notificationIntent = new Intent(getActivity(), ToggleNotificationReceiver.class);
+                    notificationIntent.putExtra("task name", task.getName());
+                    notificationIntent.putExtra("last session start", task.getLastSessionStart());
+                    notificationIntent.putExtra("course", task.getCourse().getName());
+                    AlarmManager alarmManager = (AlarmManager)
+                            getActivity().getSystemService(Context.ALARM_SERVICE);
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, 0,
+                            PendingIntent.getBroadcast(getActivity(), 1, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+
                 }
 
                 if(!isChecked && task.getLastSessionStart() != 0) {

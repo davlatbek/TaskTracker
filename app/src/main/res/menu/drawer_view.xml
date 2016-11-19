@@ -3,27 +3,54 @@
     <group
         android:id="@+id/group1"
         android:checkableBehavior="single">
-
         <item
             android:id="@+id/nav_tasks_fragment"
             android:icon="@drawable/ic_assignment_24dp"
             android:title="Tasks" />
+
+    </group>
+
+    <group
+        android:id="@+id/group2"
+        android:checkableBehavior="single">
+
         <item
             android:id="@+id/nav_plan_fragment"
             android:icon="@drawable/ic_event_24dp"
             android:title="Plan" />
+
+    </group>
+
+    <group
+        android:id="@+id/group3"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_weekly_view_fragment"
             android:icon="@drawable/ic_view_column_24dp"
             android:title="Weekly view" />
+    </group>
+
+    <group
+        android:id="@+id/group4"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_courses_fragment"
             android:icon="@drawable/ic_school_24dp"
             android:title="Courses" />
+    </group>
+
+    <group
+        android:id="@+id/group5"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_progress_fragment"
             android:icon="@drawable/ic_insert_chart_24dp"
             android:title="Progress" />
+    </group>
+
+    <group
+        android:id="@+id/group6"
+        android:checkableBehavior="single">
        
         <item
             android:id="@+id/nav_import_fragment"
@@ -33,7 +60,7 @@
     </group>
 
     <group
-        android:id="@+id/group2"
+        android:id="@+id/group7"
         android:checkableBehavior="single">
         <item
             android:id="@+id/nav_settings_fragment"

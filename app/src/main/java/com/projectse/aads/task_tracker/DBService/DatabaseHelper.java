@@ -1027,8 +1027,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(TASKS_IS_NOTIFY_DEADLINE, task.getIsNotifyDeadline() ? 1 : 0);
         values.put(TASKS_IS_DONE, task.getIsDone() ? 1 : 0);
         values.put(TASKS_IS_RUNNING, task.getRunning() ? 1 : 0);
-        System.out.println("Write to tabl1111:"+task.getId());
-        System.out.println("Write to tabl11111:"+ task.getTimeSpentMs());
 
         values.put(TASKS_TIME_SPENT_MS, task.getTimeSpentMs());
         values.put(TASKS_LAST_SESSION_START, task.getLastSessionStart());

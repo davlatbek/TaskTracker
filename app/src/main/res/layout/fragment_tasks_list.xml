@@ -3,13 +3,6 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ExpandableListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/listView"
-        android:groupIndicator="@null"
-        android:layout_gravity="center_horizontal" />
-
     <ImageButton
         android:id="@+id/create_task_btn"
         android:layout_width="48dp"
@@ -23,4 +16,13 @@
         android:tint="@android:color/white"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
+
+    <ExpandableListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView"
+        android:groupIndicator="@null"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>

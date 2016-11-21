@@ -50,6 +50,7 @@ dependencies {
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
     androidTestCompile 'com.android.support.test:runner:0.5'
+    compile 'com.google.android.gms:play-services-drive:9.8.0'
 
 }
 configurations.all {

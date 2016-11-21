@@ -42,7 +42,7 @@ public class SettingsFragment extends Fragment {
     EditText notSpecefiedStartDate;
     EditText notSpecDurationTaskEdit;
     EditText txtBackupInterval;
-    TextView textViewLatestBackup;
+    public static TextView textViewLatestBackup;
     LinearLayout linearLayoutBackupInterval;
 
     public static void hideSoftKeyboard(Activity activity) {
@@ -84,8 +84,8 @@ public class SettingsFragment extends Fragment {
         notSpecDurationTaskEdit.setText(settingsModel.getINSTD() + "");
         linearLayoutBackupInterval = (LinearLayout) view.findViewById(R.id.llSetBackupInterval);
         String latestBackup = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext())
-                .getString(Constants.LAST_BACKUP_KEY, "");
-        textViewLatestBackup.setText(latestBackup);
+                .getString(Constants.LAST_BACKUP_KEY, "No backup from this device");
+        textViewLatestBackup.setText("Latest backup: " + latestBackup);
         int backupInterval = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext())
                 .getInt(Constants.BACKUP_INTERVAL_KEY, -1);
         //If it is not the default value it means that automatic backup is enabled

@@ -432,14 +432,14 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="82dp"
+            android:layout_height="102dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="No backup of your data!!!"
+            android:text="Latest backup: 12:12:2012 12:12"
             android:id="@+id/textViewLatestBackup"
             android:layout_alignParentEnd="true"
             android:layout_alignTop="@+id/btnBackup"
             android:layout_marginLeft="10dp"
-            android:textSize="15dp" />
+            android:textSize="13dp" />
     </LinearLayout>
 
 </RelativeLayout>

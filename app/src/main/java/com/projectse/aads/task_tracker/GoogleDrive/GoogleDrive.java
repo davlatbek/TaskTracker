@@ -28,6 +28,7 @@ import com.google.android.gms.drive.DriveResource;
 import com.google.android.gms.drive.Metadata;
 import com.google.android.gms.drive.MetadataChangeSet;
 import com.projectse.aads.task_tracker.DBService.DatabaseHelper;
+import com.projectse.aads.task_tracker.Fragments.SettingsFragment;
 import com.projectse.aads.task_tracker.R;
 import com.projectse.aads.task_tracker.RequestCode;
 
@@ -262,6 +263,9 @@ public class GoogleDrive implements
                                 latestDatabaseDate = getDateString(metadata.getCreatedDate());
                                 PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext())
                                         .edit().putString(Constants.LAST_BACKUP_KEY, latestDatabaseDate).commit();
+                                if(!isAutomatic && SettingsFragment.textViewLatestBackup != null){
+                                    SettingsFragment.textViewLatestBackup.setText("Latest backup: " + latestDatabaseDate);
+                                }
                             }
                         }
                     } else {
